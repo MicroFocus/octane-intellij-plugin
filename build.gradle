@@ -11,6 +11,7 @@ apply plugin: "idea"
 apply plugin: "org.jetbrains.intellij"
 
 repositories {
+    mavenLocal()
     mavenCentral()
     maven { url 'http://dl.bintray.com/jetbrains/intellij-plugin-service' }
     maven { url "http://mydtbld0051.hpeswlab.net:8081/nexus/content/groups/mqm-public" }
@@ -39,9 +40,6 @@ dependencies {
     }
 
     testCompile group: 'junit', name: 'junit', version: '4.11'
-    testCompile group: 'org.apache.commons', name: 'commons-configuration2', version: '2.1'
-    testCompile 'commons-beanutils:commons-beanutils:1.9.3'
-    testCompile 'org.easymock:easymock:3.2'
 }
 
 intellij {

@@ -1,14 +1,13 @@
 package com.hpe.adm.octane.ideplugins.integrationtests.util;
 
-import org.apache.commons.configuration2.CombinedConfiguration;
-import org.apache.commons.configuration2.SystemConfiguration;
-import org.apache.commons.configuration2.builder.fluent.Configurations;
-import org.apache.commons.configuration2.ex.ConfigurationException;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
 
 public class ConfigurationUtil {
 
     private static final String PROP_PREFIX = "sdk";
-    public enum Properties {
+    public enum PropertyKeys {
         URL(PROP_PREFIX + ".url"),
         SHAREDSPACE(PROP_PREFIX + ".sharedSpaceId"),
         WORKSPACE(PROP_PREFIX + ".workspaceId"),
@@ -16,31 +15,27 @@ public class ConfigurationUtil {
         PASSWORD(PROP_PREFIX + ".password");
 
         public String propertyKey;
-        Properties(String propertyKey){
+        PropertyKeys(String propertyKey){
             this.propertyKey = propertyKey;
         }
     }
 
     private static final String MAIN_CONFIG_FILE_NAME = "configuration.properties";
-    private static CombinedConfiguration combinedConfiguration;
-
+    private static final Properties properties = new Properties();
     static {
-        final Configurations configurations = new Configurations();
-        combinedConfiguration = new CombinedConfiguration();
         try {
-            combinedConfiguration.addConfiguration(new SystemConfiguration());
-            combinedConfiguration.addConfiguration(configurations.properties(MAIN_CONFIG_FILE_NAME));
-        } catch (ConfigurationException ex) {
-            throw new RuntimeException(ex);
+            properties.load(ConfigurationUtil.class.getClassLoader().getResourceAsStream(MAIN_CONFIG_FILE_NAME));
+        } catch (IOException ex){
+            throw new RuntimeException("Error occured while loading config file: " + MAIN_CONFIG_FILE_NAME + ", " + ex);
         }
     }
 
-    public static String getString(Properties property) {
-        return combinedConfiguration.getString(property.propertyKey);
+    public static String getString(PropertyKeys property) {
+        return properties.getProperty(property.propertyKey) ;
     }
 
-    public static Long getLong(Properties property) {
-        return combinedConfiguration.getLong(property.propertyKey);
+    public static Long getLong(PropertyKeys property) {
+        return Long.valueOf(properties.getProperty(property.propertyKey));
     }
 
 }

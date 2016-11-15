@@ -21,11 +21,11 @@ class TestModule extends AbstractModule {
             ConnectionSettings connectionSettings = new ConnectionSettings();
 
             //Set form config
-            connectionSettings.setBaseUrl(ConfigurationUtil.getString(ConfigurationUtil.Properties.URL));
-            connectionSettings.setSharedSpaceId(ConfigurationUtil.getLong(ConfigurationUtil.Properties.SHAREDSPACE));
-            connectionSettings.setWorkspaceId(ConfigurationUtil.getLong(ConfigurationUtil.Properties.WORKSPACE));
-            connectionSettings.setUserName(ConfigurationUtil.getString(ConfigurationUtil.Properties.USERNAME));
-            connectionSettings.setPassword(ConfigurationUtil.getString(ConfigurationUtil.Properties.PASSWORD));
+            connectionSettings.setBaseUrl(ConfigurationUtil.getString(ConfigurationUtil.PropertyKeys.URL));
+            connectionSettings.setSharedSpaceId(ConfigurationUtil.getLong(ConfigurationUtil.PropertyKeys.SHAREDSPACE));
+            connectionSettings.setWorkspaceId(ConfigurationUtil.getLong(ConfigurationUtil.PropertyKeys.WORKSPACE));
+            connectionSettings.setUserName(ConfigurationUtil.getString(ConfigurationUtil.PropertyKeys.USERNAME));
+            connectionSettings.setPassword(ConfigurationUtil.getString(ConfigurationUtil.PropertyKeys.PASSWORD));
 
             return connectionSettings;
         }).in(Singleton.class);

@@ -1,7 +1,8 @@
-package com.hpe.adm.octane.ideplugins.general;
+package com.hpe.adm.octane.ideplugins;
 
 import com.google.inject.Inject;
 import com.hpe.adm.octane.ideplugins.integrationtests.IntegrationTestBase;
+import com.hpe.adm.octane.ideplugins.integrationtests.util.ConfigurationUtil;
 import com.hpe.adm.octane.ideplugins.services.ConnectionSettings;
 import com.hpe.adm.octane.ideplugins.services.TestService;
 import org.junit.Ignore;
@@ -22,12 +23,13 @@ public class DependencyInjectionITCase extends IntegrationTestBase {
     private TestService testService;
 
     @Test
-    @Ignore
     public void test(){
         //Test DI
         assertNotNull(connectionSettings);
-        assertEquals(connectionSettings.getUserName(), "sa@nga");
         assertNotNull(testService);
+
+        //This should is loaded in the TestModule from the config file
+        assertEquals(connectionSettings.getUserName(), ConfigurationUtil.getString(ConfigurationUtil.PropertyKeys.USERNAME));
     }
 
 }

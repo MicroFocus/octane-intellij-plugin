@@ -11,9 +11,7 @@ public class TestServiceITCase extends IntegrationTestBase{
     @Inject
     private TestService testService;
 
-    //TODO: not very useful, depends on a nightly server, test will be removed in the future
     @Test
-    @Ignore
     public void testConnectionTest(){
         try{
             testService.testConnection();
