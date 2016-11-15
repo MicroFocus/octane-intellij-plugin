@@ -19,11 +19,11 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <toolWindow factoryClass="com.hpe.adm.octane.ideplugins.intellij.ui.panels.WelcomeView" anchor="bottom" icon="/images/octane-icon-13x13.png" secondary="true" id="HPE ALM Octane"/>
-    <applicationService serviceInterface="com.hpe.adm.octane.ideplugins.intellij.ConnectionSettingsWrapper"
-                        serviceImplementation="com.hpe.adm.octane.ideplugins.intellij.ConnectionSettingsWrapper"/>
-    <applicationConfigurable id="com.hpe.adm.octane.ideplugins.intellij.ConnectionSettingsConfigurable"
+    <applicationService serviceInterface="com.hpe.adm.octane.ideplugins.intellij.settings.IdePersistentConnectionSettingsProvider"
+                        serviceImplementation="com.hpe.adm.octane.ideplugins.intellij.settings.IdePersistentConnectionSettingsProvider"/>
+    <applicationConfigurable id="com.hpe.adm.octane.ideplugins.intellij.settings.ConnectionSettingsConfigurable"
                              displayName="Octane Settings"
-                             instance="com.hpe.adm.octane.ideplugins.intellij.ConnectionSettingsConfigurable"/>
+                             instance="com.hpe.adm.octane.ideplugins.intellij.settings.ConnectionSettingsConfigurable"/>
   </extensions>
 
   <application-components>

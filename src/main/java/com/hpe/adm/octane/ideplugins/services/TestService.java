@@ -5,6 +5,7 @@ import com.hpe.adm.nga.sdk.NGA;
 import com.hpe.adm.nga.sdk.authorisation.UserAuthorisation;
 import com.hpe.adm.nga.sdk.exception.NgaException;
 import com.hpe.adm.nga.sdk.model.EntityModel;
+import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
 
 import java.util.Collection;
 

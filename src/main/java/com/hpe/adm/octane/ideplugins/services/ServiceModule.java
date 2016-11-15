@@ -2,18 +2,13 @@ package com.hpe.adm.octane.ideplugins.services;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
+import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
 
+//TODO: Currently not using the modules, having problems sharing a bean between more modules
 public class ServiceModule extends AbstractModule {
-
-    private ConnectionSettings connectionSettings;
-
-    public ServiceModule(ConnectionSettings connectionSettings) {
-        this.connectionSettings = connectionSettings;
-    }
 
     @Override
     protected void configure() {
-        bind(ConnectionSettings.class).toProvider(() -> connectionSettings).in(Singleton.class);
-        bind(TestService.class).toProvider(() -> new TestService()).in(Singleton.class);
+        bind(TestService.class).toProvider(TestService::new).in(Singleton.class);
     }
 }

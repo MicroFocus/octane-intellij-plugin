@@ -1,19 +1,16 @@
 package com.hpe.adm.octane.ideplugins.intellij.util;
 
-import com.hpe.adm.octane.ideplugins.services.ConnectionSettings;
+import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
 
 import java.net.URL;
 
 public class UrlParser {
-    private static URL site;
-
-    public UrlParser() {
-    }
 
     public static ConnectionSettings resolveConnectionSettings(String url, String userName, String password) {
         ConnectionSettings connectionSettings = new ConnectionSettings();
+
         try {
-            site = new URL(url);
+            URL site = new URL(url);
             if (null != site.getQuery()) {
                 String baseUrl = site.getProtocol() + "://" + site.getHost();
                 String[] split = site.getQuery().split("/");
@@ -23,12 +20,14 @@ public class UrlParser {
                 connectionSettings.setBaseUrl(baseUrl);
                 connectionSettings.setSharedSpaceId(sharedspaceId);
                 connectionSettings.setWorkspaceId(workspaceId);
-                connectionSettings.setUserName(userName);
-                connectionSettings.setPassword(password);
             }
 
         } catch (Exception e) {
+            //TODO
         }
+
+        connectionSettings.setUserName(userName);
+        connectionSettings.setPassword(password);
 
         return connectionSettings;
     }

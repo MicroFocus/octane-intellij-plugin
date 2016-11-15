@@ -3,7 +3,7 @@ package com.hpe.adm.octane.ideplugins.integrationtests;
 import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
 import com.hpe.adm.octane.ideplugins.integrationtests.util.ConfigurationUtil;
-import com.hpe.adm.octane.ideplugins.services.ConnectionSettings;
+import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
 import com.hpe.adm.octane.ideplugins.services.TestService;
 
 

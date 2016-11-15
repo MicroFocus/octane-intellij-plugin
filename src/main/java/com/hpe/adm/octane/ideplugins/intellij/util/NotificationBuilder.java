@@ -23,7 +23,7 @@ import com.intellij.notification.NotificationType;
 import com.intellij.openapi.project.Project;
 
 public final class NotificationBuilder {
-    private static final String GERRIT_NOTIFICATION_GROUP = "octane";
+    private static final String NOTIFICATION_GROUP = "octane";
 
     private final Project project;
     private final String title;
@@ -60,7 +60,7 @@ public final class NotificationBuilder {
     }
 
     protected Notification get() {
-        Notification notification = new Notification(GERRIT_NOTIFICATION_GROUP, title, message, type, listener.orNull());
+        Notification notification = new Notification(NOTIFICATION_GROUP, title, message, type, listener.orNull());
         if (!showBalloon) {
             notification.expire();
         }

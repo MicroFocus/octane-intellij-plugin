@@ -1,4 +1,4 @@
-package com.hpe.adm.octane.ideplugins.services;
+package com.hpe.adm.octane.ideplugins.services.connection;
 
 public class ConnectionSettings {
 
@@ -56,5 +56,31 @@ public class ConnectionSettings {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ConnectionSettings that = (ConnectionSettings) o;
+
+        if (baseUrl != null ? !baseUrl.equals(that.baseUrl) : that.baseUrl != null) return false;
+        if (sharedSpaceId != null ? !sharedSpaceId.equals(that.sharedSpaceId) : that.sharedSpaceId != null)
+            return false;
+        if (workspaceId != null ? !workspaceId.equals(that.workspaceId) : that.workspaceId != null) return false;
+        if (userName != null ? !userName.equals(that.userName) : that.userName != null) return false;
+        return password != null ? password.equals(that.password) : that.password == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = baseUrl != null ? baseUrl.hashCode() : 0;
+        result = 31 * result + (sharedSpaceId != null ? sharedSpaceId.hashCode() : 0);
+        result = 31 * result + (workspaceId != null ? workspaceId.hashCode() : 0);
+        result = 31 * result + (userName != null ? userName.hashCode() : 0);
+        result = 31 * result + (password != null ? password.hashCode() : 0);
+        return result;
     }
 }

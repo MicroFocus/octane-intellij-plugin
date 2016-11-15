@@ -9,10 +9,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Supplier;
 
-/**
- * Created by totha on 13-Nov-16.
- */
 public class RestUtil {
+
+    private static final String LOADING_MESSAGE = "Fetching data from Octane...";
 
     private static NotificationUtil notificationService = new NotificationUtil();
 
@@ -29,7 +28,7 @@ public class RestUtil {
                                   final Project project,
                                   final String errorMessage) {
         ApplicationManager.getApplication().invokeLater(() -> {
-            Task.Backgroundable backgroundTask = new Task.Backgroundable(project, "Fetching data...", true) {
+            Task.Backgroundable backgroundTask = new Task.Backgroundable(project, LOADING_MESSAGE, true) {
                 public void run(@NotNull ProgressIndicator indicator) {
                     try {
                         final T result = supplier.get();
@@ -55,7 +54,7 @@ public class RestUtil {
         notificationService.notifyError(notification);
     }
 
-    public static String getErrorTextFromException(Throwable t) {
+    private static String getErrorTextFromException(Throwable t) {
         String message = t.getMessage();
         if (message == null) {
             message = "(No exception message available)";

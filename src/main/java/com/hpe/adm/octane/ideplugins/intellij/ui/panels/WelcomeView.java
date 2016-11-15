@@ -1,6 +1,8 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.panels;
 
-import com.hpe.adm.octane.ideplugins.intellij.ConnectionSettingsConfigurable;
+import com.google.inject.Inject;
+import com.hpe.adm.octane.ideplugins.intellij.settings.ConnectionSettingsConfigurable;
+import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
@@ -38,8 +40,6 @@ public class WelcomeView implements ToolWindowFactory{
         Content content = contentFactory.createContent(rootPanel, "", false);
         rootToolWindow.getContentManager().addContent(content);
 
-        settingsLink.addActionListener(event -> {
-            ShowSettingsUtil.getInstance().showSettingsDialog(project, ConnectionSettingsConfigurable.class);
-        });
+        settingsLink.addActionListener(event -> ShowSettingsUtil.getInstance().showSettingsDialog(project, ConnectionSettingsConfigurable.class));
     }
 }
