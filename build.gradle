@@ -18,7 +18,20 @@ repositories {
 //    maven { url "http://mydtbld0051.hpeswlab.net:8081/nexus/content/groups/mqm-public" }
 }
 
+sourceSets {
+    main {
+        java.srcDir 'src/main/java'
+        resources.srcDir 'src/main/resources'
+    }
+    test {
+        java.srcDir 'src/test/java'
+        resources.srcDir 'src/test/resources'
+    }
+}
+
 dependencies {
+
+
     compile group: 'com.hpe.adm.nga.sdk', name: 'sdk-src', version: '1.2-SNAPSHOT'
     compile('com.google.inject:guice:4.0') {
         exclude group: 'com.google.guava', module: 'guava'
@@ -26,8 +39,12 @@ dependencies {
     compile('com.google.inject.extensions:guice-multibindings:4.0') {
         exclude group: 'com.google.guava', module: 'guava'
     }
+
     testCompile group: 'junit', name: 'junit', version: '4.11'
+    compile group: 'org.apache.commons', name: 'commons-configuration2', version: '2.1'
+    testCompile 'org.easymock:easymock:3.2'
 }
+
 intellij {
     version project.hasProperty("intellijVersion") ? project.getProperty("intellijVersion") : ideaVersion
     plugins = ["maven", "gradle"]
