@@ -1,0 +1,39 @@
+<idea-plugin version="2">
+  <id>com.hpe.adm.octane.ideplugins.intellij</id>
+  <name>Octane IntelliJ Plugin</name>
+  <version>0.1</version>
+  <vendor email="support@hpe.com" url="https://www.hpe.com">Hewlett Packard Enterprise</vendor>
+
+  <description></description>
+
+  <change-notes>Initial commit</change-notes>
+
+  <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
+  <idea-version since-build="131"/>
+
+  <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+       on how to target different products -->
+  <!-- uncomment to enable plugin in all products
+  <depends>com.intellij.modules.lang</depends>
+  -->
+
+  <extensions defaultExtensionNs="com.intellij">
+    <toolWindow factoryClass="com.hpe.adm.octane.ideplugins.intellij.ui.panels.WelcomeView" anchor="bottom" icon="/images/octane-icon-13x13.png" secondary="true" id="HPE ALM Octane"/>
+    <applicationConfigurable id="com.hpe.adm.octane.ideplugins.intellij.ConnectionSettingsConfigurable"
+                             displayName="Octane Settings"
+                             instance="com.hpe.adm.octane.ideplugins.intellij.ConnectionSettingsConfigurable"/>
+  </extensions>
+
+  <application-components>
+    <!-- Add your application components here -->
+  </application-components>
+
+  <project-components>
+    <!-- Add your project components here -->
+  </project-components>
+
+  <actions>
+    <!-- Add your actions here -->
+  </actions>
+
+</idea-plugin>
