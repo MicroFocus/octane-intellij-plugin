@@ -41,7 +41,8 @@ dependencies {
     }
 
     testCompile group: 'junit', name: 'junit', version: '4.11'
-    compile group: 'org.apache.commons', name: 'commons-configuration2', version: '2.1'
+    testCompile group: 'org.apache.commons', name: 'commons-configuration2', version: '2.1'
+    testCompile 'commons-beanutils:commons-beanutils:1.9.3'
     testCompile 'org.easymock:easymock:3.2'
 }
 

@@ -1,18 +1,18 @@
-package com.hpe.adm.octane.ideplugins.services;
+package com.hpe.adm.octane.ideplugins.general;
 
 import com.google.inject.Inject;
 import com.hpe.adm.octane.ideplugins.integrationtests.IntegrationTestBase;
-import org.junit.After;
-import org.junit.Before;
+import com.hpe.adm.octane.ideplugins.services.ConnectionSettings;
+import com.hpe.adm.octane.ideplugins.services.TestService;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
 
 /**
  * This is just an example for now
  */
-public class DependencyInjectionItCase extends IntegrationTestBase {
+public class DependencyInjectionITCase extends IntegrationTestBase {
 
     @Inject
     private ConnectionSettings connectionSettings;
@@ -20,22 +20,12 @@ public class DependencyInjectionItCase extends IntegrationTestBase {
     @Inject
     private TestService testService;
 
-    @Before
-    public void before(){
-
-    }
-
     @Test
     public void test(){
         //Test DI
         assertNotNull(connectionSettings);
         assertEquals(connectionSettings.getUserName(), null);
         assertNotNull(testService);
-    }
-
-    @After
-    public void after(){
-
     }
 
 }
