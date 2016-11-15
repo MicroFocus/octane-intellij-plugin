@@ -7,9 +7,9 @@ public class ConnectionSettings {
     private Long workspaceId;
     private String userName;
     private String password;
-    //Singleton
-    private static ConnectionSettings connectionSettings;
 
+    public ConnectionSettings() {
+    }
     public ConnectionSettings(String baseUrl, Long sharedSpaceId, Long workspaceId, String userName, String password) {
         this.baseUrl = baseUrl;
         this.sharedSpaceId = sharedSpaceId;
@@ -18,39 +18,43 @@ public class ConnectionSettings {
         this.password = password;
     }
 
-    public static ConnectionSettings init(String baseUrl, Long sharedSpaceId, Long workspaceId, String userName, String password) {
-        if(isInit()){
-            throw new RuntimeException("Already init");
-        }
-        connectionSettings = new ConnectionSettings(baseUrl, sharedSpaceId, workspaceId, userName,password);
-        return connectionSettings;
-    }
-
-    public static boolean isInit() {
-        return connectionSettings != null;
-    }
-
-    public static ConnectionSettings getInstance(){
-        return connectionSettings;
-    }
-
     public String getBaseUrl() {
         return baseUrl;
+    }
+
+    public void setBaseUrl(String baseUrl) {
+        this.baseUrl = baseUrl;
     }
 
     public Long getSharedSpaceId() {
         return sharedSpaceId;
     }
 
+    public void setSharedSpaceId(Long sharedSpaceId) {
+        this.sharedSpaceId = sharedSpaceId;
+    }
+
     public Long getWorkspaceId() {
         return workspaceId;
+    }
+
+    public void setWorkspaceId(Long workspaceId) {
+        this.workspaceId = workspaceId;
     }
 
     public String getUserName() {
         return userName;
     }
 
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
     public String getPassword() {
         return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

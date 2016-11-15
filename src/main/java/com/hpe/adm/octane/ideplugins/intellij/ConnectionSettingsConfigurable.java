@@ -1,6 +1,7 @@
 package com.hpe.adm.octane.ideplugins.intellij;
 
-import com.hpe.adm.octane.ideplugins.PluginModuleManager;
+import com.google.inject.Inject;
+import com.hpe.adm.octane.ideplugins.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.ui.panels.ConnectionSettingsView;
 import com.hpe.adm.octane.ideplugins.services.ConnectionSettings;
 import com.intellij.openapi.options.ConfigurationException;
@@ -16,7 +17,8 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
     public static final String NAME = "Octane";
     private ConnectionSettingsWrapper connectionSettingsWrapper;
     private ConnectionSettingsView connectionSettingsView;
-    private ConnectionSettings connectionSettings = ConnectionSettings.getInstance();
+    @Inject
+    private ConnectionSettings connectionSettings;
 
     @NotNull
     @Override
@@ -46,7 +48,7 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
     @Override
     public JComponent createComponent() {
         if (connectionSettingsView == null) {
-            connectionSettingsView = PluginModuleManager.getInstance(ConnectionSettingsView.class);
+            connectionSettingsView = PluginModule.getInstance(ConnectionSettingsView.class);
 //            connectionSettingsView = new ConnectionSettingsView();
         }
         return connectionSettingsView.getRootPanel();

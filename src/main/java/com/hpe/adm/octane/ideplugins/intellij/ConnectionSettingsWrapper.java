@@ -1,5 +1,6 @@
 package com.hpe.adm.octane.ideplugins.intellij;
 
+import com.google.inject.Inject;
 import com.hpe.adm.octane.ideplugins.services.ConnectionSettings;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
@@ -23,8 +24,9 @@ public class ConnectionSettingsWrapper implements PersistentStateComponent<Eleme
     private static final String WORKSPACE_TAG = "WorkSpace";
     private static final String USER_TAG = "User";
     private static final String PASSWORD_TAG = "Password";
-    private ConnectionSettings connectionSettings = ConnectionSettings.getInstance();
     private Logger pluginLogger;
+    @Inject
+    private ConnectionSettings connectionSettings;
 
     @Nullable
     @Override
@@ -43,12 +45,12 @@ public class ConnectionSettingsWrapper implements PersistentStateComponent<Eleme
     @Override
     public void loadState(Element state) {
         try {
-            connectionSettings = ConnectionSettings.init(
-                    state.getAttributeValue(URL_TAG),
-                    Long.valueOf(state.getAttributeValue(SHARED_SPACE_TAG)),
-                    Long.valueOf(state.getAttributeValue(WORKSPACE_TAG)),
-                    state.getAttributeValue(USER_TAG),
-                    state.getAttributeValue(PASSWORD_TAG));
+            connectionSettings.setBaseUrl(state.getAttributeValue(URL_TAG));
+            connectionSettings.setSharedSpaceId(Long.valueOf(state.getAttributeValue(SHARED_SPACE_TAG)));
+            connectionSettings.setWorkspaceId(Long.valueOf(state.getAttributeValue(WORKSPACE_TAG)));
+            connectionSettings.setUserName(state.getAttributeValue(USER_TAG));
+            connectionSettings.setPassword(state.getAttributeValue(PASSWORD_TAG));
+
         } catch (Exception e) {
             pluginLogger.error("Error while trying to load the connection settings");
         }
