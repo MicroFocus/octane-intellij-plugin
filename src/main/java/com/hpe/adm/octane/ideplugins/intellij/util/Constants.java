@@ -8,4 +8,10 @@ public class Constants {
     public static final String IMG_OCTANE_LOGO = IMAGE_FOLDER_PATH + "octane-logo.png";
     public static final String IMG_OCTANE_ICON = IMAGE_FOLDER_PATH + "octane-icon-13x13.png";
 
+
+    //Url Parser
+    public static final int INVALID_ID = -1;
+
+    //Password encoder
+    public static final String PLUGIN_SETTINGS_PASSWORD_KEY = "OCTANE_SETTINGS_PASSWORD_KEY";
 }

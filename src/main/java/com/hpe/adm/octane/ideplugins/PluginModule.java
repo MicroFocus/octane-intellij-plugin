@@ -2,15 +2,13 @@ package com.hpe.adm.octane.ideplugins;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Singleton;
+import com.google.inject.*;
 import com.hpe.adm.octane.ideplugins.intellij.ConnectionSettingsWrapper;
 import com.hpe.adm.octane.ideplugins.intellij.ui.UiModule;
 import com.hpe.adm.octane.ideplugins.services.ServiceModule;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 
@@ -36,10 +34,14 @@ public class PluginModule extends AbstractModule {
         bind(Application.class).toInstance(ApplicationManager.getApplication());
         bind(FileDocumentManager.class).toInstance(FileDocumentManager.getInstance());
 
-        bind(ConnectionSettingsWrapper.class).toProvider(ConnectionSettingsWrapper::new).in(Singleton.class);
-
         install(new UiModule());
-        install(new ServiceModule());
+
+
+        Provider<ConnectionSettingsWrapper> settingsProvider = () -> ServiceManager.getService(ConnectionSettingsWrapper.class);
+        bind(ConnectionSettingsWrapper.class).toProvider(settingsProvider).in(Singleton.class);
+
+        //A service module only works on one set of connection settings
+        install(new ServiceModule(settingsProvider.get().getConnectionSettings()));
 
     }
 

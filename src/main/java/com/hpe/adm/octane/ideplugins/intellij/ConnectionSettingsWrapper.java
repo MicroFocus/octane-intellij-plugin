@@ -1,12 +1,10 @@
 package com.hpe.adm.octane.ideplugins.intellij;
 
-import com.google.inject.Inject;
 import com.hpe.adm.octane.ideplugins.services.ConnectionSettings;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.components.StoragePathMacros;
-import com.intellij.openapi.diagnostic.Logger;
 import org.jdom.Element;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,26 +16,26 @@ import org.jetbrains.annotations.Nullable;
                 )}
 )
 public class ConnectionSettingsWrapper implements PersistentStateComponent<Element> {
+
     private static final String CONNECTION_SETTINGS_TAG = "ConnectionSettings";
     private static final String URL_TAG = "Url";
     private static final String SHARED_SPACE_TAG = "SharedSpace";
     private static final String WORKSPACE_TAG = "WorkSpace";
     private static final String USER_TAG = "User";
     private static final String PASSWORD_TAG = "Password";
-    private Logger pluginLogger;
-    @Inject
-    private ConnectionSettings connectionSettings;
+
+    private ConnectionSettings connectionSettings = new ConnectionSettings();
 
     @Nullable
     @Override
     public Element getState() {
         final Element element = new Element(CONNECTION_SETTINGS_TAG);
 
-        element.setAttribute(URL_TAG, connectionSettings.getBaseUrl());
+        element.setAttribute(URL_TAG, String.valueOf(connectionSettings.getBaseUrl()));
         element.setAttribute(SHARED_SPACE_TAG, String.valueOf(connectionSettings.getSharedSpaceId()));
         element.setAttribute(WORKSPACE_TAG, String.valueOf(connectionSettings.getWorkspaceId()));
-        element.setAttribute(USER_TAG, connectionSettings.getUserName());
-        element.setAttribute(PASSWORD_TAG, connectionSettings.getPassword());
+        element.setAttribute(USER_TAG, String.valueOf(connectionSettings.getUserName()));
+        element.setAttribute(PASSWORD_TAG, String.valueOf(connectionSettings.getPassword()));
 
         return element;
     }
@@ -52,12 +50,52 @@ public class ConnectionSettingsWrapper implements PersistentStateComponent<Eleme
             connectionSettings.setPassword(state.getAttributeValue(PASSWORD_TAG));
 
         } catch (Exception e) {
-            pluginLogger.error("Error while trying to load the connection settings");
+            //pluginLogger.error("Error while trying to load the connection settings");
         }
     }
 
-    public void setLog(Logger log) {
-        this.pluginLogger = log;
+    public String getBaseUrl() {
+        return connectionSettings.getBaseUrl();
+    }
+
+    public void setBaseUrl(String baseUrl) {
+        connectionSettings.setBaseUrl(baseUrl);
+    }
+
+    public Long getSharedSpaceId() {
+        return connectionSettings.getSharedSpaceId();
+    }
+
+    public void setSharedSpaceId(Long sharedSpaceId) {
+        connectionSettings.setSharedSpaceId(sharedSpaceId);
+    }
+
+    public Long getWorkspaceId() {
+        return connectionSettings.getWorkspaceId();
+    }
+
+    public void setWorkspaceId(Long workspaceId) {
+        connectionSettings.setWorkspaceId(workspaceId);
+    }
+
+    public String getUserName() {
+        return connectionSettings.getUserName();
+    }
+
+    public void setUserName(String userName) {
+        connectionSettings.setUserName(userName);
+    }
+
+    public String getPassword() {
+        return connectionSettings.getPassword();
+    }
+
+    public void setPassword(String password) {
+        connectionSettings.setPassword(password);
+    }
+
+    public ConnectionSettings getConnectionSettings() {
+        return connectionSettings;
     }
 }
 
