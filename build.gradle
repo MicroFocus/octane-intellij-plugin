@@ -12,10 +12,8 @@ apply plugin: "org.jetbrains.intellij"
 
 repositories {
     mavenCentral()
-    mavenLocal()
     maven { url 'http://dl.bintray.com/jetbrains/intellij-plugin-service' }
-//    This repository is not need until the SDK version is update to 1.2 version
-//    maven { url "http://mydtbld0051.hpeswlab.net:8081/nexus/content/groups/mqm-public" }
+    maven { url "http://mydtbld0051.hpeswlab.net:8081/nexus/content/groups/mqm-public" }
 }
 
 sourceSets {
