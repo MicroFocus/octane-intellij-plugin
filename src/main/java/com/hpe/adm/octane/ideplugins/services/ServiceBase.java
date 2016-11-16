@@ -12,7 +12,7 @@ public abstract class ServiceBase {
     @Inject
     private ConnectionSettingsProvider connectionSettingsProvider;
 
-    private static ConnectionSettings previousConnectionSettings;
+    private static ConnectionSettings previousConnectionSettings = new ConnectionSettings();
     private static NGA nga;
 
     /**
@@ -32,7 +32,7 @@ public abstract class ServiceBase {
                     .build();
         }
 
-        previousConnectionSettings = currentConnectionSettings;
+        previousConnectionSettings.setState(currentConnectionSettings);
         return nga;
     }
 

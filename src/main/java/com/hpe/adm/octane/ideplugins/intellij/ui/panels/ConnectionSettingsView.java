@@ -2,9 +2,8 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.panels;
 
 import com.google.inject.Inject;
 import com.hpe.adm.octane.ideplugins.intellij.util.UrlParser;
-import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
 import com.hpe.adm.octane.ideplugins.services.TestService;
-import com.intellij.openapi.ui.Messages;
+import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
 import org.apache.commons.lang.StringUtils;
 
 import javax.swing.*;
@@ -72,14 +71,6 @@ public class ConnectionSettingsView {
             }
         });
 
-        btnTest.addActionListener(event -> {
-            try {
-                testService.testConnection();
-                Messages.showInfoMessage("Connection working", "Test Successful");
-            } catch (Exception ex) {
-                Messages.showErrorDialog("Failed to connect with given connection settings", "Test Failed");
-            }
-        });
     }
 
     private void setFieldsFromServerUrl(String serverUrl) {

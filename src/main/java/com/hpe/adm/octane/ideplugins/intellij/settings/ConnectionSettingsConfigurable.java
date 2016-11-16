@@ -20,7 +20,8 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
     private static final String NAME = "Octane";
 
     private static final String CONNECTION_FAILED_DIALOG_MESSAGE = "Failed to connect with given connection settings";
-    private static final String CONNECTION_FAILED_DIALOG_TITLE = "Failed to connect with given connection settings";
+    private static final String URL_PARSE_FAILED_DIALOG_MESSAGE = "Failed to parse given server URL, bad format.";
+    private static final String CONNECTION_DIALOG_TITLE = "Connection status";
 
     //@Inject not working at the moment
     private ConnectionSettingsProvider connectionSettingsProvider = PluginModule.getInstance(ConnectionSettingsProvider.class);
@@ -29,8 +30,7 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
     @NotNull
     @Override
     public String getId() {
-        //TODO what is this supposed to be?
-        return null;
+        return "settings.octane";
     }
 
     @Nullable
@@ -66,8 +66,9 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
         connectionSettingsView.setTestConnectionActionListener(event -> {
             try {
                 ConnectionSettingsConfigurable.this.apply();
+                Messages.showInfoMessage("Connection successful", CONNECTION_DIALOG_TITLE);
             } catch (ConfigurationException ex){
-                Messages.showErrorDialog(CONNECTION_FAILED_DIALOG_MESSAGE, CONNECTION_FAILED_DIALOG_TITLE);
+                Messages.showErrorDialog(CONNECTION_FAILED_DIALOG_MESSAGE, CONNECTION_DIALOG_TITLE);
             }
         });
 
@@ -95,7 +96,11 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
                 connectionSettingsView.getUserName(),
                 connectionSettingsView.getPassword());
 
-        ConnectionSettings oldConnectionSettings = connectionSettingsProvider.getConnectionSettings();
+        if(newConnectionSettings.getBaseUrl() == null ||
+                newConnectionSettings.getWorkspaceId() == null ||
+                newConnectionSettings.getSharedSpaceId() == null) {
+            throw new ConfigurationException(URL_PARSE_FAILED_DIALOG_MESSAGE);
+        }
 
         //Modify the provider
         connectionSettingsProvider.getConnectionSettings().setState(newConnectionSettings);
@@ -106,8 +111,6 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
         try{
             testService.testConnection();
         } catch (Exception ex){
-            //rollback to the old, possibly working settings
-            connectionSettingsProvider.getConnectionSettings().setState(oldConnectionSettings);
             throw new ConfigurationException(CONNECTION_FAILED_DIALOG_MESSAGE);
         }
     }
