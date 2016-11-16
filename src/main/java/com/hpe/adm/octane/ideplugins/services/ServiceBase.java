@@ -7,7 +7,7 @@ import com.hpe.adm.nga.sdk.authorisation.UserAuthorisation;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 
-public class ServiceBase {
+public abstract class ServiceBase {
 
     @Inject
     private ConnectionSettingsProvider connectionSettingsProvider;
