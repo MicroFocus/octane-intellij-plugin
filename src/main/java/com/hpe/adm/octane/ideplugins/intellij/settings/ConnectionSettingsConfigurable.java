@@ -23,7 +23,7 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
     private static final String CONNECTION_FAILED_DIALOG_TITLE = "Failed to connect with given connection settings";
 
     //@Inject not working at the moment
-    private ConnectionSettingsProvider connectionSettingsProvider = PluginModule.getInstance(IdePersistentConnectionSettingsProvider.class);
+    private ConnectionSettingsProvider connectionSettingsProvider = PluginModule.getInstance(ConnectionSettingsProvider.class);
     private ConnectionSettingsView connectionSettingsView = PluginModule.getInstance(ConnectionSettingsView.class);
 
     @NotNull
@@ -90,7 +90,7 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
     @Override
     public void apply() throws ConfigurationException {
         //Parse server url
-        ConnectionSettings connectionSettings = UrlParser.resolveConnectionSettings(
+        ConnectionSettings newConnectionSettings = UrlParser.resolveConnectionSettings(
                 connectionSettingsView.getServerUrl(),
                 connectionSettingsView.getUserName(),
                 connectionSettingsView.getPassword());
@@ -98,7 +98,7 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
         ConnectionSettings oldConnectionSettings = connectionSettingsProvider.getConnectionSettings();
 
         //Modify the provider
-        connectionSettingsProvider.setConnectionSettings(connectionSettings);
+        connectionSettingsProvider.getConnectionSettings().setState(newConnectionSettings);
 
         //Will use the new provider
         TestService testService = PluginModule.getInstance(TestService.class);
@@ -107,7 +107,7 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
             testService.testConnection();
         } catch (Exception ex){
             //rollback to the old, possibly working settings
-            connectionSettingsProvider.setConnectionSettings(oldConnectionSettings);
+            connectionSettingsProvider.getConnectionSettings().setState(oldConnectionSettings);
             throw new ConfigurationException(CONNECTION_FAILED_DIALOG_MESSAGE);
         }
     }

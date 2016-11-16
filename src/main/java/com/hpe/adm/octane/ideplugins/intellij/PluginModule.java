@@ -2,13 +2,16 @@ package com.hpe.adm.octane.ideplugins.intellij;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-import com.google.inject.*;
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Singleton;
 import com.hpe.adm.octane.ideplugins.intellij.settings.ConnectionSettingsConfigurable;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePersistentConnectionSettingsProvider;
 import com.hpe.adm.octane.ideplugins.intellij.ui.panels.ConnectionSettingsView;
 import com.hpe.adm.octane.ideplugins.intellij.util.NotificationUtil;
 import com.hpe.adm.octane.ideplugins.services.TestService;
-import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
+import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
@@ -19,12 +22,7 @@ public class PluginModule extends AbstractModule {
 
     public static final Logger logger = Logger.getInstance("octane");
 
-    protected static final Supplier<Injector> injector = Suppliers.memoize(new Supplier<Injector>() {
-        @Override
-        public Injector get() {
-            return Guice.createInjector(new PluginModule());
-        }
-    });
+    protected static final Supplier<Injector> injector = Suppliers.memoize(() -> Guice.createInjector(new PluginModule()));
 
     public PluginModule() {
     }
@@ -35,24 +33,20 @@ public class PluginModule extends AbstractModule {
 
     @Override
     protected void configure() {
-
         bind(Logger.class).toInstance(logger);
         bind(Application.class).toInstance(ApplicationManager.getApplication());
         bind(FileDocumentManager.class).toInstance(FileDocumentManager.getInstance());
-
-        bind(ConnectionSettingsView.class);
-        bind(ConnectionSettingsConfigurable.class);
         bind(NotificationUtil.class);
-        bind(IdePersistentConnectionSettingsProvider.class).toProvider(() -> ServiceManager.getService(IdePersistentConnectionSettingsProvider.class)).in(Singleton.class);
+
+        //Settings
+        bind(ConnectionSettingsConfigurable.class);
+        bind(ConnectionSettingsProvider.class).toProvider(() -> ServiceManager.getService(IdePersistentConnectionSettingsProvider.class)).in(Singleton.class);
+
+        //Views
+        bind(ConnectionSettingsView.class);
 
         //Services
         bind(TestService.class);
-
     }
 
-    //Should provide the connection settings for the services
-    @Provides
-    ConnectionSettings getConnectionSettings(IdePersistentConnectionSettingsProvider connectionSettingsProvider) {
-        return connectionSettingsProvider.getConnectionSettings();
-    }
 }

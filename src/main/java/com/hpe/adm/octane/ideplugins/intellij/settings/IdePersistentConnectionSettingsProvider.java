@@ -83,15 +83,6 @@ public class IdePersistentConnectionSettingsProvider implements PersistentStateC
         return connectionSettings;
     }
 
-    @Override
-    public void setConnectionSettings(ConnectionSettings connectionSettings) {
-        this.connectionSettings.setBaseUrl(connectionSettings.getBaseUrl());
-        this.connectionSettings.setPassword(connectionSettings.getPassword());
-        this.connectionSettings.setUserName(connectionSettings.getUserName());
-        this.connectionSettings.setSharedSpaceId(connectionSettings.getSharedSpaceId());
-        this.connectionSettings.setWorkspaceId(connectionSettings.getWorkspaceId());
-    }
-
 }
 
 

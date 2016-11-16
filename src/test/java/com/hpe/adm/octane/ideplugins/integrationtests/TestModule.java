@@ -3,8 +3,10 @@ package com.hpe.adm.octane.ideplugins.integrationtests;
 import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
 import com.hpe.adm.octane.ideplugins.integrationtests.util.ConfigurationUtil;
-import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
 import com.hpe.adm.octane.ideplugins.services.TestService;
+import com.hpe.adm.octane.ideplugins.services.connection.BasicConnectionSettingProvider;
+import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
+import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 
 
 /**
@@ -12,12 +14,15 @@ import com.hpe.adm.octane.ideplugins.services.TestService;
  */
 class TestModule extends AbstractModule {
 
+    //Init with empty settings
+    private static ConnectionSettingsProvider connectionSettingProvider = new BasicConnectionSettingProvider(new ConnectionSettings());
+
     @Override
     protected void configure() {
 
         bind(TestService.class);
 
-        bind(ConnectionSettings.class).toProvider(()-> {
+        bind(ConnectionSettingsProvider.class).toProvider(()-> {
             ConnectionSettings connectionSettings = new ConnectionSettings();
 
             //Set form config
@@ -27,7 +32,9 @@ class TestModule extends AbstractModule {
             connectionSettings.setUserName(ConfigurationUtil.getString(ConfigurationUtil.PropertyKeys.USERNAME));
             connectionSettings.setPassword(ConfigurationUtil.getString(ConfigurationUtil.PropertyKeys.PASSWORD));
 
-            return connectionSettings;
+            connectionSettingProvider.getConnectionSettings().setState(connectionSettings);
+            return connectionSettingProvider;
+
         }).in(Singleton.class);
 
     }
