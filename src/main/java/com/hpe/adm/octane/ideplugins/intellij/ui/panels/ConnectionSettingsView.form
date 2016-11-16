@@ -104,9 +104,9 @@
                   </grid>
                 </constraints>
                 <properties>
-                  <editable value="true"/>
-                  <enabled value="true"/>
-                  <text value="Retrieved from URL"/>
+                  <editable value="false"/>
+                  <enabled value="false"/>
+                  <text value=""/>
                 </properties>
               </component>
               <vspacer id="c2944">
@@ -128,7 +128,10 @@
                     <preferred-size width="150" height="-1"/>
                   </grid>
                 </constraints>
-                <properties/>
+                <properties>
+                  <editable value="false"/>
+                  <enabled value="false"/>
+                </properties>
               </component>
             </children>
           </grid>

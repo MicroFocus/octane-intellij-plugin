@@ -10,6 +10,7 @@ import org.apache.commons.lang.StringUtils;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
@@ -82,8 +83,7 @@ public class ConnectionSettingsView {
     }
 
     private void setFieldsFromServerUrl(String serverUrl) {
-        //TODO: the event handler that calls this method needs to be disabled when the properties are set from the code
-        if(!StringUtils.isEmpty(serverUrl)) {
+        if(!StringUtils.isEmpty(serverUrl) && !EMPTY_SERVER_URL_TEXT.equals(serverUrl)) {
             ConnectionSettings connectionSettings = UrlParser.resolveConnectionSettings(serverUrl, getUserName(), getPassword());
             setSharedspaceWorkspaceIds(connectionSettings.getSharedSpaceId(), connectionSettings.getWorkspaceId());
         }
@@ -118,12 +118,16 @@ public class ConnectionSettingsView {
         passField.setText(password);
     }
 
-    //TODO: these two methods are merged into one because I don't know how to disable a damn document listener
-    public void setSharedspaceWorkspaceIds(Long sharedspaceId, Long workspaceId) {
+    //This is private, should always be set from the base url
+    private void setSharedspaceWorkspaceIds(Long sharedspaceId, Long workspaceId) {
         String sharedspaceText = sharedspaceId != null ? sharedspaceId.toString() : EMPTY_SHAREDSPACE_WORKSPACE_URL_TEXT;
         this.txtFieldSharedSpace.setText(sharedspaceText);
         String workspaceText = workspaceId != null ? workspaceId.toString() : EMPTY_SHAREDSPACE_WORKSPACE_URL_TEXT;
         this.txtFieldWorkspace.setText(workspaceText);
+    }
+
+    public void setTestConnectionActionListener(ActionListener actionListener) {
+        btnTest.addActionListener(actionListener);
     }
 
 }

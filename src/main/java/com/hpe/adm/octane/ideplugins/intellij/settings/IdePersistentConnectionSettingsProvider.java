@@ -5,7 +5,6 @@ import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvi
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
-import org.jdom.Element;
 import org.jetbrains.annotations.Nullable;
 
 @State(
@@ -16,13 +15,6 @@ import org.jetbrains.annotations.Nullable;
                 )}
 )
 public class IdePersistentConnectionSettingsProvider implements PersistentStateComponent<ConnectionSettings>, ConnectionSettingsProvider {
-
-    private static final String CONNECTION_SETTINGS_TAG = "ConnectionSettings";
-    private static final String URL_TAG = "Url";
-    private static final String SHARED_SPACE_TAG = "SharedSpace";
-    private static final String WORKSPACE_TAG = "WorkSpace";
-    private static final String USER_TAG = "User";
-    private static final String PASSWORD_TAG = "Password";
 
     private final ConnectionSettings connectionSettings = new ConnectionSettings();
 

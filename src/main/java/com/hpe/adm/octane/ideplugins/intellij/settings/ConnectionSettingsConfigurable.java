@@ -3,11 +3,12 @@ package com.hpe.adm.octane.ideplugins.intellij.settings;
 import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.ui.panels.ConnectionSettingsView;
 import com.hpe.adm.octane.ideplugins.intellij.util.UrlParser;
+import com.hpe.adm.octane.ideplugins.services.TestService;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
-import com.intellij.openapi.util.Comparing;
+import com.intellij.openapi.ui.Messages;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,6 +19,10 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
 
     private static final String NAME = "Octane";
 
+    private static final String CONNECTION_FAILED_DIALOG_MESSAGE = "Failed to connect with given connection settings";
+    private static final String CONNECTION_FAILED_DIALOG_TITLE = "Failed to connect with given connection settings";
+
+    //@Inject not working at the moment
     private ConnectionSettingsProvider connectionSettingsProvider = PluginModule.getInstance(IdePersistentConnectionSettingsProvider.class);
     private ConnectionSettingsView connectionSettingsView = PluginModule.getInstance(ConnectionSettingsView.class);
 
@@ -50,10 +55,22 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
     @Override
     public JComponent createComponent() {
         ConnectionSettings connectionSettings = connectionSettingsProvider.getConnectionSettings();
-        connectionSettingsView.setServerUrl(connectionSettings.getBaseUrl());
+
+        //Setting the base url will fire the even handler in the view, this will set the shared space and workspace fields
+        connectionSettingsView.setServerUrl(UrlParser.createUrlFromConnectionSettings(connectionSettings));
+
         connectionSettingsView.setUserName(connectionSettings.getUserName());
-        connectionSettingsView.setSharedspaceWorkspaceIds(connectionSettings.getWorkspaceId(), connectionSettings.getSharedSpaceId());
         connectionSettingsView.setPassword(connectionSettings.getPassword());
+
+        //Test connection should now do apply
+        connectionSettingsView.setTestConnectionActionListener(event -> {
+            try {
+                ConnectionSettingsConfigurable.this.apply();
+            } catch (ConfigurationException ex){
+                Messages.showErrorDialog(CONNECTION_FAILED_DIALOG_MESSAGE, CONNECTION_FAILED_DIALOG_TITLE);
+            }
+        });
+
         return connectionSettingsView.getRootPanel();
     }
 
@@ -68,30 +85,39 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
                 connectionSettingsView.getPassword());
 
         return !currentConnectionSettings.equals(viewConnectionSettings);
-
     }
 
     @Override
     public void apply() throws ConfigurationException {
-        if (null != connectionSettingsView) {
-            //Parse server url
-            ConnectionSettings connectionSettings = UrlParser.resolveConnectionSettings(
-                    connectionSettingsView.getServerUrl(),
-                    connectionSettingsView.getUserName(),
-                    connectionSettingsView.getPassword());
+        //Parse server url
+        ConnectionSettings connectionSettings = UrlParser.resolveConnectionSettings(
+                connectionSettingsView.getServerUrl(),
+                connectionSettingsView.getUserName(),
+                connectionSettingsView.getPassword());
 
-            //Modify the provider
-            connectionSettingsProvider.setConnectionSettings(connectionSettings);
+        ConnectionSettings oldConnectionSettings = connectionSettingsProvider.getConnectionSettings();
+
+        //Modify the provider
+        connectionSettingsProvider.setConnectionSettings(connectionSettings);
+
+        //Will use the new provider
+        TestService testService = PluginModule.getInstance(TestService.class);
+
+        try{
+            testService.testConnection();
+        } catch (Exception ex){
+            //rollback to the old, possibly working settings
+            connectionSettingsProvider.setConnectionSettings(oldConnectionSettings);
+            throw new ConfigurationException(CONNECTION_FAILED_DIALOG_MESSAGE);
         }
     }
 
     @Override
     public void reset() {
         ConnectionSettings connectionSettings = connectionSettingsProvider.getConnectionSettings();
-        connectionSettingsView.setServerUrl(connectionSettings.getBaseUrl());
-        connectionSettingsView.setSharedspaceWorkspaceIds(connectionSettings.getSharedSpaceId(), connectionSettings.getWorkspaceId());
+        connectionSettingsView.setServerUrl(UrlParser.createUrlFromConnectionSettings(connectionSettings));
         connectionSettingsView.setUserName(connectionSettings.getUserName());
-        connectionSettingsView.setPassword(connectionSettings.getUserName());
+        connectionSettingsView.setPassword(connectionSettings.getPassword());
     }
 
     @Override

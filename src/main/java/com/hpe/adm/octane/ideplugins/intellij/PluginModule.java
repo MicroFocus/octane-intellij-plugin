@@ -7,7 +7,6 @@ import com.hpe.adm.octane.ideplugins.intellij.settings.ConnectionSettingsConfigu
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePersistentConnectionSettingsProvider;
 import com.hpe.adm.octane.ideplugins.intellij.ui.panels.ConnectionSettingsView;
 import com.hpe.adm.octane.ideplugins.intellij.util.NotificationUtil;
-import com.hpe.adm.octane.ideplugins.services.ServiceModule;
 import com.hpe.adm.octane.ideplugins.services.TestService;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
 import com.intellij.openapi.application.Application;
@@ -51,7 +50,7 @@ public class PluginModule extends AbstractModule {
 
     }
 
-    //Should provide the connection settings for the service module
+    //Should provide the connection settings for the services
     @Provides
     ConnectionSettings getConnectionSettings(IdePersistentConnectionSettingsProvider connectionSettingsProvider) {
         return connectionSettingsProvider.getConnectionSettings();
