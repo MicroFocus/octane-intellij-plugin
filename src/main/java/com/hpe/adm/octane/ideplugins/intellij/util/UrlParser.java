@@ -13,6 +13,12 @@ public class UrlParser {
             URL site = new URL(url);
             if (null != site.getQuery()) {
                 String baseUrl = site.getProtocol() + "://" + site.getHost();
+
+                //Add port if not the default
+                if(site.getPort() != 80 && site.getPort() != -1){
+                    baseUrl += ":" + site.getPort();
+                }
+
                 String[] split = site.getQuery().split("/");
                 Long sharedspaceId = Long.valueOf(split[0].substring(split[0].indexOf("p=") + 2));
                 Long workspaceId = Long.valueOf(split[1]);
@@ -30,6 +36,33 @@ public class UrlParser {
         connectionSettings.setPassword(password);
 
         return connectionSettings;
+    }
+
+    /**
+     * Create an octane url from a connection settings object
+     * @param connectionSettings {@link ConnectionSettings} object
+     * @return octane browser url or null if if any of the req. fields are missing (base url, workspace id, shared space id)
+     */
+    public static String createUrlFromConnectionSettings(ConnectionSettings connectionSettings){
+
+        if(connectionSettings.getBaseUrl() == null ||
+                connectionSettings.getWorkspaceId() == null ||
+                connectionSettings.getSharedSpaceId() == null) {
+            return  null;
+        }
+
+        return connectionSettings.getBaseUrl()
+                + "/ui/?"
+                + "p=" + connectionSettings.getSharedSpaceId()
+                + "/" + connectionSettings.getWorkspaceId();
+    }
+
+    public static String removeHash(String url){
+        int hashPosition = url.indexOf("#");
+        if(hashPosition != 1){
+            return url.substring(0,hashPosition);
+        }
+        return url;
     }
 
 }
