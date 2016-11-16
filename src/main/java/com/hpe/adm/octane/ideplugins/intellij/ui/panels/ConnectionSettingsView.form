@@ -38,7 +38,7 @@
                   </grid>
                 </constraints>
                 <properties>
-                  <text value="Paste your Octane URL here"/>
+                  <text value=""/>
                   <toolTipText value=""/>
                 </properties>
               </component>
