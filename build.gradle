@@ -11,7 +11,6 @@ apply plugin: "idea"
 apply plugin: "org.jetbrains.intellij"
 
 repositories {
-    mavenLocal()
     mavenCentral()
     maven { url 'http://dl.bintray.com/jetbrains/intellij-plugin-service' }
     maven { url "http://mydtbld0051.hpeswlab.net:8081/nexus/content/groups/mqm-public" }
