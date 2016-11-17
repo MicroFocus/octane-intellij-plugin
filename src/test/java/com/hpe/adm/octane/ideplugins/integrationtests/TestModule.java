@@ -14,8 +14,6 @@ import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvi
  */
 class TestModule extends AbstractModule {
 
-    //Init with empty settings
-    private static ConnectionSettingsProvider connectionSettingProvider = new BasicConnectionSettingProvider(new ConnectionSettings());
 
     @Override
     protected void configure() {
@@ -32,9 +30,7 @@ class TestModule extends AbstractModule {
             connectionSettings.setUserName(ConfigurationUtil.getString(ConfigurationUtil.PropertyKeys.USERNAME));
             connectionSettings.setPassword(ConfigurationUtil.getString(ConfigurationUtil.PropertyKeys.PASSWORD));
 
-            connectionSettingProvider.getConnectionSettings().setState(connectionSettings);
-            return connectionSettingProvider;
-
+            return new BasicConnectionSettingProvider(connectionSettings);
         }).in(Singleton.class);
 
     }

@@ -23,7 +23,7 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
     private static final String URL_PARSE_FAILED_DIALOG_MESSAGE = "Failed to parse given server URL, bad format.";
     private static final String CONNECTION_DIALOG_TITLE = "Connection status";
 
-    //@Inject not working at the moment
+    //@Inject is not supported here, this class is instantiated by intellij
     private ConnectionSettingsProvider connectionSettingsProvider = PluginModule.getInstance(ConnectionSettingsProvider.class);
     private ConnectionSettingsView connectionSettingsView = PluginModule.getInstance(ConnectionSettingsView.class);
 
@@ -103,7 +103,7 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
         }
 
         //Modify the provider
-        connectionSettingsProvider.getConnectionSettings().setState(newConnectionSettings);
+        connectionSettingsProvider.setConnectionSettings(newConnectionSettings);
 
         //Will use the new provider
         TestService testService = PluginModule.getInstance(TestService.class);
@@ -127,6 +127,5 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
     public void disposeUIResources() {
         connectionSettingsView = null;
     }
-
 
 }

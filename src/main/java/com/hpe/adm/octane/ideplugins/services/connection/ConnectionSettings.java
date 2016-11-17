@@ -88,12 +88,13 @@ public class ConnectionSettings {
      * Set the internal state of the object to math the param
      * @param connectionSettings
      */
-    public void setState(ConnectionSettings connectionSettings){
-        setBaseUrl(connectionSettings.getBaseUrl());
-        setPassword(connectionSettings.getPassword());
-        setUserName(connectionSettings.getUserName());
-        setSharedSpaceId(connectionSettings.getSharedSpaceId());
-        setWorkspaceId(connectionSettings.getWorkspaceId());
+    public static ConnectionSettings getCopy(ConnectionSettings connectionSettings){
+        return new ConnectionSettings(
+                connectionSettings.getBaseUrl(),
+                connectionSettings.getSharedSpaceId(),
+                connectionSettings.getWorkspaceId(),
+                connectionSettings.getUserName(),
+                connectionSettings.getPassword());
     }
 
 }

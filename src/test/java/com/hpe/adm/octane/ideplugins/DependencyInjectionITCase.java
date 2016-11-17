@@ -3,8 +3,8 @@ package com.hpe.adm.octane.ideplugins;
 import com.google.inject.Inject;
 import com.hpe.adm.octane.ideplugins.integrationtests.IntegrationTestBase;
 import com.hpe.adm.octane.ideplugins.integrationtests.util.ConfigurationUtil;
-import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
 import com.hpe.adm.octane.ideplugins.services.TestService;
+import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
@@ -16,7 +16,7 @@ import static junit.framework.Assert.assertNotNull;
 public class DependencyInjectionITCase extends IntegrationTestBase {
 
     @Inject
-    private ConnectionSettings connectionSettings;
+    private ConnectionSettingsProvider connectionSettingsProvider;
 
     @Inject
     private TestService testService;
@@ -24,11 +24,11 @@ public class DependencyInjectionITCase extends IntegrationTestBase {
     @Test
     public void test(){
         //Test DI
-        assertNotNull(connectionSettings);
+        assertNotNull(connectionSettingsProvider);
         assertNotNull(testService);
 
         //This should is loaded in the TestModule from the config file
-        assertEquals(connectionSettings.getUserName(), ConfigurationUtil.getString(ConfigurationUtil.PropertyKeys.USERNAME));
+        assertEquals(connectionSettingsProvider.getConnectionSettings().getUserName(), ConfigurationUtil.getString(ConfigurationUtil.PropertyKeys.USERNAME));
     }
 
 }

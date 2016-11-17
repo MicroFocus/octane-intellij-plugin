@@ -1,7 +1,7 @@
 package com.hpe.adm.octane.ideplugins.intellij.settings;
 
+import com.hpe.adm.octane.ideplugins.services.connection.BasicConnectionSettingProvider;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
-import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import com.intellij.ide.passwordSafe.PasswordSafe;
 import com.intellij.ide.passwordSafe.PasswordSafeException;
 import com.intellij.openapi.components.PersistentStateComponent;
@@ -19,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
                         file = "$APP_CONFIG$/octane_connection_settings.xml"
                 )}
 )
-public class IdePersistentConnectionSettingsProvider implements PersistentStateComponent<Element>, ConnectionSettingsProvider {
+public class IdePersistentConnectionSettingsProvider extends BasicConnectionSettingProvider implements PersistentStateComponent<Element> {
 
     private static final String OCTANE_PASSWORD_KEY = "OCTANE_PASSWORD_KEY";
 
@@ -28,8 +28,6 @@ public class IdePersistentConnectionSettingsProvider implements PersistentStateC
     private static final String SHARED_SPACE_TAG = "SharedSpace";
     private static final String WORKSPACE_TAG = "WorkSpace";
     private static final String USER_TAG = "User";
-
-    private final ConnectionSettings connectionSettings = new ConnectionSettings();
 
     @Nullable
     @Override
@@ -48,6 +46,8 @@ public class IdePersistentConnectionSettingsProvider implements PersistentStateC
 
     @Override
     public void loadState(Element state) {
+        ConnectionSettings connectionSettings = new ConnectionSettings();
+
         connectionSettings.setBaseUrl(state.getAttributeValue(URL_TAG));
         connectionSettings.setSharedSpaceId(Long.valueOf(state.getAttributeValue(SHARED_SPACE_TAG)));
         connectionSettings.setWorkspaceId(Long.valueOf(state.getAttributeValue(WORKSPACE_TAG)));
@@ -55,6 +55,8 @@ public class IdePersistentConnectionSettingsProvider implements PersistentStateC
 
         //attempt to load password from the password store
         connectionSettings.setPassword(decryptPassword());
+
+        setConnectionSettings(connectionSettings);
     }
 
     @NotNull
@@ -76,11 +78,6 @@ public class IdePersistentConnectionSettingsProvider implements PersistentStateC
             password = "";
         }
         return StringUtil.notNullize(password);
-    }
-
-    @Override
-    public ConnectionSettings getConnectionSettings() {
-        return connectionSettings;
     }
 
 }

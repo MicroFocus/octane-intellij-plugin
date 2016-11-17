@@ -18,7 +18,7 @@
   -->
 
   <extensions defaultExtensionNs="com.intellij">
-    <toolWindow factoryClass="com.hpe.adm.octane.ideplugins.intellij.ui.panels.WelcomeView" anchor="bottom" icon="/images/octane-icon-13x13.png" secondary="true" id="HPE ALM Octane"/>
+    <toolWindow factoryClass="com.hpe.adm.octane.ideplugins.intellij.ui.panels.MainToolWindowFactory" anchor="bottom" icon="/images/octane-icon-13x13.png" secondary="true" id="HPE ALM Octane"/>
     <applicationService serviceInterface="com.hpe.adm.octane.ideplugins.intellij.settings.IdePersistentConnectionSettingsProvider"
                         serviceImplementation="com.hpe.adm.octane.ideplugins.intellij.settings.IdePersistentConnectionSettingsProvider"/>
     <applicationConfigurable id="com.hpe.adm.octane.ideplugins.intellij.settings.ConnectionSettingsConfigurable"

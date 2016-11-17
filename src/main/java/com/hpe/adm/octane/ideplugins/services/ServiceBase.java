@@ -32,7 +32,7 @@ public abstract class ServiceBase {
                     .build();
         }
 
-        previousConnectionSettings.setState(currentConnectionSettings);
+        previousConnectionSettings = currentConnectionSettings;
         return nga;
     }
 
