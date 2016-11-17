@@ -8,7 +8,9 @@ import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import com.hpe.adm.octane.ideplugins.intellij.settings.ConnectionSettingsConfigurable;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePersistentConnectionSettingsProvider;
-import com.hpe.adm.octane.ideplugins.intellij.ui.panels.ConnectionSettingsView;
+import com.hpe.adm.octane.ideplugins.intellij.ui.ConnectionSettingsView;
+import com.hpe.adm.octane.ideplugins.intellij.ui.MainView;
+import com.hpe.adm.octane.ideplugins.intellij.ui.WelcomeView;
 import com.hpe.adm.octane.ideplugins.intellij.util.NotificationUtil;
 import com.hpe.adm.octane.ideplugins.services.TestService;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
@@ -35,7 +37,6 @@ public class PluginModule extends AbstractModule {
     protected void configure() {
         bind(Logger.class).toInstance(logger);
         bind(Application.class).toInstance(ApplicationManager.getApplication());
-        bind(FileDocumentManager.class).toInstance(FileDocumentManager.getInstance());
         bind(NotificationUtil.class);
 
         //Settings
@@ -44,6 +45,8 @@ public class PluginModule extends AbstractModule {
 
         //Views
         bind(ConnectionSettingsView.class);
+        bind(MainView.class);
+        bind(WelcomeView.class);
 
         //Services
         bind(TestService.class);

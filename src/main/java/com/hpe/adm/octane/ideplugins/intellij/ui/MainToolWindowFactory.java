@@ -1,9 +1,11 @@
-package com.hpe.adm.octane.ideplugins.intellij.ui.panels;
+package com.hpe.adm.octane.ideplugins.intellij.ui;
 
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
+import com.hpe.adm.octane.ideplugins.intellij.ui.MainView;
+import com.hpe.adm.octane.ideplugins.intellij.ui.WelcomeView;
 import com.hpe.adm.octane.ideplugins.services.TestService;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import com.intellij.openapi.project.Project;
@@ -22,6 +24,9 @@ public class MainToolWindowFactory implements ToolWindowFactory {
 
     @Inject
     private WelcomeView welcomeView;
+
+    @Inject
+    private MainView mainView;
 
     @Inject
     private TestService testService;
@@ -46,10 +51,10 @@ public class MainToolWindowFactory implements ToolWindowFactory {
             try{
                 testService.testConnection();
                 //In case the connection is valid show a generalView at the start
-                setContent(contentFactory.createContent(mainPanel, "", false));
+                setContent(mainView.getContent());
             } catch (Exception ex){
                 //Otherwise show the welcome view
-                setContent(contentFactory.createContent(welcomeView.getRootPanel(), "", false));
+                setContent(welcomeView.getContent());
             }
         };
 

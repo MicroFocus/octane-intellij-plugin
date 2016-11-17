@@ -1,13 +1,15 @@
-package com.hpe.adm.octane.ideplugins.intellij.ui.panels;
+package com.hpe.adm.octane.ideplugins.intellij.ui;
 
 import com.hpe.adm.octane.ideplugins.intellij.settings.ConnectionSettingsConfigurable;
+import com.hpe.adm.octane.ideplugins.intellij.ui.custom.HasComponent;
+import com.hpe.adm.octane.ideplugins.intellij.ui.custom.HasContent;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.wm.ToolWindow;
 import org.jdesktop.swingx.JXHyperlink;
 
 import javax.swing.*;
 
-public class WelcomeView {
+public class WelcomeView extends HasContent {
 
     private ToolWindow rootToolWindow;
     private JPanel rootPanel;
@@ -21,7 +23,8 @@ public class WelcomeView {
         settingsLink.addActionListener(event -> ShowSettingsUtil.getInstance().showSettingsDialog(null, ConnectionSettingsConfigurable.class));
     }
 
-    public JPanel getRootPanel(){
+    @Override
+    public JComponent getComponent() {
         return rootPanel;
     }
 

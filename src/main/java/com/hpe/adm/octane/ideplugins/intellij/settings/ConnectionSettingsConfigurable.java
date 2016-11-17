@@ -1,7 +1,7 @@
 package com.hpe.adm.octane.ideplugins.intellij.settings;
 
 import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
-import com.hpe.adm.octane.ideplugins.intellij.ui.panels.ConnectionSettingsView;
+import com.hpe.adm.octane.ideplugins.intellij.ui.ConnectionSettingsView;
 import com.hpe.adm.octane.ideplugins.intellij.util.UrlParser;
 import com.hpe.adm.octane.ideplugins.services.TestService;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
@@ -72,7 +72,7 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
             }
         });
 
-        return connectionSettingsView.getRootPanel();
+        return connectionSettingsView.getComponent();
     }
 
     @Override

@@ -1,6 +1,8 @@
-package com.hpe.adm.octane.ideplugins.intellij.ui.panels;
+package com.hpe.adm.octane.ideplugins.intellij.ui;
 
 import com.google.inject.Inject;
+import com.hpe.adm.octane.ideplugins.intellij.ui.custom.HasComponent;
+import com.hpe.adm.octane.ideplugins.intellij.ui.custom.HasContent;
 import com.hpe.adm.octane.ideplugins.intellij.util.UrlParser;
 import com.hpe.adm.octane.ideplugins.services.TestService;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
@@ -13,7 +15,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
-public class ConnectionSettingsView {
+public class ConnectionSettingsView extends HasContent {
 
     private static final String EMPTY_SERVER_URL_TEXT = "Copy paste your Octane URL from the browser here...";
     private static final String EMPTY_SHAREDSPACE_WORKSPACE_URL_TEXT = "Retrieved from server URL";
@@ -88,7 +90,8 @@ public class ConnectionSettingsView {
         }
     }
 
-    public JPanel getRootPanel(){
+    @Override
+    public JComponent getComponent(){
         return rootPanel;
     }
 
