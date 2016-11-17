@@ -58,7 +58,7 @@ public class IdePersistentConnectionSettingsProvider extends BasicConnectionSett
 
         String workSpaceStr = state.getAttributeValue(WORKSPACE_TAG);
         if(StringUtils.isNumeric(workSpaceStr)){
-            connectionSettings.setSharedSpaceId(Long.valueOf(workSpaceStr));
+            connectionSettings.setWorkspaceId(Long.valueOf(workSpaceStr));
         }
 
         connectionSettings.setUserName(state.getAttributeValue(USER_TAG));
