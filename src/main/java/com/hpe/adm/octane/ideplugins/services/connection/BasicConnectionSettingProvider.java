@@ -5,7 +5,7 @@ import java.util.List;
 
 public class BasicConnectionSettingProvider implements ConnectionSettingsProvider{
 
-    protected ConnectionSettings connectionSettings;
+    protected ConnectionSettings connectionSettings = new ConnectionSettings();
 
     public BasicConnectionSettingProvider(){}
 

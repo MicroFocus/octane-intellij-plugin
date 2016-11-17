@@ -85,7 +85,7 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
                 connectionSettingsView.getUserName(),
                 connectionSettingsView.getPassword());
 
-        return !currentConnectionSettings.equals(viewConnectionSettings);
+        return !viewConnectionSettings.equals(currentConnectionSettings);
     }
 
     @Override
