@@ -8,6 +8,7 @@ import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.util.text.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -49,8 +50,17 @@ public class IdePersistentConnectionSettingsProvider extends BasicConnectionSett
         ConnectionSettings connectionSettings = new ConnectionSettings();
 
         connectionSettings.setBaseUrl(state.getAttributeValue(URL_TAG));
-        connectionSettings.setSharedSpaceId(Long.valueOf(state.getAttributeValue(SHARED_SPACE_TAG)));
-        connectionSettings.setWorkspaceId(Long.valueOf(state.getAttributeValue(WORKSPACE_TAG)));
+
+        String sharedSpaceStr = state.getAttributeValue(SHARED_SPACE_TAG);
+        if(StringUtils.isNumeric(sharedSpaceStr)){
+            connectionSettings.setSharedSpaceId(Long.valueOf(sharedSpaceStr));
+        }
+
+        String workSpaceStr = state.getAttributeValue(WORKSPACE_TAG);
+        if(StringUtils.isNumeric(workSpaceStr)){
+            connectionSettings.setSharedSpaceId(Long.valueOf(workSpaceStr));
+        }
+
         connectionSettings.setUserName(state.getAttributeValue(USER_TAG));
 
         //attempt to load password from the password store
@@ -63,7 +73,7 @@ public class IdePersistentConnectionSettingsProvider extends BasicConnectionSett
     private void encryptPassword(String password) {
         try {
             PasswordSafe.getInstance().storePassword (null, IdePersistentConnectionSettingsProvider.class, OCTANE_PASSWORD_KEY, password);
-        } catch (PasswordSafeException e) {
+        } catch (NullPointerException | PasswordSafeException e) {
             //log.info("Couldn't get password for key [" + OCTANE_PASSWORD_KEY + "]", e);
         }
     }
@@ -73,7 +83,7 @@ public class IdePersistentConnectionSettingsProvider extends BasicConnectionSett
         String password;
         try {
             password = PasswordSafe.getInstance().getPassword(null, IdePersistentConnectionSettingsProvider.class, OCTANE_PASSWORD_KEY);
-        } catch (PasswordSafeException e) {
+        } catch (NullPointerException | PasswordSafeException e) {
             //log.info("Couldn't get password for key [" + OCTANE_PASSWORD_KEY + "]", e);
             password = "";
         }
