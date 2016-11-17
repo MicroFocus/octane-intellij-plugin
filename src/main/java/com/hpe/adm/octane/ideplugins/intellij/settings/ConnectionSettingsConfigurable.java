@@ -66,7 +66,7 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
         connectionSettingsView.setTestConnectionActionListener(event -> {
             try {
                 ConnectionSettingsConfigurable.this.apply();
-                Messages.showInfoMessage("Connection successful", CONNECTION_DIALOG_TITLE);
+                Messages.showInfoMessage(CONNECTION_DIALOG_TITLE, CONNECTION_DIALOG_TITLE);
             } catch (ConfigurationException ex){
                 Messages.showErrorDialog(CONNECTION_FAILED_DIALOG_MESSAGE, CONNECTION_DIALOG_TITLE);
             }
@@ -96,14 +96,15 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
                 connectionSettingsView.getUserName(),
                 connectionSettingsView.getPassword());
 
+        //Modify the provider
+        connectionSettingsProvider.setConnectionSettings(newConnectionSettings);
+
+        //Check the format
         if(newConnectionSettings.getBaseUrl() == null ||
                 newConnectionSettings.getWorkspaceId() == null ||
                 newConnectionSettings.getSharedSpaceId() == null) {
             throw new ConfigurationException(URL_PARSE_FAILED_DIALOG_MESSAGE);
         }
-
-        //Modify the provider
-        connectionSettingsProvider.setConnectionSettings(newConnectionSettings);
 
         //Will use the new provider
         TestService testService = PluginModule.getInstance(TestService.class);
