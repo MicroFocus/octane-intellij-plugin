@@ -1,5 +1,6 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui;
 
+import com.hpe.adm.octane.ideplugins.intellij.ui.custom.ClosableJTabbedPane;
 import com.hpe.adm.octane.ideplugins.intellij.ui.custom.FilteringWidget;
 import com.hpe.adm.octane.ideplugins.intellij.ui.custom.HasComponent;
 import com.hpe.adm.octane.ideplugins.intellij.ui.custom.HasContent;
@@ -32,5 +33,15 @@ public class MainView extends HasContent {
         gbc.weightx = 1;
         gbc.weighty = 1;
         filterPanel.add(filteringWidget.getComponent(), gbc);
+
+        tabbedPane = new ClosableJTabbedPane();
+
+        for(int i = 0; i<10; i++){
+            JPanel panel = new JPanel();
+            panel.setLayout(new BorderLayout());
+            panel.add(new JLabel("tab " + i));
+            tabbedPane.addTab("Test tab " + i, panel);
+        }
+
     }
 }
