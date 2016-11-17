@@ -14,6 +14,7 @@ import com.intellij.ui.content.ContentFactory;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class MainToolWindowFactory implements ToolWindowFactory {
 
@@ -38,11 +39,14 @@ public class MainToolWindowFactory implements ToolWindowFactory {
         this.toolWindow = toolWindow;
         ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
 
+        JPanel mainPanel = new JPanel();
+        mainPanel.add(new JLabel("It's working, be happy!"), BorderLayout.CENTER);
+
         Runnable mainToolWindowContentControl = () -> {
             try{
                 testService.testConnection();
                 //In case the connection is valid show a generalView at the start
-                setContent(contentFactory.createContent(new JPanel(), "", false));
+                setContent(contentFactory.createContent(mainPanel, "", false));
             } catch (Exception ex){
                 //Otherwise show the welcome view
                 setContent(contentFactory.createContent(welcomeView.getRootPanel(), "", false));

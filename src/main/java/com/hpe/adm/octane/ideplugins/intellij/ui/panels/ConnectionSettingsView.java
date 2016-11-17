@@ -35,10 +35,18 @@ public class ConnectionSettingsView {
     private JLabel lblSharedSpaceUrl;
     private JTextField txtFieldSharedSpace;
 
+    private JLabel lblLoading;
+
     @Inject
     private ConnectionSettings connectionSettings;
 
     public ConnectionSettingsView() {
+
+        //Default placeholder
+        txtFieldSharedSpace.setText(EMPTY_SHAREDSPACE_WORKSPACE_URL_TEXT);
+        txtFieldWorkspace.setText(EMPTY_SHAREDSPACE_WORKSPACE_URL_TEXT);
+
+        lblLoading.setVisible(false);
 
         txtFieldServerUrl.getDocument().addDocumentListener(new DocumentListener() {
             @Override
@@ -119,6 +127,10 @@ public class ConnectionSettingsView {
 
     public void setTestConnectionActionListener(ActionListener actionListener) {
         btnTest.addActionListener(actionListener);
+    }
+
+    public void isLoading(boolean isLoading){
+        lblLoading.setVisible(isLoading);
     }
 
 }

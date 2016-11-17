@@ -7,7 +7,7 @@ public class Constants {
     public static final String IMG_VENDOR_LOGO = IMAGE_FOLDER_PATH + "hpe-logo.png";
     public static final String IMG_OCTANE_LOGO = IMAGE_FOLDER_PATH + "octane-logo.png";
     public static final String IMG_OCTANE_ICON = IMAGE_FOLDER_PATH + "octane-icon-13x13.png";
-
+    public static final String IMG_AJAX_SPINNER = IMAGE_FOLDER_PATH + "ajax-loader.gif";
 
     //Url Parser
     public static final int INVALID_ID = -1;

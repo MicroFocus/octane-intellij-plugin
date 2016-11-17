@@ -58,9 +58,8 @@ public class UrlParser {
     }
 
     public static String removeHash(String url){
-        int hashPosition = url.indexOf("#");
-        if(hashPosition != 1){
-            return url.substring(0,hashPosition);
+        if(url.contains("#")){
+            return url.substring(0,url.indexOf("#"));
         }
         return url;
     }
