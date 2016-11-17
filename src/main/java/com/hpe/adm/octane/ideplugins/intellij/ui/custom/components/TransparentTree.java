@@ -32,12 +32,12 @@ public class TransparentTree extends JTree {
 
         UIManager.put("Tree.repaintWholeRow", Boolean.TRUE);
 
-//        Icon empty = new TreeIcon();
-//        UIManager.put("Tree.closedIcon", empty);
-//        UIManager.put("Tree.openIcon", empty);
-//        UIManager.put("Tree.collapsedIcon", empty);
-//        UIManager.put("Tree.expandedIcon", empty);
-//        UIManager.put("Tree.leafIcon", empty);
+        Icon empty = new TreeIcon();
+        UIManager.put("Tree.closedIcon", empty);
+        UIManager.put("Tree.openIcon", empty);
+        UIManager.put("Tree.collapsedIcon", empty);
+        UIManager.put("Tree.expandedIcon", empty);
+        UIManager.put("Tree.leafIcon", empty);
 
         setCellRenderer(new TransparentTreeCellRenderer());
         setOpaque(false);

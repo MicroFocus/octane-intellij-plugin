@@ -17,7 +17,9 @@
         <children>
           <splitpane id="90bf2">
             <constraints/>
-            <properties/>
+            <properties>
+              <dividerSize value="10"/>
+            </properties>
             <border type="empty">
               <size top="1" left="1" bottom="1" right="1"/>
             </border>
@@ -26,7 +28,9 @@
                 <constraints>
                   <splitpane position="right"/>
                 </constraints>
-                <properties/>
+                <properties>
+                  <tabLayoutPolicy value="0"/>
+                </properties>
                 <border type="empty">
                   <size top="5" left="5" bottom="5" right="5"/>
                 </border>
@@ -42,23 +46,19 @@
                   </grid>
                 </children>
               </tabbedpane>
-              <grid id="68f7f" binding="filterPanel" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-                <margin top="0" left="0" bottom="0" right="0"/>
+              <grid id="68f7f" binding="filterPanel" custom-create="true" layout-manager="GridBagLayout">
                 <constraints>
                   <splitpane position="left"/>
                 </constraints>
-                <properties/>
-                <border type="empty">
-                  <size top="5" left="5" bottom="5" right="5"/>
+                <properties>
+                  <minimumSize width="200" height="0"/>
+                  <opaque value="true"/>
+                  <preferredSize width="200" height="-1"/>
+                </properties>
+                <border type="none">
+                  <size top="10" left="10" bottom="10" right="10"/>
                 </border>
-                <children>
-                  <component id="89b5d" class="com.hpe.adm.octane.ideplugins.intellij.ui.custom.components.TransparentTree" binding="filterTree">
-                    <constraints>
-                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-                    </constraints>
-                    <properties/>
-                  </component>
-                </children>
+                <children/>
               </grid>
             </children>
           </splitpane>
