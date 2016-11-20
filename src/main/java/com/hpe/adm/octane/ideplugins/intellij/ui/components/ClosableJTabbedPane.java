@@ -1,10 +1,9 @@
-package com.hpe.adm.octane.ideplugins.intellij.ui.custom;
+package com.hpe.adm.octane.ideplugins.intellij.ui.components;
 
 import javax.swing.*;
-import javax.swing.plaf.metal.MetalIconFactory;
 import java.awt.*;
-import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 /**
  * A class which creates a JTabbedPane and auto sets a close button when you add a tab

@@ -1,4 +1,4 @@
-package com.hpe.adm.octane.ideplugins.intellij.ui.custom;
+package com.hpe.adm.octane.ideplugins.intellij.ui;
 
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;

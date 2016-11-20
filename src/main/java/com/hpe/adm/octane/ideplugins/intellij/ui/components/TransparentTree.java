@@ -1,4 +1,4 @@
-package com.hpe.adm.octane.ideplugins.intellij.ui.custom.components;
+package com.hpe.adm.octane.ideplugins.intellij.ui.components;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultTreeCellRenderer;

@@ -1,17 +1,14 @@
-package com.hpe.adm.octane.ideplugins.intellij.ui;
+package com.hpe.adm.octane.ideplugins.intellij.ui.views;
 
 import com.hpe.adm.octane.ideplugins.intellij.settings.ConnectionSettingsConfigurable;
-import com.hpe.adm.octane.ideplugins.intellij.ui.custom.HasComponent;
-import com.hpe.adm.octane.ideplugins.intellij.ui.custom.HasContent;
+import com.hpe.adm.octane.ideplugins.intellij.ui.HasContent;
 import com.intellij.openapi.options.ShowSettingsUtil;
-import com.intellij.openapi.wm.ToolWindow;
 import org.jdesktop.swingx.JXHyperlink;
 
 import javax.swing.*;
 
 public class WelcomeView extends HasContent {
 
-    private ToolWindow rootToolWindow;
     private JPanel rootPanel;
 
     private JLabel welcomeScreenMessage;
