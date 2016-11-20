@@ -1,9 +1,12 @@
 package com.hpe.adm.octane.ideplugins.services;
 
 import com.google.inject.Inject;
+import com.hpe.adm.nga.sdk.model.StringFieldModel;
 import com.hpe.adm.octane.ideplugins.integrationtests.IntegrationTestBase;
+import com.hpe.adm.octane.ideplugins.services.filtering.Comparator;
+import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
+import com.hpe.adm.octane.ideplugins.services.filtering.Filter;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class TestServiceITCase extends IntegrationTestBase{
@@ -19,5 +22,15 @@ public class TestServiceITCase extends IntegrationTestBase{
             Assert.fail(ex.toString());
         }
     }
+
+    @Test
+    //@Ignore
+    //TODO
+    public void getSomeData() {
+        System.out.println(testService.findEntities(Entity.STORY).size());
+        System.out.println(testService.findEntities(Entity.DEFECT).size());
+        System.out.println(testService.findEntities(Entity.TEST).size());
+    }
+
 
 }
