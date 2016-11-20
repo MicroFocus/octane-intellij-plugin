@@ -4,20 +4,19 @@ import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
-import com.hpe.adm.octane.ideplugins.intellij.ui.MainView;
-import com.hpe.adm.octane.ideplugins.intellij.ui.WelcomeView;
+import com.hpe.adm.octane.ideplugins.intellij.ui.views.MainView;
+import com.hpe.adm.octane.ideplugins.intellij.ui.views.WelcomeView;
 import com.hpe.adm.octane.ideplugins.services.TestService;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowFactory;
 import com.intellij.ui.content.Content;
-import com.intellij.ui.content.ContentFactory;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import java.awt.*;
-
+/**
+ * Entry point, will create the IntelliJ tool window
+ */
 public class MainToolWindowFactory implements ToolWindowFactory {
 
     private ToolWindow toolWindow;
@@ -42,14 +41,11 @@ public class MainToolWindowFactory implements ToolWindowFactory {
     @Override
     public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
         this.toolWindow = toolWindow;
-        ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
-
-        JPanel mainPanel = new JPanel();
-        mainPanel.add(new JLabel("It's working, be happy!"), BorderLayout.CENTER);
 
         Runnable mainToolWindowContentControl = () -> {
             try{
                 testService.testConnection();
+                //TODO: this view is not reloaded when the settings change
                 //In case the connection is valid show a generalView at the start
                 setContent(mainView.getContent());
             } catch (Exception ex){
@@ -58,12 +54,17 @@ public class MainToolWindowFactory implements ToolWindowFactory {
             }
         };
 
+        //Run at the start of the application
         mainToolWindowContentControl.run();
 
         //add handler
         connectionSettingsProvider.addChangeHandler(mainToolWindowContentControl);
     }
 
+    /**
+     * Swap the content of the main tool window
+     * @param content
+     */
     private void setContent(Content content){
         toolWindow.getContentManager().removeAllContents(true);
         toolWindow.getContentManager().addContent(content);

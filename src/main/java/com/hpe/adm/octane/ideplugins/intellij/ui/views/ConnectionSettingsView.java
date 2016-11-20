@@ -1,8 +1,7 @@
-package com.hpe.adm.octane.ideplugins.intellij.ui;
+package com.hpe.adm.octane.ideplugins.intellij.ui.views;
 
 import com.google.inject.Inject;
-import com.hpe.adm.octane.ideplugins.intellij.ui.custom.HasComponent;
-import com.hpe.adm.octane.ideplugins.intellij.ui.custom.HasContent;
+import com.hpe.adm.octane.ideplugins.intellij.ui.HasContent;
 import com.hpe.adm.octane.ideplugins.intellij.util.UrlParser;
 import com.hpe.adm.octane.ideplugins.services.TestService;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;

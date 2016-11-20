@@ -8,9 +8,8 @@ import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import com.hpe.adm.octane.ideplugins.intellij.settings.ConnectionSettingsConfigurable;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePersistentConnectionSettingsProvider;
-import com.hpe.adm.octane.ideplugins.intellij.ui.ConnectionSettingsView;
-import com.hpe.adm.octane.ideplugins.intellij.ui.MainView;
-import com.hpe.adm.octane.ideplugins.intellij.ui.WelcomeView;
+import com.hpe.adm.octane.ideplugins.intellij.ui.views.*;
+import com.hpe.adm.octane.ideplugins.intellij.ui.views.treetable.EntityTreeTableView;
 import com.hpe.adm.octane.ideplugins.intellij.util.NotificationUtil;
 import com.hpe.adm.octane.ideplugins.services.TestService;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
@@ -18,7 +17,6 @@ import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
 
 public class PluginModule extends AbstractModule {
 
@@ -43,10 +41,16 @@ public class PluginModule extends AbstractModule {
         bind(ConnectionSettingsConfigurable.class);
         bind(ConnectionSettingsProvider.class).toProvider(() -> ServiceManager.getService(IdePersistentConnectionSettingsProvider.class)).in(Singleton.class);
 
+        //TODO: actually make the di useful
         //Views
+        //Settings
         bind(ConnectionSettingsView.class);
-        bind(MainView.class);
+        //Tool window content
         bind(WelcomeView.class);
+        bind(MainView.class);
+        /**/bind(FilteringView.class);
+        /**/bind(TabView.class);
+        /**//**/bind(EntityTreeTableView.class);
 
         //Services
         bind(TestService.class);

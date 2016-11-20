@@ -1,4 +1,4 @@
-package com.hpe.adm.octane.ideplugins.intellij.ui.custom;
+package com.hpe.adm.octane.ideplugins.intellij.ui;
 
 import javax.swing.*;
 
