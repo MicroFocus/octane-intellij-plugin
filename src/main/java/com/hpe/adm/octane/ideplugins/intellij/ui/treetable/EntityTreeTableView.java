@@ -1,19 +1,13 @@
-package com.hpe.adm.octane.ideplugins.intellij.ui.views.treetable;
+package com.hpe.adm.octane.ideplugins.intellij.ui.treetable;
 
-import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.ui.HasComponent;
-import com.hpe.adm.octane.ideplugins.intellij.ui.components.PacmanLoadingWidget;
-import com.hpe.adm.octane.ideplugins.services.TestService;
-import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
+import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.PacmanLoadingWidget;
 import org.jdesktop.swingx.JXTreeTable;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.tree.TreeSelectionModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Collections;
 
 public class EntityTreeTableView implements HasComponent {
 
@@ -22,13 +16,12 @@ public class EntityTreeTableView implements HasComponent {
     private JXTreeTable entitiesTreeTable;
     private JScrollPane entitiesTreeTableScrollPane;
 
-    private LoadTableActionListener loadTableActionListener = new LoadTableActionListener();
+    private EntityTreeTablePresenter presenter;
 
-    private TestService testService = PluginModule.getInstance(TestService.class);
+    public EntityTreeTableView(EntityTreeTablePresenter presenter, EntityTreeTableModel entityTreeTableModel){
+        this.presenter = presenter;
 
-    public EntityTreeTableView(){
-
-        entitiesTreeTable = new JXTreeTable(new EntityTreeTableModel(Collections.emptyList(), ""));
+        entitiesTreeTable = new JXTreeTable(entityTreeTableModel);
         entitiesTreeTable.setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         entitiesTreeTable.setRootVisible(false);
         entitiesTreeTable.setEditable(false);
@@ -54,6 +47,14 @@ public class EntityTreeTableView implements HasComponent {
 
         //Toolbar
         rootPanel.add(createToolbar(), BorderLayout.EAST);
+
+    }
+
+    public EntityTreeTablePresenter getPresenter() {
+        return presenter;
+    }
+    public void setPresenter(EntityTreeTablePresenter presenter) {
+        this.presenter = presenter;
     }
 
     private JPanel createToolbar(){
@@ -62,7 +63,9 @@ public class EntityTreeTableView implements HasComponent {
         toolbar.setLayout(new BoxLayout(toolbar, BoxLayout.Y_AXIS));
 
         JButton refreshButton = new JButton("R");
-        refreshButton.addActionListener(event -> loadTableActionListener.actionPerformed(event));
+        refreshButton.addActionListener(event -> {
+            presenter.refresh();
+        });
         toolbar.add(refreshButton);
 
         JButton expandAllButton = new JButton("E");
@@ -91,13 +94,12 @@ public class EntityTreeTableView implements HasComponent {
         return toolbar;
     }
 
-
     private PacmanLoadingWidget loadingWidget = new PacmanLoadingWidget("Loading...");
 
-    private void setLoading(boolean isLoading){
+    public void setLoading(boolean isLoading) {
 
         SwingUtilities.invokeLater(() -> {
-            if(isLoading) {
+            if (isLoading) {
                 rootPanel.remove(entitiesTreeTableScrollPane);
                 rootPanel.add(loadingWidget, BorderLayout.CENTER);
             } else {
@@ -110,31 +112,8 @@ public class EntityTreeTableView implements HasComponent {
 
     }
 
-    class LoadTableActionListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            //Async get
-            SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
-                @Override
-                protected Void doInBackground() throws Exception {
-                    setLoading(true);
-                    entitiesTreeTable.setTreeTableModel(new EntityTreeTableModel(testService.findEntities(Entity.WORK_ITEM), "subtype"));
-                    return null;
-                }
-
-                @Override
-                protected void done(){
-                    setLoading(false);
-                }
-            };
-            worker.execute();
-        }
-    }
-
     @Override
     public JComponent getComponent() {
-        //lazy load, model empty at the start
-        loadTableActionListener.actionPerformed(null);
         return rootPanel;
     }
 }

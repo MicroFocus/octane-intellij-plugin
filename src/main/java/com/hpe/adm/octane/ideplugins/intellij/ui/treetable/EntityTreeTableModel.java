@@ -1,4 +1,4 @@
-package com.hpe.adm.octane.ideplugins.intellij.ui.views.treetable;
+package com.hpe.adm.octane.ideplugins.intellij.ui.treetable;
 
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import org.jdesktop.swingx.treetable.AbstractTreeTableModel;
@@ -15,16 +15,21 @@ public class EntityTreeTableModel extends AbstractTreeTableModel {
 
     private TreeMap<String, List<EntityModel>> groupedEntities;
 
-    /**
-     * Currently only supports one group by clause
-     * @param entityModels
-     * @param groupByFieldName can be null
-     */
+    public EntityTreeTableModel(){
+        groupedEntities = new TreeMap<>();
+    }
+
     public EntityTreeTableModel(Collection<EntityModel> entityModels, String groupByFieldName) {
         super(new Object());
+        setGroupedEntities(entityModels, groupByFieldName);
+    }
 
-        //todo: maybe move this somewhere else
-        groupedEntities = new TreeMap<>();
+    public void setEntities(Collection<EntityModel> entityModels, String groupByFieldName) {
+        setGroupedEntities(entityModels, groupByFieldName);
+    }
+
+    private void setGroupedEntities(Collection<EntityModel> entityModels, String groupByFieldName){
+        groupedEntities.clear();
 
         for(EntityModel entityModel : entityModels){
             String fieldValue = entityModel.getValue(groupByFieldName).getValue().toString();
@@ -34,6 +39,7 @@ public class EntityTreeTableModel extends AbstractTreeTableModel {
             groupedEntities.get(fieldValue).add(entityModel);
         }
 
+        modelSupport.fireNewRoot();
     }
 
     public int getColumnCount() {

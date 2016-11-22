@@ -1,13 +1,13 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.views;
 
 import com.hpe.adm.octane.ideplugins.intellij.settings.ConnectionSettingsConfigurable;
-import com.hpe.adm.octane.ideplugins.intellij.ui.HasContent;
+import com.hpe.adm.octane.ideplugins.intellij.ui.HasComponent;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import org.jdesktop.swingx.JXHyperlink;
 
 import javax.swing.*;
 
-public class WelcomeView extends HasContent {
+public class WelcomeView implements HasComponent {
 
     private JPanel rootPanel;
 

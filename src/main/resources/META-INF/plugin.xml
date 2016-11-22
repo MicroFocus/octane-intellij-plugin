@@ -27,11 +27,11 @@
   </extensions>
 
   <application-components>
-    <!-- Add your application components here -->
+    <!-- Add your application customcomponents here -->
   </application-components>
 
   <project-components>
-    <!-- Add your project components here -->
+    <!-- Add your project customcomponents here -->
   </project-components>
 
   <actions>
