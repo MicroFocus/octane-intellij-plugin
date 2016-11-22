@@ -1,7 +1,7 @@
 package com.hpe.adm.octane.ideplugins.intellij.settings;
 
 import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
-import com.hpe.adm.octane.ideplugins.intellij.ui.views.ConnectionSettingsView;
+import com.hpe.adm.octane.ideplugins.intellij.ui.components.ConnectionSettingsComponent;
 import com.hpe.adm.octane.ideplugins.intellij.util.UrlParser;
 import com.hpe.adm.octane.ideplugins.services.TestService;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
@@ -26,7 +26,7 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
 
     //@Inject is not supported here, this class is instantiated by intellij
     private ConnectionSettingsProvider connectionSettingsProvider = PluginModule.getInstance(ConnectionSettingsProvider.class);
-    private ConnectionSettingsView connectionSettingsView = new ConnectionSettingsView();
+    private ConnectionSettingsComponent connectionSettingsView = new ConnectionSettingsComponent();
 
     @NotNull
     @Override
