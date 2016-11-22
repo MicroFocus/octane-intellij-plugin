@@ -26,7 +26,7 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
 
     //@Inject is not supported here, this class is instantiated by intellij
     private ConnectionSettingsProvider connectionSettingsProvider = PluginModule.getInstance(ConnectionSettingsProvider.class);
-    private ConnectionSettingsView connectionSettingsView = PluginModule.getInstance(ConnectionSettingsView.class);
+    private ConnectionSettingsView connectionSettingsView = new ConnectionSettingsView();
 
     @NotNull
     @Override

@@ -1,7 +1,6 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.views;
 
 import com.google.inject.Guice;
-import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.ui.HasComponent;
@@ -18,9 +17,6 @@ public class TabView implements HasComponent {
     private final JPanel rootPanel = new JPanel();
     private ClosableJTabbedPane tabbedPane = new ClosableJTabbedPane();
 
-    //TODO: @Inject a factory
-    @Inject
-    private EntityTreeTableView entityTreeTableView;
     private TestService testService = PluginModule.getInstance(TestService.class);
 
     public TabView(){
@@ -28,17 +24,17 @@ public class TabView implements HasComponent {
 
         rootPanel.setLayout(new BorderLayout(0, 0));
         rootPanel.add(tabbedPane, BorderLayout.CENTER);
-
-        tabbedPane.addTab("Tab ", makeTab());
-        tabbedPane.addTab("Detailed ", makeDetailedTab());
     }
 
     @Override
     public JComponent getComponent() {
+        tabbedPane.addTab("Tab ", makeTab());
+        tabbedPane.addTab("Detailed ", makeDetailedTab());
         return rootPanel;
     }
 
     private JPanel makeTab() {
+        EntityTreeTableView entityTreeTableView = new EntityTreeTableView();
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout(0, 0));
         panel.add(entityTreeTableView.getComponent(), BorderLayout.CENTER);

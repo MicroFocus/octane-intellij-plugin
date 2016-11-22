@@ -48,6 +48,7 @@ public class MainToolWindowFactory implements ToolWindowFactory {
                 //TODO: this view is not reloaded when the settings change
                 //In case the connection is valid show a generalView at the start
                 setContent(mainView.getContent());
+
             } catch (Exception ex){
                 //Otherwise show the welcome view
                 setContent(welcomeView.getContent());
@@ -56,9 +57,8 @@ public class MainToolWindowFactory implements ToolWindowFactory {
 
         //Run at the start of the application
         mainToolWindowContentControl.run();
-
-        //add handler
         connectionSettingsProvider.addChangeHandler(mainToolWindowContentControl);
+
     }
 
     /**

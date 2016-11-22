@@ -63,11 +63,11 @@ public class TestService extends ServiceBase{
      * Check if the current connection settings are valid
      */
     public void testConnection() throws Exception {
-        try {
-            getNGA();
-            //rethrow runtime exceptions as checked exceptions
+        //Try to build an nga client(will check auth), also try to a query to see if the shared+workspace are valid
+        try{
+            findEntities(Entity.WORK_ITEM);
         } catch (Exception ex){
-            throw ex;
+            throw new Exception(ex);
         }
     }
 

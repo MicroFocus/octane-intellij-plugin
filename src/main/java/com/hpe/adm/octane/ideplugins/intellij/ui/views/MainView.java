@@ -1,7 +1,6 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.views;
 
 import com.google.inject.Guice;
-import com.google.inject.Inject;
 import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.ui.HasContent;
 import com.intellij.uiDesigner.core.GridConstraints;
@@ -18,39 +17,31 @@ public class MainView extends HasContent {
     private final JPanel rootPanel = new JPanel();
 
     //2 main components
-    @Inject
-    private FilteringView filteringView;
-    @Inject
-    private TabView tabView;
+    private TabView tabView = new TabView();
 
     public MainView(){
         Guice.createInjector(new PluginModule()).injectMembers(this); //TODO: DI issues
+    }
 
-        //Init view
-        JSplitPane splitter = new JSplitPane();
-
-        JPanel filterPanel = new JPanel(new BorderLayout(0,0));
-        filterPanel.setBorder(marginBorder);
-        filterPanel.add(filteringView.getComponent(), BorderLayout.CENTER);
-
-        JPanel tabPanel = new JPanel(new BorderLayout(0,0));
-        tabPanel.setBorder(marginBorder);
-        tabPanel.add(tabView.getComponent(), BorderLayout.CENTER);
-
-        //Add them to the splitter
-        splitter.setLeftComponent(filteringView.getComponent());
-        splitter.setRightComponent(tabPanel);
-
-        //add the splitter to the root panel;
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(1,1);
-        rootPanel.setLayout(gridLayoutManager);
-        GridConstraints gc = new GridConstraints();
-        gc.setFill(GridConstraints.FILL_BOTH);
-        rootPanel.add(splitter, gc);
+    private boolean isInit = false;
+    private void initView(){
+        if(!isInit) {
+            JPanel tabPanel = new JPanel(new BorderLayout(0, 0));
+            tabPanel.setBorder(marginBorder);
+            tabPanel.add(tabView.getComponent(), BorderLayout.CENTER);
+            //add the tabPanel to the root panel
+            GridLayoutManager gridLayoutManager = new GridLayoutManager(1, 1);
+            rootPanel.setLayout(gridLayoutManager);
+            GridConstraints gc = new GridConstraints();
+            gc.setFill(GridConstraints.FILL_BOTH);
+            rootPanel.add(tabPanel, gc);
+            isInit = true;
+        }
     }
 
     @Override
     public JComponent getComponent() {
+        initView();
         return rootPanel;
     }
 
