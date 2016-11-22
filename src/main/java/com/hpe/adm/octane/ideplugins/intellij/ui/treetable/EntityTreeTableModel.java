@@ -11,6 +11,8 @@ import java.util.TreeMap;
 
 public class EntityTreeTableModel extends AbstractTreeTableModel {
 
+    public static EntityTreeTableModel EMPTY_MODEL = new EntityTreeTableModel();
+
     private final static String[] COLUMN_NAMES = {"group", "id", "name"};
 
     private TreeMap<String, List<EntityModel>> groupedEntities;

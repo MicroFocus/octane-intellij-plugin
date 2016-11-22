@@ -1,19 +1,23 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
 import com.hpe.adm.nga.sdk.model.EntityModel;
-import com.hpe.adm.octane.ideplugins.intellij.ui.HasComponent;
+import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
 
-public class EntityDetailPresenter {
+public class EntityDetailPresenter implements Presenter<EntityDetailView> {
 
     EntityDetailView entityDetailView;
     EntityModel entityModel;
 
     public EntityDetailPresenter(){
-        entityDetailView = new EntityDetailView(this);
     }
 
-    public HasComponent getView(){
+    public EntityDetailView getView(){
         return entityDetailView;
+    }
+
+    @Override
+    public void setView(EntityDetailView view) {
+        this.entityDetailView = entityDetailView;
     }
 
     public void setEntity(EntityModel model){

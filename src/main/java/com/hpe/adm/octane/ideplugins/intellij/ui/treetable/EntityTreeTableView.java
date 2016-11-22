@@ -1,6 +1,6 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.treetable;
 
-import com.hpe.adm.octane.ideplugins.intellij.ui.HasComponent;
+import com.hpe.adm.octane.ideplugins.intellij.ui.View;
 import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.PacmanLoadingWidget;
 import org.jdesktop.swingx.JXTreeTable;
 
@@ -8,20 +8,20 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.tree.TreeSelectionModel;
 import java.awt.*;
+import java.awt.event.ActionListener;
 
-public class EntityTreeTableView implements HasComponent {
+public class EntityTreeTableView implements View {
 
     private JPanel rootPanel;
-
     private JXTreeTable entitiesTreeTable;
     private JScrollPane entitiesTreeTableScrollPane;
+    private PacmanLoadingWidget loadingWidget = new PacmanLoadingWidget("Loading...");
 
-    private EntityTreeTablePresenter presenter;
+    private JButton refreshButton;
 
-    public EntityTreeTableView(EntityTreeTablePresenter presenter, EntityTreeTableModel entityTreeTableModel){
-        this.presenter = presenter;
+    public EntityTreeTableView(){
 
-        entitiesTreeTable = new JXTreeTable(entityTreeTableModel);
+        entitiesTreeTable = new JXTreeTable(EntityTreeTableModel.EMPTY_MODEL);
         entitiesTreeTable.setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         entitiesTreeTable.setRootVisible(false);
         entitiesTreeTable.setEditable(false);
@@ -47,14 +47,6 @@ public class EntityTreeTableView implements HasComponent {
 
         //Toolbar
         rootPanel.add(createToolbar(), BorderLayout.EAST);
-
-    }
-
-    public EntityTreeTablePresenter getPresenter() {
-        return presenter;
-    }
-    public void setPresenter(EntityTreeTablePresenter presenter) {
-        this.presenter = presenter;
     }
 
     private JPanel createToolbar(){
@@ -62,10 +54,7 @@ public class EntityTreeTableView implements HasComponent {
         toolbar.setBorder(new EmptyBorder(22, 0, 22, 0));
         toolbar.setLayout(new BoxLayout(toolbar, BoxLayout.Y_AXIS));
 
-        JButton refreshButton = new JButton("R");
-        refreshButton.addActionListener(event -> {
-            presenter.refresh();
-        });
+        refreshButton = new JButton("R");
         toolbar.add(refreshButton);
 
         JButton expandAllButton = new JButton("E");
@@ -94,10 +83,12 @@ public class EntityTreeTableView implements HasComponent {
         return toolbar;
     }
 
-    private PacmanLoadingWidget loadingWidget = new PacmanLoadingWidget("Loading...");
+    //TODO: create proper wrapped handler
+    public void addRefreshButtonActionListener(ActionListener l) {
+        refreshButton.addActionListener(l);
+    }
 
     public void setLoading(boolean isLoading) {
-
         SwingUtilities.invokeLater(() -> {
             if (isLoading) {
                 rootPanel.remove(entitiesTreeTableScrollPane);
@@ -109,7 +100,6 @@ public class EntityTreeTableView implements HasComponent {
             rootPanel.revalidate();
             rootPanel.repaint();
         });
-
     }
 
     @Override

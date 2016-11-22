@@ -1,5 +1,7 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.tabbedpane;
 
+import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.EntityDetailPresenter;
@@ -11,24 +13,25 @@ import java.util.List;
 
 public class TabbedPanePresenter implements Presenter<TabbedPaneView>{
 
+    @Inject
     TabbedPaneView tabbedPaneView;
 
-    List<EntityDetailPresenter> detailPresenters = new ArrayList<>();
+    @Inject
+    Provider<EntityDetailPresenter> entityDetailPresenterProvider;
+    @Inject
+    Provider<EntityTreeTablePresenter> entityTreeTablePresenterProvider;
 
+    List<EntityDetailPresenter> detailPresenters = new ArrayList<>();
     List<EntityTreeTablePresenter> treeTablePresenters = new ArrayList<>();
 
-    public TabbedPanePresenter(){
-        tabbedPaneView = new TabbedPaneView();
-    }
-
     public void openMyWorkTab(String tabName){
-        EntityTreeTablePresenter presenter = new EntityTreeTablePresenter();
+        EntityTreeTablePresenter presenter = entityTreeTablePresenterProvider.get();
         treeTablePresenters.add(presenter);
         tabbedPaneView.addTab(tabName, presenter.getView().getComponent());
     }
 
     public void openDetailTab(EntityModel entityModel){
-        EntityDetailPresenter presenter = new EntityDetailPresenter();
+        EntityDetailPresenter presenter = entityDetailPresenterProvider.get();
         detailPresenters.add(presenter);
         tabbedPaneView.addTab("ETITTY NAME", presenter.getView().getComponent());
     }
@@ -42,15 +45,16 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView>{
     }
 
     public TabbedPaneView getView(){
-        //test
-        openMyWorkTab("My work");
-        openDetailTab(null);
         return tabbedPaneView;
     }
 
     @Override
     public void setView(TabbedPaneView tabbedPaneView) {
         this.tabbedPaneView = tabbedPaneView;
+
+        //open test tabs
+        openMyWorkTab("My work");
+        openDetailTab(null);
     }
 
 }

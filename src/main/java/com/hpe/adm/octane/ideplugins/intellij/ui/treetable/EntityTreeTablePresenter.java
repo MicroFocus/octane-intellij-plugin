@@ -1,7 +1,7 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.treetable;
 
 import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
-import com.hpe.adm.octane.ideplugins.intellij.ui.HasComponent;
+import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
 import com.hpe.adm.octane.ideplugins.services.TestService;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 
@@ -10,16 +10,15 @@ import javax.swing.*;
 /**
  * Created by tothan on 11/22/2016.
  */
-public class EntityTreeTablePresenter {
+public class EntityTreeTablePresenter implements Presenter<EntityTreeTableView>{
 
-    EntityTreeTableModel treeTableModel;
+    EntityTreeTableModel treeTableModel = new EntityTreeTableModel();
     EntityTreeTableView entityTreeTableView;
 
+    //TODO needs injection
     TestService testService = PluginModule.getInstance(TestService.class);
 
     public EntityTreeTablePresenter(){
-        treeTableModel = new EntityTreeTableModel();
-        entityTreeTableView = new EntityTreeTableView(this, treeTableModel);
     }
 
     public void refresh(){
@@ -39,8 +38,18 @@ public class EntityTreeTablePresenter {
         worker.execute();
     }
 
-    public HasComponent getView(){
+    public EntityTreeTableView getView(){
         return entityTreeTableView;
+    }
+
+    @Override
+    public void setView(EntityTreeTableView entityTreeTableView) {
+        this.entityTreeTableView = entityTreeTableView;
+        addHandlers(entityTreeTableView);
+    }
+
+    private void addHandlers(EntityTreeTableView view){
+        view.addRefreshButtonActionListener(event ->  refresh());
     }
 
 }
