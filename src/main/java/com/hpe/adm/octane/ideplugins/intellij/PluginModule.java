@@ -2,11 +2,12 @@ package com.hpe.adm.octane.ideplugins.intellij;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-import com.google.inject.*;
-import com.google.inject.name.Named;
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Singleton;
 import com.hpe.adm.octane.ideplugins.intellij.settings.ConnectionSettingsConfigurable;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePersistentConnectionSettingsProvider;
-import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.EntityDetailPresenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.EntityDetailView;
 import com.hpe.adm.octane.ideplugins.intellij.ui.main.MainPresenter;
@@ -52,69 +53,19 @@ public class PluginModule extends AbstractModule {
 
         //Services
         bind(TestService.class);
-    }
 
-    @Provides
-    @Named("defaultTabbedPanePresenter")
-    Presenter<TabbedPaneView> getTabbedPanePresenter(TabbedPaneView view){
-        TabbedPanePresenter presenter = new TabbedPanePresenter();
-        presenter.setView(view);
-        return presenter;
-    }
+        //UI
+        bind(MainView.class);
+        bind(MainPresenter.class);
 
-    @Provides
-    @Named("defaultMainView")
-    MainView getMainView(){
-        MainView view = new MainView();
-        return view;
-    }
+        bind(TabbedPaneView.class);
+        bind(TabbedPanePresenter.class);
 
-    @Provides
-    @Named("defaultMainPresenter")
-    MainPresenter getMainPresenter(MainView mainView,
-                                   @Named("defaultTabbedPanePresenter") Presenter<TabbedPaneView> tabbedPanePresenter){
-        MainPresenter presenter = new MainPresenter(tabbedPanePresenter);
-        presenter.setView(mainView);
-        return presenter;
-    }
+        bind(EntityDetailView.class);
+        bind(EntityDetailPresenter.class);
 
-    @Provides
-    @Named("defaultTabbedPaneView")
-    TabbedPaneView getTabbedPaneView(){
-        TabbedPaneView view = new TabbedPaneView();
-        return view;
-    }
-
-
-
-    @Provides
-    @Named("defaultEntityDetailView")
-    EntityDetailView getEntityDetailView(){
-        EntityDetailView view = new EntityDetailView();
-        return view;
-    }
-
-    @Provides
-    @Named("defaultEntityDetailPresenter")
-    Presenter<EntityDetailView> getEntityDetailPresenter(EntityDetailView view){
-        EntityDetailPresenter presenter = new EntityDetailPresenter();
-        presenter.setView(view);
-        return presenter;
-    }
-
-    @Provides
-    @Named("defaultEntityTreeTableView")
-    EntityTreeTableView getEntityTreeTableView(){
-        EntityTreeTableView view = new EntityTreeTableView();
-        return view;
-    }
-
-    @Provides
-    @Named("defaultEntityTreeTablePresenter")
-    Presenter<EntityTreeTableView> getEntityTreeTablePresenter(EntityTreeTableView view){
-        EntityTreeTablePresenter presenter = new EntityTreeTablePresenter();
-        presenter.setView(view);
-        return presenter;
+        bind(EntityTreeTableView.class);
+        bind(EntityTreeTablePresenter.class);
     }
 
 }

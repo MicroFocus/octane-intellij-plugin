@@ -1,18 +1,17 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.main;
 
+import com.google.inject.Inject;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
-import com.hpe.adm.octane.ideplugins.intellij.ui.tabbedpane.TabbedPaneView;
+import com.hpe.adm.octane.ideplugins.intellij.ui.tabbedpane.TabbedPanePresenter;
 
 public class MainPresenter implements Presenter<MainView> {
 
     MainView mainView;
 
-    Presenter<TabbedPaneView> tabbedPanePresenter;
+    TabbedPanePresenter tabbedPanePresenter;
 
-    public MainPresenter() {
-    }
-
-    public MainPresenter(Presenter<TabbedPaneView> tabbedPanePresenter){
+    @Inject
+    public MainPresenter(TabbedPanePresenter tabbedPanePresenter){
         this.tabbedPanePresenter = tabbedPanePresenter;
     }
 
@@ -22,6 +21,7 @@ public class MainPresenter implements Presenter<MainView> {
     }
 
     @Override
+    @Inject
     public void setView(MainView view) {
         this.mainView = view;
         view.setTabView(tabbedPanePresenter.getView());

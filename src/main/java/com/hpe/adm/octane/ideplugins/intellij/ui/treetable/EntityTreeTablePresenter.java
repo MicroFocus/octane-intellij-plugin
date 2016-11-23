@@ -1,6 +1,6 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.treetable;
 
-import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
+import com.google.inject.Inject;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
 import com.hpe.adm.octane.ideplugins.services.TestService;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
@@ -15,8 +15,8 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeTableView>{
     EntityTreeTableModel treeTableModel = new EntityTreeTableModel();
     EntityTreeTableView entityTreeTableView;
 
-    //TODO needs injection
-    TestService testService = PluginModule.getInstance(TestService.class);
+    @Inject
+    TestService testService;
 
     public EntityTreeTablePresenter(){
     }
@@ -43,6 +43,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeTableView>{
     }
 
     @Override
+    @Inject
     public void setView(EntityTreeTableView entityTreeTableView) {
         this.entityTreeTableView = entityTreeTableView;
         addHandlers(entityTreeTableView);

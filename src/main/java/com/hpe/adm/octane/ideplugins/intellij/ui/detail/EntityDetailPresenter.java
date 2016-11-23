@@ -1,5 +1,6 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
+import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
 
@@ -16,7 +17,8 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
     }
 
     @Override
-    public void setView(EntityDetailView view) {
+    @Inject
+    public void setView(EntityDetailView entityDetailView) {
         this.entityDetailView = entityDetailView;
     }
 

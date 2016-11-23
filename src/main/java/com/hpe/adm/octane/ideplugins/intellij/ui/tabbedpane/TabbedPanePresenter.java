@@ -49,6 +49,7 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView>{
     }
 
     @Override
+    @Inject
     public void setView(TabbedPaneView tabbedPaneView) {
         this.tabbedPaneView = tabbedPaneView;
 
