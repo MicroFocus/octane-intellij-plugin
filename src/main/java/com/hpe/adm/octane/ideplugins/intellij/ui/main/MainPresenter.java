@@ -9,6 +9,9 @@ public class MainPresenter implements Presenter<MainView> {
 
     Presenter<TabbedPaneView> tabbedPanePresenter;
 
+    public MainPresenter() {
+    }
+
     public MainPresenter(Presenter<TabbedPaneView> tabbedPanePresenter){
         this.tabbedPanePresenter = tabbedPanePresenter;
     }
