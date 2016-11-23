@@ -2,13 +2,13 @@ package com.hpe.adm.octane.ideplugins.intellij.settings;
 
 import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.ui.components.ConnectionSettingsComponent;
-import com.hpe.adm.octane.ideplugins.intellij.util.UrlParser;
 import com.hpe.adm.octane.ideplugins.services.TestService;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
+import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
+import com.hpe.adm.octane.ideplugins.services.util.UrlParser;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
-import com.intellij.openapi.ui.Messages;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -59,17 +59,14 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
 
         //Setting the base url will fire the even handler in the view, this will set the shared space and workspace fields
         connectionSettingsView.setServerUrl(UrlParser.createUrlFromConnectionSettings(connectionSettings));
-
         connectionSettingsView.setUserName(connectionSettings.getUserName());
         connectionSettingsView.setPassword(connectionSettings.getPassword());
 
-        //Test connection should now do apply
         connectionSettingsView.setTestConnectionActionListener(event -> {
             try {
-                ConnectionSettingsConfigurable.this.apply();
-                Messages.showInfoMessage(CONNECTION_SUCCESSFUL_DIALOG_MESSAGE, CONNECTION_DIALOG_TITLE);
+                testConnection();
             } catch (ConfigurationException ex){
-                Messages.showErrorDialog(CONNECTION_FAILED_DIALOG_MESSAGE, CONNECTION_DIALOG_TITLE);
+                //testConnection sets the labels that's all we care about
             }
         });
 
@@ -81,40 +78,57 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
 
         ConnectionSettings currentConnectionSettings = connectionSettingsProvider.getConnectionSettings();
 
-        ConnectionSettings viewConnectionSettings = UrlParser.resolveConnectionSettings(
-                connectionSettingsView.getServerUrl(),
-                connectionSettingsView.getUserName(),
-                connectionSettingsView.getPassword());
+        ConnectionSettings viewConnectionSettings = null;
+        try {
+            viewConnectionSettings = UrlParser.resolveConnectionSettings(
+                    connectionSettingsView.getServerUrl(),
+                    connectionSettingsView.getUserName(),
+                    connectionSettingsView.getPassword());
+        } catch (ServiceException e) {
+            viewConnectionSettings = new ConnectionSettings();
+        }
 
         return !viewConnectionSettings.equals(currentConnectionSettings);
     }
 
     @Override
     public void apply() throws ConfigurationException {
+        //Throws ConfigurationException in case it fails
+        testConnection();
+
+        //apply otherwise
+        try {
+            connectionSettingsProvider.setConnectionSettings(getConnectionSettingsFromView());
+        } catch (ServiceException ex){
+            //can never happen, testConnection does the same check b4
+        }
+    }
+
+    private void testConnection(ConnectionSettings connectionSettings) throws ConfigurationException {
+        try {
+            //Clear previous message
+            connectionSettingsView.setConnectionStatusLabel(false);
+
+            //throws config exception if invalid
+            ConnectionSettings newConnectionSettings = getConnectionSettingsFromView();
+
+            //Will use the new provider
+            TestService testService = PluginModule.getInstance(TestService.class);
+            testService.testConnection(connectionSettings);
+
+        } catch(Exception ex){
+            connectionSettingsView.setConnectionStatusErrorLabel(ex.getMessage());
+            throw new ConfigurationException(CONNECTION_FAILED_DIALOG_MESSAGE + ": \r\n" + ex.getMessage());
+        }
+        connectionSettingsView.setConnectionStatusSuccessLabel();
+    }
+
+    private ConnectionSettings getConnectionSettingsFromView() throws ServiceException{
         //Parse server url
-        ConnectionSettings newConnectionSettings = UrlParser.resolveConnectionSettings(
+        return UrlParser.resolveConnectionSettings(
                 connectionSettingsView.getServerUrl(),
                 connectionSettingsView.getUserName(),
                 connectionSettingsView.getPassword());
-
-        //Modify the provider
-        connectionSettingsProvider.setConnectionSettings(newConnectionSettings);
-
-        //Check the format
-        if(newConnectionSettings.getBaseUrl() == null ||
-                newConnectionSettings.getWorkspaceId() == null ||
-                newConnectionSettings.getSharedSpaceId() == null) {
-            throw new ConfigurationException(URL_PARSE_FAILED_DIALOG_MESSAGE);
-        }
-
-        //Will use the new provider
-        TestService testService = PluginModule.getInstance(TestService.class);
-
-        try{
-            testService.testConnection();
-        } catch (Exception ex){
-            throw new ConfigurationException(CONNECTION_FAILED_DIALOG_MESSAGE);
-        }
     }
 
     @Override

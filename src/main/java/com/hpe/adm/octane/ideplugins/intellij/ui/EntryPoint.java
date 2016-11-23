@@ -36,7 +36,7 @@ public class EntryPoint implements ToolWindowFactory {
 
         Runnable mainToolWindowContentControl = () -> {
             try{
-                testService.testConnection();
+                testService.testConnection(connectionSettingsProvider.getConnectionSettings());
                 //TODO: this view is not reloaded when the settings change
                 //In case the connection is valid show a generalView at the start
                 setContent(mainPresenter.getView());

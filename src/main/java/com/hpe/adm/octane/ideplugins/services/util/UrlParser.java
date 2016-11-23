@@ -1,14 +1,23 @@
-package com.hpe.adm.octane.ideplugins.intellij.util;
+package com.hpe.adm.octane.ideplugins.services.util;
 
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
+import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
+import org.apache.commons.validator.UrlValidator;
 
 import java.net.URL;
 
 public class UrlParser {
 
-    public static ConnectionSettings resolveConnectionSettings(String url, String userName, String password) {
+    public static ConnectionSettings resolveConnectionSettings(String url, String userName, String password) throws ServiceException {
+
         ConnectionSettings connectionSettings = new ConnectionSettings();
 
+        //Try to validate the url before
+        String[] schemes = {"http","https"};
+        UrlValidator urlValidator = new UrlValidator(schemes);
+        if (!urlValidator.isValid(url)) {
+            throw new ServiceException("Given server url is not valid.");
+        }
         try {
             URL site = new URL(url);
             if (null != site.getQuery()) {
@@ -29,7 +38,7 @@ public class UrlParser {
             }
 
         } catch (Exception e) {
-            //TODO
+            throw new ServiceException("Failed to retrieve sharedspace and workspace from given server url.");
         }
 
         connectionSettings.setUserName(userName);

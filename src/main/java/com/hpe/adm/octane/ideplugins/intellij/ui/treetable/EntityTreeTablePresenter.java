@@ -2,7 +2,7 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.treetable;
 
 import com.google.inject.Inject;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
-import com.hpe.adm.octane.ideplugins.services.TestService;
+import com.hpe.adm.octane.ideplugins.services.EntityService;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 
 import javax.swing.*;
@@ -16,7 +16,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeTableView>{
     EntityTreeTableView entityTreeTableView;
 
     @Inject
-    TestService testService;
+    EntityService entityService;
 
     public EntityTreeTablePresenter(){
     }
@@ -27,7 +27,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeTableView>{
             @Override
             protected Void doInBackground() throws Exception {
                 entityTreeTableView.setLoading(true);
-                treeTableModel.setEntities(testService.findEntities(Entity.WORK_ITEM), "subtype");
+                treeTableModel.setEntities(entityService.findEntities(Entity.WORK_ITEM), "subtype");
                 return null;
             }
             @Override

@@ -1,11 +1,13 @@
 package com.hpe.adm.octane.ideplugins;
 
 
-import com.hpe.adm.octane.ideplugins.intellij.util.UrlParser;
+import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
+import com.hpe.adm.octane.ideplugins.services.util.UrlParser;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class UrlParserUTCase {
 
@@ -24,7 +26,12 @@ public class UrlParserUTCase {
     public void testUrlParser(){
 
         //Test parsing
-        ConnectionSettings connectionSettings = UrlParser.resolveConnectionSettings(octaneUrlWithPortAndHash, "username", "password");
+        ConnectionSettings connectionSettings = null;
+        try {
+            connectionSettings = UrlParser.resolveConnectionSettings(octaneUrlWithPortAndHash, "username", "password");
+        } catch (ServiceException e) {
+            fail(e.getMessage());
+        }
 
         assertEquals(connectionSettings.getBaseUrl(), expectedBase);
         assertEquals(connectionSettings.getSharedSpaceId(), expectedSharedSpaceId);
