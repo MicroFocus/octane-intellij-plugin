@@ -9,7 +9,7 @@ public enum Entity {
     DEFECT("defects"),
     WORK_ITEM("work_items"),
     STORY(Entity.WORK_ITEM, "story"),
-    TEST(Entity.WORK_ITEM, "test");
+    TEST("tests");
 
     //This is the name of the entity passed to the sdk, used for the rest, call, usually plural
     private String apiEntityName;

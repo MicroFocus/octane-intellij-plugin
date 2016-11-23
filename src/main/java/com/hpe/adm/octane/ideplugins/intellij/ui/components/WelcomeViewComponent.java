@@ -1,27 +1,30 @@
-package com.hpe.adm.octane.ideplugins.intellij.ui.panels;
+package com.hpe.adm.octane.ideplugins.intellij.ui.components;
 
 import com.hpe.adm.octane.ideplugins.intellij.settings.ConnectionSettingsConfigurable;
+import com.hpe.adm.octane.ideplugins.intellij.ui.HasComponent;
 import com.intellij.openapi.options.ShowSettingsUtil;
-import com.intellij.openapi.wm.ToolWindow;
 import org.jdesktop.swingx.JXHyperlink;
 
 import javax.swing.*;
 
-public class WelcomeView {
+/**
+ * This does not need a presenter, it's too basic
+ */
+public class WelcomeViewComponent implements HasComponent {
 
-    private ToolWindow rootToolWindow;
     private JPanel rootPanel;
 
     private JLabel welcomeScreenMessage;
     private JXHyperlink settingsLink;
 
-    public WelcomeView(){
+    public WelcomeViewComponent(){
         welcomeScreenMessage.setText("Welcome to ALM Octane plugin");
         settingsLink.setText("Before you start please go to settings and connect to Octane");
         settingsLink.addActionListener(event -> ShowSettingsUtil.getInstance().showSettingsDialog(null, ConnectionSettingsConfigurable.class));
     }
 
-    public JPanel getRootPanel(){
+    @Override
+    public JComponent getComponent() {
         return rootPanel;
     }
 

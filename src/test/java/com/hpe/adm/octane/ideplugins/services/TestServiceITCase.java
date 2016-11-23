@@ -1,11 +1,8 @@
 package com.hpe.adm.octane.ideplugins.services;
 
 import com.google.inject.Inject;
-import com.hpe.adm.nga.sdk.model.StringFieldModel;
 import com.hpe.adm.octane.ideplugins.integrationtests.IntegrationTestBase;
-import com.hpe.adm.octane.ideplugins.services.filtering.Comparator;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
-import com.hpe.adm.octane.ideplugins.services.filtering.Filter;
 import org.junit.Assert;
 import org.junit.Test;
 
