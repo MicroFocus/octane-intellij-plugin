@@ -43,6 +43,7 @@ public class ConnectionSettingsComponent implements HasComponent {
 
     private JLabel lblLoading;
     private JLabel lblConnectionStatus;
+    private JButton btnClearSettings;
 
     @Inject
     private ConnectionSettings connectionSettings;
@@ -85,6 +86,12 @@ public class ConnectionSettingsComponent implements HasComponent {
                 }
             }
         });
+
+        btnClearSettings.addActionListener((event) -> {
+            setServerUrl("");
+            txtFieldUserName.setText("");
+            passField.setText("");
+        });
     }
 
     /**
@@ -102,6 +109,8 @@ public class ConnectionSettingsComponent implements HasComponent {
                 setConnectionStatusErrorLabel(ex.getMessage());
             }
             setSharedspaceWorkspaceIds(connectionSettings.getSharedSpaceId(), connectionSettings.getWorkspaceId());
+        } else {
+            setSharedspaceWorkspaceIds(null, null);
         }
     }
 

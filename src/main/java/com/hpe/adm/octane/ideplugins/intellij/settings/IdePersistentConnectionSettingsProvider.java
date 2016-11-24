@@ -34,13 +34,24 @@ public class IdePersistentConnectionSettingsProvider extends BasicConnectionSett
     @Override
     public Element getState() {
         final Element element = new Element(CONNECTION_SETTINGS_TAG);
-        element.setAttribute(URL_TAG, String.valueOf(connectionSettings.getBaseUrl()));
-        element.setAttribute(SHARED_SPACE_TAG, String.valueOf(connectionSettings.getSharedSpaceId()));
-        element.setAttribute(WORKSPACE_TAG, String.valueOf(connectionSettings.getWorkspaceId()));
-        element.setAttribute(USER_TAG, String.valueOf(connectionSettings.getUserName()));
 
-        //save the password into the password store
-        encryptPassword(connectionSettings.getPassword());
+        if(!StringUtils.isEmpty(connectionSettings.getBaseUrl())){
+            element.setAttribute(URL_TAG, String.valueOf(connectionSettings.getBaseUrl()));
+        }
+        if(connectionSettings.getSharedSpaceId() != null){
+            element.setAttribute(SHARED_SPACE_TAG, String.valueOf(connectionSettings.getSharedSpaceId()));
+        }
+        if(connectionSettings.getWorkspaceId() != null){
+            element.setAttribute(WORKSPACE_TAG, String.valueOf(connectionSettings.getWorkspaceId()));
+        }
+        if(!StringUtils.isEmpty(connectionSettings.getUserName())){
+            element.setAttribute(USER_TAG, String.valueOf(connectionSettings.getUserName()));
+        }
+
+        //save the password into the password store, not related to the xml file
+        if(!StringUtils.isEmpty(connectionSettings.getPassword())) {
+            encryptPassword(connectionSettings.getPassword());
+        }
 
         return element;
     }
@@ -49,7 +60,11 @@ public class IdePersistentConnectionSettingsProvider extends BasicConnectionSett
     public void loadState(Element state) {
         ConnectionSettings connectionSettings = new ConnectionSettings();
 
-        connectionSettings.setBaseUrl(state.getAttributeValue(URL_TAG));
+        if(state.getAttribute(USER_TAG) != null) {
+            connectionSettings.setBaseUrl(state.getAttributeValue(URL_TAG));
+        } else{
+            connectionSettings.setBaseUrl("");
+        }
 
         String sharedSpaceStr = state.getAttributeValue(SHARED_SPACE_TAG);
         if(StringUtils.isNumeric(sharedSpaceStr)){
@@ -61,9 +76,13 @@ public class IdePersistentConnectionSettingsProvider extends BasicConnectionSett
             connectionSettings.setWorkspaceId(Long.valueOf(workSpaceStr));
         }
 
-        connectionSettings.setUserName(state.getAttributeValue(USER_TAG));
+        if(state.getAttribute(USER_TAG) != null){
+            connectionSettings.setUserName(state.getAttributeValue(USER_TAG));
+        } else {
+            connectionSettings.setUserName("");
+        }
 
-        //attempt to load password from the password store
+        //attempt to load password from the password store, not related to the xml file
         connectionSettings.setPassword(decryptPassword());
 
         setConnectionSettings(connectionSettings);
