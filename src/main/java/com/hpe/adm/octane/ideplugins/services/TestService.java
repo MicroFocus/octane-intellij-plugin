@@ -7,7 +7,7 @@ import java.util.Collection;
 public class TestService extends ServiceBase{
 
     public Collection<EntityModel> getDefects(){
-        return getNGA().entityList("defects").get().execute();
+        return getOctane().entityList("defects").get().execute();
     }
 
     /**
@@ -15,7 +15,7 @@ public class TestService extends ServiceBase{
      */
     public void testConnection() throws Exception {
         try {
-            getNGA();
+            getOctane();
             //rethrow runtime exceptions as checked exceptions
         } catch (Exception ex){
             throw ex;
