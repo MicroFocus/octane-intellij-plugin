@@ -1,6 +1,6 @@
 package com.hpe.adm.octane.ideplugins.services.util;
 
-import com.hpe.adm.nga.sdk.exception.NgaException;
+import com.hpe.adm.nga.sdk.exception.OctaneException;
 import com.hpe.adm.nga.sdk.model.StringFieldModel;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -8,12 +8,12 @@ import org.json.JSONObject;
 public class SdkUtil {
 
     /**
-     * Attempt to get the error message from and NgaException, if it fails returns null instead
+     * Attempt to get the error message from and OctaneException, if it fails returns null instead
      * @param ex
      * @return
      */
-    public static String getMessageFromNgaException(NgaException ex){
-        JSONObject object = getJsonFromNgaException(ex);
+    public static String getMessageFromOctaneException(OctaneException ex){
+        JSONObject object = getJsonFromOctaneException(ex);
         if(object != null){
             return object.getString("description");
         } else {
@@ -21,12 +21,12 @@ public class SdkUtil {
         }
     }
 
-    public static JSONObject getJsonFromNgaException(NgaException ex){
-        //TODO: wish the NgaException would give more structured details...
+    public static JSONObject getJsonFromOctaneException(OctaneException ex){
+        //TODO: wish the OctaneException would give more structured details...
 
         String jsonMessage;
         try{
-            //Description: private constant in NgaException.errorModel...
+            //Description: private constant in OctaneException.errorModel...
             jsonMessage = ((StringFieldModel)ex.getError().getValue("Description")).getValue();
         } catch (ClassCastException | NullPointerException castException){
             return null;

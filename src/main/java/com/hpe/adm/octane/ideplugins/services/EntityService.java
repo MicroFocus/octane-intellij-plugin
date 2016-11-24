@@ -20,7 +20,7 @@ public class EntityService extends ServiceBase{
      * @return
      */
     public Collection<EntityModel> findEntities(Entity entity, Filter... filters){
-        EntityList entityList = getNGA().entityList(entity.getApiEntityName());
+        EntityList entityList = getOctane().entityList(entity.getApiEntityName());
 
         Query.QueryBuilder queryBuilder = null;
 

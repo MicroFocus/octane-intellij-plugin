@@ -4,6 +4,12 @@ out
 *.iml
 build
 .gradle
+.classpath
+.project
+.settings
+bin
+build
+out
 
 # Ignore Gradle GUI config
 gradle-app.setting
