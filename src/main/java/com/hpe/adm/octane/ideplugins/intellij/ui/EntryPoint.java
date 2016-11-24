@@ -1,67 +1,61 @@
-package com.hpe.adm.octane.ideplugins.intellij.ui.panels;
+package com.hpe.adm.octane.ideplugins.intellij.ui;
 
-import com.google.inject.Guice;
 import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
+import com.hpe.adm.octane.ideplugins.intellij.ui.components.WelcomeViewComponent;
+import com.hpe.adm.octane.ideplugins.intellij.ui.main.MainPresenter;
 import com.hpe.adm.octane.ideplugins.services.TestService;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowFactory;
-import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import java.awt.*;
-
-public class MainToolWindowFactory implements ToolWindowFactory {
+/**
+ * Entry point, will create the IntelliJ tool window
+ */
+public class EntryPoint implements ToolWindowFactory {
 
     private ToolWindow toolWindow;
-
-    @Inject
-    private WelcomeView welcomeView;
 
     @Inject
     private TestService testService;
 
     @Inject
-    private ConnectionSettingsProvider connectionSettingsProvider;
+    private MainPresenter mainPresenter;
 
-    private Injector injector = Guice.createInjector(new PluginModule());
-    public MainToolWindowFactory(){
-        injector.injectMembers(this);
-    }
+    @Inject
+    private ConnectionSettingsProvider connectionSettingsProvider;
 
     @Override
     public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
         this.toolWindow = toolWindow;
-        ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
 
-        JPanel mainPanel = new JPanel();
-        mainPanel.add(new JLabel("It's working, be happy!"), BorderLayout.CENTER);
+        PluginModule.getInjectorSupplier().injectMembers(this);
 
         Runnable mainToolWindowContentControl = () -> {
             try{
                 testService.testConnection();
+                //TODO: this view is not reloaded when the settings change
                 //In case the connection is valid show a generalView at the start
-                setContent(contentFactory.createContent(mainPanel, "", false));
+                setContent(mainPresenter.getView());
+
             } catch (Exception ex){
                 //Otherwise show the welcome view
-                setContent(contentFactory.createContent(welcomeView.getRootPanel(), "", false));
+                setContent(new WelcomeViewComponent());
             }
         };
 
+        //Run at the start of the application
         mainToolWindowContentControl.run();
-
-        //add handler
         connectionSettingsProvider.addChangeHandler(mainToolWindowContentControl);
     }
 
-    private void setContent(Content content){
+    private void setContent(HasComponent hasComponent){
+        ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
         toolWindow.getContentManager().removeAllContents(true);
-        toolWindow.getContentManager().addContent(content);
+        toolWindow.getContentManager().addContent(contentFactory.createContent(hasComponent.getComponent(), "", false));
     }
 
 }

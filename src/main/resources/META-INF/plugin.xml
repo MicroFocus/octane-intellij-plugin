@@ -18,20 +18,21 @@
   -->
 
   <extensions defaultExtensionNs="com.intellij">
-    <toolWindow factoryClass="com.hpe.adm.octane.ideplugins.intellij.ui.panels.MainToolWindowFactory" anchor="bottom" icon="/images/octane-icon-13x13.png" secondary="true" id="HPE ALM Octane"/>
+    <toolWindow factoryClass="com.hpe.adm.octane.ideplugins.intellij.ui.EntryPoint" anchor="bottom" icon="/images/octane-icon-13x13.png" secondary="true" id="HPE ALM Octane"/>
     <applicationService serviceInterface="com.hpe.adm.octane.ideplugins.intellij.settings.IdePersistentConnectionSettingsProvider"
                         serviceImplementation="com.hpe.adm.octane.ideplugins.intellij.settings.IdePersistentConnectionSettingsProvider"/>
     <applicationConfigurable id="com.hpe.adm.octane.ideplugins.intellij.settings.ConnectionSettingsConfigurable"
                              displayName="Octane Settings"
                              instance="com.hpe.adm.octane.ideplugins.intellij.settings.ConnectionSettingsConfigurable"/>
+    <checkinHandlerFactory implementation="com.hpe.adm.octane.ideplugins.intellij.gitcommit.OctaneCheckinHandlerFactory" />
   </extensions>
 
   <application-components>
-    <!-- Add your application components here -->
+    <!-- Add your application customcomponents here -->
   </application-components>
 
   <project-components>
-    <!-- Add your project components here -->
+    <!-- Add your project customcomponents here -->
   </project-components>
 
   <actions>
