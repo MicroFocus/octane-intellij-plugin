@@ -31,7 +31,6 @@ public class ConnectionSettingsComponent implements HasComponent {
 
     private JTextField txtFieldSharedSpace;
 
-    private JLabel lblLoading;
     private JLabel lblConnectionStatus;
     private JButton btnClearSettings;
 
@@ -40,8 +39,6 @@ public class ConnectionSettingsComponent implements HasComponent {
         //Default placeholder
         txtFieldSharedSpace.setText(EMPTY_SHAREDSPACE_WORKSPACE_URL_TEXT);
         txtFieldWorkspace.setText(EMPTY_SHAREDSPACE_WORKSPACE_URL_TEXT);
-
-        lblLoading.setVisible(false);
 
         txtFieldServerUrl.getDocument().addDocumentListener(new DocumentListener() {
             @Override
@@ -152,7 +149,7 @@ public class ConnectionSettingsComponent implements HasComponent {
         lblConnectionStatus.setVisible(true);
         lblConnectionStatus.setForeground(Color.RED);
         if(!StringUtils.isEmpty(errorText)){
-            lblConnectionStatus.setText(errorText);
+            lblConnectionStatus.setText("<html>"+errorText+"</html>");
         }
     }
 

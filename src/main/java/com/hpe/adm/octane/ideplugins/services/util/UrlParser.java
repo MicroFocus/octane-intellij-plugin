@@ -2,46 +2,92 @@ package com.hpe.adm.octane.ideplugins.services.util;
 
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
 import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.validator.UrlValidator;
 
 import java.net.URL;
 
+import static com.hpe.adm.octane.ideplugins.intellij.util.Constants.CORRECT_URL_FORMAT_MESSAGE;
+import static com.hpe.adm.octane.ideplugins.intellij.util.Constants.INVALID_URL_FORMAT_MESSAGE;
+
 public class UrlParser {
+
+    // Only works for a html enabled JLabel,
+    // TODO: use error codes or subtypes of ServiceException instead of passing a message
+    private static final String LINE_BREAK = "<br>";
 
     public static ConnectionSettings resolveConnectionSettings(String url, String userName, String password) throws ServiceException {
 
         ConnectionSettings connectionSettings = new ConnectionSettings();
 
         //Try to validate the url before
-        String[] schemes = {"http","https"};
+        String[] schemes = {"http", "https"};
         UrlValidator urlValidator = new UrlValidator(schemes);
         if (!urlValidator.isValid(url)) {
-            throw new ServiceException("Given server url is not valid.");
+            throw new ServiceException(INVALID_URL_FORMAT_MESSAGE
+                    + LINE_BREAK
+                    + CORRECT_URL_FORMAT_MESSAGE);
         }
-        try {
-            URL site = new URL(url);
-            if (null != site.getQuery()) {
-                String baseUrl = site.getProtocol() + "://" + site.getHost();
 
+        //This check is not redundant, above does some extra things
+        URL siteUrl;
+        try {
+            siteUrl = new URL(url);
+        } catch (Exception ex){
+            throw new ServiceException(INVALID_URL_FORMAT_MESSAGE
+                    + CORRECT_URL_FORMAT_MESSAGE);
+        }
+
+        if (null == siteUrl.getQuery()) {
+            throw new ServiceException("Missing query parameters."
+                    + LINE_BREAK
+                    + CORRECT_URL_FORMAT_MESSAGE);
+        } else {
+
+            try {
+
+                String baseUrl;
+                Long sharedspaceId;
+                Long workspaceId;
+
+                baseUrl = siteUrl.getProtocol() + "://" + siteUrl.getHost();
                 //Add port if not the default
-                if(site.getPort() != 80 && site.getPort() != -1){
-                    baseUrl += ":" + site.getPort();
+                if(siteUrl.getPort() != 80 && siteUrl.getPort() != -1){
+                    baseUrl += ":" + siteUrl.getPort();
                 }
 
-                String[] split = site.getQuery().split("/");
-                Long sharedspaceId = Long.valueOf(split[0].substring(split[0].indexOf("p=") + 2));
-                Long workspaceId = Long.valueOf(split[1]);
+                String[] split = siteUrl.getQuery().split("/");
+                sharedspaceId = Long.valueOf(split[0].substring(split[0].indexOf("p=") + 2));
+                workspaceId = Long.valueOf(split[1]);
+
+                if(sharedspaceId<0)
+                    throw new Exception();
+
+                if(workspaceId<0)
+                    throw new Exception();
+
 
                 connectionSettings.setBaseUrl(baseUrl);
                 connectionSettings.setSharedSpaceId(sharedspaceId);
                 connectionSettings.setWorkspaceId(workspaceId);
+
+
+            } catch (Exception ex) {
+                throw new ServiceException("Could not get sharedspace/workspace ids from URL. "
+                        + LINE_BREAK
+                        + CORRECT_URL_FORMAT_MESSAGE);
             }
 
-        } catch (Exception e) {
-            throw new ServiceException("Failed to retrieve sharedspace and workspace from given server url.");
         }
 
+        if(StringUtils.isEmpty(userName)){
+            throw new ServiceException("Username cannot be blank.");
+        }
         connectionSettings.setUserName(userName);
+
+        if(StringUtils.isEmpty(userName)){
+            throw new ServiceException("Password cannot be blank.");
+        }
         connectionSettings.setPassword(password);
 
         return connectionSettings;
@@ -61,7 +107,7 @@ public class UrlParser {
         }
 
         return connectionSettings.getBaseUrl()
-                + "/ui/?"
+                + "/?"
                 + "p=" + connectionSettings.getSharedSpaceId()
                 + "/" + connectionSettings.getWorkspaceId();
     }

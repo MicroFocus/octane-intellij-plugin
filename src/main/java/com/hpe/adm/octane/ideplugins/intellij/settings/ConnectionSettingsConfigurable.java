@@ -22,11 +22,6 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
 
     private static final String NAME = "Octane";
 
-    private static final String CONNECTION_FAILED_DIALOG_MESSAGE = "Failed to connect with given connection settings";
-    private static final String CONNECTION_SUCCESSFUL_DIALOG_MESSAGE = "Connection successful";
-    private static final String URL_PARSE_FAILED_DIALOG_MESSAGE = "Failed to parse given server URL, bad format";
-    private static final String CONNECTION_DIALOG_TITLE = "Connection status";
-
     //@Inject is not supported here, this class is instantiated by intellij
     private ConnectionSettingsProvider connectionSettingsProvider = PluginModule.getInstance(ConnectionSettingsProvider.class);
     private ConnectionSettingsComponent connectionSettingsView = new ConnectionSettingsComponent();
@@ -115,7 +110,7 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
             testService.testConnection(newConnectionSettings);
         } catch (ServiceException ex) {
             connectionSettingsView.setConnectionStatusErrorLabel(ex.getMessage());
-            throw new ConfigurationException(CONNECTION_FAILED_DIALOG_MESSAGE + ": " + ex.getMessage());
+            return;
         }
 
         //apply if valid
@@ -138,8 +133,8 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
     }
 
     private boolean isViewConnectionSettingsEmpty(){
-        return StringUtils.isEmpty(connectionSettingsView.getServerUrl()) ||
-                StringUtils.isEmpty(connectionSettingsView.getUserName()) ||
+        return StringUtils.isEmpty(connectionSettingsView.getServerUrl()) &&
+                StringUtils.isEmpty(connectionSettingsView.getUserName()) &&
                 StringUtils.isEmpty(connectionSettingsView.getPassword());
     }
 
