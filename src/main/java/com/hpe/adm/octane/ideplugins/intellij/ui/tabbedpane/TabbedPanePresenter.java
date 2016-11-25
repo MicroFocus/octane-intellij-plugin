@@ -33,6 +33,7 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView>{
     public void openDetailTab(EntityModel entityModel){
         EntityDetailPresenter presenter = entityDetailPresenterProvider.get();
         detailPresenters.add(presenter);
+        presenter.setEntity(Long.valueOf(123));
         tabbedPaneView.addTab("ETITTY NAME", presenter.getView().getComponent());
     }
 
