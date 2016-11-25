@@ -13,38 +13,47 @@ public class SdkUtil {
      * @return
      */
     public static String getMessageFromOctaneException(OctaneException ex){
-        JSONObject object = getJsonFromOctaneException(ex);
-        if(object != null){
-            return object.getString("description");
-        } else {
-            return null;
+        String message = getStringFromErrorModel(ex);
+        if(message != null){
+
+            //Try to get the json version
+            JSONObject jsonMessage = getJsonFromOctaneException(message);
+            if(jsonMessage != null){
+                return jsonMessage.getString("description");
+            }
+
+            //otherwise the plain message is good enough
+            return message;
         }
+
+        //Well, I'm sorry
+        return null;
     }
 
-    public static JSONObject getJsonFromOctaneException(OctaneException ex){
-        //TODO: wish the OctaneException would give more structured details...
-
-        String jsonMessage;
-        try{
-            //Description: private constant in OctaneException.errorModel...
-            jsonMessage = ((StringFieldModel)ex.getError().getValue("Description")).getValue();
-        } catch (ClassCastException | NullPointerException castException){
-            return null;
-        }
-
-        int firstIndex = jsonMessage.indexOf("{");
+    public static JSONObject getJsonFromOctaneException(String message){
+        int firstIndex = message.indexOf("{");
         if(firstIndex != -1){
-            jsonMessage = jsonMessage.substring(firstIndex);
+            message = message.substring(firstIndex);
         } else {
             return null;
         }
 
         //Attempt to parse the json message
         try {
-            JSONObject jsonObject = new JSONObject(jsonMessage);
+            JSONObject jsonObject = new JSONObject(message);
             return jsonObject;
         } catch(JSONException jsonException){
            return null;
+        }
+    }
+
+    private static String getStringFromErrorModel(OctaneException ex){
+        //TODO: wish the OctaneException would give more structured details...
+        try{
+            //Description: private constant in OctaneException.errorModel...
+            return ((StringFieldModel)ex.getError().getValue("Description")).getValue();
+        } catch (ClassCastException | NullPointerException castException){
+            return null;
         }
     }
 
