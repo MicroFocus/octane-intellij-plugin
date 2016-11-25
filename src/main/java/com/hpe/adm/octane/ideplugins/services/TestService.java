@@ -14,14 +14,23 @@ import java.net.UnknownHostException;
 
 public class TestService extends ServiceBase{
 
-    private Octane getOctane(ConnectionSettings connectionSettings){
-        Octane nga = new Octane
+    public Octane getOctane(ConnectionSettings connectionSettings){
+        //gainarie
+        try {
+            return new Octane
                     .Builder(new UserAuthorisation(connectionSettings.getUserName(), connectionSettings.getPassword()))
                     .Server(connectionSettings.getBaseUrl())
                     .sharedSpace(connectionSettings.getSharedSpaceId())
                     .workSpace(connectionSettings.getWorkspaceId())
                     .build();
-        return nga;
+        } catch (Exception ex) {
+            return new Octane
+                    .Builder(new UserAuthorisation(connectionSettings.getUserName(), connectionSettings.getPassword()))
+                    .Server(connectionSettings.getBaseUrl())
+                    .sharedSpace(connectionSettings.getSharedSpaceId())
+                    .workSpace(connectionSettings.getWorkspaceId())
+                    .build();
+        }
     }
 
     private void testHttpConnection(ConnectionSettings connectionSettings) throws ServiceException {
