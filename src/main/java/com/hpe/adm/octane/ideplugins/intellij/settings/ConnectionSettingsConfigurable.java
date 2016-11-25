@@ -16,6 +16,8 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
+import static com.hpe.adm.octane.ideplugins.services.util.UrlParser.resolveConnectionSettings;
+
 public class ConnectionSettingsConfigurable implements SearchableConfigurable {
 
     private static final String NAME = "Octane";
@@ -85,7 +87,7 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
 
         ConnectionSettings viewConnectionSettings;
         try {
-            viewConnectionSettings = UrlParser.resolveConnectionSettings(
+            viewConnectionSettings = resolveConnectionSettings(
                     connectionSettingsView.getServerUrl(),
                     connectionSettingsView.getUserName(),
                     connectionSettingsView.getPassword());
@@ -124,10 +126,15 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
 
     private ConnectionSettings getConnectionSettingsFromView() throws ServiceException{
         //Parse server url
-        return UrlParser.resolveConnectionSettings(
+        ConnectionSettings connectionSettings = UrlParser.resolveConnectionSettings(
                 connectionSettingsView.getServerUrl(),
                 connectionSettingsView.getUserName(),
                 connectionSettingsView.getPassword());
+
+        //remove the hash and remove extra stuff if successful
+        connectionSettingsView.setServerUrl(UrlParser.createUrlFromConnectionSettings(connectionSettings));
+
+        return connectionSettings;
     }
 
     private boolean isViewConnectionSettingsEmpty(){

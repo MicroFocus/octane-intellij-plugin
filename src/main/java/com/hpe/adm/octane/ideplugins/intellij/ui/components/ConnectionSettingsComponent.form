@@ -42,7 +42,7 @@
                   <toolTipText value=""/>
                 </properties>
               </component>
-              <component id="1fcd8" class="javax.swing.JLabel" binding="lblServerUrl">
+              <component id="1fcd8" class="javax.swing.JLabel">
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -51,7 +51,7 @@
                   <text value="&amp;Server URL:"/>
                 </properties>
               </component>
-              <component id="c7d89" class="javax.swing.JLabel" binding="lblPassword">
+              <component id="c7d89" class="javax.swing.JLabel">
                 <constraints>
                   <grid row="10" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -60,7 +60,7 @@
                   <text value="&amp;Password:"/>
                 </properties>
               </component>
-              <component id="ce8f3" class="javax.swing.JLabel" binding="lblUserName">
+              <component id="ce8f3" class="javax.swing.JLabel">
                 <constraints>
                   <grid row="8" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -80,7 +80,7 @@
                   <JPasswordField.cutCopyAllowed class="java.lang.Boolean" value="false"/>
                 </clientProperties>
               </component>
-              <component id="20c39" class="javax.swing.JLabel" binding="lblWorkspace">
+              <component id="20c39" class="javax.swing.JLabel">
                 <constraints>
                   <grid row="4" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="10" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -109,7 +109,7 @@
                   <text value=""/>
                 </properties>
               </component>
-              <component id="fe853" class="javax.swing.JLabel" binding="lblSharedSpaceUrl">
+              <component id="fe853" class="javax.swing.JLabel">
                 <constraints>
                   <grid row="2" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>

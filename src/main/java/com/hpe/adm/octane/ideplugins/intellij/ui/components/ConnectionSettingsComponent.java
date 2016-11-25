@@ -1,8 +1,6 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.components;
 
-import com.google.inject.Inject;
 import com.hpe.adm.octane.ideplugins.intellij.ui.HasComponent;
-import com.hpe.adm.octane.ideplugins.services.TestService;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
 import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
 import com.hpe.adm.octane.ideplugins.services.util.UrlParser;
@@ -24,29 +22,18 @@ public class ConnectionSettingsComponent implements HasComponent {
     private static final String EMPTY_SERVER_URL_TEXT = "Copy paste your Octane URL from the browser here...";
     private static final String EMPTY_SHAREDSPACE_WORKSPACE_URL_TEXT = "Retrieved from server URL";
 
-    @Inject
-    private TestService testService;
-
     private JPanel rootPanel;
-    private JLabel lblServerUrl;
     private JTextField txtFieldServerUrl;
-    private JLabel lblWorkspace;
     private JTextField txtFieldWorkspace;
-    private JLabel lblUserName;
     private JTextField txtFieldUserName;
-    private JLabel lblPassword;
     private JPasswordField passField;
     private JButton btnTest;
 
-    private JLabel lblSharedSpaceUrl;
     private JTextField txtFieldSharedSpace;
 
     private JLabel lblLoading;
     private JLabel lblConnectionStatus;
     private JButton btnClearSettings;
-
-    @Inject
-    private ConnectionSettings connectionSettings;
 
     public ConnectionSettingsComponent() {
 
@@ -157,10 +144,6 @@ public class ConnectionSettingsComponent implements HasComponent {
         btnTest.addActionListener(actionListener);
     }
 
-    public void isLoading(boolean isLoading){
-        lblLoading.setVisible(isLoading);
-    }
-
     /**
      * Null or empty string hides the error message
      * @param errorText
@@ -175,16 +158,12 @@ public class ConnectionSettingsComponent implements HasComponent {
 
     public void setConnectionStatusSuccessLabel(){
         lblConnectionStatus.setVisible(true);
-        lblConnectionStatus.setForeground(Color.GREEN);
+        lblConnectionStatus.setForeground(new Color(0,133,0));
         lblConnectionStatus.setText("Connection successful.");
     }
 
     public void setConnectionStatusLabel(boolean isVisible){
         lblConnectionStatus.setVisible(isVisible);
-    }
-
-    private void setLblOrHide(JLabel lbl, String text){
-
     }
 
 }
