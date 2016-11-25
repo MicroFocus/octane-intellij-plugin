@@ -60,7 +60,7 @@ public class IdePersistentConnectionSettingsProvider extends BasicConnectionSett
     public void loadState(Element state) {
         ConnectionSettings connectionSettings = new ConnectionSettings();
 
-        if(state.getAttribute(USER_TAG) != null) {
+        if(state.getAttribute(URL_TAG) != null) {
             connectionSettings.setBaseUrl(state.getAttributeValue(URL_TAG));
         } else{
             connectionSettings.setBaseUrl("");
