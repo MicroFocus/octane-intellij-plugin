@@ -3,17 +3,11 @@ package com.hpe.adm.octane.ideplugins.services.util;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
 import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
 
-
 import java.net.URL;
 
-import static com.hpe.adm.octane.ideplugins.intellij.util.Constants.CORRECT_URL_FORMAT_MESSAGE;
 import static com.hpe.adm.octane.ideplugins.intellij.util.Constants.INVALID_URL_FORMAT_MESSAGE;
 
 public class UrlParser {
-
-    // Only works for a html enabled JLabel,
-    // TODO: use error codes or subtypes of ServiceException instead of passing a message
-    private static final String LINE_BREAK = "<br>";
 
     public static ConnectionSettings resolveConnectionSettings(String url, String userName, String password) throws ServiceException {
 
@@ -27,15 +21,11 @@ public class UrlParser {
                 throw new Exception();
             }
         } catch (Exception ex){
-            throw new ServiceException(INVALID_URL_FORMAT_MESSAGE
-                    + LINE_BREAK
-                    + CORRECT_URL_FORMAT_MESSAGE);
+            throw new ServiceException(INVALID_URL_FORMAT_MESSAGE);
         }
 
         if (null == siteUrl.getQuery()) {
-            throw new ServiceException("Missing query parameters."
-                    + LINE_BREAK
-                    + CORRECT_URL_FORMAT_MESSAGE);
+            throw new ServiceException("Missing query parameters.");
         } else {
 
             try {
@@ -67,9 +57,7 @@ public class UrlParser {
 
 
             } catch (Exception ex) {
-                throw new ServiceException("Could not get sharedspace/workspace ids from URL. "
-                        + LINE_BREAK
-                        + CORRECT_URL_FORMAT_MESSAGE);
+                throw new ServiceException("Could not get sharedspace/workspace ids from URL. ");
             }
 
         }

@@ -7,7 +7,6 @@ import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
 import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.util.SdkUtil;
-import org.apache.commons.lang.StringUtils;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -37,29 +36,11 @@ public class TestService extends ServiceBase{
         }
     }
 
-    private void validateUsernameAndPassword(ConnectionSettings connectionSettings) throws ServiceException {
-        StringBuilder errorMessageBuilder = new StringBuilder();
-        if(StringUtils.isEmpty(connectionSettings.getUserName())){
-            errorMessageBuilder.append("Username cannot be blank.");
-        }
-        if(errorMessageBuilder.length() != 0){
-            errorMessageBuilder.append(" ");
-        }
-        if(StringUtils.isEmpty(connectionSettings.getPassword())){
-            errorMessageBuilder.append("Password cannot be blank.");
-        }
-
-        if(errorMessageBuilder.length() != 0){
-            throw new ServiceException(errorMessageBuilder.toString());
-        }
-    }
-
     /**
+     * Attempts to connect to given url, basic validations should be done first
      * Check if the current connection settings are valid
      */
     public void testConnection(ConnectionSettings connectionSettings) throws ServiceException {
-
-        validateUsernameAndPassword(connectionSettings);
 
         //Try basic http connection first
         testHttpConnection(connectionSettings);

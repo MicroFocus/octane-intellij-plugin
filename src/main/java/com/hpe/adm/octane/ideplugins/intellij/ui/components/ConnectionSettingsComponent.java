@@ -1,6 +1,7 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.components;
 
 import com.hpe.adm.octane.ideplugins.intellij.ui.HasComponent;
+import com.hpe.adm.octane.ideplugins.intellij.util.Constants;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
 import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
 import com.hpe.adm.octane.ideplugins.services.util.UrlParser;
@@ -92,7 +93,7 @@ public class ConnectionSettingsComponent implements HasComponent {
                 setConnectionStatusLabelVisible(false);
             } catch (ServiceException ex) {
                 connectionSettings = new ConnectionSettings();
-                setConnectionStatusError(ex.getMessage());
+                setConnectionStatusError(ex.getMessage() + "<br>" + Constants.CORRECT_URL_FORMAT_MESSAGE);
             }
             setSharedspaceWorkspaceIds(connectionSettings.getSharedSpaceId(), connectionSettings.getWorkspaceId());
         } else {
@@ -145,7 +146,7 @@ public class ConnectionSettingsComponent implements HasComponent {
 
     /**
      * Re-enables the test connection button, sets error text for the label
-     * @param errorText
+     * @param errorText can be html
      */
     public void setConnectionStatusError(String errorText){
         lblConnectionStatus.setVisible(true);

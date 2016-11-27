@@ -2,6 +2,7 @@ package com.hpe.adm.octane.ideplugins.intellij.settings;
 
 import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.ui.components.ConnectionSettingsComponent;
+import com.hpe.adm.octane.ideplugins.intellij.util.Constants;
 import com.hpe.adm.octane.ideplugins.services.TestService;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
@@ -64,20 +65,13 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
         connectionSettingsView.setTestConnectionActionListener(event -> {
             //Clear previous message
             connectionSettingsView.setConnectionStatusLoading();
-
             new SwingWorker() {
                 @Override
                 protected Void doInBackground() throws Exception {
-                    try {
-                        testService.testConnection(getConnectionSettingsFromView());
-                        SwingUtilities.invokeLater(connectionSettingsView::setConnectionStatusSuccess);
-                    } catch (ServiceException ex){
-                        SwingUtilities.invokeLater(() ->  connectionSettingsView.setConnectionStatusError(ex.getMessage()));
-                    }
+                    testConnection();
                     return null;
                 }
             }.execute();
-
         });
 
         return connectionSettingsView.getComponent();
@@ -109,20 +103,61 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
             return;
         }
 
+        ConnectionSettings newConnectionSettings = testConnection();
+        //apply if valid
+        if(newConnectionSettings != null){
+            connectionSettingsProvider.setConnectionSettings(newConnectionSettings);
+            //remove the hash and remove extra stuff if successful
+            SwingUtilities.invokeLater(() -> connectionSettingsView.setServerUrl(UrlParser.createUrlFromConnectionSettings(newConnectionSettings)));
+            connectionSettingsView.setConnectionStatusSuccess();
+        }
+    }
+
+    /**
+     * Test the connection with the given info from the view, sets error labels
+     * @return ConnectionSettings if valid, null otherwise
+     */
+    private ConnectionSettings testConnection(){
         ConnectionSettings newConnectionSettings;
+
+        // Validation that does not require connection to the server,
+        // only this one shows and example for a correct message
         try {
             newConnectionSettings = getConnectionSettingsFromView();
-            testService.testConnection(newConnectionSettings);
-        } catch (ServiceException ex) {
-            connectionSettingsView.setConnectionStatusError(ex.getMessage());
-            return;
+        } catch (ServiceException ex){
+
+            final StringBuilder errorMessageBuilder = new StringBuilder();
+
+            errorMessageBuilder.append(ex.getMessage());
+            errorMessageBuilder.append("<br>");
+            errorMessageBuilder.append(Constants.CORRECT_URL_FORMAT_MESSAGE);
+
+            SwingUtilities.invokeLater(() ->  connectionSettingsView.setConnectionStatusError(errorMessageBuilder.toString()));
+
+            return null;
         }
 
-        //apply if valid
-        connectionSettingsProvider.setConnectionSettings(newConnectionSettings);
-        //remove the hash and remove extra stuff if successful
-        SwingUtilities.invokeLater(() -> connectionSettingsView.setServerUrl(UrlParser.createUrlFromConnectionSettings(newConnectionSettings)));
-        connectionSettingsView.setConnectionStatusSuccess();
+        //Validation of username and password
+        try {
+            validateUsernameAndPassword();
+        } catch (ServiceException ex) {
+            SwingUtilities.invokeLater(() ->  connectionSettingsView.setConnectionStatusError(ex.getMessage()));
+
+            return null;
+        }
+
+        //This will attempt a connection
+        try {
+            testService.testConnection(newConnectionSettings);
+            SwingUtilities.invokeLater(connectionSettingsView::setConnectionStatusSuccess);
+        } catch (ServiceException ex){
+            SwingUtilities.invokeLater(() ->  connectionSettingsView.setConnectionStatusError(ex.getMessage()));
+
+            return null;
+        }
+
+        //it's valid! yay
+        return newConnectionSettings;
     }
 
 
@@ -140,6 +175,23 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
         return StringUtils.isEmpty(connectionSettingsView.getServerUrl()) &&
                 StringUtils.isEmpty(connectionSettingsView.getUserName()) &&
                 StringUtils.isEmpty(connectionSettingsView.getPassword());
+    }
+
+    private void validateUsernameAndPassword() throws ServiceException {
+        StringBuilder errorMessageBuilder = new StringBuilder();
+        if(StringUtils.isEmpty(connectionSettingsView.getUserName())){
+            errorMessageBuilder.append("Username cannot be blank.");
+        }
+        if(errorMessageBuilder.length() != 0){
+            errorMessageBuilder.append(" ");
+        }
+        if(StringUtils.isEmpty(connectionSettingsView.getPassword())){
+            errorMessageBuilder.append("Password cannot be blank.");
+        }
+
+        if(errorMessageBuilder.length() != 0){
+            throw new ServiceException(errorMessageBuilder.toString());
+        }
     }
 
     @Override
