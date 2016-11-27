@@ -2,7 +2,6 @@ package com.hpe.adm.octane.ideplugins.services.util;
 
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
 import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.validator.UrlValidator;
 
 import java.net.URL;
@@ -80,14 +79,7 @@ public class UrlParser {
 
         }
 
-        if(StringUtils.isEmpty(userName)){
-            throw new ServiceException("Username cannot be blank.");
-        }
         connectionSettings.setUserName(userName);
-
-        if(StringUtils.isEmpty(userName)){
-            throw new ServiceException("Password cannot be blank.");
-        }
         connectionSettings.setPassword(password);
 
         return connectionSettings;
