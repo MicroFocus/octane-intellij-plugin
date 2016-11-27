@@ -63,13 +63,21 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
 
         connectionSettingsView.setTestConnectionActionListener(event -> {
             //Clear previous message
-            connectionSettingsView.setConnectionStatusLabel(false);
-            try {
-                testService.testConnection(getConnectionSettingsFromView());
-                connectionSettingsView.setConnectionStatusSuccessLabel();
-            } catch (ServiceException ex){
-                connectionSettingsView.setConnectionStatusErrorLabel(ex.getMessage());
-            }
+            connectionSettingsView.setConnectionStatusLoading();
+
+            new SwingWorker() {
+                @Override
+                protected Void doInBackground() throws Exception {
+                    try {
+                        testService.testConnection(getConnectionSettingsFromView());
+                        SwingUtilities.invokeLater(connectionSettingsView::setConnectionStatusSuccess);
+                    } catch (ServiceException ex){
+                        SwingUtilities.invokeLater(() ->  connectionSettingsView.setConnectionStatusError(ex.getMessage()));
+                    }
+                    return null;
+                }
+            }.execute();
+
         });
 
         return connectionSettingsView.getComponent();
@@ -95,9 +103,6 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
 
     @Override
     public void apply() throws ConfigurationException {
-        //Clear previous message
-        connectionSettingsView.setConnectionStatusLabel(false);
-
         //If the connection settings are empty then save them, only way to clear and save
         if(isViewConnectionSettingsEmpty()){
             connectionSettingsProvider.setConnectionSettings(new ConnectionSettings());
@@ -109,13 +114,15 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
             newConnectionSettings = getConnectionSettingsFromView();
             testService.testConnection(newConnectionSettings);
         } catch (ServiceException ex) {
-            connectionSettingsView.setConnectionStatusErrorLabel(ex.getMessage());
+            connectionSettingsView.setConnectionStatusError(ex.getMessage());
             return;
         }
 
         //apply if valid
         connectionSettingsProvider.setConnectionSettings(newConnectionSettings);
-        connectionSettingsView.setConnectionStatusSuccessLabel();
+        //remove the hash and remove extra stuff if successful
+        SwingUtilities.invokeLater(() -> connectionSettingsView.setServerUrl(UrlParser.createUrlFromConnectionSettings(newConnectionSettings)));
+        connectionSettingsView.setConnectionStatusSuccess();
     }
 
 
@@ -125,9 +132,6 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
                 connectionSettingsView.getServerUrl(),
                 connectionSettingsView.getUserName(),
                 connectionSettingsView.getPassword());
-
-        //remove the hash and remove extra stuff if successful
-        connectionSettingsView.setServerUrl(UrlParser.createUrlFromConnectionSettings(connectionSettings));
 
         return connectionSettings;
     }

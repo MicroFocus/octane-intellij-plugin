@@ -4,6 +4,7 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.HasComponent;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
 import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
 import com.hpe.adm.octane.ideplugins.services.util.UrlParser;
+import com.intellij.util.ui.UIUtil;
 import org.apache.commons.lang.StringUtils;
 
 import javax.swing.*;
@@ -75,6 +76,7 @@ public class ConnectionSettingsComponent implements HasComponent {
             setServerUrl("");
             txtFieldUserName.setText("");
             passField.setText("");
+            lblConnectionStatus.setText("");
         });
     }
 
@@ -87,10 +89,10 @@ public class ConnectionSettingsComponent implements HasComponent {
             ConnectionSettings connectionSettings;
             try {
                 connectionSettings = UrlParser.resolveConnectionSettings(serverUrl, getUserName(), getPassword());
-                setConnectionStatusLabel(false);
+                setConnectionStatusLabelVisible(false);
             } catch (ServiceException ex) {
                 connectionSettings = new ConnectionSettings();
-                setConnectionStatusErrorLabel(ex.getMessage());
+                setConnectionStatusError(ex.getMessage());
             }
             setSharedspaceWorkspaceIds(connectionSettings.getSharedSpaceId(), connectionSettings.getWorkspaceId());
         } else {
@@ -142,25 +144,47 @@ public class ConnectionSettingsComponent implements HasComponent {
     }
 
     /**
-     * Null or empty string hides the error message
+     * Re-enables the test connection button, sets error text for the label
      * @param errorText
      */
-    public void setConnectionStatusErrorLabel(String errorText){
+    public void setConnectionStatusError(String errorText){
         lblConnectionStatus.setVisible(true);
+        setTestConnectionButtonEnabled(true);
         lblConnectionStatus.setForeground(Color.RED);
         if(!StringUtils.isEmpty(errorText)){
             lblConnectionStatus.setText("<html>"+errorText+"</html>");
         }
     }
 
-    public void setConnectionStatusSuccessLabel(){
+    /**
+     * Re-enables the test connection button, sets success test for the label
+     */
+    public void setConnectionStatusSuccess(){
         lblConnectionStatus.setVisible(true);
+        setTestConnectionButtonEnabled(true);
         lblConnectionStatus.setForeground(new Color(0,133,0));
         lblConnectionStatus.setText("Connection successful.");
     }
 
-    public void setConnectionStatusLabel(boolean isVisible){
+    /**
+     * Disables the test connection button, sets a waiting message for the label
+     */
+    public void setConnectionStatusLoading(){
+        lblConnectionStatus.setVisible(true);
+        lblConnectionStatus.setForeground(UIUtil.getLabelForeground());
+        lblConnectionStatus.setText("Testing connection, please wait.");
+        btnTest.setEnabled(false);
+    }
+
+    public void setConnectionStatusLabelVisible(boolean isVisible){
         lblConnectionStatus.setVisible(isVisible);
+    }
+
+    public void setTestConnectionButtonEnabled(boolean isEnabled){
+        if(btnTest.isEnabled()!=isEnabled) {
+            btnTest.setEnabled(isEnabled);
+            btnTest.requestFocus();
+        }
     }
 
 }
