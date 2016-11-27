@@ -2,7 +2,7 @@ package com.hpe.adm.octane.ideplugins.services.util;
 
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
 import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
-import org.apache.commons.validator.UrlValidator;
+
 
 import java.net.URL;
 
@@ -19,21 +19,16 @@ public class UrlParser {
 
         ConnectionSettings connectionSettings = new ConnectionSettings();
 
-        //Try to validate the url before
-        String[] schemes = {"http", "https"};
-        UrlValidator urlValidator = new UrlValidator(schemes);
-        if (!urlValidator.isValid(url)) {
-            throw new ServiceException(INVALID_URL_FORMAT_MESSAGE
-                    + LINE_BREAK
-                    + CORRECT_URL_FORMAT_MESSAGE);
-        }
-
-        //This check is not redundant, above does some extra things
         URL siteUrl;
         try {
             siteUrl = new URL(url);
+            siteUrl.toURI(); // does the extra checking required for validation of URI
+            if(!"http".equals(siteUrl.getProtocol()) && !"https".equals(siteUrl.getProtocol())){
+                throw new Exception();
+            }
         } catch (Exception ex){
             throw new ServiceException(INVALID_URL_FORMAT_MESSAGE
+                    + LINE_BREAK
                     + CORRECT_URL_FORMAT_MESSAGE);
         }
 
