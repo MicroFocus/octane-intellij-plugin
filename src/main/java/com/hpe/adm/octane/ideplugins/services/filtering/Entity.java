@@ -6,10 +6,16 @@ import com.hpe.adm.nga.sdk.Query;
  * Constants for sdk query builder use
  */
 public enum Entity {
+
     DEFECT("defects"),
+
     WORK_ITEM("work_items"),
     STORY(Entity.WORK_ITEM, "story"),
-    TEST("tests");
+
+    TEST("tests"),
+    MANUAL_TEST(Entity.TEST, "test_manual"),
+
+    TASK("tasks");
 
     //This is the name of the entity passed to the sdk, used for the rest, call, usually plural
     private String apiEntityName;

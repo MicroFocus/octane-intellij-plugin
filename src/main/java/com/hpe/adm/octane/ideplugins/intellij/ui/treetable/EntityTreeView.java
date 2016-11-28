@@ -1,0 +1,113 @@
+package com.hpe.adm.octane.ideplugins.intellij.ui.treetable;
+
+import com.hpe.adm.octane.ideplugins.intellij.ui.View;
+import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.PacmanLoadingWidget;
+import com.intellij.ui.components.JBScrollPane;
+import com.intellij.ui.treeStructure.Tree;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
+import java.awt.event.ActionListener;
+
+public class EntityTreeView implements View {
+
+    private JPanel rootPanel;
+
+    private Tree tree;
+    private JBScrollPane scrollPane;
+
+    private PacmanLoadingWidget loadingWidget = new PacmanLoadingWidget("Loading...");
+
+    private JButton refreshButton;
+
+    public EntityTreeView(){
+
+        tree = new Tree();
+        tree.setRootVisible(false);
+        tree.setCellRenderer(new EntityTreeCellRenderer());
+
+        //Add it to the root panel
+        rootPanel = new JPanel(new BorderLayout(0,0));
+        scrollPane = new JBScrollPane();
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
+
+        rootPanel.add(scrollPane, BorderLayout.CENTER);
+        scrollPane.setViewportView(tree);
+
+        //Toolbar
+        rootPanel.add(createToolbar(), BorderLayout.EAST);
+
+    }
+
+    private JPanel createToolbar(){
+        JPanel toolbar = new JPanel();
+        toolbar.setBorder(new EmptyBorder(22, 0, 22, 0));
+        toolbar.setLayout(new BoxLayout(toolbar, BoxLayout.Y_AXIS));
+
+        refreshButton = new JButton("R");
+        toolbar.add(refreshButton);
+
+        JButton expandAllButton = new JButton("E");
+        expandAllButton.addActionListener(event -> {
+            expandAllNodes(tree);
+        });
+        toolbar.add(expandAllButton);
+        JButton collapseAllButton = new JButton("C");
+        collapseAllButton.addActionListener(event -> {
+            collapseAllNodes(tree);
+        });
+        toolbar.add(collapseAllButton);
+
+        return toolbar;
+    }
+
+    private void expandAllNodes(JTree tree) {
+        int j = tree.getRowCount();
+        int i = 0;
+        while(i < j) {
+            tree.expandRow(i);
+            i += 1;
+            j = tree.getRowCount();
+        }
+    }
+
+    private void collapseAllNodes(JTree tree) {
+        int j = tree.getRowCount();
+        int i = 0;
+        while (i < j) {
+            tree.collapseRow(i);
+            i += 1;
+            j = tree.getRowCount();
+        }
+    }
+
+    //TODO: create proper wrapped handler
+    public void addRefreshButtonActionListener(ActionListener l) {
+        refreshButton.addActionListener(l);
+    }
+
+    @Override
+    public JComponent getComponent() {
+        return rootPanel;
+    }
+
+    public void setLoading(boolean isLoading) {
+        SwingUtilities.invokeLater(() -> {
+            if (isLoading) {
+                rootPanel.remove(scrollPane);
+                rootPanel.add(loadingWidget, BorderLayout.CENTER);
+            } else {
+                rootPanel.remove(loadingWidget);
+                rootPanel.add(scrollPane);
+            }
+            rootPanel.revalidate();
+            rootPanel.repaint();
+        });
+    }
+
+    public void setTreeModel(EntityTreeModel model){
+        tree.setModel(model);
+    }
+
+}

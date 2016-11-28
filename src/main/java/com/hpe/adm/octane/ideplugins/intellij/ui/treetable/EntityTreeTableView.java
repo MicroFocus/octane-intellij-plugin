@@ -3,6 +3,7 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.treetable;
 import com.hpe.adm.octane.ideplugins.intellij.ui.View;
 import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.PacmanLoadingWidget;
 import org.jdesktop.swingx.JXTreeTable;
+import org.jdesktop.swingx.treetable.TreeTableModel;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -105,5 +106,9 @@ public class EntityTreeTableView implements View {
     @Override
     public JComponent getComponent() {
         return rootPanel;
+    }
+
+    public void setEntitiesTreeTableModel(TreeTableModel entityTreeTableModel){
+        entitiesTreeTable.setTreeTableModel(entityTreeTableModel);
     }
 }

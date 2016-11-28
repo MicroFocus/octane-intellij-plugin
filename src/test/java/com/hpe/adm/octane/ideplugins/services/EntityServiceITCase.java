@@ -23,10 +23,12 @@ public class EntityServiceITCase extends IntegrationTestBase{
     //@Ignore
     //TODO
     public void getSomeData() {
-        System.out.println(entityService.findEntities(Entity.STORY).size());
-        System.out.println(entityService.findEntities(Entity.DEFECT).size());
         System.out.println(entityService.findEntities(Entity.TEST).size());
+        System.out.println(entityService.findEntities(Entity.MANUAL_TEST).size());
     }
+
+    @Test
+    public void getSomeMetaData() {}
 
     @Test
     @Inject

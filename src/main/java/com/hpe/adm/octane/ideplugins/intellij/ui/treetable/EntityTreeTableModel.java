@@ -15,7 +15,7 @@ public class EntityTreeTableModel extends AbstractTreeTableModel {
 
     private final static String[] COLUMN_NAMES = {"group", "id", "name"};
 
-    private TreeMap<String, List<EntityModel>> groupedEntities;
+    private TreeMap<String, List<EntityModel>> groupedEntities = new TreeMap<>();
 
     public EntityTreeTableModel(){
         groupedEntities = new TreeMap<>();
@@ -31,8 +31,6 @@ public class EntityTreeTableModel extends AbstractTreeTableModel {
     }
 
     private void setGroupedEntities(Collection<EntityModel> entityModels, String groupByFieldName){
-        groupedEntities.clear();
-
         for(EntityModel entityModel : entityModels){
             String fieldValue = entityModel.getValue(groupByFieldName).getValue().toString();
             if(groupedEntities.get(fieldValue) == null){
@@ -40,7 +38,6 @@ public class EntityTreeTableModel extends AbstractTreeTableModel {
             }
             groupedEntities.get(fieldValue).add(entityModel);
         }
-
         modelSupport.fireNewRoot();
     }
 
