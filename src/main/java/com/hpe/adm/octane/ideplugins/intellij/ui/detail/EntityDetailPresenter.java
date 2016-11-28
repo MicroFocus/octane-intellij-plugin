@@ -34,7 +34,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
     public void setEntity(Long entityId){
         EntityModel entityModel = null;
         try {
-            entityModel = entityService.findEntity(Entity.DEFECT, 1033);//24068
+            entityModel = entityService.findEntity(Entity.DEFECT, 2031);//24068
         } catch (ServiceException e) {
             e.printStackTrace();
         }

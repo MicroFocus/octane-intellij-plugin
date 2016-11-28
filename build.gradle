@@ -29,9 +29,8 @@ sourceSets {
 }
 
 dependencies {
-
-
     compile group: 'com.hpe.adm.nga.sdk', name: 'sdk-src', version: '1.2.1-SNAPSHOT'
+    compile group: 'org.jsoup', name: 'jsoup', version: '1.8.3'
     compile('com.google.inject:guice:4.0') {
         exclude group: 'com.google.guava', module: 'guava'
     }
