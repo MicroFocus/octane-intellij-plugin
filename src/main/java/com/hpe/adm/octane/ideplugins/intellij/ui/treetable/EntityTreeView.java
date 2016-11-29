@@ -7,6 +7,7 @@ import com.intellij.ui.treeStructure.Tree;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -28,11 +29,13 @@ public class EntityTreeView implements View {
     public EntityTreeView(){
 
         tree = new Tree();
+        //tree.setUI(new FillingTreeUI());
+        //tree.setLargeModel(true);
         //Init with an empty model
         tree.setModel(new EntityTreeModel());
 
         tree.setRootVisible(false);
-        tree.setCellRenderer(new EntityTreeCellRenderer());
+        //tree.setCellRenderer(new EntityTreeCellRenderer());
         tree.addMouseListener(createTreeMouseListener());
 
         //Add it to the root panel
@@ -139,7 +142,7 @@ public class EntityTreeView implements View {
         });
     }
 
-    public void setTreeModel(EntityTreeModel model){
+    public void setTreeModel(TreeModel model){
         tree.setModel(model);
     }
 

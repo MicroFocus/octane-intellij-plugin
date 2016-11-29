@@ -38,7 +38,7 @@ public class EntityTreeTableModel extends AbstractTreeTableModel {
             }
             groupedEntities.get(fieldValue).add(entityModel);
         }
-        modelSupport.fireNewRoot();
+        //should fire an event, not sure which one
     }
 
     public int getColumnCount() {
