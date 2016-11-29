@@ -47,7 +47,10 @@ public class EntityServiceITCase extends IntegrationTestBase{
     }
 
     @Test
-    public void getSomeMetaData() {}
+    public void testGetMyWork(){
+        Collection<EntityModel> entityModels = entityService.getMyWork();
+        System.out.println(entityModels.size());
+    }
 
     @Test
     @Inject
