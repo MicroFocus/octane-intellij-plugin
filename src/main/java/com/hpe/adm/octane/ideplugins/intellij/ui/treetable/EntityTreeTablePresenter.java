@@ -11,14 +11,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by tothan on 11/22/2016.
- */
 public class EntityTreeTablePresenter implements Presenter<EntityTreeView>{
 
-    //EntityTreeTableModel treeTableModel = new EntityTreeTableModel();
-
     EntityTreeView entityTreeTableView;
+    EntityTreeModel entityTreeModel = new EntityTreeModel();
 
     @Inject
     EntityService entityService;
@@ -34,8 +30,8 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView>{
         map.put(Entity.TEST, new ArrayList<>());
         map.put(Entity.TASK, new ArrayList<>());
 
-        EntityTreeModel model = new EntityTreeModel(entityService.findEntities(map));
-        entityTreeTableView.setTreeModel(model);
+        entityTreeModel.setEntities(entityService.findEntities(map));
+
         /*
         //Async get
         SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
@@ -63,11 +59,11 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView>{
     @Inject
     public void setView(EntityTreeView entityTreeView) {
         this.entityTreeTableView = entityTreeView;
-        addHandlers(entityTreeView);
-    }
 
-    private void addHandlers(EntityTreeView view){
-        view.addRefreshButtonActionListener(event ->  refresh());
+        //start presenting
+        entityTreeTableView.setTreeModel(entityTreeModel);
+        entityTreeTableView.addRefreshButtonActionListener(event ->  refresh());
+        refresh();
     }
 
 }

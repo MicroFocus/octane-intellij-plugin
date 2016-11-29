@@ -7,8 +7,12 @@ import com.intellij.ui.treeStructure.Tree;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 public class EntityTreeView implements View {
 
@@ -24,8 +28,12 @@ public class EntityTreeView implements View {
     public EntityTreeView(){
 
         tree = new Tree();
+        //Init with an empty model
+        tree.setModel(new EntityTreeModel());
+
         tree.setRootVisible(false);
         tree.setCellRenderer(new EntityTreeCellRenderer());
+        tree.addMouseListener(createTreeMouseListener());
 
         //Add it to the root panel
         rootPanel = new JPanel(new BorderLayout(0,0));
@@ -37,7 +45,35 @@ public class EntityTreeView implements View {
 
         //Toolbar
         rootPanel.add(createToolbar(), BorderLayout.EAST);
+    }
 
+    private MouseListener createTreeMouseListener(){
+        MouseListener ml = new MouseAdapter() {
+            public void mousePressed(MouseEvent e) {
+
+                if (SwingUtilities.isRightMouseButton(e)) {
+
+                    int row = tree.getClosestRowForLocation(e.getX(), e.getY());
+                    tree.setSelectionRow(row);
+                    JPopupMenu popup = new JPopupMenu();
+                    popup.add(new JMenuItem("Icecream!"));
+                    popup.show(e.getComponent(), e.getX(), e.getY());
+
+                } else if (SwingUtilities.isLeftMouseButton(e)) {
+                    int selRow = tree.getRowForLocation(e.getX(), e.getY());
+                    TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
+
+                    if (selRow != -1) {
+                        if (e.getClickCount() == 1) {
+                            System.out.println("SINGLE CLICKKKKK!");
+                        } else if (e.getClickCount() == 2) {
+                            System.out.println("DDDDDOUBLE CLICKKKKK!");
+                        }
+                    }
+                }
+            }
+        };
+        return ml;
     }
 
     private JPanel createToolbar(){
@@ -49,14 +85,11 @@ public class EntityTreeView implements View {
         toolbar.add(refreshButton);
 
         JButton expandAllButton = new JButton("E");
-        expandAllButton.addActionListener(event -> {
-            expandAllNodes(tree);
-        });
+        expandAllButton.addActionListener(event -> expandAllNodes(tree));
         toolbar.add(expandAllButton);
+
         JButton collapseAllButton = new JButton("C");
-        collapseAllButton.addActionListener(event -> {
-            collapseAllNodes(tree);
-        });
+        collapseAllButton.addActionListener(event -> collapseAllNodes(tree));
         toolbar.add(collapseAllButton);
 
         return toolbar;
@@ -109,5 +142,11 @@ public class EntityTreeView implements View {
     public void setTreeModel(EntityTreeModel model){
         tree.setModel(model);
     }
+
+    public EntityTreeModel getTreeModel(){
+        return (EntityTreeModel) tree.getModel();
+    }
+
+
 
 }

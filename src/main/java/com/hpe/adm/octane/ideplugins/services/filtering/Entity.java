@@ -15,9 +15,9 @@ public enum Entity {
 
     TEST("tests", "test"),
     MANUAL_TEST(Entity.TEST, "test_manual"),
+    GHERKIN_TEST(Entity.TEST, "test_gherkin"),
 
     TASK("tasks", "task");
-
 
     //This is the name of the entity passed to the sdk, used for the rest, call, usually plural
     private String apiEntityName;

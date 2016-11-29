@@ -1,6 +1,7 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.treetable;
 
 import com.hpe.adm.nga.sdk.model.EntityModel;
+import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.intellij.util.ui.tree.AbstractTreeModel;
 
 import javax.swing.tree.TreePath;
@@ -11,46 +12,33 @@ public class EntityTreeModel extends AbstractTreeModel {
     private static final String ROOT = "root";
 
     public enum EntityCategory {
-        BACKLOG("Backlog", "story","defect"),
-        TASK("Tasks", "task"),
-        TEST("Tests", "test_automated", "gherkin_test", "test_manual");
+        BACKLOG("Backlog", Entity.STORY, Entity.DEFECT),
+        TASK("Tasks", Entity.TASK),
+        TEST("Tests", Entity.GHERKIN_TEST, Entity.MANUAL_TEST);
 
         private String name;
-        private List<String> subtypes = new ArrayList<>();
+        private List<Entity> entityTypes = new ArrayList<>();
 
-        EntityCategory(String name, String... subtypes){
+        EntityCategory(String name, Entity... entityTypes){
             this.name = name;
-            this.subtypes = Arrays.asList(subtypes);
+            this.entityTypes = Arrays.asList(entityTypes);
+        }
+
+        public List<Entity> getEntityTypes() {
+            return entityTypes;
         }
 
         public static EntityCategory getCategory(EntityModel entityModel){
-
-            String type = null;
-
-            //For subtypes
-            if(entityModel.getValue("subtype") != null){
-                type = entityModel.getValue("subtype").getValue().toString();
-            }
-            //For non subtype entities
-            else if(entityModel.getValue("type") != null){
-                type = entityModel.getValue("type").getValue().toString();
-            }
-
-            for(EntityCategory category : EntityCategory.values()){
-                if(category.getSubtypes().contains(type)){
+            for(EntityCategory category : EntityCategory.values()) {
+                if (category.getEntityTypes().contains(Entity.getEntityType(entityModel))) {
                     return category;
                 }
             }
-            System.out.println("Trying to add unsupported entity to the model: " + type );
             return null;
         }
 
         public String getName() {
             return name;
-        }
-
-        public List<String> getSubtypes() {
-            return subtypes;
         }
     }
 
