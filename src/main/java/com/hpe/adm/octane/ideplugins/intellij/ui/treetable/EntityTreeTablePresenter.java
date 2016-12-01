@@ -36,7 +36,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView>{
                     SwingUtilities.invokeLater(() -> entityTreeTableView.setTreeModel(entityTreeModel));
                     return null;
                 } catch (Exception ex){
-                    System.err.print(ex);
+                    System.out.println(ex);
                     throw ex;
                 }
             }

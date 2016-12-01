@@ -39,8 +39,6 @@ public abstract class ServiceBase {
                     .sharedSpace(currentConnectionSettings.getSharedSpaceId())
                     .workSpace(currentConnectionSettings.getWorkspaceId())
                     .build();
-
-            currentUserId = getCurrentUserId(octane);
         }
 
         previousConnectionSettings = currentConnectionSettings;
@@ -69,6 +67,9 @@ public abstract class ServiceBase {
     }
 
     protected Long getCurrentUserId(){
+        if(currentUserId == -1){
+            currentUserId = getCurrentUserId(getOctane());
+        }
         return currentUserId;
     }
 
