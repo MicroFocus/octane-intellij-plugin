@@ -2,6 +2,7 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.treetable;
 
 import com.hpe.adm.octane.ideplugins.intellij.ui.View;
 import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.PacmanLoadingWidget;
+import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.tree.FillingTreeUI;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.treeStructure.Tree;
 
@@ -29,13 +30,13 @@ public class EntityTreeView implements View {
     public EntityTreeView(){
 
         tree = new Tree();
-        //tree.setUI(new FillingTreeUI());
-        //tree.setLargeModel(true);
+        tree.setUI(new FillingTreeUI());
+        tree.setLargeModel(true);
         //Init with an empty model
         tree.setModel(new EntityTreeModel());
 
         tree.setRootVisible(false);
-        //tree.setCellRenderer(new EntityTreeCellRenderer());
+        tree.setCellRenderer(new EntityTreeCellRenderer());
         tree.addMouseListener(createTreeMouseListener());
 
         //Add it to the root panel
