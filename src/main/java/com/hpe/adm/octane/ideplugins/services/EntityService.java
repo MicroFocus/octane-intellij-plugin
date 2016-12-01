@@ -5,7 +5,6 @@ import com.hpe.adm.nga.sdk.EntityList;
 import com.hpe.adm.nga.sdk.Query;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
-import com.hpe.adm.octane.ideplugins.services.exception.ServiceRuntimeException;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.filtering.Filter;
 
@@ -23,7 +22,7 @@ public class EntityService extends ServiceBase{
         };
 
         Query.QueryBuilder currentUserQuery = new Query.QueryBuilder("owner", Query::equalTo,
-                new Query.QueryBuilder("id", Query::equalTo, getCurrentUserId()));
+                new Query.QueryBuilder("id", Query::equalTo, currentUserId));
 
         Collection<EntityModel> result = new ArrayList<>();
 
@@ -61,26 +60,6 @@ public class EntityService extends ServiceBase{
             return entityList.get().query(queryBuilder.build()).execute();
         } else {
             return entityList.get().execute();
-        }
-    }
-
-    /**
-     * Well this is horrible, this method is needed because cross filtering work item owner by name does not work
-     * TODO: this call req rights that an ordaniry user might now have, need to fix the filtering or find another solution
-     * @return
-     */
-    private Long getCurrentUserId(){
-        String currentUser = connectionSettingsProvider.getConnectionSettings().getUserName();
-        EntityList entityList = getOctane().entityList(Entity.WORKSPACE_USER.getApiEntityName());
-        Collection<EntityModel> entityModels =
-                entityList.get().query(
-                        new Query.QueryBuilder("name", Query::equalTo, currentUser).build()).addFields("id")
-                        .execute();
-
-        if(entityModels.size()!=1){
-            throw new ServiceRuntimeException("Failed to retrieve logged in user id");
-        } else {
-            return Long.parseLong(entityModels.iterator().next().getValue("id").getValue().toString());
         }
     }
 
