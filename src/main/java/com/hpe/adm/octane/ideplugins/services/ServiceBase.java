@@ -11,6 +11,7 @@ public abstract class ServiceBase {
 
     private static ConnectionSettings previousConnectionSettings = new ConnectionSettings();
     private static Octane octane;
+
     @Inject
     private ConnectionSettingsProvider connectionSettingsProvider;
 
@@ -19,18 +20,18 @@ public abstract class ServiceBase {
      * Use this for all service methods that need an octane client
      * @return {@link Octane}
      */
-    protected Octane getOctane() {
+    protected synchronized Octane getOctane() {
 
         ConnectionSettings currentConnectionSettings = connectionSettingsProvider.getConnectionSettings();
 
-        if (!currentConnectionSettings.equals(previousConnectionSettings) || octane == null) {
+        //if (!currentConnectionSettings.equals(previousConnectionSettings) || octane == null) {
             octane = new Octane
                     .Builder(new UserAuthorisation(currentConnectionSettings.getUserName(), currentConnectionSettings.getPassword()))
                     .Server(currentConnectionSettings.getBaseUrl())
                     .sharedSpace(currentConnectionSettings.getSharedSpaceId())
                     .workSpace(currentConnectionSettings.getWorkspaceId())
                     .build();
-        }
+        //}
 
         previousConnectionSettings = currentConnectionSettings;
         return octane;
