@@ -2,12 +2,14 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.treetable;
 
 import com.hpe.adm.octane.ideplugins.intellij.ui.View;
 import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.PacmanLoadingWidget;
-import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.tree.FillingTreeUI;
+import com.hpe.adm.octane.ideplugins.intellij.util.Constants;
+import com.intellij.icons.AllIcons;
+import com.intellij.openapi.util.IconLoader;
+import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.treeStructure.Tree;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 import java.awt.*;
@@ -23,15 +25,11 @@ public class EntityTreeView implements View {
     private Tree tree;
     private JBScrollPane scrollPane;
 
-    private PacmanLoadingWidget loadingWidget = new PacmanLoadingWidget("Loading...");
-
     private JButton refreshButton;
 
     public EntityTreeView(){
 
         tree = new Tree();
-        tree.setUI(new FillingTreeUI());
-        tree.setLargeModel(true);
         //Init with an empty model
         tree.setModel(new EntityTreeModel());
 
@@ -80,23 +78,48 @@ public class EntityTreeView implements View {
         return ml;
     }
 
-    private JPanel createToolbar(){
+    private JComponent createToolbar(){
+
         JPanel toolbar = new JPanel();
-        toolbar.setBorder(new EmptyBorder(22, 0, 22, 0));
         toolbar.setLayout(new BoxLayout(toolbar, BoxLayout.Y_AXIS));
 
-        refreshButton = new JButton("R");
+        toolbar.setBorder(BorderFactory.createMatteBorder(0,1,0,0, JBColor.border()));
+
+        refreshButton = createButton(IconLoader.findIcon(Constants.IMG_REFRESH_ICON));
         toolbar.add(refreshButton);
 
-        JButton expandAllButton = new JButton("E");
+        JButton expandAllButton = createButton(AllIcons.Actions.Expandall);
         expandAllButton.addActionListener(event -> expandAllNodes(tree));
         toolbar.add(expandAllButton);
 
-        JButton collapseAllButton = new JButton("C");
+        JButton collapseAllButton = createButton(AllIcons.Actions.Collapseall);
         collapseAllButton.addActionListener(event -> collapseAllNodes(tree));
         toolbar.add(collapseAllButton);
 
         return toolbar;
+    }
+
+    private JButton createButton(Icon icon){
+        JButton button = new JButton(icon);
+        button.setBorderPainted(false);
+        button.setContentAreaFilled(false);
+        button.setOpaque(false);
+
+        button.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button.setBorderPainted(true);
+                button.setContentAreaFilled(true);
+                button.setOpaque(true);
+            }
+
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                button.setBorderPainted(false);
+                button.setContentAreaFilled(false);
+                button.setOpaque(false);
+            }
+        });
+
+        return button;
     }
 
     private void expandAllNodes(JTree tree) {
@@ -128,6 +151,8 @@ public class EntityTreeView implements View {
     public JComponent getComponent() {
         return rootPanel;
     }
+
+    private PacmanLoadingWidget loadingWidget = new PacmanLoadingWidget("Loading...");
 
     public void setLoading(boolean isLoading) {
         SwingUtilities.invokeLater(() -> {
