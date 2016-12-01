@@ -1,6 +1,7 @@
 package com.hpe.adm.octane.ideplugins.services;
 
 import com.hpe.adm.nga.sdk.Octane;
+import com.hpe.adm.nga.sdk.Query;
 import com.hpe.adm.nga.sdk.authorisation.UserAuthorisation;
 import com.hpe.adm.nga.sdk.exception.OctaneException;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
@@ -46,8 +47,9 @@ public class TestService extends ServiceBase{
         testHttpConnection(connectionSettings);
 
         try{
+            Query query = new Query.QueryBuilder("subtype", Query::equalTo, Entity.WORK_ITEM_ROOT.getSubtypeName()).build();
             //Try to fetch the backlog root
-            getOctane(connectionSettings).entityList(Entity.DEFECT.getApiEntityName()).get().execute();
+            getOctane(connectionSettings).entityList(Entity.WORK_ITEM_ROOT.getApiEntityName()).get().query(query).execute();
         } catch (Exception ex){
             String message = null;
 

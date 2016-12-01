@@ -12,6 +12,7 @@ public enum Entity {
 
     WORK_ITEM("work_items", "work_item"),
     STORY(Entity.WORK_ITEM, "story"),
+    WORK_ITEM_ROOT(Entity.WORK_ITEM, "work_item_root"),
 
     TEST("tests", "test"),
     MANUAL_TEST(Entity.TEST, "test_manual"),
@@ -20,6 +21,7 @@ public enum Entity {
     TASK("tasks", "task"),
 
     WORKSPACE_USER("workspace_users", "workspace_user");
+
 
     //This is the name of the entity passed to the sdk, used for the rest, call, usually plural
     private String apiEntityName;
