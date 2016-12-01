@@ -1,8 +1,10 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.treetable;
 
+import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.View;
 import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.PacmanLoadingWidget;
 import com.hpe.adm.octane.ideplugins.intellij.util.Constants;
+import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.JBColor;
@@ -20,6 +22,10 @@ import java.awt.event.MouseListener;
 
 public class EntityTreeView implements View {
 
+    public interface EntityDoubleClickHandler{
+        void entityDoubleClicked(Entity entityType, Long entityId, EntityModel model);
+    }
+
     private JPanel rootPanel;
 
     private Tree tree;
@@ -35,7 +41,7 @@ public class EntityTreeView implements View {
 
         tree.setRootVisible(false);
         tree.setCellRenderer(new EntityTreeCellRenderer());
-        tree.addMouseListener(createTreeMouseListener());
+        //tree.addMouseListener(createTreeMouseListener());
 
         //Add it to the root panel
         rootPanel = new JPanel(new BorderLayout(0,0));
@@ -47,6 +53,30 @@ public class EntityTreeView implements View {
 
         //Toolbar
         rootPanel.add(createToolbar(), BorderLayout.EAST);
+    }
+
+    public void addEntityDoubleClickHandler(EntityDoubleClickHandler handler){
+        tree.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent e) {
+                if (SwingUtilities.isLeftMouseButton(e)) {
+                    int selRow = tree.getRowForLocation(e.getX(), e.getY());
+                    TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
+                    if (selRow != -1 && e.getClickCount() == 2) {
+                        Object object = selPath.getLastPathComponent();
+                        if(object instanceof EntityModel) {
+                            try {
+                                EntityModel entityModel = (EntityModel) object;
+                                Entity entityType = Entity.getEntityType(entityModel);
+                                Long entityId = Long.parseLong(entityModel.getValue("id").getValue().toString());
+                                handler.entityDoubleClicked(entityType, entityId, entityModel);
+                            } catch (Exception ex){
+                                System.out.print(ex);
+                            }
+                        }
+                    }
+                }
+            }
+        });
     }
 
     private MouseListener createTreeMouseListener(){

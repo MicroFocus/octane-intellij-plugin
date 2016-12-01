@@ -63,4 +63,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView>{
         refresh();
     }
 
+    public void addEntityDoubleClickHandler(EntityTreeView.EntityDoubleClickHandler handler) {
+        getView().addEntityDoubleClickHandler(handler);
+    }
 }

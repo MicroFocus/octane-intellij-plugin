@@ -7,6 +7,7 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.EntityDetailPresenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeTablePresenter;
 import com.hpe.adm.octane.ideplugins.services.DownloadScriptService;
+import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.filtering.Filter;
 import com.intellij.ide.DataManager;
 import com.intellij.ide.actions.OpenProjectFileChooserDescriptor;
@@ -42,10 +43,11 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
     List<EntityDetailPresenter> detailPresenters = new ArrayList<>();
     List<EntityTreeTablePresenter> treeTablePresenters = new ArrayList<>();
 
-    public void openMyWorkTab(String tabName) {
+    public EntityTreeTablePresenter openMyWorkTab(String tabName) {
         EntityTreeTablePresenter presenter = entityTreeTablePresenterProvider.get();
         treeTablePresenters.add(presenter);
         tabbedPaneView.addTab(tabName, presenter.getView().getComponent());
+        return presenter;
     }
 
     public void openDetailTab(EntityModel entityModel) {
@@ -71,8 +73,10 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
     public void setView(TabbedPaneView tabbedPaneView) {
         this.tabbedPaneView = tabbedPaneView;
 
-        //open test tabs
-        openMyWorkTab("My work");
+        //open test entity tree view
+        EntityTreeTablePresenter presenter = openMyWorkTab("My work");
+        presenter.addEntityDoubleClickHandler((entityType, entityId, model) -> openDummyDetailTab(entityType, model));
+
         openDetailTab(null);
         openTestTab(1003);
     }
@@ -127,4 +131,11 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
         });
         tabbedPaneView.addTab("TEST TAB", panel);
     }
+
+    private void openDummyDetailTab(Entity entity, EntityModel entityModel){
+        //assume it has a name at least
+        String name = entity.name() + ": " + entityModel.getValue("name").getValue().toString();
+        tabbedPaneView.addTab(name, new JLabel(entityModel.toString()));
+    }
+
 }
