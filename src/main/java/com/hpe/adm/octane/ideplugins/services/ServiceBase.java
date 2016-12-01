@@ -13,15 +13,12 @@ import com.hpe.adm.octane.ideplugins.services.exception.ServiceRuntimeException;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 
 import java.util.Collection;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 public abstract class ServiceBase {
 
     private static ConnectionSettings previousConnectionSettings = new ConnectionSettings();
     private static Octane octane;
-    protected long currentUserId;
-    protected final Lock _mutex = new ReentrantLock(true);
+    private long currentUserId = -1;
 
     @Inject
     private ConnectionSettingsProvider connectionSettingsProvider;
@@ -53,7 +50,7 @@ public abstract class ServiceBase {
 
     /**
      * Well this is horrible, this method is needed because cross filtering work item owner by name does not work
-     * TODO: this call req rights that an ordaniry user might now have, need to fix the filtering or find another solution
+     * TODO: this call req rights that an ordinary user might now have, need to fix the filtering or find another solution
      * @return
      */
     private Long getCurrentUserId(Octane octane){
@@ -71,6 +68,8 @@ public abstract class ServiceBase {
         }
     }
 
-
+    protected Long getCurrentUserId(){
+        return currentUserId;
+    }
 
 }

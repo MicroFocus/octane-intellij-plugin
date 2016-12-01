@@ -22,7 +22,7 @@ public class EntityService extends ServiceBase{
         };
 
         Query.QueryBuilder currentUserQuery = new Query.QueryBuilder("owner", Query::equalTo,
-                new Query.QueryBuilder("id", Query::equalTo, currentUserId));
+                new Query.QueryBuilder("id", Query::equalTo, getCurrentUserId()));
 
         Collection<EntityModel> result = new ArrayList<>();
 
