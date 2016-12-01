@@ -116,7 +116,7 @@ public class EntityTreeModel extends AbstractTreeModel {
            return false;
         }
         else if(node instanceof EntityCategory){
-            return false;
+            return groupedEntities.get(node) == null || groupedEntities.get(node).size() == 0;
         }
         return true;
     }
