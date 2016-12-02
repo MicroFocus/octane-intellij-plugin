@@ -1,75 +1,71 @@
 package com.hpe.adm.octane.ideplugins.services;
 
-import com.hpe.adm.nga.sdk.EntityList;
+import com.hpe.adm.nga.sdk.Octane;
 import com.hpe.adm.nga.sdk.Query;
-import com.hpe.adm.nga.sdk.model.EntityModel;
+import com.hpe.adm.nga.sdk.authorisation.UserAuthorisation;
+import com.hpe.adm.nga.sdk.exception.OctaneException;
+import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
+import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
-import com.hpe.adm.octane.ideplugins.services.filtering.Filter;
+import com.hpe.adm.octane.ideplugins.services.util.SdkUtil;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.UnknownHostException;
 
 public class TestService extends ServiceBase{
 
-    /**
-     * All filters have && between them, used for simple filtering
-     * @param entity
-     * @param filters
-     * @return
-     */
-    public Collection<EntityModel> findEntities(Entity entity, Filter... filters){
-        EntityList entityList = getOctane().entityList(entity.getApiEntityName());
+    public Octane getOctane(ConnectionSettings connectionSettings){
+        return new Octane
+                .Builder(new UserAuthorisation(connectionSettings.getUserName(), connectionSettings.getPassword()))
+                .Server(connectionSettings.getBaseUrl())
+                .sharedSpace(connectionSettings.getSharedSpaceId())
+                .workSpace(connectionSettings.getWorkspaceId())
+                .build();
+    }
 
-        Query.QueryBuilder queryBuilder = null;
-
-        if(entity.isSubtype()){
-            queryBuilder = entity.createMatchSubtypeQueryBuilder();
-        }
-
-        for(Filter filter : filters){
-            if(queryBuilder == null) {
-                queryBuilder = filter.createQueryBuilder();
-            } else {
-                queryBuilder = queryBuilder.and(filter.createQueryBuilder());
+    private void testHttpConnection(ConnectionSettings connectionSettings) throws ServiceException {
+        try {
+            HttpURLConnection connection = (HttpURLConnection) new URL(connectionSettings.getBaseUrl()).openConnection();
+            connection.setRequestMethod("HEAD");
+            int responseCode = connection.getResponseCode();
+            if (responseCode != 200) {
+                // Not OK.
             }
-        }
-
-        if(queryBuilder != null){
-            return entityList.get().query(queryBuilder.build()).execute();
-        } else {
-            return entityList.get().execute();
+        } catch (Exception ex){
+            throw new ServiceException("HTTP connection to url: " + connectionSettings.getBaseUrl() + " failed.");
         }
     }
 
     /**
-     * TODO: this method is really inefficient for subtypes
-     * Can return multiple entity types
-     * @param entityFilters
-     * @return
-     */
-    public Collection<EntityModel> findEntities(Map<Entity, List<Filter>> entityFilters){
-        Collection<EntityModel> result = new ArrayList<>();
-
-        for(Entity entity : entityFilters.keySet()){
-            result.addAll(findEntities(entity, entityFilters.get(entity).toArray(new Filter[]{})));
-        }
-
-        return result;
-    }
-
-    /**
+     * Attempts to connect to given url, basic validations should be done first
      * Check if the current connection settings are valid
      */
-    public void testConnection() throws Exception {
-        //Try to build an nga client(will check auth), also try to a query to see if the shared+workspace are valid
+    public void testConnection(ConnectionSettings connectionSettings) throws ServiceException {
+
+        //Try basic http connection first
+        testHttpConnection(connectionSettings);
+
         try{
-            findEntities(Entity.WORK_ITEM);
+            Query query = new Query.QueryBuilder("subtype", Query::equalTo, Entity.WORK_ITEM_ROOT.getSubtypeName()).build();
+            //Try to fetch the backlog root
+            getOctane(connectionSettings).entityList(Entity.WORK_ITEM_ROOT.getApiEntityName()).get().query(query).execute();
         } catch (Exception ex){
-            throw new Exception(ex);
+            String message = null;
+
+            if(ex instanceof OctaneException){
+                message = SdkUtil.getMessageFromOctaneException((OctaneException)ex);
+            }
+            else if(ex instanceof UnknownHostException){
+                message = "Failed to connect to host: " + ex.getMessage();
+            }
+            //Default
+            if(message == null) {
+                message = ex.getMessage();
+            }
+
+            throw new ServiceException(message, ex);
         }
     }
-
 
 }

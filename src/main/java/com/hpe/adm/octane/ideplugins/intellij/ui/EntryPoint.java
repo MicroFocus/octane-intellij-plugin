@@ -23,9 +23,6 @@ public class EntryPoint implements ToolWindowFactory {
     private TestService testService;
 
     @Inject
-    private MainPresenter mainPresenter;
-
-    @Inject
     private ConnectionSettingsProvider connectionSettingsProvider;
 
     @Override
@@ -36,9 +33,9 @@ public class EntryPoint implements ToolWindowFactory {
 
         Runnable mainToolWindowContentControl = () -> {
             try{
-                testService.testConnection();
-                //TODO: this view is not reloaded when the settings change
+                testService.testConnection(connectionSettingsProvider.getConnectionSettings());
                 //In case the connection is valid show a generalView at the start
+                MainPresenter mainPresenter = PluginModule.getInstance(MainPresenter.class);
                 setContent(mainPresenter.getView());
 
             } catch (Exception ex){

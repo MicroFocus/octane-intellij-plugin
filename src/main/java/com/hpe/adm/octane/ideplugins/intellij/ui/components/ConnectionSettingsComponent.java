@@ -1,15 +1,17 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.components;
 
-import com.google.inject.Inject;
 import com.hpe.adm.octane.ideplugins.intellij.ui.HasComponent;
-import com.hpe.adm.octane.ideplugins.intellij.util.UrlParser;
-import com.hpe.adm.octane.ideplugins.services.TestService;
+import com.hpe.adm.octane.ideplugins.intellij.util.Constants;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
+import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
+import com.hpe.adm.octane.ideplugins.services.util.UrlParser;
+import com.intellij.util.ui.UIUtil;
 import org.apache.commons.lang.StringUtils;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -22,35 +24,23 @@ public class ConnectionSettingsComponent implements HasComponent {
     private static final String EMPTY_SERVER_URL_TEXT = "Copy paste your Octane URL from the browser here...";
     private static final String EMPTY_SHAREDSPACE_WORKSPACE_URL_TEXT = "Retrieved from server URL";
 
-    @Inject
-    private TestService testService;
-
     private JPanel rootPanel;
-    private JLabel lblServerUrl;
     private JTextField txtFieldServerUrl;
-    private JLabel lblWorkspace;
     private JTextField txtFieldWorkspace;
-    private JLabel lblUserName;
     private JTextField txtFieldUserName;
-    private JLabel lblPassword;
     private JPasswordField passField;
     private JButton btnTest;
 
-    private JLabel lblSharedSpaceUrl;
     private JTextField txtFieldSharedSpace;
 
-    private JLabel lblLoading;
-
-    @Inject
-    private ConnectionSettings connectionSettings;
+    private JLabel lblConnectionStatus;
+    private JButton btnClearSettings;
 
     public ConnectionSettingsComponent() {
 
         //Default placeholder
         txtFieldSharedSpace.setText(EMPTY_SHAREDSPACE_WORKSPACE_URL_TEXT);
         txtFieldWorkspace.setText(EMPTY_SHAREDSPACE_WORKSPACE_URL_TEXT);
-
-        lblLoading.setVisible(false);
 
         txtFieldServerUrl.getDocument().addDocumentListener(new DocumentListener() {
             @Override
@@ -83,17 +73,37 @@ public class ConnectionSettingsComponent implements HasComponent {
             }
         });
 
+        btnClearSettings.addActionListener((event) -> {
+            setServerUrl("");
+            txtFieldUserName.setText("");
+            passField.setText("");
+            lblConnectionStatus.setText("");
+        });
     }
 
+    /**
+     * Parses
+     * @param serverUrl
+     */
     private void setFieldsFromServerUrl(String serverUrl) {
         if(!StringUtils.isEmpty(serverUrl) && !EMPTY_SERVER_URL_TEXT.equals(serverUrl)) {
-            ConnectionSettings connectionSettings = UrlParser.resolveConnectionSettings(serverUrl, getUserName(), getPassword());
+            ConnectionSettings connectionSettings;
+            try {
+                connectionSettings = UrlParser.resolveConnectionSettings(serverUrl, getUserName(), getPassword());
+                setConnectionStatusLabelVisible(false);
+            } catch (ServiceException ex) {
+                connectionSettings = new ConnectionSettings();
+                setConnectionStatusError(ex.getMessage() + "<br>" + Constants.CORRECT_URL_FORMAT_MESSAGE);
+            }
             setSharedspaceWorkspaceIds(connectionSettings.getSharedSpaceId(), connectionSettings.getWorkspaceId());
+        } else {
+            setSharedspaceWorkspaceIds(null, null);
         }
     }
 
     @Override
     public JComponent getComponent(){
+        rootPanel.setBorder(BorderFactory.createEmptyBorder());
         return rootPanel;
     }
 
@@ -134,8 +144,48 @@ public class ConnectionSettingsComponent implements HasComponent {
         btnTest.addActionListener(actionListener);
     }
 
-    public void isLoading(boolean isLoading){
-        lblLoading.setVisible(isLoading);
+    /**
+     * Re-enables the test connection button, sets error text for the label
+     * @param errorText can be html
+     */
+    public void setConnectionStatusError(String errorText){
+        lblConnectionStatus.setVisible(true);
+        setTestConnectionButtonEnabled(true);
+        lblConnectionStatus.setForeground(Color.RED);
+        if(!StringUtils.isEmpty(errorText)){
+            lblConnectionStatus.setText("<html>"+errorText+"</html>");
+        }
+    }
+
+    /**
+     * Re-enables the test connection button, sets success test for the label
+     */
+    public void setConnectionStatusSuccess(){
+        lblConnectionStatus.setVisible(true);
+        setTestConnectionButtonEnabled(true);
+        lblConnectionStatus.setForeground(new Color(0,133,0));
+        lblConnectionStatus.setText("Connection successful.");
+    }
+
+    /**
+     * Disables the test connection button, sets a waiting message for the label
+     */
+    public void setConnectionStatusLoading(){
+        lblConnectionStatus.setVisible(true);
+        lblConnectionStatus.setForeground(UIUtil.getLabelForeground());
+        lblConnectionStatus.setText("Testing connection, please wait.");
+        btnTest.setEnabled(false);
+    }
+
+    public void setConnectionStatusLabelVisible(boolean isVisible){
+        lblConnectionStatus.setVisible(isVisible);
+    }
+
+    public void setTestConnectionButtonEnabled(boolean isEnabled){
+        if(btnTest.isEnabled()!=isEnabled) {
+            btnTest.setEnabled(isEnabled);
+            btnTest.requestFocus();
+        }
     }
 
 }

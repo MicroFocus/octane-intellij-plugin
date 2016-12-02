@@ -12,11 +12,15 @@ public enum Entity {
 
     WORK_ITEM("work_items", "work_item"),
     STORY(Entity.WORK_ITEM, "story"),
+    WORK_ITEM_ROOT(Entity.WORK_ITEM, "work_item_root"),
 
     TEST("tests", "test"),
     MANUAL_TEST(Entity.TEST, "test_manual"),
+    GHERKIN_TEST(Entity.TEST, "test_gherkin"),
 
-    TASK("tasks", "task");
+    TASK("tasks", "task"),
+
+    WORKSPACE_USER("workspace_users", "workspace_user");
 
 
     //This is the name of the entity passed to the sdk, used for the rest, call, usually plural
@@ -99,7 +103,7 @@ public enum Entity {
 
     public Query.QueryBuilder createMatchSubtypeQueryBuilder(){
         if(isSubtype()){
-           return new Query.QueryBuilder("subtype", Comparator.EQ.getFunction(), getSubtypeName());
+            return new Query.QueryBuilder("subtype", Comparator.EQ.getFunction(), getSubtypeName());
         }
         throw new RuntimeException("Entity " + apiEntityName + "is not a subtype");
     }
