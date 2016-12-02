@@ -76,8 +76,7 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
     @Inject
     public void setView(TabbedPaneView tabbedPaneView) {
         this.tabbedPaneView = tabbedPaneView;
-        //open test tabs
-        openMyWorkTab("My work");
+
         try {
             openDetailTab(entityService.findEntity(Entity.STORY, Long.valueOf(159001)));
             openDetailTab(entityService.findEntity(Entity.TASK, Long.valueOf(52003)));
@@ -87,12 +86,17 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
             e.printStackTrace();
         }
 
-
         //open test entity tree view
         EntityTreeTablePresenter presenter = openMyWorkTab("My work");
-        presenter.addEntityDoubleClickHandler((entityType, entityId, model) -> openDummyDetailTab(entityType, model));
+        presenter.addEntityDoubleClickHandler((entityType, entityId, model) -> {
+            //openDetailTab(model); //would still work, but it will be partially loaded in the future
+            try {
+                openDetailTab(entityService.findEntity(entityType, entityId));
+            } catch (ServiceException ex){
+                ex.printStackTrace();
+            }
+        });
 
-//        openDetailTab(null);
         openTestTab(1003);
     }
 
