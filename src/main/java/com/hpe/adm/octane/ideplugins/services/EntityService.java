@@ -66,14 +66,14 @@ public class EntityService extends ServiceBase{
      * @return
      * @throws ServiceException
      */
-    public EntityModel findEntity(Entity entityType, int entityId) throws ServiceException{
-    	EntityModel result = null;
-    	try {
-    		result = getOctane().entityList(entityType.getApiEntityName()).at(entityId).get().execute();	
-		} catch (Exception e) {
-			throw new ServiceException("Failed to get the entity with id = '"+entityId+"' and type '"+entityType+"' ", e);
-		}
-    	
-    	return result;
+    public EntityModel findEntity(Entity entityType, Long entityId) throws ServiceException {
+        EntityModel result = null;
+        try {
+            result = getOctane().entityList(entityType.getApiEntityName()).at(entityId.intValue()).get().execute();
+        } catch (Exception e) {
+            throw new ServiceException("Failed to get the entity with id = '" + entityId + "' and type '" + entityType + "' ", e);
+        }
+
+        return result;
     }
 }

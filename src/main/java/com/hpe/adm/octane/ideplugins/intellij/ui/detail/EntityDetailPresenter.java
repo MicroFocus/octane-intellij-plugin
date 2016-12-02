@@ -31,15 +31,14 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
         entityDetailView.setEntityModel(model);
     }
 
-    public void setEntity(Long entityId){
+    public void setEntity(Long entityId, Entity entityType) {
         EntityModel entityModel = null;
         try {
-            entityModel = entityService.findEntity(Entity.DEFECT, 2031);//24068
+            entityModel = entityService.findEntity(entityType, entityId);
         } catch (ServiceException e) {
             e.printStackTrace();
         }
         this.setEntity(entityModel);
 
     }
-
 }

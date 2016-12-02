@@ -2,10 +2,13 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.tabbedpane;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.google.protobuf.ServiceException;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.EntityDetailPresenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeTablePresenter;
+import com.hpe.adm.octane.ideplugins.services.EntityService;
+import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.filtering.Filter;
 
 import java.util.ArrayList;
@@ -15,7 +18,8 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView>{
 
     @Inject
     TabbedPaneView tabbedPaneView;
-
+    @Inject
+    EntityService entityService;
     @Inject
     Provider<EntityDetailPresenter> entityDetailPresenterProvider;
     @Inject
@@ -33,8 +37,8 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView>{
     public void openDetailTab(EntityModel entityModel){
         EntityDetailPresenter presenter = entityDetailPresenterProvider.get();
         detailPresenters.add(presenter);
-        presenter.setEntity(Long.valueOf(123));
-        tabbedPaneView.addTab("ETITTY NAME", presenter.getView().getComponent());
+        presenter.setEntity(entityModel);
+        tabbedPaneView.addTab(entityModel.getValue("type").getValue().toString() + " | " + entityModel.getValue("id").getValue().toString(), presenter.getView().getComponent());
     }
 
     public void openSearchTab(String searchQuery){
@@ -53,10 +57,13 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView>{
     @Inject
     public void setView(TabbedPaneView tabbedPaneView) {
         this.tabbedPaneView = tabbedPaneView;
-
         //open test tabs
         openMyWorkTab("My work");
-        openDetailTab(null);
+        try {
+            openDetailTab(entityService.findEntity(Entity.STORY, Long.valueOf(159001)));
+        } catch (ServiceException e) {
+            e.printStackTrace();
+        }
     }
 
 }
