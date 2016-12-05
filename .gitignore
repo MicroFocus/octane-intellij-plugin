@@ -8,8 +8,8 @@ build
 .project
 .settings
 bin
-build
-out
+
+src/test/resources/configuration.properties
 
 # Ignore Gradle GUI config
 gradle-app.setting
