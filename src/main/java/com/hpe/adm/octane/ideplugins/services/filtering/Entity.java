@@ -8,10 +8,9 @@ import com.hpe.adm.nga.sdk.model.EntityModel;
  */
 public enum Entity {
 
-    DEFECT("defects", "defect"),
-
     WORK_ITEM("work_items", "work_item"),
     STORY(Entity.WORK_ITEM, "story"),
+    DEFECT(Entity.WORK_ITEM, "defect"),
     WORK_ITEM_ROOT(Entity.WORK_ITEM, "work_item_root"),
 
     TEST("tests", "test"),
