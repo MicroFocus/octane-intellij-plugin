@@ -1,7 +1,5 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
-import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
-import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.intellij.ui.JBColor;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
@@ -12,7 +10,6 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 import java.awt.*;
-import java.util.HashMap;
 
 public class DefectsDetailsPanel extends JPanel {
 	private JXPanel rootPanel;
@@ -76,6 +73,7 @@ public class DefectsDetailsPanel extends JPanel {
 		this.setLayout(gridBagLayout);
 
 		rootPanel = new JXPanel();
+		rootPanel.setPreferredSize(new Dimension(900, 450));
 		rootPanel.setBorder(new EmptyBorder(10, 30, 30, 30));
 		GridBagConstraints gbc_rootPanel = new GridBagConstraints();
 		gbc_rootPanel.fill = GridBagConstraints.BOTH;

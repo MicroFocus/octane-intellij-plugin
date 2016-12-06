@@ -1,7 +1,5 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
-import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
-import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.intellij.ui.JBColor;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
@@ -47,7 +45,7 @@ public class UserStoryDetailsPanel extends JPanel {
 
     public UserStoryDetailsPanel() {
         setBorder(null);
-        setBounds(100, 100, 900, 378);
+        setBounds(100, 100, 900, 380);
         GridBagLayout gridBagLayout = new GridBagLayout();
         gridBagLayout.columnWidths = new int[]{0, 0};
         gridBagLayout.rowHeights = new int[]{0, 0};
@@ -57,6 +55,7 @@ public class UserStoryDetailsPanel extends JPanel {
 
         rootPanel = new JXPanel();
         rootPanel.setBorder(new EmptyBorder(10, 30, 30, 30));
+        rootPanel.setPreferredSize(new Dimension(900, 380));
         GridBagConstraints gbc_rootPanel = new GridBagConstraints();
         gbc_rootPanel.fill = GridBagConstraints.BOTH;
         gbc_rootPanel.gridx = 0;

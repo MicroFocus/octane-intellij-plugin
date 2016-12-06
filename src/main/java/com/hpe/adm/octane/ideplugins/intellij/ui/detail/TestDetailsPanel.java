@@ -54,7 +54,7 @@ public class TestDetailsPanel extends JPanel {
 
     public TestDetailsPanel(Entity entity) {
         setBorder(null);
-        setBounds(100, 100, 900, 291);
+        setBounds(100, 100, 900, 300);
         GridBagLayout gridBagLayout = new GridBagLayout();
         gridBagLayout.columnWidths = new int[]{0, 0};
         gridBagLayout.rowHeights = new int[]{0, 0};
@@ -64,6 +64,7 @@ public class TestDetailsPanel extends JPanel {
 
         rootPanel = new JXPanel();
         rootPanel.setBorder(new EmptyBorder(10, 30, 30, 30));
+        rootPanel.setPreferredSize(new Dimension(900, 350));
         GridBagConstraints gbc_rootPanel = new GridBagConstraints();
         gbc_rootPanel.fill = GridBagConstraints.BOTH;
         gbc_rootPanel.gridx = 0;
