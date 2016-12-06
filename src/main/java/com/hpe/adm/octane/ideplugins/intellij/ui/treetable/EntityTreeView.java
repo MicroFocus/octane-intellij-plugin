@@ -154,15 +154,12 @@ public class EntityTreeView implements View {
                         JPopupMenu popup = new JPopupMenu();
                         if (entityType == Entity.GHERKIN_TEST) {
                             long id = Long.parseLong((String) entityModel.getValue("id").getValue().toString());
-                            System.out.println("A gherkin test " + id);
                             JMenuItem downloadScriptItem = new JMenuItem("Download script");
                             downloadScriptItem.addMouseListener(new MouseAdapter() {
                                 @Override
                                 public void mousePressed(MouseEvent e) {
                                     super.mousePressed(e);
                                     downloadScriptForGherkinTest(id);
-                                    System.out.println("will download script for " + id);
-
                                 }
                             });
                             popup.add(downloadScriptItem);
