@@ -24,7 +24,7 @@ public class DownloadScriptService extends ServiceBase {
     @Inject
     private ConnectionSettingsProvider connectionSettingsProvider;
 
-    public String getGherkinTestScriptContent(int testId) {
+    public String getGherkinTestScriptContent(long testId) {
         ConnectionSettings connectionSettings = connectionSettingsProvider.getConnectionSettings();
         System.out.println("url = " + connectionSettings.getBaseUrl());
         UserAuthorisation auth = new UserAuthorisation(connectionSettings.getUserName(), connectionSettings.getPassword());
