@@ -15,7 +15,6 @@ import java.awt.*;
 import java.util.HashMap;
 
 public class DefectsDetailsPanel extends JPanel {
-	private HashMap<String, Integer> phases = new HashMap<>();
 	private JXPanel rootPanel;
 	private JXLabel lblDescription;
 	private JXTextArea txtfldDescription;
@@ -68,13 +67,6 @@ public class DefectsDetailsPanel extends JPanel {
 
 	public DefectsDetailsPanel() {
 		setBorder(null);
-		phases.put("Duplicate", 6);
-		phases.put("Closed", 5);
-		phases.put("Ready for QA", 4);
-		phases.put("In Testing", 3);
-		phases.put("In Progress", 2);
-		phases.put("Open", 1);
-
 		setBounds(100, 100, 900, 400);
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[] { 0, 0 };
@@ -746,7 +738,7 @@ public class DefectsDetailsPanel extends JPanel {
 	}
 
 	public void setLblName(String lblName) {
-		this.lblName.setText("Name: " + lblName);
+		this.lblName.setText(lblName);
 	}
 
 }

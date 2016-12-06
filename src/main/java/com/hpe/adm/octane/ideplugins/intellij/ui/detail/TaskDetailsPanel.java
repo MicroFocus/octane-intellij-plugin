@@ -12,7 +12,7 @@ import javax.swing.border.MatteBorder;
 import java.awt.*;
 
 public class TaskDetailsPanel extends JPanel {
-    private JXPanel panel;
+    private JXPanel rootPanel;
     private JXLabel lblDescription;
     private JXTextArea txtfldDescription;
     private JXPanel taskDetailsPanel;
@@ -41,7 +41,7 @@ public class TaskDetailsPanel extends JPanel {
 
     public TaskDetailsPanel() {
         setBorder(null);
-        setBounds(100, 100, 918, 245);
+        setBounds(100, 100, 900, 300);
         GridBagLayout gridBagLayout = new GridBagLayout();
         gridBagLayout.columnWidths = new int[]{0, 0};
         gridBagLayout.rowHeights = new int[]{0, 0};
@@ -49,19 +49,19 @@ public class TaskDetailsPanel extends JPanel {
         gridBagLayout.rowWeights = new double[]{1.0, Double.MIN_VALUE};
         this.setLayout(gridBagLayout);
 
-        panel = new JXPanel();
-        panel.setBorder(null);
-        GridBagConstraints gbc_panel = new GridBagConstraints();
-        gbc_panel.fill = GridBagConstraints.BOTH;
-        gbc_panel.gridx = 0;
-        gbc_panel.gridy = 0;
-        add(panel, gbc_panel);
-        GridBagLayout gbl_panel = new GridBagLayout();
-        gbl_panel.columnWidths = new int[]{0, 0};
-        gbl_panel.rowHeights = new int[]{0, 0, 0, 0, 0};
-        gbl_panel.columnWeights = new double[]{1.0, Double.MIN_VALUE};
-        gbl_panel.rowWeights = new double[]{0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
-        panel.setLayout(gbl_panel);
+        rootPanel = new JXPanel();
+        rootPanel.setBorder(null);
+        GridBagConstraints gbc_rootPanel = new GridBagConstraints();
+        gbc_rootPanel.fill = GridBagConstraints.BOTH;
+        gbc_rootPanel.gridx = 0;
+        gbc_rootPanel.gridy = 0;
+        add(rootPanel, gbc_rootPanel);
+        GridBagLayout gbl_rootPanel = new GridBagLayout();
+        gbl_rootPanel.columnWidths = new int[]{0, 0};
+        gbl_rootPanel.rowHeights = new int[]{0, 0, 0, 0, 0};
+        gbl_rootPanel.columnWeights = new double[]{1.0, Double.MIN_VALUE};
+        gbl_rootPanel.rowWeights = new double[]{0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
+        rootPanel.setLayout(gbl_rootPanel);
 
         nameAndIconPanel = new JXPanel();
         nameAndIconPanel.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
@@ -72,7 +72,7 @@ public class TaskDetailsPanel extends JPanel {
         gbc_nameAndIconPanel.fill = GridBagConstraints.BOTH;
         gbc_nameAndIconPanel.gridx = 0;
         gbc_nameAndIconPanel.gridy = 0;
-        panel.add(nameAndIconPanel, gbc_nameAndIconPanel);
+        rootPanel.add(nameAndIconPanel, gbc_nameAndIconPanel);
         
         lblName = new JXLabel();
         lblName.setIcon(new ImageIcon(TaskDetailsPanel.class.getResource("/images/taskIcon.png")));
@@ -90,7 +90,7 @@ public class TaskDetailsPanel extends JPanel {
         gbc_lblDescription.insets = new Insets(0, 0, 5, 0);
         gbc_lblDescription.gridx = 0;
         gbc_lblDescription.gridy = 1;
-        panel.add(lblDescription, gbc_lblDescription);
+        rootPanel.add(lblDescription, gbc_lblDescription);
         
         txtfldDescription = new JXTextArea();
         txtfldDescription.setText("Description");
@@ -104,7 +104,7 @@ public class TaskDetailsPanel extends JPanel {
         gbc_txtfldDescription.insets = new Insets(0, 0, 5, 0);
         gbc_txtfldDescription.gridx = 0;
         gbc_txtfldDescription.gridy = 2;
-        panel.add(txtfldDescription, gbc_txtfldDescription);
+        rootPanel.add(txtfldDescription, gbc_txtfldDescription);
 
         taskDetailsPanel = new JXPanel();
         taskDetailsPanel.setBorder(new EmptyBorder(10, 10, 2, 10));
@@ -112,7 +112,7 @@ public class TaskDetailsPanel extends JPanel {
         gbc_taskDetailsPanel.fill = GridBagConstraints.BOTH;
         gbc_taskDetailsPanel.gridx = 0;
         gbc_taskDetailsPanel.gridy = 3;
-        panel.add(taskDetailsPanel, gbc_taskDetailsPanel);
+        rootPanel.add(taskDetailsPanel, gbc_taskDetailsPanel);
         GridBagLayout gbl_taskDetailsPanel = new GridBagLayout();
         gbl_taskDetailsPanel.columnWidths = new int[]{0, 0, 0, 0, 0};
         gbl_taskDetailsPanel.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0};
@@ -358,7 +358,7 @@ public class TaskDetailsPanel extends JPanel {
     }
 
     public void setLblName(String lblName) {
-        this.lblName.setText("Name: " + lblName);
+        this.lblName.setText(lblName);
     }
 
     public void setTxtfldDescription(String txtfldDescription) {
