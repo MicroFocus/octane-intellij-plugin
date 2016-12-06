@@ -20,7 +20,7 @@ public class EntityService extends ServiceBase {
     public Collection<EntityModel> getMyWork() {
 
         Entity[] myWorkEntities = new Entity[]{
-                Entity.DEFECT, Entity.STORY, Entity.TEST, Entity.TASK
+                Entity.DEFECT, Entity.USER_STORY, Entity.TEST, Entity.TASK
         };
 
         Query.QueryBuilder currentUserQuery = new Query.QueryBuilder("owner", Query::equalTo,

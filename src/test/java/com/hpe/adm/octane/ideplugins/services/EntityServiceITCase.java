@@ -39,10 +39,10 @@ public class EntityServiceITCase extends IntegrationTestBase{
             Assert.assertEquals(Entity.getEntityType(firstEntity), Entity.DEFECT);
         }
 
-        entities = entityService.findEntities(Entity.STORY);
+        entities = entityService.findEntities(Entity.USER_STORY);
         if(entities.size()>0){
             EntityModel firstEntity = entities.iterator().next();
-            Assert.assertEquals(Entity.getEntityType(firstEntity), Entity.STORY);
+            Assert.assertEquals(Entity.getEntityType(firstEntity), Entity.USER_STORY);
         }
     }
 

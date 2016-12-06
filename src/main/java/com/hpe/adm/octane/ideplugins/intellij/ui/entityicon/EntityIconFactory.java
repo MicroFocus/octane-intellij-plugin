@@ -24,7 +24,7 @@ public class EntityIconFactory {
    
     //default values should reflect octane
     static {
-        iconDetailMap.put(Entity.STORY, new IconDetail(new Color(218,199,120), "US"));
+        iconDetailMap.put(Entity.USER_STORY, new IconDetail(new Color(218, 199, 120), "US"));
         iconDetailMap.put(Entity.DEFECT, new IconDetail(new Color(190,102,92), "D"));
         iconDetailMap.put(Entity.TASK, new IconDetail(new Color(137,204,174), "T"));
         iconDetailMap.put(Entity.MANUAL_TEST, new IconDetail(new Color(96,121,141), "MT"));

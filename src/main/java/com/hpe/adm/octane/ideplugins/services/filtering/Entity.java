@@ -11,7 +11,7 @@ public enum Entity {
     DEFECT("defects", "defect"),
 
     WORK_ITEM("work_items", "work_item"),
-    STORY(Entity.WORK_ITEM, "story"),
+    USER_STORY(Entity.WORK_ITEM, "story"),
     WORK_ITEM_ROOT(Entity.WORK_ITEM, "work_item_root"),
 
     TEST("tests", "test"),

@@ -20,8 +20,30 @@ public class EntityDetailView implements View {
 
     private JPanel entityDetailsPanel;
 
-	public EntityDetailView() {
+    public EntityDetailView() {
 
+    }
+
+    public static String getNameForEntity(Entity entity) {
+        String ret = "Item";
+        switch (entity) {
+            case DEFECT:
+                ret = "Defect";
+                break;
+            case GHERKIN_TEST:
+                ret = "Gherkin Test";
+                break;
+            case MANUAL_TEST:
+                ret = "Manual Test";
+                break;
+            case USER_STORY:
+                ret = "User Story";
+                break;
+            case TASK:
+                ret = "Task";
+                break;
+        }
+        return ret;
     }
 
     @Override
@@ -44,7 +66,7 @@ public class EntityDetailView implements View {
             case MANUAL_TEST:
                 setEntityModelForTests(entityModel);
                 break;
-            case STORY:
+            case USER_STORY:
                 setEntityModelForUserStory(entityModel);
                 break;
             case TASK:
@@ -53,7 +75,6 @@ public class EntityDetailView implements View {
         }
 
     }
-
 
     private void setEntityModelForDefects(EntityModel entityModel) {
         DefectsDetailsPanel defectsDetailsPanel = new DefectsDetailsPanel();
@@ -200,7 +221,6 @@ public class EntityDetailView implements View {
         }
         return result.toString();
     }
-
 
 
 }

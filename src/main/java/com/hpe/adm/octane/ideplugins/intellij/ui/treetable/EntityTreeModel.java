@@ -10,38 +10,6 @@ import java.util.*;
 public class EntityTreeModel extends AbstractTreeModel {
 
     private static final String ROOT = "root";
-
-    public enum EntityCategory {
-        BACKLOG("Backlog", Entity.STORY, Entity.DEFECT),
-        TASK("Tasks", Entity.TASK),
-        TEST("Tests", Entity.GHERKIN_TEST, Entity.MANUAL_TEST);
-
-        private String name;
-        private List<Entity> entityTypes = new ArrayList<>();
-
-        EntityCategory(String name, Entity... entityTypes){
-            this.name = name;
-            this.entityTypes = Arrays.asList(entityTypes);
-        }
-
-        public List<Entity> getEntityTypes() {
-            return entityTypes;
-        }
-
-        public static EntityCategory getCategory(EntityModel entityModel){
-            for(EntityCategory category : EntityCategory.values()) {
-                if (category.getEntityTypes().contains(Entity.getEntityType(entityModel))) {
-                    return category;
-                }
-            }
-            return null;
-        }
-
-        public String getName() {
-            return name;
-        }
-    }
-
     private TreeMap<EntityCategory, List<EntityModel>> groupedEntities = new TreeMap<>();
 
     public EntityTreeModel(){
@@ -138,6 +106,37 @@ public class EntityTreeModel extends AbstractTreeModel {
 
         //root
         return 0;
+    }
+
+    public enum EntityCategory {
+        BACKLOG("Backlog", Entity.USER_STORY, Entity.DEFECT),
+        TASK("Tasks", Entity.TASK),
+        TEST("Tests", Entity.GHERKIN_TEST, Entity.MANUAL_TEST);
+
+        private String name;
+        private List<Entity> entityTypes = new ArrayList<>();
+
+        EntityCategory(String name, Entity... entityTypes){
+            this.name = name;
+            this.entityTypes = Arrays.asList(entityTypes);
+        }
+
+        public static EntityCategory getCategory(EntityModel entityModel){
+            for(EntityCategory category : EntityCategory.values()) {
+                if (category.getEntityTypes().contains(Entity.getEntityType(entityModel))) {
+                    return category;
+                }
+            }
+            return null;
+        }
+
+        public List<Entity> getEntityTypes() {
+            return entityTypes;
+        }
+
+        public String getName() {
+            return name;
+        }
     }
 
 }
