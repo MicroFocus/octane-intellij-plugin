@@ -50,7 +50,7 @@ public class TaskDetailsPanel extends JPanel {
         this.setLayout(gridBagLayout);
 
         rootPanel = new JXPanel();
-        rootPanel.setBorder(null);
+        rootPanel.setBorder(new EmptyBorder(10, 30, 30, 30));
         GridBagConstraints gbc_rootPanel = new GridBagConstraints();
         gbc_rootPanel.fill = GridBagConstraints.BOTH;
         gbc_rootPanel.gridx = 0;
@@ -66,6 +66,7 @@ public class TaskDetailsPanel extends JPanel {
         nameAndIconPanel = new JXPanel();
         nameAndIconPanel.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         FlowLayout flowLayout = (FlowLayout) nameAndIconPanel.getLayout();
+        flowLayout.setHgap(0);
         flowLayout.setAlignment(FlowLayout.LEFT);
         GridBagConstraints gbc_nameAndIconPanel = new GridBagConstraints();
         gbc_nameAndIconPanel.insets = new Insets(0, 0, 5, 0);
@@ -84,7 +85,7 @@ public class TaskDetailsPanel extends JPanel {
         lblDescription = new JXLabel();
         lblDescription.setText("Description");
         lblDescription.setFont(new Font("Tahoma", Font.BOLD, 11));
-        lblDescription.setBorder(new EmptyBorder(5, 10, 0, 10));
+        lblDescription.setBorder(null);
         GridBagConstraints gbc_lblDescription = new GridBagConstraints();
         gbc_lblDescription.anchor = GridBagConstraints.NORTHWEST;
         gbc_lblDescription.insets = new Insets(0, 0, 5, 0);
@@ -97,7 +98,7 @@ public class TaskDetailsPanel extends JPanel {
         txtfldDescription.setOpaque(false);
         txtfldDescription.setLineWrap(true);
         txtfldDescription.setEditable(false);
-        txtfldDescription.setBorder(new EmptyBorder(5, 10, 0, 10));
+        txtfldDescription.setBorder(null);
         txtfldDescription.setBackground(new Color(0, 0, 0, 0));
         GridBagConstraints gbc_txtfldDescription = new GridBagConstraints();
         gbc_txtfldDescription.fill = GridBagConstraints.BOTH;
@@ -107,7 +108,7 @@ public class TaskDetailsPanel extends JPanel {
         rootPanel.add(txtfldDescription, gbc_txtfldDescription);
 
         taskDetailsPanel = new JXPanel();
-        taskDetailsPanel.setBorder(new EmptyBorder(10, 10, 2, 10));
+        taskDetailsPanel.setBorder(new EmptyBorder(10, 0, 0, 0));
         GridBagConstraints gbc_taskDetailsPanel = new GridBagConstraints();
         gbc_taskDetailsPanel.fill = GridBagConstraints.BOTH;
         gbc_taskDetailsPanel.gridx = 0;
@@ -115,9 +116,9 @@ public class TaskDetailsPanel extends JPanel {
         rootPanel.add(taskDetailsPanel, gbc_taskDetailsPanel);
         GridBagLayout gbl_taskDetailsPanel = new GridBagLayout();
         gbl_taskDetailsPanel.columnWidths = new int[]{0, 0, 0, 0, 0};
-        gbl_taskDetailsPanel.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0};
+        gbl_taskDetailsPanel.rowHeights = new int[]{0, 0, 0, 0, 0, 0};
         gbl_taskDetailsPanel.columnWeights = new double[]{0.0, 1.0, 0.0, 1.0, Double.MIN_VALUE};
-        gbl_taskDetailsPanel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+        gbl_taskDetailsPanel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
         taskDetailsPanel.setLayout(gbl_taskDetailsPanel);
         
         lblStory = new JXLabel();
@@ -146,7 +147,7 @@ public class TaskDetailsPanel extends JPanel {
         lblOwner = new JXLabel();
         lblOwner.setText("Owner");
         lblOwner.setFont(new Font("Tahoma", Font.BOLD, 11));
-        lblOwner.setBorder(new EmptyBorder(0, 10, 0, 10));
+        lblOwner.setBorder(new EmptyBorder(0, 30, 0, 10));
         GridBagConstraints gbc_lblOwner = new GridBagConstraints();
         gbc_lblOwner.anchor = GridBagConstraints.WEST;
         gbc_lblOwner.insets = new Insets(0, 0, 5, 5);
@@ -192,7 +193,7 @@ public class TaskDetailsPanel extends JPanel {
         lblType = new JXLabel();
         lblType.setText("Type");
         lblType.setFont(new Font("Tahoma", Font.BOLD, 11));
-        lblType.setBorder(new EmptyBorder(0, 10, 0, 10));
+        lblType.setBorder(new EmptyBorder(0, 30, 0, 10));
         GridBagConstraints gbc_lblType = new GridBagConstraints();
         gbc_lblType.anchor = GridBagConstraints.WEST;
         gbc_lblType.insets = new Insets(0, 0, 5, 5);
@@ -238,7 +239,7 @@ public class TaskDetailsPanel extends JPanel {
         lblCreationTime = new JXLabel();
         lblCreationTime.setText("Creation Time");
         lblCreationTime.setFont(new Font("Tahoma", Font.BOLD, 11));
-        lblCreationTime.setBorder(new EmptyBorder(0, 10, 0, 10));
+        lblCreationTime.setBorder(new EmptyBorder(0, 30, 0, 10));
         GridBagConstraints gbc_lblCreationTime = new GridBagConstraints();
         gbc_lblCreationTime.anchor = GridBagConstraints.WEST;
         gbc_lblCreationTime.insets = new Insets(0, 0, 5, 5);
@@ -284,7 +285,7 @@ public class TaskDetailsPanel extends JPanel {
         lblLastModified = new JXLabel();
         lblLastModified.setText("Last modified");
         lblLastModified.setFont(new Font("Tahoma", Font.BOLD, 11));
-        lblLastModified.setBorder(new EmptyBorder(0, 10, 0, 10));
+        lblLastModified.setBorder(new EmptyBorder(0, 30, 0, 10));
         GridBagConstraints gbc_lblLastModified = new GridBagConstraints();
         gbc_lblLastModified.anchor = GridBagConstraints.WEST;
         gbc_lblLastModified.insets = new Insets(0, 0, 5, 5);
@@ -310,7 +311,7 @@ public class TaskDetailsPanel extends JPanel {
         lblRemainingHours.setBorder(new EmptyBorder(0, 0, 0, 10));
         GridBagConstraints gbc_lblRemainingHours = new GridBagConstraints();
         gbc_lblRemainingHours.anchor = GridBagConstraints.WEST;
-        gbc_lblRemainingHours.insets = new Insets(0, 0, 5, 5);
+        gbc_lblRemainingHours.insets = new Insets(0, 0, 0, 5);
         gbc_lblRemainingHours.gridx = 0;
         gbc_lblRemainingHours.gridy = 4;
         taskDetailsPanel.add(lblRemainingHours, gbc_lblRemainingHours);
@@ -322,7 +323,7 @@ public class TaskDetailsPanel extends JPanel {
         txtfldRemainingHours.setBackground(new Color(0, 0, 0, 0));
         GridBagConstraints gbc_txtfldRemainingHours = new GridBagConstraints();
         gbc_txtfldRemainingHours.fill = GridBagConstraints.HORIZONTAL;
-        gbc_txtfldRemainingHours.insets = new Insets(0, 0, 5, 5);
+        gbc_txtfldRemainingHours.insets = new Insets(0, 0, 0, 5);
         gbc_txtfldRemainingHours.gridx = 1;
         gbc_txtfldRemainingHours.gridy = 4;
         taskDetailsPanel.add(txtfldRemainingHours, gbc_txtfldRemainingHours);
@@ -330,10 +331,10 @@ public class TaskDetailsPanel extends JPanel {
         lblPhase = new JXLabel();
         lblPhase.setText("Phase");
         lblPhase.setFont(new Font("Tahoma", Font.BOLD, 11));
-        lblPhase.setBorder(new EmptyBorder(0, 10, 0, 10));
+        lblPhase.setBorder(new EmptyBorder(0, 30, 0, 10));
         GridBagConstraints gbc_lblPhase = new GridBagConstraints();
         gbc_lblPhase.anchor = GridBagConstraints.WEST;
-        gbc_lblPhase.insets = new Insets(0, 0, 5, 5);
+        gbc_lblPhase.insets = new Insets(0, 0, 0, 5);
         gbc_lblPhase.gridx = 2;
         gbc_lblPhase.gridy = 4;
         taskDetailsPanel.add(lblPhase, gbc_lblPhase);
@@ -343,7 +344,6 @@ public class TaskDetailsPanel extends JPanel {
         comboBoxPhase.setBorder(new EmptyBorder(0, 0, 0, 0));
         GridBagConstraints gbc_comboBoxPhase = new GridBagConstraints();
         gbc_comboBoxPhase.fill = GridBagConstraints.HORIZONTAL;
-        gbc_comboBoxPhase.insets = new Insets(0, 0, 5, 0);
         gbc_comboBoxPhase.gridx = 3;
         gbc_comboBoxPhase.gridy = 4;
         taskDetailsPanel.add(comboBoxPhase, gbc_comboBoxPhase);

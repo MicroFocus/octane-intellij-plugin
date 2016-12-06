@@ -67,7 +67,7 @@ public class DefectsDetailsPanel extends JPanel {
 
 	public DefectsDetailsPanel() {
 		setBorder(null);
-		setBounds(100, 100, 900, 400);
+		setBounds(100, 100, 900, 430);
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[] { 0, 0 };
 		gridBagLayout.rowHeights = new int[] { 0, 0 };
@@ -76,7 +76,7 @@ public class DefectsDetailsPanel extends JPanel {
 		this.setLayout(gridBagLayout);
 
 		rootPanel = new JXPanel();
-		rootPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+		rootPanel.setBorder(new EmptyBorder(10, 30, 30, 30));
 		GridBagConstraints gbc_rootPanel = new GridBagConstraints();
 		gbc_rootPanel.fill = GridBagConstraints.BOTH;
 		gbc_rootPanel.gridx = 0;
@@ -90,7 +90,9 @@ public class DefectsDetailsPanel extends JPanel {
 		rootPanel.setLayout(gbl_rootPanel);
 
 		nameAndIconPanel = new JXPanel();
+		nameAndIconPanel.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
 		FlowLayout fl_nameAndIconPanel = (FlowLayout) nameAndIconPanel.getLayout();
+		fl_nameAndIconPanel.setHgap(0);
 		fl_nameAndIconPanel.setAlignment(FlowLayout.LEFT);
 		GridBagConstraints gbc_nameAndIconPanel = new GridBagConstraints();
 		gbc_nameAndIconPanel.insets = new Insets(0, 0, 5, 0);
@@ -109,7 +111,7 @@ public class DefectsDetailsPanel extends JPanel {
 		lblDescription = new JXLabel();
 		lblDescription.setText("Description");
 		lblDescription.setFont(new Font("Tahoma", Font.BOLD, 11));
-		lblDescription.setBorder(new EmptyBorder(7, 7, 0, 0));
+		lblDescription.setBorder(null);
 		GridBagConstraints gbc_lblDescription = new GridBagConstraints();
 		gbc_lblDescription.anchor = GridBagConstraints.NORTHWEST;
 		gbc_lblDescription.insets = new Insets(0, 0, 5, 0);
@@ -121,7 +123,7 @@ public class DefectsDetailsPanel extends JPanel {
 		txtfldDescription.setOpaque(false);
 		txtfldDescription.setLineWrap(true);
 		txtfldDescription.setEditable(false);
-		txtfldDescription.setBorder(new EmptyBorder(5, 7, 0, 13));
+		txtfldDescription.setBorder(null);
 		txtfldDescription.setBackground(new Color(0, 0, 0, 0));
 		GridBagConstraints gbc_txtfldDescription = new GridBagConstraints();
 		gbc_txtfldDescription.fill = GridBagConstraints.BOTH;
@@ -132,7 +134,7 @@ public class DefectsDetailsPanel extends JPanel {
 
 		defectsDetailsPanel = new JXPanel();
 		defectsDetailsPanel.setOpaque(false);
-		defectsDetailsPanel.setBorder(new EmptyBorder(10, 7, 2, 13));
+		defectsDetailsPanel.setBorder(new EmptyBorder(10, 0, 15, 0));
 		GridBagConstraints gbc_defectsDetailsPanel = new GridBagConstraints();
 		gbc_defectsDetailsPanel.fill = GridBagConstraints.BOTH;
 		gbc_defectsDetailsPanel.insets = new Insets(0, 0, 5, 0);
@@ -172,7 +174,7 @@ public class DefectsDetailsPanel extends JPanel {
 		lblDetectedBy = new JXLabel();
 		lblDetectedBy.setText("Detected by");
 		lblDetectedBy.setFont(new Font("Tahoma", Font.BOLD, 11));
-		lblDetectedBy.setBorder(new EmptyBorder(0, 20, 0, 10));
+		lblDetectedBy.setBorder(new EmptyBorder(0, 30, 0, 10));
 		GridBagConstraints gbc_lblDetectedBy = new GridBagConstraints();
 		gbc_lblDetectedBy.anchor = GridBagConstraints.SOUTHWEST;
 		gbc_lblDetectedBy.insets = new Insets(0, 0, 5, 5);
@@ -218,7 +220,7 @@ public class DefectsDetailsPanel extends JPanel {
 		lblBlocked = new JXLabel();
 		lblBlocked.setText("Blocked");
 		lblBlocked.setFont(new Font("Tahoma", Font.BOLD, 11));
-		lblBlocked.setBorder(new EmptyBorder(0, 20, 0, 10));
+		lblBlocked.setBorder(new EmptyBorder(0, 30, 0, 10));
 		GridBagConstraints gbc_lblBlocked = new GridBagConstraints();
 		gbc_lblBlocked.anchor = GridBagConstraints.SOUTHWEST;
 		gbc_lblBlocked.insets = new Insets(0, 0, 5, 5);
@@ -264,7 +266,7 @@ public class DefectsDetailsPanel extends JPanel {
 		lblBlockedReason = new JXLabel();
 		lblBlockedReason.setText("Blocked Reason");
 		lblBlockedReason.setFont(new Font("Tahoma", Font.BOLD, 11));
-		lblBlockedReason.setBorder(new EmptyBorder(0, 20, 0, 10));
+		lblBlockedReason.setBorder(new EmptyBorder(0, 30, 0, 10));
 		GridBagConstraints gbc_lblBlockedReason = new GridBagConstraints();
 		gbc_lblBlockedReason.anchor = GridBagConstraints.SOUTHWEST;
 		gbc_lblBlockedReason.insets = new Insets(0, 0, 5, 5);
@@ -310,7 +312,7 @@ public class DefectsDetailsPanel extends JPanel {
 		lblGroup = new JXLabel();
 		lblGroup.setText("Group");
 		lblGroup.setFont(new Font("Tahoma", Font.BOLD, 11));
-		lblGroup.setBorder(new EmptyBorder(0, 20, 0, 0));
+		lblGroup.setBorder(new EmptyBorder(0, 30, 0, 10));
 		GridBagConstraints gbc_lblGroup = new GridBagConstraints();
 		gbc_lblGroup.anchor = GridBagConstraints.WEST;
 		gbc_lblGroup.insets = new Insets(0, 0, 5, 5);
@@ -356,7 +358,7 @@ public class DefectsDetailsPanel extends JPanel {
 		lblFeedbackType = new JXLabel();
 		lblFeedbackType.setText("Feedback type");
 		lblFeedbackType.setFont(new Font("Tahoma", Font.BOLD, 11));
-		lblFeedbackType.setBorder(new EmptyBorder(0, 20, 0, 10));
+		lblFeedbackType.setBorder(new EmptyBorder(0, 30, 0, 10));
 		GridBagConstraints gbc_lblFeedbackType = new GridBagConstraints();
 		gbc_lblFeedbackType.anchor = GridBagConstraints.SOUTHWEST;
 		gbc_lblFeedbackType.insets = new Insets(0, 0, 5, 5);
@@ -402,7 +404,7 @@ public class DefectsDetailsPanel extends JPanel {
 		lblEnviroment = new JXLabel();
 		lblEnviroment.setText("Enviroment");
 		lblEnviroment.setFont(new Font("Tahoma", Font.BOLD, 11));
-		lblEnviroment.setBorder(new EmptyBorder(0, 20, 0, 10));
+		lblEnviroment.setBorder(new EmptyBorder(0, 30, 0, 10));
 		GridBagConstraints gbc_lblEnviroment = new GridBagConstraints();
 		gbc_lblEnviroment.anchor = GridBagConstraints.WEST;
 		gbc_lblEnviroment.insets = new Insets(0, 0, 5, 5);
@@ -446,7 +448,7 @@ public class DefectsDetailsPanel extends JPanel {
 		lblAppModules = new JXLabel();
 		lblAppModules.setText("Application Module");
 		lblAppModules.setFont(new Font("Tahoma", Font.BOLD, 11));
-		lblAppModules.setBorder(new EmptyBorder(0, 20, 0, 10));
+		lblAppModules.setBorder(new EmptyBorder(0, 30, 0, 10));
 		GridBagConstraints gbc_lblAppModules = new GridBagConstraints();
 		gbc_lblAppModules.anchor = GridBagConstraints.SOUTHEAST;
 		gbc_lblAppModules.insets = new Insets(0, 0, 5, 5);
@@ -516,7 +518,7 @@ public class DefectsDetailsPanel extends JPanel {
 		lblDetectedInBuild = new JXLabel();
 		lblDetectedInBuild.setText("Detected in Build");
 		lblDetectedInBuild.setFont(new Font("Tahoma", Font.BOLD, 11));
-		lblDetectedInBuild.setBorder(new EmptyBorder(0, 20, 0, 10));
+		lblDetectedInBuild.setBorder(new EmptyBorder(0, 30, 0, 10));
 		GridBagConstraints gbc_lblDetectedInBuild = new GridBagConstraints();
 		gbc_lblDetectedInBuild.anchor = GridBagConstraints.WEST;
 		gbc_lblDetectedInBuild.insets = new Insets(0, 0, 5, 5);
@@ -562,7 +564,7 @@ public class DefectsDetailsPanel extends JPanel {
 		lblDetectedInRelease = new JXLabel();
 		lblDetectedInRelease.setText("Detected in release");
 		lblDetectedInRelease.setFont(new Font("Tahoma", Font.BOLD, 11));
-		lblDetectedInRelease.setBorder(new EmptyBorder(0, 20, 0, 10));
+		lblDetectedInRelease.setBorder(new EmptyBorder(0, 30, 0, 10));
 		GridBagConstraints gbc_lblDetectedInRelease = new GridBagConstraints();
 		gbc_lblDetectedInRelease.anchor = GridBagConstraints.WEST;
 		gbc_lblDetectedInRelease.insets = new Insets(0, 0, 5, 5);
@@ -585,7 +587,7 @@ public class DefectsDetailsPanel extends JPanel {
 		lblFixedInBuild = new JXLabel();
 		lblFixedInBuild.setText("Fixed in Build");
 		lblFixedInBuild.setFont(new Font("Tahoma", Font.BOLD, 11));
-		lblFixedInBuild.setBorder(new EmptyBorder(0, 20, 0, 10));
+		lblFixedInBuild.setBorder(new EmptyBorder(0, 30, 0, 10));
 		GridBagConstraints gbc_lblFixedInBuild = new GridBagConstraints();
 		gbc_lblFixedInBuild.anchor = GridBagConstraints.WEST;
 		gbc_lblFixedInBuild.insets = new Insets(0, 0, 0, 5);
@@ -605,6 +607,7 @@ public class DefectsDetailsPanel extends JPanel {
 		defectsDetailsPanel.add(txtfldFixedInBuild, gbc_txtfldFixedInBuild);
 
 		atachementsPanel = new JXPanel();
+		atachementsPanel.setBorder(new MatteBorder(1, 0, 0, 0, JBColor.border()));
 		GridBagConstraints gbc_atachementsPanel = new GridBagConstraints();
 		gbc_atachementsPanel.fill = GridBagConstraints.BOTH;
 		gbc_atachementsPanel.gridx = 0;
@@ -620,8 +623,9 @@ public class DefectsDetailsPanel extends JPanel {
 		lblAttachments = new JXLabel();
 		lblAttachments.setText("Attachments");
 		lblAttachments.setFont(new Font("Tahoma", Font.BOLD, 11));
-		lblAttachments.setBorder(new EmptyBorder(10, 7, 0, 10));
+		lblAttachments.setBorder(new EmptyBorder(5, 0, 0, 10));
 		GridBagConstraints gbc_lblAttachments = new GridBagConstraints();
+		gbc_lblAttachments.anchor = GridBagConstraints.WEST;
 		gbc_lblAttachments.insets = new Insets(0, 0, 0, 5);
 		gbc_lblAttachments.gridx = 0;
 		gbc_lblAttachments.gridy = 0;
@@ -630,7 +634,7 @@ public class DefectsDetailsPanel extends JPanel {
 		listOfAttachments = new JXLabel();
 		listOfAttachments.setText("No attachments");
 		listOfAttachments.setLineWrap(true);
-		listOfAttachments.setBorder(new EmptyBorder(10, 0, 0, 0));
+		listOfAttachments.setBorder(new EmptyBorder(5, 0, 0, 0));
 		GridBagConstraints gbc_listOfAttachments = new GridBagConstraints();
 		gbc_listOfAttachments.fill = GridBagConstraints.HORIZONTAL;
 		gbc_listOfAttachments.gridx = 1;

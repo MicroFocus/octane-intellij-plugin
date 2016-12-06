@@ -17,7 +17,7 @@ public class TestDetailsPanel extends JPanel {
     private JLabel lblName;
     private JXLabel lblDescription;
     private JXTextArea txtfldDescription;
-    private JXPanel panel_1;
+    private JXPanel testDetailsPanel;
     private JXLabel lblAppModules;
     private JXTextField txtfldAppModules;
     private JXLabel lblCreated;
@@ -63,7 +63,7 @@ public class TestDetailsPanel extends JPanel {
         this.setLayout(gridBagLayout);
 
         rootPanel = new JXPanel();
-        rootPanel.setBorder(null);
+        rootPanel.setBorder(new EmptyBorder(10, 30, 30, 30));
         GridBagConstraints gbc_rootPanel = new GridBagConstraints();
         gbc_rootPanel.fill = GridBagConstraints.BOTH;
         gbc_rootPanel.gridx = 0;
@@ -80,6 +80,7 @@ public class TestDetailsPanel extends JPanel {
         nameAndIconPanel = new JXPanel();
         nameAndIconPanel.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         FlowLayout flowLayout = (FlowLayout) nameAndIconPanel.getLayout();
+        flowLayout.setHgap(0);
         flowLayout.setAlignment(FlowLayout.LEFT);
         GridBagConstraints gbc_nameAndIconPanel = new GridBagConstraints();
         gbc_nameAndIconPanel.insets = new Insets(0, 0, 5, 0);
@@ -98,7 +99,7 @@ public class TestDetailsPanel extends JPanel {
         lblDescription = new JXLabel();
         lblDescription.setText("Description");
         lblDescription.setFont(new Font("Tahoma", Font.BOLD, 11));
-        lblDescription.setBorder(new EmptyBorder(5, 10, 0, 10));
+        lblDescription.setBorder(null);
         GridBagConstraints gbc_lblDescription = new GridBagConstraints();
         gbc_lblDescription.anchor = GridBagConstraints.NORTHWEST;
         gbc_lblDescription.insets = new Insets(0, 0, 5, 0);
@@ -111,7 +112,7 @@ public class TestDetailsPanel extends JPanel {
         txtfldDescription.setOpaque(false);
         txtfldDescription.setLineWrap(true);
         txtfldDescription.setEditable(false);
-        txtfldDescription.setBorder(new EmptyBorder(5, 10, 0, 10));
+        txtfldDescription.setBorder(null);
         txtfldDescription.setBackground(new Color(0, 0, 0, 0));
         GridBagConstraints gbc_txtfldDescription = new GridBagConstraints();
         gbc_txtfldDescription.fill = GridBagConstraints.BOTH;
@@ -120,19 +121,19 @@ public class TestDetailsPanel extends JPanel {
         gbc_txtfldDescription.gridy = 2;
         rootPanel.add(txtfldDescription, gbc_txtfldDescription);
 
-        panel_1 = new JXPanel();
-        panel_1.setBorder(new EmptyBorder(10, 10, 2, 10));
-        GridBagConstraints gbc_panel_1 = new GridBagConstraints();
-        gbc_panel_1.fill = GridBagConstraints.BOTH;
-        gbc_panel_1.gridx = 0;
-        gbc_panel_1.gridy = 3;
-        rootPanel.add(panel_1, gbc_panel_1);
-        GridBagLayout gbl_panel_1 = new GridBagLayout();
-        gbl_panel_1.columnWidths = new int[]{0, 0, 0, 0, 0};
-        gbl_panel_1.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
-        gbl_panel_1.columnWeights = new double[]{0.0, 1.0, 0.0, 1.0, Double.MIN_VALUE};
-        gbl_panel_1.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
-        panel_1.setLayout(gbl_panel_1);
+        testDetailsPanel = new JXPanel();
+        testDetailsPanel.setBorder(new EmptyBorder(10, 0, 0, 0));
+        GridBagConstraints gbc_testDetailsPanel = new GridBagConstraints();
+        gbc_testDetailsPanel.fill = GridBagConstraints.BOTH;
+        gbc_testDetailsPanel.gridx = 0;
+        gbc_testDetailsPanel.gridy = 3;
+        rootPanel.add(testDetailsPanel, gbc_testDetailsPanel);
+        GridBagLayout gbl_testDetailsPanel = new GridBagLayout();
+        gbl_testDetailsPanel.columnWidths = new int[]{0, 0, 0, 0, 0};
+        gbl_testDetailsPanel.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
+        gbl_testDetailsPanel.columnWeights = new double[]{0.0, 1.0, 0.0, 1.0, Double.MIN_VALUE};
+        gbl_testDetailsPanel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+        testDetailsPanel.setLayout(gbl_testDetailsPanel);
 
         lblAppModules = new JXLabel();
         lblAppModules.setText("Application Module");
@@ -143,7 +144,7 @@ public class TestDetailsPanel extends JPanel {
         gbc_lblAppModules.insets = new Insets(0, 0, 5, 5);
         gbc_lblAppModules.gridx = 0;
         gbc_lblAppModules.gridy = 0;
-        panel_1.add(lblAppModules, gbc_lblAppModules);
+        testDetailsPanel.add(lblAppModules, gbc_lblAppModules);
 
         txtfldAppModules = new JXTextField();
         txtfldAppModules.setOpaque(false);
@@ -155,18 +156,18 @@ public class TestDetailsPanel extends JPanel {
         gbc_txtfldAppModules.insets = new Insets(0, 0, 5, 5);
         gbc_txtfldAppModules.gridx = 1;
         gbc_txtfldAppModules.gridy = 0;
-        panel_1.add(txtfldAppModules, gbc_txtfldAppModules);
+        testDetailsPanel.add(txtfldAppModules, gbc_txtfldAppModules);
 
         lblCreated = new JXLabel();
         lblCreated.setText("Created");
         lblCreated.setFont(new Font("Tahoma", Font.BOLD, 11));
-        lblCreated.setBorder(new EmptyBorder(0, 10, 0, 10));
+        lblCreated.setBorder(new EmptyBorder(0, 30, 0, 10));
         GridBagConstraints gbc_lblCreated = new GridBagConstraints();
         gbc_lblCreated.anchor = GridBagConstraints.WEST;
         gbc_lblCreated.insets = new Insets(0, 0, 5, 5);
         gbc_lblCreated.gridx = 2;
         gbc_lblCreated.gridy = 0;
-        panel_1.add(lblCreated, gbc_lblCreated);
+        testDetailsPanel.add(lblCreated, gbc_lblCreated);
 
         txtfldCreated = new JXTextField();
         txtfldCreated.setOpaque(false);
@@ -178,7 +179,7 @@ public class TestDetailsPanel extends JPanel {
         gbc_txtfldCreated.insets = new Insets(0, 0, 5, 0);
         gbc_txtfldCreated.gridx = 3;
         gbc_txtfldCreated.gridy = 0;
-        panel_1.add(txtfldCreated, gbc_txtfldCreated);
+        testDetailsPanel.add(txtfldCreated, gbc_txtfldCreated);
 
         lblDesigner = new JXLabel();
         lblDesigner.setText("Designer");
@@ -189,7 +190,7 @@ public class TestDetailsPanel extends JPanel {
         gbc_lblDesigner.insets = new Insets(0, 0, 5, 5);
         gbc_lblDesigner.gridx = 0;
         gbc_lblDesigner.gridy = 1;
-        panel_1.add(lblDesigner, gbc_lblDesigner);
+        testDetailsPanel.add(lblDesigner, gbc_lblDesigner);
 
         txtfldDesigner = new JXTextField();
         txtfldDesigner.setOpaque(false);
@@ -201,18 +202,18 @@ public class TestDetailsPanel extends JPanel {
         gbc_txtfldDesigner.insets = new Insets(0, 0, 5, 5);
         gbc_txtfldDesigner.gridx = 1;
         gbc_txtfldDesigner.gridy = 1;
-        panel_1.add(txtfldDesigner, gbc_txtfldDesigner);
+        testDetailsPanel.add(txtfldDesigner, gbc_txtfldDesigner);
 
         lblOwner = new JXLabel();
         lblOwner.setText("Owner");
         lblOwner.setFont(new Font("Tahoma", Font.BOLD, 11));
-        lblOwner.setBorder(new EmptyBorder(0, 10, 0, 10));
+        lblOwner.setBorder(new EmptyBorder(0, 30, 0, 10));
         GridBagConstraints gbc_lblOwner = new GridBagConstraints();
         gbc_lblOwner.anchor = GridBagConstraints.WEST;
         gbc_lblOwner.insets = new Insets(0, 0, 5, 5);
         gbc_lblOwner.gridx = 2;
         gbc_lblOwner.gridy = 1;
-        panel_1.add(lblOwner, gbc_lblOwner);
+        testDetailsPanel.add(lblOwner, gbc_lblOwner);
 
         txtfldOwner = new JXTextField();
         txtfldOwner.setOpaque(false);
@@ -224,7 +225,7 @@ public class TestDetailsPanel extends JPanel {
         gbc_txtfldOwner.insets = new Insets(0, 0, 5, 0);
         gbc_txtfldOwner.gridx = 3;
         gbc_txtfldOwner.gridy = 1;
-        panel_1.add(txtfldOwner, gbc_txtfldOwner);
+        testDetailsPanel.add(txtfldOwner, gbc_txtfldOwner);
 
         lblManual = new JXLabel();
         lblManual.setText("Manual");
@@ -235,7 +236,7 @@ public class TestDetailsPanel extends JPanel {
         gbc_lblManual.insets = new Insets(0, 0, 5, 5);
         gbc_lblManual.gridx = 0;
         gbc_lblManual.gridy = 2;
-        panel_1.add(lblManual, gbc_lblManual);
+        testDetailsPanel.add(lblManual, gbc_lblManual);
 
         txtfldManual = new JXTextField();
         txtfldManual.setOpaque(false);
@@ -247,18 +248,18 @@ public class TestDetailsPanel extends JPanel {
         gbc_txtfldManual.insets = new Insets(0, 0, 5, 5);
         gbc_txtfldManual.gridx = 1;
         gbc_txtfldManual.gridy = 2;
-        panel_1.add(txtfldManual, gbc_txtfldManual);
+        testDetailsPanel.add(txtfldManual, gbc_txtfldManual);
 
         lblFeature = new JXLabel();
         lblFeature.setText("Feature");
         lblFeature.setFont(new Font("Tahoma", Font.BOLD, 11));
-        lblFeature.setBorder(new EmptyBorder(0, 10, 0, 10));
+        lblFeature.setBorder(new EmptyBorder(0, 30, 0, 10));
         GridBagConstraints gbc_lblFeature = new GridBagConstraints();
         gbc_lblFeature.anchor = GridBagConstraints.WEST;
         gbc_lblFeature.insets = new Insets(0, 0, 5, 5);
         gbc_lblFeature.gridx = 2;
         gbc_lblFeature.gridy = 2;
-        panel_1.add(lblFeature, gbc_lblFeature);
+        testDetailsPanel.add(lblFeature, gbc_lblFeature);
 
         txtfldFeature = new JXTextField();
         txtfldFeature.setOpaque(false);
@@ -270,7 +271,7 @@ public class TestDetailsPanel extends JPanel {
         gbc_txtfldFeature.insets = new Insets(0, 0, 5, 0);
         gbc_txtfldFeature.gridx = 3;
         gbc_txtfldFeature.gridy = 2;
-        panel_1.add(txtfldFeature, gbc_txtfldFeature);
+        testDetailsPanel.add(txtfldFeature, gbc_txtfldFeature);
 
         lblRunInReleases = new JXLabel();
         lblRunInReleases.setText("Run in Releases");
@@ -281,7 +282,7 @@ public class TestDetailsPanel extends JPanel {
         gbc_lblRunInReleases.insets = new Insets(0, 0, 5, 5);
         gbc_lblRunInReleases.gridx = 0;
         gbc_lblRunInReleases.gridy = 3;
-        panel_1.add(lblRunInReleases, gbc_lblRunInReleases);
+        testDetailsPanel.add(lblRunInReleases, gbc_lblRunInReleases);
 
         textRunInReleases = new JXTextField();
         textRunInReleases.setOpaque(false);
@@ -293,18 +294,18 @@ public class TestDetailsPanel extends JPanel {
         gbc_textRunInReleases.insets = new Insets(0, 0, 5, 5);
         gbc_textRunInReleases.gridx = 1;
         gbc_textRunInReleases.gridy = 3;
-        panel_1.add(textRunInReleases, gbc_textRunInReleases);
+        testDetailsPanel.add(textRunInReleases, gbc_textRunInReleases);
 
         lblEstimatedDuration = new JXLabel();
         lblEstimatedDuration.setText("Estimated duration");
         lblEstimatedDuration.setFont(new Font("Tahoma", Font.BOLD, 11));
-        lblEstimatedDuration.setBorder(new EmptyBorder(0, 10, 0, 10));
+        lblEstimatedDuration.setBorder(new EmptyBorder(0, 30, 0, 10));
         GridBagConstraints gbc_lblEstimatedDuration = new GridBagConstraints();
         gbc_lblEstimatedDuration.anchor = GridBagConstraints.WEST;
         gbc_lblEstimatedDuration.insets = new Insets(0, 0, 5, 5);
         gbc_lblEstimatedDuration.gridx = 2;
         gbc_lblEstimatedDuration.gridy = 3;
-        panel_1.add(lblEstimatedDuration, gbc_lblEstimatedDuration);
+        testDetailsPanel.add(lblEstimatedDuration, gbc_lblEstimatedDuration);
 
         txtfldEstimetedDuration = new JXTextField();
         txtfldEstimetedDuration.setOpaque(false);
@@ -316,7 +317,7 @@ public class TestDetailsPanel extends JPanel {
         gbc_txtfldEstimetedDuration.insets = new Insets(0, 0, 5, 0);
         gbc_txtfldEstimetedDuration.gridx = 3;
         gbc_txtfldEstimetedDuration.gridy = 3;
-        panel_1.add(txtfldEstimetedDuration, gbc_txtfldEstimetedDuration);
+        testDetailsPanel.add(txtfldEstimetedDuration, gbc_txtfldEstimetedDuration);
 
         lblTestType = new JXLabel();
         lblTestType.setText("Test type");
@@ -327,7 +328,7 @@ public class TestDetailsPanel extends JPanel {
         gbc_lblTestType.insets = new Insets(0, 0, 5, 5);
         gbc_lblTestType.gridx = 0;
         gbc_lblTestType.gridy = 4;
-        panel_1.add(lblTestType, gbc_lblTestType);
+        testDetailsPanel.add(lblTestType, gbc_lblTestType);
 
         txtfldTestType = new JXTextField();
         txtfldTestType.setOpaque(false);
@@ -339,18 +340,18 @@ public class TestDetailsPanel extends JPanel {
         gbc_txtfldTestType.insets = new Insets(0, 0, 5, 5);
         gbc_txtfldTestType.gridx = 1;
         gbc_txtfldTestType.gridy = 4;
-        panel_1.add(txtfldTestType, gbc_txtfldTestType);
+        testDetailsPanel.add(txtfldTestType, gbc_txtfldTestType);
 
         lblRequirementCoverage = new JXLabel();
         lblRequirementCoverage.setText("Requirement coverage");
         lblRequirementCoverage.setFont(new Font("Tahoma", Font.BOLD, 11));
-        lblRequirementCoverage.setBorder(new EmptyBorder(0, 10, 0, 10));
+        lblRequirementCoverage.setBorder(new EmptyBorder(0, 30, 0, 10));
         GridBagConstraints gbc_lblRequirementCoverage = new GridBagConstraints();
         gbc_lblRequirementCoverage.anchor = GridBagConstraints.WEST;
         gbc_lblRequirementCoverage.insets = new Insets(0, 0, 5, 5);
         gbc_lblRequirementCoverage.gridx = 2;
         gbc_lblRequirementCoverage.gridy = 4;
-        panel_1.add(lblRequirementCoverage, gbc_lblRequirementCoverage);
+        testDetailsPanel.add(lblRequirementCoverage, gbc_lblRequirementCoverage);
 
         txtfldRequirementCoverage = new JXTextField();
         txtfldRequirementCoverage.setOpaque(false);
@@ -362,7 +363,7 @@ public class TestDetailsPanel extends JPanel {
         gbc_txtfldRequirementCoverage.insets = new Insets(0, 0, 5, 0);
         gbc_txtfldRequirementCoverage.gridx = 3;
         gbc_txtfldRequirementCoverage.gridy = 4;
-        panel_1.add(txtfldRequirementCoverage, gbc_txtfldRequirementCoverage);
+        testDetailsPanel.add(txtfldRequirementCoverage, gbc_txtfldRequirementCoverage);
 
         lblTestingToolType = new JXLabel();
         lblTestingToolType.setText("Testing tool type");
@@ -373,7 +374,7 @@ public class TestDetailsPanel extends JPanel {
         gbc_lblTestingToolType.insets = new Insets(0, 0, 5, 5);
         gbc_lblTestingToolType.gridx = 0;
         gbc_lblTestingToolType.gridy = 5;
-        panel_1.add(lblTestingToolType, gbc_lblTestingToolType);
+        testDetailsPanel.add(lblTestingToolType, gbc_lblTestingToolType);
 
         txtfldTestingToolType = new JXTextField();
         txtfldTestingToolType.setOpaque(false);
@@ -385,18 +386,18 @@ public class TestDetailsPanel extends JPanel {
         gbc_txtfldTestingToolType.insets = new Insets(0, 0, 5, 5);
         gbc_txtfldTestingToolType.gridx = 1;
         gbc_txtfldTestingToolType.gridy = 5;
-        panel_1.add(txtfldTestingToolType, gbc_txtfldTestingToolType);
+        testDetailsPanel.add(txtfldTestingToolType, gbc_txtfldTestingToolType);
 
         lblRunSet = new JXLabel();
         lblRunSet.setText("Run set");
         lblRunSet.setFont(new Font("Tahoma", Font.BOLD, 11));
-        lblRunSet.setBorder(new EmptyBorder(0, 10, 0, 10));
+        lblRunSet.setBorder(new EmptyBorder(0, 30, 0, 10));
         GridBagConstraints gbc_lblRunSet = new GridBagConstraints();
         gbc_lblRunSet.anchor = GridBagConstraints.WEST;
         gbc_lblRunSet.insets = new Insets(0, 0, 5, 5);
         gbc_lblRunSet.gridx = 2;
         gbc_lblRunSet.gridy = 5;
-        panel_1.add(lblRunSet, gbc_lblRunSet);
+        testDetailsPanel.add(lblRunSet, gbc_lblRunSet);
 
         txtfldRunSet = new JXTextField();
         txtfldRunSet.setOpaque(false);
@@ -408,7 +409,7 @@ public class TestDetailsPanel extends JPanel {
         gbc_txtfldRunSet.insets = new Insets(0, 0, 5, 0);
         gbc_txtfldRunSet.gridx = 3;
         gbc_txtfldRunSet.gridy = 5;
-        panel_1.add(txtfldRunSet, gbc_txtfldRunSet);
+        testDetailsPanel.add(txtfldRunSet, gbc_txtfldRunSet);
 
         lblLastRuns = new JXLabel();
         lblLastRuns.setText("Last runs");
@@ -419,7 +420,7 @@ public class TestDetailsPanel extends JPanel {
         gbc_lblLastRuns.insets = new Insets(0, 0, 5, 5);
         gbc_lblLastRuns.gridx = 0;
         gbc_lblLastRuns.gridy = 6;
-        panel_1.add(lblLastRuns, gbc_lblLastRuns);
+        testDetailsPanel.add(lblLastRuns, gbc_lblLastRuns);
 
         txtfldLastRuns = new JXTextField();
         txtfldLastRuns.setOpaque(false);
@@ -431,18 +432,18 @@ public class TestDetailsPanel extends JPanel {
         gbc_txtfldLastRuns.insets = new Insets(0, 0, 5, 5);
         gbc_txtfldLastRuns.gridx = 1;
         gbc_txtfldLastRuns.gridy = 6;
-        panel_1.add(txtfldLastRuns, gbc_txtfldLastRuns);
+        testDetailsPanel.add(txtfldLastRuns, gbc_txtfldLastRuns);
 
         lblContent = new JXLabel();
         lblContent.setText("Content");
         lblContent.setFont(new Font("Tahoma", Font.BOLD, 11));
-        lblContent.setBorder(new EmptyBorder(0, 10, 0, 10));
+        lblContent.setBorder(new EmptyBorder(0, 30, 0, 10));
         GridBagConstraints gbc_lblContent = new GridBagConstraints();
         gbc_lblContent.anchor = GridBagConstraints.WEST;
         gbc_lblContent.insets = new Insets(0, 0, 5, 5);
         gbc_lblContent.gridx = 2;
         gbc_lblContent.gridy = 6;
-        panel_1.add(lblContent, gbc_lblContent);
+        testDetailsPanel.add(lblContent, gbc_lblContent);
 
         txtfldContent = new JXTextField();
         txtfldContent.setOpaque(false);
@@ -454,7 +455,7 @@ public class TestDetailsPanel extends JPanel {
         gbc_txtfldContent.insets = new Insets(0, 0, 5, 0);
         gbc_txtfldContent.gridx = 3;
         gbc_txtfldContent.gridy = 6;
-        panel_1.add(txtfldContent, gbc_txtfldContent);
+        testDetailsPanel.add(txtfldContent, gbc_txtfldContent);
 
         lblPhase = new JXLabel();
         lblPhase.setText("Phase");
@@ -465,7 +466,7 @@ public class TestDetailsPanel extends JPanel {
         gbc_lblPhase.insets = new Insets(0, 0, 0, 5);
         gbc_lblPhase.gridx = 0;
         gbc_lblPhase.gridy = 7;
-        panel_1.add(lblPhase, gbc_lblPhase);
+        testDetailsPanel.add(lblPhase, gbc_lblPhase);
 
         comboBoxPhase = new JComboBox();
         comboBoxPhase.setEditable(true);
@@ -475,18 +476,18 @@ public class TestDetailsPanel extends JPanel {
         gbc_comboBoxPhase.insets = new Insets(0, 0, 0, 5);
         gbc_comboBoxPhase.gridx = 1;
         gbc_comboBoxPhase.gridy = 7;
-        panel_1.add(comboBoxPhase, gbc_comboBoxPhase);
+        testDetailsPanel.add(comboBoxPhase, gbc_comboBoxPhase);
 
         lblCoveredContent = new JXLabel();
         lblCoveredContent.setText("Covered Content");
         lblCoveredContent.setFont(new Font("Tahoma", Font.BOLD, 11));
-        lblCoveredContent.setBorder(new EmptyBorder(0, 10, 0, 10));
+        lblCoveredContent.setBorder(new EmptyBorder(0, 30, 0, 10));
         GridBagConstraints gbc_lblCoveredContent = new GridBagConstraints();
         gbc_lblCoveredContent.anchor = GridBagConstraints.WEST;
         gbc_lblCoveredContent.insets = new Insets(0, 0, 0, 5);
         gbc_lblCoveredContent.gridx = 2;
         gbc_lblCoveredContent.gridy = 7;
-        panel_1.add(lblCoveredContent, gbc_lblCoveredContent);
+        testDetailsPanel.add(lblCoveredContent, gbc_lblCoveredContent);
 
         txtfldCoveredContent = new JXTextField();
         txtfldCoveredContent.setOpaque(false);
@@ -497,7 +498,7 @@ public class TestDetailsPanel extends JPanel {
         gbc_txtfldCoveredContent.fill = GridBagConstraints.HORIZONTAL;
         gbc_txtfldCoveredContent.gridx = 3;
         gbc_txtfldCoveredContent.gridy = 7;
-        panel_1.add(txtfldCoveredContent, gbc_txtfldCoveredContent);
+        testDetailsPanel.add(txtfldCoveredContent, gbc_txtfldCoveredContent);
     }
 
 

@@ -47,7 +47,7 @@ public class UserStoryDetailsPanel extends JPanel {
 
     public UserStoryDetailsPanel() {
         setBorder(null);
-        setBounds(100, 100, 900, 336);
+        setBounds(100, 100, 900, 378);
         GridBagLayout gridBagLayout = new GridBagLayout();
         gridBagLayout.columnWidths = new int[]{0, 0};
         gridBagLayout.rowHeights = new int[]{0, 0};
@@ -56,7 +56,7 @@ public class UserStoryDetailsPanel extends JPanel {
         this.setLayout(gridBagLayout);
 
         rootPanel = new JXPanel();
-        rootPanel.setBorder(null);
+        rootPanel.setBorder(new EmptyBorder(10, 30, 30, 30));
         GridBagConstraints gbc_rootPanel = new GridBagConstraints();
         gbc_rootPanel.fill = GridBagConstraints.BOTH;
         gbc_rootPanel.gridx = 0;
@@ -71,6 +71,7 @@ public class UserStoryDetailsPanel extends JPanel {
 
         nameAndIconPanel = new JXPanel();
         FlowLayout flowLayout = (FlowLayout) nameAndIconPanel.getLayout();
+        flowLayout.setHgap(0);
         flowLayout.setAlignment(FlowLayout.LEFT);
         nameAndIconPanel.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_nameAndIconPanel = new GridBagConstraints();
@@ -81,6 +82,7 @@ public class UserStoryDetailsPanel extends JPanel {
         rootPanel.add(nameAndIconPanel, gbc_nameAndIconPanel);
         
         lblName = new JXLabel();
+        lblName.setIconTextGap(5);
         lblName.setIcon(new ImageIcon(UserStoryDetailsPanel.class.getResource("/images/userStoryIcon.png")));
         lblName.setText("Name");
         lblName.setFont(new Font("Tahoma", Font.BOLD, 12));
@@ -90,7 +92,7 @@ public class UserStoryDetailsPanel extends JPanel {
         lblDescription = new JXLabel();
         lblDescription.setText("Description");
         lblDescription.setFont(new Font("Tahoma", Font.BOLD, 11));
-        lblDescription.setBorder(new EmptyBorder(5, 10, 0, 10));
+        lblDescription.setBorder(null);
         GridBagConstraints gbc_lblDescription = new GridBagConstraints();
         gbc_lblDescription.anchor = GridBagConstraints.NORTHWEST;
         gbc_lblDescription.insets = new Insets(0, 0, 5, 0);
@@ -103,7 +105,7 @@ public class UserStoryDetailsPanel extends JPanel {
         txtfldDescription.setOpaque(false);
         txtfldDescription.setLineWrap(true);
         txtfldDescription.setEditable(false);
-        txtfldDescription.setBorder(new EmptyBorder(5, 10, 0, 10));
+        txtfldDescription.setBorder(null);
         txtfldDescription.setBackground(new Color(0, 0, 0, 0));
         GridBagConstraints gbc_txtfldDescription = new GridBagConstraints();
         gbc_txtfldDescription.fill = GridBagConstraints.BOTH;
@@ -113,7 +115,7 @@ public class UserStoryDetailsPanel extends JPanel {
         rootPanel.add(txtfldDescription, gbc_txtfldDescription);
 
         userStoryDetailsPanel = new JXPanel();
-        userStoryDetailsPanel.setBorder(new EmptyBorder(10, 10, 2, 10));
+        userStoryDetailsPanel.setBorder(new EmptyBorder(10, 0, 0, 0));
         GridBagConstraints gbc_userStoryDetailsPanel = new GridBagConstraints();
         gbc_userStoryDetailsPanel.fill = GridBagConstraints.BOTH;
         gbc_userStoryDetailsPanel.gridx = 0;
@@ -152,7 +154,7 @@ public class UserStoryDetailsPanel extends JPanel {
         lblGroup = new JXLabel();
         lblGroup.setText("Group");
         lblGroup.setFont(new Font("Tahoma", Font.BOLD, 11));
-        lblGroup.setBorder(new EmptyBorder(0, 10, 0, 10));
+        lblGroup.setBorder(new EmptyBorder(0, 30, 0, 10));
         GridBagConstraints gbc_lblGroup = new GridBagConstraints();
         gbc_lblGroup.anchor = GridBagConstraints.WEST;
         gbc_lblGroup.insets = new Insets(0, 0, 5, 5);
@@ -198,7 +200,7 @@ public class UserStoryDetailsPanel extends JPanel {
         lblOwner = new JXLabel();
         lblOwner.setText("Owner");
         lblOwner.setFont(new Font("Tahoma", Font.BOLD, 11));
-        lblOwner.setBorder(new EmptyBorder(0, 10, 0, 10));
+        lblOwner.setBorder(new EmptyBorder(0, 30, 0, 10));
         GridBagConstraints gbc_lblOwner = new GridBagConstraints();
         gbc_lblOwner.anchor = GridBagConstraints.WEST;
         gbc_lblOwner.insets = new Insets(0, 0, 5, 5);
@@ -244,7 +246,7 @@ public class UserStoryDetailsPanel extends JPanel {
         lblFeature = new JXLabel();
         lblFeature.setText("Feature");
         lblFeature.setFont(new Font("Tahoma", Font.BOLD, 11));
-        lblFeature.setBorder(new EmptyBorder(0, 10, 0, 10));
+        lblFeature.setBorder(new EmptyBorder(0, 30, 0, 10));
         GridBagConstraints gbc_lblFeature = new GridBagConstraints();
         gbc_lblFeature.anchor = GridBagConstraints.WEST;
         gbc_lblFeature.insets = new Insets(0, 0, 5, 5);
@@ -311,7 +313,7 @@ public class UserStoryDetailsPanel extends JPanel {
         lblSprint = new JXLabel();
         lblSprint.setText("Sprint");
         lblSprint.setFont(new Font("Tahoma", Font.BOLD, 11));
-        lblSprint.setBorder(new EmptyBorder(0, 10, 0, 10));
+        lblSprint.setBorder(new EmptyBorder(0, 30, 0, 10));
         GridBagConstraints gbc_lblSprint = new GridBagConstraints();
         gbc_lblSprint.anchor = GridBagConstraints.WEST;
         gbc_lblSprint.insets = new Insets(0, 0, 5, 5);
@@ -358,7 +360,7 @@ public class UserStoryDetailsPanel extends JPanel {
         lblQaStoryPointsDays.setText("QA Story Points Days");
         lblQaStoryPointsDays.setOpaque(false);
         lblQaStoryPointsDays.setFont(new Font("Tahoma", Font.BOLD, 11));
-        lblQaStoryPointsDays.setBorder(new EmptyBorder(0, 10, 0, 10));
+        lblQaStoryPointsDays.setBorder(new EmptyBorder(0, 30, 0, 10));
         lblQaStoryPointsDays.setBackground(new Color(0, 0, 0, 0));
         GridBagConstraints gbc_lblQaStoryPointsDays = new GridBagConstraints();
         gbc_lblQaStoryPointsDays.anchor = GridBagConstraints.WEST;

@@ -50,6 +50,7 @@ public class EntityDetailView implements View {
     public JComponent getComponent() {
         JBScrollPane component = new JBScrollPane(entityDetailsPanel);
         component.setBorder(null);
+        component.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         return component;
     }
 
