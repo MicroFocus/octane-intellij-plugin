@@ -3,6 +3,7 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.treetable;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
+import com.intellij.ui.JBColor;
 
 import javax.swing.*;
 import javax.swing.tree.TreeCellRenderer;
@@ -48,6 +49,8 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
             //assume it has a name at least
             String name = entityModel.getValue("name").getValue().toString();
             rowWidget.setEntityName(name);
+
+            rowWidget.setBorder(BorderFactory.createLineBorder(JBColor.border()));
 
             return rowWidget;
         }
