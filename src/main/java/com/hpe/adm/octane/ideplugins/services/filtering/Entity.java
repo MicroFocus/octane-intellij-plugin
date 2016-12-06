@@ -8,15 +8,14 @@ import com.hpe.adm.nga.sdk.model.EntityModel;
  */
 public enum Entity {
 
-    DEFECT("defects", "defect"),
-
     WORK_ITEM("work_items", "work_item"),
     USER_STORY(Entity.WORK_ITEM, "story"),
+    DEFECT(Entity.WORK_ITEM, "defect"),
     WORK_ITEM_ROOT(Entity.WORK_ITEM, "work_item_root"),
 
     TEST("tests", "test"),
     MANUAL_TEST(Entity.TEST, "test_manual"),
-    GHERKIN_TEST(Entity.TEST, "test_gherkin"),
+    GHERKIN_TEST(Entity.TEST, "gherkin_test"),
 
     TASK("tasks", "task"),
 

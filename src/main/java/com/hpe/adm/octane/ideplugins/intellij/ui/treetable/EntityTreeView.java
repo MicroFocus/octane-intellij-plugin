@@ -134,6 +134,7 @@ public class EntityTreeView implements View {
         button.setBorderPainted(false);
         button.setContentAreaFilled(false);
         button.setOpaque(false);
+        button.setPreferredSize(new Dimension(30,30));
 
         button.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
