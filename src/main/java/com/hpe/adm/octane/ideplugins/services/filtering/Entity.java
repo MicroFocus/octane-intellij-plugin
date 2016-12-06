@@ -15,7 +15,7 @@ public enum Entity {
 
     TEST("tests", "test"),
     MANUAL_TEST(Entity.TEST, "test_manual"),
-    GHERKIN_TEST(Entity.TEST, "test_gherkin"),
+    GHERKIN_TEST(Entity.TEST, "gherkin_test"),
 
     TASK("tasks", "task"),
 
