@@ -5,6 +5,8 @@ import com.hpe.adm.nga.sdk.model.FieldModel;
 import com.hpe.adm.nga.sdk.model.MultiReferenceFieldModel;
 import com.hpe.adm.nga.sdk.model.ReferenceFieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.View;
+import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
+import com.intellij.ui.components.JBScrollPane;
 import org.apache.commons.lang.CharEncoding;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -16,31 +18,53 @@ import java.util.StringJoiner;
 
 public class EntityDetailView implements View {
 
-    private static final String DEFECT = "defect";
-    private static final String TEST = "test";
-    private static final String USER_STORY = "work_item";
-    private static final String TASK = "task";
-
     private JPanel entityDetailsPanel;
 
-	public EntityDetailView() {
+    public EntityDetailView() {
 
+    }
+
+    public static String getNameForEntity(Entity entity) {
+        String ret = "Item";
+        switch (entity) {
+            case DEFECT:
+                ret = "Defect";
+                break;
+            case GHERKIN_TEST:
+                ret = "Gherkin Test";
+                break;
+            case MANUAL_TEST:
+                ret = "Manual Test";
+                break;
+            case USER_STORY:
+                ret = "User Story";
+                break;
+            case TASK:
+                ret = "Task";
+                break;
+        }
+        return ret;
     }
 
     @Override
     public JComponent getComponent() {
-
-        return new JScrollPane(entityDetailsPanel);
+        JBScrollPane component = new JBScrollPane(entityDetailsPanel);
+        component.setBorder(null);
+        component.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        return component;
     }
 
     //TODO: @osavencu: build it more generic (after it works)
     public void setEntityModel(EntityModel entityModel) {
-        String entityType = entityModel.getValue("type").getValue().toString();
+        Entity entityType = Entity.getEntityType(entityModel);
         switch (entityType) {
             case DEFECT:
                 setEntityModelForDefects(entityModel);
                 break;
-            case TEST:
+            case GHERKIN_TEST:
+                setEntityModelForTests(entityModel);
+                break;
+            case MANUAL_TEST:
                 setEntityModelForTests(entityModel);
                 break;
             case USER_STORY:
@@ -52,7 +76,6 @@ public class EntityDetailView implements View {
         }
 
     }
-
 
     private void setEntityModelForDefects(EntityModel entityModel) {
         DefectsDetailsPanel defectsDetailsPanel = new DefectsDetailsPanel();
@@ -84,9 +107,10 @@ public class EntityDetailView implements View {
     }
 
     private void setEntityModelForTests(EntityModel entityModel) {
-        TestDetailsPanel testDetailsPanel = new TestDetailsPanel();
+        TestDetailsPanel testDetailsPanel = new TestDetailsPanel(Entity.getEntityType(entityModel));
         testDetailsPanel.setTxtfldDescription(getDescriptionForEntityModel(entityModel));
         testDetailsPanel.setLblName(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_NAME)));
+        testDetailsPanel.setTestIcon(Entity.getEntityType(entityModel));
         testDetailsPanel.setTxtfldAppModules(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_APPMODULE)));
         testDetailsPanel.setTtxtfldDesigner(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_DESIGNER)));
         testDetailsPanel.setTxtfldManual(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_IS_MANUAL)));
@@ -107,7 +131,6 @@ public class EntityDetailView implements View {
     }
 
     private void setEntityModelForUserStory(EntityModel entityModel) {
-
         UserStoryDetailsPanel userStoryDetailsPanel = new UserStoryDetailsPanel();
         userStoryDetailsPanel.setTxtfldDescription(getDescriptionForEntityModel(entityModel));
         userStoryDetailsPanel.setLblName(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_NAME)));
@@ -199,7 +222,6 @@ public class EntityDetailView implements View {
         }
         return result.toString();
     }
-
 
 
 }

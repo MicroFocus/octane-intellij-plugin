@@ -6,6 +6,7 @@ import com.google.protobuf.ServiceException;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.EntityDetailPresenter;
+import com.hpe.adm.octane.ideplugins.intellij.ui.detail.EntityDetailView;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeTablePresenter;
 import com.hpe.adm.octane.ideplugins.services.DownloadScriptService;
 import com.hpe.adm.octane.ideplugins.services.EntityService;
@@ -57,7 +58,7 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
         EntityDetailPresenter presenter = entityDetailPresenterProvider.get();
         detailPresenters.add(presenter);
         presenter.setEntity(entityModel);
-        tabbedPaneView.addTab(entityModel.getValue("type").getValue().toString() + " | " + entityModel.getValue("id").getValue().toString(), presenter.getView().getComponent());
+        tabbedPaneView.addTab(EntityDetailView.getNameForEntity(Entity.getEntityType(entityModel)) + " | " + entityModel.getValue("id").getValue().toString(), presenter.getView().getComponent());
     }
 
     public void openSearchTab(String searchQuery) {
@@ -76,16 +77,6 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
     @Inject
     public void setView(TabbedPaneView tabbedPaneView) {
         this.tabbedPaneView = tabbedPaneView;
-
-        try {
-            openDetailTab(entityService.findEntity(Entity.STORY, Long.valueOf(159001)));
-            openDetailTab(entityService.findEntity(Entity.TASK, Long.valueOf(52003)));
-            openDetailTab(entityService.findEntity(Entity.TEST, Long.valueOf(231018)));
-            openDetailTab(entityService.findEntity(Entity.DEFECT, Long.valueOf(163015)));
-        } catch (ServiceException e) {
-            e.printStackTrace();
-        }
-
         //open test entity tree view
         EntityTreeTablePresenter presenter = openMyWorkTab("My work");
         presenter.addEntityDoubleClickHandler((entityType, entityId, model) -> {
@@ -97,6 +88,14 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
             }
         });
 
+        try {
+            openDetailTab(entityService.findEntity(Entity.USER_STORY, Long.valueOf(159001)));
+            openDetailTab(entityService.findEntity(Entity.TASK, Long.valueOf(52003)));
+            openDetailTab(entityService.findEntity(Entity.TEST, Long.valueOf(231018)));
+            openDetailTab(entityService.findEntity(Entity.DEFECT, Long.valueOf(163015)));
+        } catch (ServiceException e) {
+            e.printStackTrace();
+        }
         openTestTab(1003);
     }
 
