@@ -5,7 +5,6 @@ import com.google.protobuf.ServiceException;
 import com.hpe.adm.nga.sdk.EntityList;
 import com.hpe.adm.nga.sdk.Query;
 import com.hpe.adm.nga.sdk.model.EntityModel;
-import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.filtering.Filter;
 
@@ -19,20 +18,50 @@ public class EntityService extends ServiceBase {
 
     public Collection<EntityModel> getMyWork() {
 
-        Entity[] myWorkEntities = new Entity[]{
-                Entity.DEFECT, Entity.USER_STORY, Entity.TEST, Entity.TASK
-        };
+        Map<Entity, Query.QueryBuilder> myWorkFilter = new HashMap<>();
+
+        myWorkFilter.put(Entity.TEST, createPhaseQuery(Entity.TEST,"new", "inprogress"));
+        myWorkFilter.put(Entity.DEFECT, createPhaseQuery(Entity.DEFECT,"new", "inprogress", "intesting"));
+        myWorkFilter.put(Entity.USER_STORY, createPhaseQuery(Entity.STORY, "new", "inprogress", "intesting"));
+        myWorkFilter.put(Entity.TASK, createPhaseQuery(Entity.TASK, "new", "inprogress"));
 
         Query.QueryBuilder currentUserQuery = new Query.QueryBuilder("owner", Query::equalTo,
                 new Query.QueryBuilder("id", Query::equalTo, getCurrentUserId()));
 
         Collection<EntityModel> result = new ArrayList<>();
 
-        Arrays.asList(myWorkEntities).forEach(entityType ->
-                result.addAll(findEntities(entityType, currentUserQuery))
+        //TODO, known subtypes should be under same rest call
+        myWorkFilter.keySet().forEach(entityType -> {
+                    Query.QueryBuilder query = myWorkFilter.get(entityType).and(currentUserQuery);
+                    result.addAll(findEntities(entityType, query));
+                }
         );
 
         return result;
+    }
+
+    /**
+     * Constructs a metaphase query builder to match "logical_name":"metaphase.entity.phasename",
+     * @param entity
+     * @param phases
+     * @return
+     */
+    private Query.QueryBuilder createPhaseQuery(Entity entity, String... phases){
+        Query.QueryBuilder phaseQueryBuilder = null;
+        for(String phaseName: phases){
+            String phaseLogicalName = "metaphase." + entity.getTypeName() + "." + phaseName;
+            Query.QueryBuilder currentPhaseQueryBuilder =
+                    new Query.QueryBuilder("metaphase", Query::equalTo,
+                            new Query.QueryBuilder("logical_name", Query::equalTo, phaseLogicalName)
+                    );
+            if(phaseQueryBuilder == null){
+                phaseQueryBuilder = currentPhaseQueryBuilder;
+            } else {
+                phaseQueryBuilder = phaseQueryBuilder.or(currentPhaseQueryBuilder);
+            }
+        }
+
+        return new Query.QueryBuilder("phase", Query::equalTo, phaseQueryBuilder);
     }
 
     /**
@@ -105,14 +134,14 @@ public class EntityService extends ServiceBase {
         return result;
     }
     /**
-     * 
+     *
      * @param entityType
      * @param entityId
      * @return
      * @throws ServiceException
      */
     public EntityModel findEntity(Entity entityType, Long entityId) throws ServiceException {
-        EntityModel result = null;
+        EntityModel result;
         try {
             result = getOctane().entityList(entityType.getApiEntityName()).at(entityId.intValue()).get().execute();
         } catch (Exception e) {
