@@ -57,7 +57,7 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
         EntityDetailPresenter presenter = entityDetailPresenterProvider.get();
         detailPresenters.add(presenter);
         presenter.setEntity(entityModel);
-        tabbedPaneView.addTab(entityModel.getValue("type").getValue().toString() + " | " + entityModel.getValue("id").getValue().toString(), presenter.getView().getComponent());
+        tabbedPaneView.addTab(Entity.getEntityType(entityModel).toString() + " | " + entityModel.getValue("id").getValue().toString(), presenter.getView().getComponent());
     }
 
     public void openSearchTab(String searchQuery) {
