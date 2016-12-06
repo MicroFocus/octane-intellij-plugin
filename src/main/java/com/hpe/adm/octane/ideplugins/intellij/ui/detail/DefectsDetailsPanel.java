@@ -1,5 +1,8 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
+import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
+import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
+import com.intellij.ui.JBColor;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.JXTextArea;
@@ -12,74 +15,59 @@ import java.awt.*;
 import java.util.HashMap;
 
 public class DefectsDetailsPanel extends JPanel {
-
-	private JXPanel detailsPanel;
-
+	private HashMap<String, Integer> phases = new HashMap<>();
+	private JXPanel rootPanel;
 	private JXLabel lblDescription;
 	private JXTextArea txtfldDescription;
-
+	private JXPanel defectsDetailsPanel;
 	private JXLabel lblFeature;
 	private JXTextField txtfldFeature;
-
-	private JXLabel lblQaOwner;
-	private JXTextField txtfldQaOwner;
-
-	private JXLabel lblTeam;
-	private JXTextField txtfldTeam;
-
-	private JXLabel lblPriority;
-	private JXTextField textfldPriority;
-
-	private JXLabel lblPhase;
-	private JComboBox comboBoxPhase;
-
-	private JXLabel lblRelease;
-	private JXTextField txtfldRelease;
-
-	private JXLabel lblFixedInPush;
-	private JXTextField textfldFixedInPush;
-
-	private JXLabel lblSprint;
-	private JXTextField txtfldSprint;
-
 	private JXLabel lblDetectedBy;
 	private JXTextField txtfldDetectedBy;
-
-	private JXLabel lblSeverity;
-	private JXTextField txtfldSeverity;
-
-	private JXLabel lblGroup;
-	private JXTextField txtfldGroup;
-
-	private JXLabel lblEnviroment;
-	private JXTextField txtfldEnviroment;
-
-	private JXLabel lblFeedbackType;
-	private JXTextField txtfldFeedbackType;
-
-	private JXLabel lblStoryPoints;
-	private JXTextField textfldStoryPoints;
-
-	private JXLabel lblDetectedInPush;
-	private JXTextField textfldDetectedInPush;
-
-	private JXLabel lblDetectedInRelease;
-	private JXTextField txtfldDetectedInRelease;
-	private HashMap<String, Integer> phases = new HashMap<>();
-	private JXTextField invizibleSpacerL;
-	private JXTextField invizibleSpacerR;
+	private JXLabel lblQaOwner;
+	private JXTextField txtfldQaOwner;
 	private JXLabel lblBlocked;
 	private JXTextField txtfldBlocked;
+	private JXLabel lblSeverity;
+	private JXTextField txtfldSeverity;
 	private JXLabel lblBlockedReason;
-	private JXLabel lblAppModule;
-	private JXPanel panel;
-	private JXLabel lblAttachments;
-	private JXLabel lblLinksToFile;
 	private JXTextField txtfldBlockedReason;
+	private JXLabel label_8;
+	private JXTextField txtfldTeam;
+	private JXLabel lblGroup;
+	private JXTextField txtfldGroup;
+	private JXLabel lblStoryPoints;
+	private JXTextField txtfldStoryPoints;
+	private JXLabel lblFeedbackType;
+	private JXTextField txtfldFeedbackType;
+	private JXLabel lblPriority;
+	private JXTextField txtfldPriority;
+	private JXLabel lblEnviroment;
+	private JXTextField txtfldEnviroment;
+	private JXLabel lblPhase;
+	private JComboBox comboBoxPhase;
+	private JXLabel lblAppModules;
 	private JXTextField txtfldAppModules;
+	private JXTextField textField_13;
+	private JXTextField textField_14;
+	private JXLabel lblRelease;
+	private JXTextField txtfldRelease;
+	private JXLabel lblDetectedInBuild;
+	private JXTextField txtfldDetectedInBuild;
+	private JXLabel lblSprint;
+	private JXTextField txtfldSprint;
+	private JXLabel lblDetectedInRelease;
+	private JXTextField txtfldDetectedInRelease;
+	private JXLabel lblFixedInBuild;
+	private JXTextField txtfldFixedInBuild;
+	private JXPanel atachementsPanel;
+	private JXLabel lblAttachments;
+	private JXLabel listOfAttachments;
+	private JXPanel nameAndIconPanel;
 	private JXLabel lblName;
 
 	public DefectsDetailsPanel() {
+		setBorder(null);
 		phases.put("Duplicate", 6);
 		phases.put("Closed", 5);
 		phases.put("Ready for QA", 4);
@@ -87,7 +75,7 @@ public class DefectsDetailsPanel extends JPanel {
 		phases.put("In Progress", 2);
 		phases.put("Open", 1);
 
-		setBounds(100, 100, 814, 410);
+		setBounds(100, 100, 900, 400);
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[] { 0, 0 };
 		gridBagLayout.rowHeights = new int[] { 0, 0 };
@@ -95,144 +83,146 @@ public class DefectsDetailsPanel extends JPanel {
 		gridBagLayout.rowWeights = new double[] { 1.0, Double.MIN_VALUE };
 		this.setLayout(gridBagLayout);
 
-		JScrollPane scrollPane = new JScrollPane();
-		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
-		gbc_scrollPane.fill = GridBagConstraints.BOTH;
-		gbc_scrollPane.gridx = 0;
-		gbc_scrollPane.gridy = 0;
-		this.add(scrollPane, gbc_scrollPane);
+		rootPanel = new JXPanel();
+		rootPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+		GridBagConstraints gbc_rootPanel = new GridBagConstraints();
+		gbc_rootPanel.fill = GridBagConstraints.BOTH;
+		gbc_rootPanel.gridx = 0;
+		gbc_rootPanel.gridy = 0;
+		add(rootPanel, gbc_rootPanel);
+		GridBagLayout gbl_rootPanel = new GridBagLayout();
+		gbl_rootPanel.columnWidths = new int[]{0, 0};
+		gbl_rootPanel.rowHeights = new int[]{0, 0, 0, 0, 0, 0};
+		gbl_rootPanel.columnWeights = new double[]{1.0, Double.MIN_VALUE};
+		gbl_rootPanel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
+		rootPanel.setLayout(gbl_rootPanel);
 
-		JXPanel parentPanel = new JXPanel();
-		parentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-		scrollPane.setColumnHeaderView(parentPanel);
-		GridBagLayout gbl_parentPanel = new GridBagLayout();
-		gbl_parentPanel.columnWidths = new int[] { 0, 0 };
-		gbl_parentPanel.rowHeights = new int[] { 0, 0, 0, 0, 0, 0 };
-		gbl_parentPanel.columnWeights = new double[] { 1.0, Double.MIN_VALUE };
-		gbl_parentPanel.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE };
-		parentPanel.setLayout(gbl_parentPanel);
-
+		nameAndIconPanel = new JXPanel();
+		FlowLayout fl_nameAndIconPanel = (FlowLayout) nameAndIconPanel.getLayout();
+		fl_nameAndIconPanel.setAlignment(FlowLayout.LEFT);
+		GridBagConstraints gbc_nameAndIconPanel = new GridBagConstraints();
+		gbc_nameAndIconPanel.insets = new Insets(0, 0, 5, 0);
+		gbc_nameAndIconPanel.fill = GridBagConstraints.BOTH;
+		gbc_nameAndIconPanel.gridx = 0;
+		gbc_nameAndIconPanel.gridy = 0;
+		rootPanel.add(nameAndIconPanel, gbc_nameAndIconPanel);
+		
 		lblName = new JXLabel();
-		lblName.setBorder(new EmptyBorder(5, 9, 0, 10));
-		lblName.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 13));
+		lblName.setIcon(new ImageIcon(DefectsDetailsPanel.class.getResource("/images/defectIcon.png")));
 		lblName.setText("Name");
-		GridBagConstraints gbc_lblName = new GridBagConstraints();
-		gbc_lblName.anchor = GridBagConstraints.WEST;
-		gbc_lblName.insets = new Insets(0, 0, 5, 0);
-		gbc_lblName.gridx = 0;
-		gbc_lblName.gridy = 0;
-		parentPanel.add(lblName, gbc_lblName);
-
+		lblName.setFont(new Font("Tahoma", Font.BOLD, 12));
+		lblName.setBorder(null);
+		nameAndIconPanel.add(lblName);
+		
 		lblDescription = new JXLabel();
-		lblDescription.setBorder(new EmptyBorder(7, 7, 0, 0));
-		lblDescription.setFont(new Font("Tahoma", Font.BOLD, 11));
 		lblDescription.setText("Description");
+		lblDescription.setFont(new Font("Tahoma", Font.BOLD, 11));
+		lblDescription.setBorder(new EmptyBorder(7, 7, 0, 0));
 		GridBagConstraints gbc_lblDescription = new GridBagConstraints();
 		gbc_lblDescription.anchor = GridBagConstraints.NORTHWEST;
 		gbc_lblDescription.insets = new Insets(0, 0, 5, 0);
 		gbc_lblDescription.gridx = 0;
 		gbc_lblDescription.gridy = 1;
-		parentPanel.add(lblDescription, gbc_lblDescription);
-
+		rootPanel.add(lblDescription, gbc_lblDescription);
+		
 		txtfldDescription = new JXTextArea();
-		txtfldDescription.setEditable(false);
 		txtfldDescription.setOpaque(false);
-		txtfldDescription.setBackground(new Color(0, 0, 0, 0));
-		txtfldDescription.setBorder(new EmptyBorder(5, 7, 0, 13));
 		txtfldDescription.setLineWrap(true);
-		GridBagConstraints gbc_txtrDescription = new GridBagConstraints();
-		gbc_txtrDescription.insets = new Insets(0, 0, 5, 0);
-		gbc_txtrDescription.fill = GridBagConstraints.BOTH;
-		gbc_txtrDescription.gridx = 0;
-		gbc_txtrDescription.gridy = 2;
-		parentPanel.add(txtfldDescription, gbc_txtrDescription);
+		txtfldDescription.setEditable(false);
+		txtfldDescription.setBorder(new EmptyBorder(5, 7, 0, 13));
+		txtfldDescription.setBackground(new Color(0, 0, 0, 0));
+		GridBagConstraints gbc_txtfldDescription = new GridBagConstraints();
+		gbc_txtfldDescription.fill = GridBagConstraints.BOTH;
+		gbc_txtfldDescription.insets = new Insets(0, 0, 5, 0);
+		gbc_txtfldDescription.gridx = 0;
+		gbc_txtfldDescription.gridy = 2;
+		rootPanel.add(txtfldDescription, gbc_txtfldDescription);
 
-		detailsPanel = new JXPanel();
-		detailsPanel.setOpaque(false);
-		detailsPanel.setBorder(new EmptyBorder(10, 7, 2, 13));
-		GridBagConstraints gbc_detailsPanel = new GridBagConstraints();
-		gbc_detailsPanel.insets = new Insets(0, 0, 5, 0);
-		gbc_detailsPanel.fill = GridBagConstraints.BOTH;
-		gbc_detailsPanel.gridx = 0;
-		gbc_detailsPanel.gridy = 3;
-		parentPanel.add(detailsPanel, gbc_detailsPanel);
-		GridBagLayout gbl_detailsPanel = new GridBagLayout();
-		gbl_detailsPanel.columnWidths = new int[] { 0, 0, 0, 0, 0 };
-		gbl_detailsPanel.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-		gbl_detailsPanel.columnWeights = new double[] { 0.0, 1.0, 0.0, 1.0, Double.MIN_VALUE };
-		gbl_detailsPanel.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-				Double.MIN_VALUE };
-		detailsPanel.setLayout(gbl_detailsPanel);
-
+		defectsDetailsPanel = new JXPanel();
+		defectsDetailsPanel.setOpaque(false);
+		defectsDetailsPanel.setBorder(new EmptyBorder(10, 7, 2, 13));
+		GridBagConstraints gbc_defectsDetailsPanel = new GridBagConstraints();
+		gbc_defectsDetailsPanel.fill = GridBagConstraints.BOTH;
+		gbc_defectsDetailsPanel.insets = new Insets(0, 0, 5, 0);
+		gbc_defectsDetailsPanel.gridx = 0;
+		gbc_defectsDetailsPanel.gridy = 3;
+		rootPanel.add(defectsDetailsPanel, gbc_defectsDetailsPanel);
+		GridBagLayout gbl_defectsDetailsPanel = new GridBagLayout();
+		gbl_defectsDetailsPanel.columnWidths = new int[]{0, 0, 0, 0, 0};
+		gbl_defectsDetailsPanel.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+		gbl_defectsDetailsPanel.columnWeights = new double[]{0.0, 1.0, 0.0, 1.0, Double.MIN_VALUE};
+		gbl_defectsDetailsPanel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		defectsDetailsPanel.setLayout(gbl_defectsDetailsPanel);
+		
 		lblFeature = new JXLabel();
-		lblFeature.setBorder(new EmptyBorder(0, 0, 0, 10));
-		lblFeature.setFont(new Font("Tahoma", Font.BOLD, 11));
 		lblFeature.setText("Feature");
+		lblFeature.setFont(new Font("Tahoma", Font.BOLD, 11));
+		lblFeature.setBorder(new EmptyBorder(0, 0, 0, 10));
 		GridBagConstraints gbc_lblFeature = new GridBagConstraints();
-		gbc_lblFeature.insets = new Insets(0, 0, 5, 5);
 		gbc_lblFeature.anchor = GridBagConstraints.WEST;
+		gbc_lblFeature.insets = new Insets(0, 0, 5, 5);
 		gbc_lblFeature.gridx = 0;
 		gbc_lblFeature.gridy = 0;
-		detailsPanel.add(lblFeature, gbc_lblFeature);
-
+		defectsDetailsPanel.add(lblFeature, gbc_lblFeature);
+		
 		txtfldFeature = new JXTextField();
 		txtfldFeature.setOpaque(false);
-		txtfldFeature.setBackground(new Color(0, 0, 0, 0));
-		txtfldFeature.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
 		txtfldFeature.setEditable(false);
+		txtfldFeature.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
+		txtfldFeature.setBackground(new Color(0, 0, 0, 0));
 		GridBagConstraints gbc_txtfldFeature = new GridBagConstraints();
-		gbc_txtfldFeature.insets = new Insets(0, 0, 5, 5);
 		gbc_txtfldFeature.fill = GridBagConstraints.HORIZONTAL;
+		gbc_txtfldFeature.insets = new Insets(0, 0, 5, 5);
 		gbc_txtfldFeature.gridx = 1;
 		gbc_txtfldFeature.gridy = 0;
-		detailsPanel.add(txtfldFeature, gbc_txtfldFeature);
-
+		defectsDetailsPanel.add(txtfldFeature, gbc_txtfldFeature);
+		
 		lblDetectedBy = new JXLabel();
-		lblDetectedBy.setBorder(new EmptyBorder(0, 20, 0, 10));
-		lblDetectedBy.setFont(new Font("Tahoma", Font.BOLD, 11));
 		lblDetectedBy.setText("Detected by");
+		lblDetectedBy.setFont(new Font("Tahoma", Font.BOLD, 11));
+		lblDetectedBy.setBorder(new EmptyBorder(0, 20, 0, 10));
 		GridBagConstraints gbc_lblDetectedBy = new GridBagConstraints();
-		gbc_lblDetectedBy.insets = new Insets(0, 0, 5, 5);
 		gbc_lblDetectedBy.anchor = GridBagConstraints.SOUTHWEST;
+		gbc_lblDetectedBy.insets = new Insets(0, 0, 5, 5);
 		gbc_lblDetectedBy.gridx = 2;
 		gbc_lblDetectedBy.gridy = 0;
-		detailsPanel.add(lblDetectedBy, gbc_lblDetectedBy);
-
+		defectsDetailsPanel.add(lblDetectedBy, gbc_lblDetectedBy);
+		
 		txtfldDetectedBy = new JXTextField();
 		txtfldDetectedBy.setOpaque(false);
-		txtfldDetectedBy.setBackground(new Color(0, 0, 0, 0));
-		txtfldDetectedBy.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
 		txtfldDetectedBy.setEditable(false);
+		txtfldDetectedBy.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
+		txtfldDetectedBy.setBackground(new Color(0, 0, 0, 0));
 		GridBagConstraints gbc_txtfldDetectedBy = new GridBagConstraints();
-		gbc_txtfldDetectedBy.insets = new Insets(0, 0, 5, 0);
 		gbc_txtfldDetectedBy.fill = GridBagConstraints.HORIZONTAL;
+		gbc_txtfldDetectedBy.insets = new Insets(0, 0, 5, 0);
 		gbc_txtfldDetectedBy.gridx = 3;
 		gbc_txtfldDetectedBy.gridy = 0;
-		detailsPanel.add(txtfldDetectedBy, gbc_txtfldDetectedBy);
-
+		defectsDetailsPanel.add(txtfldDetectedBy, gbc_txtfldDetectedBy);
+		
 		lblQaOwner = new JXLabel();
-		lblQaOwner.setBorder(new EmptyBorder(0, 0, 0, 10));
-		lblQaOwner.setFont(new Font("Tahoma", Font.BOLD, 11));
 		lblQaOwner.setText("QA Owner");
+		lblQaOwner.setFont(new Font("Tahoma", Font.BOLD, 11));
+		lblQaOwner.setBorder(new EmptyBorder(0, 0, 0, 10));
 		GridBagConstraints gbc_lblQaOwner = new GridBagConstraints();
 		gbc_lblQaOwner.anchor = GridBagConstraints.WEST;
 		gbc_lblQaOwner.insets = new Insets(0, 0, 5, 5);
 		gbc_lblQaOwner.gridx = 0;
 		gbc_lblQaOwner.gridy = 1;
-		detailsPanel.add(lblQaOwner, gbc_lblQaOwner);
-
+		defectsDetailsPanel.add(lblQaOwner, gbc_lblQaOwner);
+		
 		txtfldQaOwner = new JXTextField();
 		txtfldQaOwner.setOpaque(false);
-		txtfldQaOwner.setBackground(new Color(0, 0, 0, 0));
-		txtfldQaOwner.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
 		txtfldQaOwner.setEditable(false);
+		txtfldQaOwner.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
+		txtfldQaOwner.setBackground(new Color(0, 0, 0, 0));
 		GridBagConstraints gbc_txtfldQaOwner = new GridBagConstraints();
-		gbc_txtfldQaOwner.insets = new Insets(0, 0, 5, 5);
 		gbc_txtfldQaOwner.fill = GridBagConstraints.HORIZONTAL;
+		gbc_txtfldQaOwner.insets = new Insets(0, 0, 5, 5);
 		gbc_txtfldQaOwner.gridx = 1;
 		gbc_txtfldQaOwner.gridy = 1;
-		detailsPanel.add(txtfldQaOwner, gbc_txtfldQaOwner);
-
+		defectsDetailsPanel.add(txtfldQaOwner, gbc_txtfldQaOwner);
+		
 		lblBlocked = new JXLabel();
 		lblBlocked.setText("Blocked");
 		lblBlocked.setFont(new Font("Tahoma", Font.BOLD, 11));
@@ -242,43 +232,43 @@ public class DefectsDetailsPanel extends JPanel {
 		gbc_lblBlocked.insets = new Insets(0, 0, 5, 5);
 		gbc_lblBlocked.gridx = 2;
 		gbc_lblBlocked.gridy = 1;
-		detailsPanel.add(lblBlocked, gbc_lblBlocked);
-
+		defectsDetailsPanel.add(lblBlocked, gbc_lblBlocked);
+		
 		txtfldBlocked = new JXTextField();
 		txtfldBlocked.setOpaque(false);
 		txtfldBlocked.setEditable(false);
-		txtfldBlocked.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+		txtfldBlocked.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
 		txtfldBlocked.setBackground(new Color(0, 0, 0, 0));
 		GridBagConstraints gbc_txtfldBlocked = new GridBagConstraints();
-		gbc_txtfldBlocked.insets = new Insets(0, 0, 5, 0);
 		gbc_txtfldBlocked.fill = GridBagConstraints.HORIZONTAL;
+		gbc_txtfldBlocked.insets = new Insets(0, 0, 5, 0);
 		gbc_txtfldBlocked.gridx = 3;
 		gbc_txtfldBlocked.gridy = 1;
-		detailsPanel.add(txtfldBlocked, gbc_txtfldBlocked);
-
+		defectsDetailsPanel.add(txtfldBlocked, gbc_txtfldBlocked);
+		
 		lblSeverity = new JXLabel();
-		lblSeverity.setBorder(new EmptyBorder(0, 0, 0, 10));
-		lblSeverity.setFont(new Font("Tahoma", Font.BOLD, 11));
 		lblSeverity.setText("Severity");
+		lblSeverity.setFont(new Font("Tahoma", Font.BOLD, 11));
+		lblSeverity.setBorder(new EmptyBorder(0, 0, 0, 10));
 		GridBagConstraints gbc_lblSeverity = new GridBagConstraints();
 		gbc_lblSeverity.anchor = GridBagConstraints.SOUTHWEST;
 		gbc_lblSeverity.insets = new Insets(0, 0, 5, 5);
 		gbc_lblSeverity.gridx = 0;
 		gbc_lblSeverity.gridy = 2;
-		detailsPanel.add(lblSeverity, gbc_lblSeverity);
-
+		defectsDetailsPanel.add(lblSeverity, gbc_lblSeverity);
+		
 		txtfldSeverity = new JXTextField();
 		txtfldSeverity.setOpaque(false);
-		txtfldSeverity.setBackground(new Color(0, 0, 0, 0));
-		txtfldSeverity.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
 		txtfldSeverity.setEditable(false);
+		txtfldSeverity.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
+		txtfldSeverity.setBackground(new Color(0, 0, 0, 0));
 		GridBagConstraints gbc_txtfldSeverity = new GridBagConstraints();
-		gbc_txtfldSeverity.insets = new Insets(0, 0, 5, 5);
 		gbc_txtfldSeverity.fill = GridBagConstraints.HORIZONTAL;
+		gbc_txtfldSeverity.insets = new Insets(0, 0, 5, 5);
 		gbc_txtfldSeverity.gridx = 1;
 		gbc_txtfldSeverity.gridy = 2;
-		detailsPanel.add(txtfldSeverity, gbc_txtfldSeverity);
-
+		defectsDetailsPanel.add(txtfldSeverity, gbc_txtfldSeverity);
+		
 		lblBlockedReason = new JXLabel();
 		lblBlockedReason.setText("Blocked Reason");
 		lblBlockedReason.setFont(new Font("Tahoma", Font.BOLD, 11));
@@ -288,373 +278,372 @@ public class DefectsDetailsPanel extends JPanel {
 		gbc_lblBlockedReason.insets = new Insets(0, 0, 5, 5);
 		gbc_lblBlockedReason.gridx = 2;
 		gbc_lblBlockedReason.gridy = 2;
-		detailsPanel.add(lblBlockedReason, gbc_lblBlockedReason);
-
+		defectsDetailsPanel.add(lblBlockedReason, gbc_lblBlockedReason);
+		
 		txtfldBlockedReason = new JXTextField();
 		txtfldBlockedReason.setOpaque(false);
 		txtfldBlockedReason.setEditable(false);
-		txtfldBlockedReason.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+		txtfldBlockedReason.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
 		txtfldBlockedReason.setBackground(new Color(0, 0, 0, 0));
 		GridBagConstraints gbc_txtfldBlockedReason = new GridBagConstraints();
-		gbc_txtfldBlockedReason.insets = new Insets(0, 0, 5, 0);
 		gbc_txtfldBlockedReason.fill = GridBagConstraints.HORIZONTAL;
+		gbc_txtfldBlockedReason.insets = new Insets(0, 0, 5, 0);
 		gbc_txtfldBlockedReason.gridx = 3;
 		gbc_txtfldBlockedReason.gridy = 2;
-		detailsPanel.add(txtfldBlockedReason, gbc_txtfldBlockedReason);
+		defectsDetailsPanel.add(txtfldBlockedReason, gbc_txtfldBlockedReason);
 
-		lblTeam = new JXLabel();
-		lblTeam.setBorder(new EmptyBorder(0, 0, 0, 10));
-		lblTeam.setFont(new Font("Tahoma", Font.BOLD, 11));
-		lblTeam.setText("Team");
-		GridBagConstraints gbc_lblTeam = new GridBagConstraints();
-		gbc_lblTeam.anchor = GridBagConstraints.WEST;
-		gbc_lblTeam.insets = new Insets(0, 0, 5, 5);
-		gbc_lblTeam.gridx = 0;
-		gbc_lblTeam.gridy = 3;
-		detailsPanel.add(lblTeam, gbc_lblTeam);
-
+		label_8 = new JXLabel();
+		label_8.setText("Team");
+		label_8.setFont(new Font("Tahoma", Font.BOLD, 11));
+		label_8.setBorder(new EmptyBorder(0, 0, 0, 10));
+		GridBagConstraints gbc_label_8 = new GridBagConstraints();
+		gbc_label_8.anchor = GridBagConstraints.WEST;
+		gbc_label_8.insets = new Insets(0, 0, 5, 5);
+		gbc_label_8.gridx = 0;
+		gbc_label_8.gridy = 3;
+		defectsDetailsPanel.add(label_8, gbc_label_8);
+		
 		txtfldTeam = new JXTextField();
 		txtfldTeam.setOpaque(false);
-		txtfldTeam.setBackground(new Color(0, 0, 0, 0));
-		txtfldTeam.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
 		txtfldTeam.setEditable(false);
+		txtfldTeam.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
+		txtfldTeam.setBackground(new Color(0, 0, 0, 0));
 		GridBagConstraints gbc_txtfldTeam = new GridBagConstraints();
-		gbc_txtfldTeam.insets = new Insets(0, 0, 5, 5);
 		gbc_txtfldTeam.fill = GridBagConstraints.HORIZONTAL;
+		gbc_txtfldTeam.insets = new Insets(0, 0, 5, 5);
 		gbc_txtfldTeam.gridx = 1;
 		gbc_txtfldTeam.gridy = 3;
-		detailsPanel.add(txtfldTeam, gbc_txtfldTeam);
-
+		defectsDetailsPanel.add(txtfldTeam, gbc_txtfldTeam);
+		
 		lblGroup = new JXLabel();
-		lblGroup.setBorder(new EmptyBorder(0, 20, 0, 0));
-		lblGroup.setFont(new Font("Tahoma", Font.BOLD, 11));
 		lblGroup.setText("Group");
+		lblGroup.setFont(new Font("Tahoma", Font.BOLD, 11));
+		lblGroup.setBorder(new EmptyBorder(0, 20, 0, 0));
 		GridBagConstraints gbc_lblGroup = new GridBagConstraints();
 		gbc_lblGroup.anchor = GridBagConstraints.WEST;
 		gbc_lblGroup.insets = new Insets(0, 0, 5, 5);
 		gbc_lblGroup.gridx = 2;
 		gbc_lblGroup.gridy = 3;
-		detailsPanel.add(lblGroup, gbc_lblGroup);
-
+		defectsDetailsPanel.add(lblGroup, gbc_lblGroup);
+		
 		txtfldGroup = new JXTextField();
 		txtfldGroup.setOpaque(false);
-		txtfldGroup.setBackground(new Color(0, 0, 0, 0));
 		txtfldGroup.setEditable(false);
-		txtfldGroup.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+		txtfldGroup.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
+		txtfldGroup.setBackground(new Color(0, 0, 0, 0));
 		GridBagConstraints gbc_txtfldGroup = new GridBagConstraints();
-		gbc_txtfldGroup.insets = new Insets(0, 0, 5, 0);
 		gbc_txtfldGroup.fill = GridBagConstraints.HORIZONTAL;
+		gbc_txtfldGroup.insets = new Insets(0, 0, 5, 0);
 		gbc_txtfldGroup.gridx = 3;
 		gbc_txtfldGroup.gridy = 3;
-		detailsPanel.add(txtfldGroup, gbc_txtfldGroup);
-
+		defectsDetailsPanel.add(txtfldGroup, gbc_txtfldGroup);
+		
 		lblStoryPoints = new JXLabel();
-		lblStoryPoints.setBorder(new EmptyBorder(0, 0, 0, 10));
-		lblStoryPoints.setFont(new Font("Tahoma", Font.BOLD, 11));
 		lblStoryPoints.setText("Story Points");
+		lblStoryPoints.setFont(new Font("Tahoma", Font.BOLD, 11));
+		lblStoryPoints.setBorder(new EmptyBorder(0, 0, 0, 10));
 		GridBagConstraints gbc_lblStoryPoints = new GridBagConstraints();
 		gbc_lblStoryPoints.anchor = GridBagConstraints.WEST;
 		gbc_lblStoryPoints.insets = new Insets(0, 0, 5, 5);
 		gbc_lblStoryPoints.gridx = 0;
 		gbc_lblStoryPoints.gridy = 4;
-		detailsPanel.add(lblStoryPoints, gbc_lblStoryPoints);
+		defectsDetailsPanel.add(lblStoryPoints, gbc_lblStoryPoints);
 
-		textfldStoryPoints = new JXTextField();
-		textfldStoryPoints.setOpaque(false);
-		textfldStoryPoints.setBackground(new Color(0, 0, 0, 0));
-		textfldStoryPoints.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
-		textfldStoryPoints.setEditable(false);
-		GridBagConstraints gbc_textField_1 = new GridBagConstraints();
-		gbc_textField_1.insets = new Insets(0, 0, 5, 5);
-		gbc_textField_1.fill = GridBagConstraints.HORIZONTAL;
-		gbc_textField_1.gridx = 1;
-		gbc_textField_1.gridy = 4;
-		detailsPanel.add(textfldStoryPoints, gbc_textField_1);
-
+		txtfldStoryPoints = new JXTextField();
+		txtfldStoryPoints.setOpaque(false);
+		txtfldStoryPoints.setEditable(false);
+		txtfldStoryPoints.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
+		txtfldStoryPoints.setBackground(new Color(0, 0, 0, 0));
+		GridBagConstraints gbc_textfldStoryPoints = new GridBagConstraints();
+		gbc_textfldStoryPoints.fill = GridBagConstraints.HORIZONTAL;
+		gbc_textfldStoryPoints.insets = new Insets(0, 0, 5, 5);
+		gbc_textfldStoryPoints.gridx = 1;
+		gbc_textfldStoryPoints.gridy = 4;
+		defectsDetailsPanel.add(txtfldStoryPoints, gbc_textfldStoryPoints);
+		
 		lblFeedbackType = new JXLabel();
-		lblFeedbackType.setBorder(new EmptyBorder(0, 20, 0, 10));
-		lblFeedbackType.setFont(new Font("Tahoma", Font.BOLD, 11));
 		lblFeedbackType.setText("Feedback type");
+		lblFeedbackType.setFont(new Font("Tahoma", Font.BOLD, 11));
+		lblFeedbackType.setBorder(new EmptyBorder(0, 20, 0, 10));
 		GridBagConstraints gbc_lblFeedbackType = new GridBagConstraints();
 		gbc_lblFeedbackType.anchor = GridBagConstraints.SOUTHWEST;
 		gbc_lblFeedbackType.insets = new Insets(0, 0, 5, 5);
 		gbc_lblFeedbackType.gridx = 2;
 		gbc_lblFeedbackType.gridy = 4;
-		detailsPanel.add(lblFeedbackType, gbc_lblFeedbackType);
-
+		defectsDetailsPanel.add(lblFeedbackType, gbc_lblFeedbackType);
+		
 		txtfldFeedbackType = new JXTextField();
 		txtfldFeedbackType.setOpaque(false);
-		txtfldFeedbackType.setBackground(new Color(0, 0, 0, 0));
 		txtfldFeedbackType.setEditable(false);
-		txtfldFeedbackType.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+		txtfldFeedbackType.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
+		txtfldFeedbackType.setBackground(new Color(0, 0, 0, 0));
 		GridBagConstraints gbc_txtfldFeedbackType = new GridBagConstraints();
-		gbc_txtfldFeedbackType.insets = new Insets(0, 0, 5, 0);
 		gbc_txtfldFeedbackType.fill = GridBagConstraints.HORIZONTAL;
+		gbc_txtfldFeedbackType.insets = new Insets(0, 0, 5, 0);
 		gbc_txtfldFeedbackType.gridx = 3;
 		gbc_txtfldFeedbackType.gridy = 4;
-		detailsPanel.add(txtfldFeedbackType, gbc_txtfldFeedbackType);
-
+		defectsDetailsPanel.add(txtfldFeedbackType, gbc_txtfldFeedbackType);
+		
 		lblPriority = new JXLabel();
-		lblPriority.setBorder(new EmptyBorder(0, 0, 0, 10));
-		lblPriority.setFont(new Font("Tahoma", Font.BOLD, 11));
 		lblPriority.setText("Priority");
+		lblPriority.setFont(new Font("Tahoma", Font.BOLD, 11));
+		lblPriority.setBorder(new EmptyBorder(0, 0, 0, 10));
 		GridBagConstraints gbc_lblPriority = new GridBagConstraints();
 		gbc_lblPriority.anchor = GridBagConstraints.WEST;
 		gbc_lblPriority.insets = new Insets(0, 0, 5, 5);
 		gbc_lblPriority.gridx = 0;
 		gbc_lblPriority.gridy = 5;
-		detailsPanel.add(lblPriority, gbc_lblPriority);
+		defectsDetailsPanel.add(lblPriority, gbc_lblPriority);
 
-		textfldPriority = new JXTextField();
-		textfldPriority.setOpaque(false);
-		textfldPriority.setBackground(new Color(0, 0, 0, 0));
-		textfldPriority.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
-		textfldPriority.setEditable(false);
-		GridBagConstraints gbc_txtfldPriority = new GridBagConstraints();
-		gbc_txtfldPriority.insets = new Insets(0, 0, 5, 5);
-		gbc_txtfldPriority.fill = GridBagConstraints.HORIZONTAL;
-		gbc_txtfldPriority.gridx = 1;
-		gbc_txtfldPriority.gridy = 5;
-		detailsPanel.add(textfldPriority, gbc_txtfldPriority);
-
+		txtfldPriority = new JXTextField();
+		txtfldPriority.setOpaque(false);
+		txtfldPriority.setEditable(false);
+		txtfldPriority.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
+		txtfldPriority.setBackground(new Color(0, 0, 0, 0));
+		GridBagConstraints gbc_textfldPriority = new GridBagConstraints();
+		gbc_textfldPriority.fill = GridBagConstraints.HORIZONTAL;
+		gbc_textfldPriority.insets = new Insets(0, 0, 5, 5);
+		gbc_textfldPriority.gridx = 1;
+		gbc_textfldPriority.gridy = 5;
+		defectsDetailsPanel.add(txtfldPriority, gbc_textfldPriority);
+		
 		lblEnviroment = new JXLabel();
-		lblEnviroment.setBorder(new EmptyBorder(0, 20, 0, 10));
-		lblEnviroment.setFont(new Font("Tahoma", Font.BOLD, 11));
 		lblEnviroment.setText("Enviroment");
+		lblEnviroment.setFont(new Font("Tahoma", Font.BOLD, 11));
+		lblEnviroment.setBorder(new EmptyBorder(0, 20, 0, 10));
 		GridBagConstraints gbc_lblEnviroment = new GridBagConstraints();
 		gbc_lblEnviroment.anchor = GridBagConstraints.WEST;
 		gbc_lblEnviroment.insets = new Insets(0, 0, 5, 5);
 		gbc_lblEnviroment.gridx = 2;
 		gbc_lblEnviroment.gridy = 5;
-		detailsPanel.add(lblEnviroment, gbc_lblEnviroment);
-
+		defectsDetailsPanel.add(lblEnviroment, gbc_lblEnviroment);
+		
 		txtfldEnviroment = new JXTextField();
 		txtfldEnviroment.setOpaque(false);
-		txtfldEnviroment.setBackground(new Color(0, 0, 0, 0));
 		txtfldEnviroment.setEditable(false);
-		txtfldEnviroment.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+		txtfldEnviroment.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
+		txtfldEnviroment.setBackground(new Color(0, 0, 0, 0));
 		GridBagConstraints gbc_txtfldEnviroment = new GridBagConstraints();
-		gbc_txtfldEnviroment.insets = new Insets(0, 0, 5, 0);
 		gbc_txtfldEnviroment.fill = GridBagConstraints.HORIZONTAL;
+		gbc_txtfldEnviroment.insets = new Insets(0, 0, 5, 0);
 		gbc_txtfldEnviroment.gridx = 3;
 		gbc_txtfldEnviroment.gridy = 5;
-		detailsPanel.add(txtfldEnviroment, gbc_txtfldEnviroment);
-
+		defectsDetailsPanel.add(txtfldEnviroment, gbc_txtfldEnviroment);
+		
 		lblPhase = new JXLabel();
-		lblPhase.setBorder(new EmptyBorder(0, 0, 0, 10));
-		lblPhase.setFont(new Font("Tahoma", Font.BOLD, 11));
 		lblPhase.setText("Phase");
+		lblPhase.setFont(new Font("Tahoma", Font.BOLD, 11));
+		lblPhase.setBorder(new EmptyBorder(0, 0, 0, 10));
 		GridBagConstraints gbc_lblPhase = new GridBagConstraints();
 		gbc_lblPhase.anchor = GridBagConstraints.WEST;
 		gbc_lblPhase.insets = new Insets(0, 0, 5, 5);
 		gbc_lblPhase.gridx = 0;
 		gbc_lblPhase.gridy = 6;
-		detailsPanel.add(lblPhase, gbc_lblPhase);
-
+		defectsDetailsPanel.add(lblPhase, gbc_lblPhase);
+		
 		comboBoxPhase = new JComboBox();
 		comboBoxPhase.setEditable(true);
 		comboBoxPhase.setBorder(new EmptyBorder(0, 0, 0, 0));
-		comboBoxPhase.setModel(new DefaultComboBoxModel(phases.keySet().toArray()));
-		GridBagConstraints gbc_comboBox = new GridBagConstraints();
-		gbc_comboBox.insets = new Insets(0, 0, 5, 5);
-		gbc_comboBox.fill = GridBagConstraints.HORIZONTAL;
-		gbc_comboBox.gridx = 1;
-		gbc_comboBox.gridy = 6;
-		detailsPanel.add(comboBoxPhase, gbc_comboBox);
+		GridBagConstraints gbc_comboBoxPhase = new GridBagConstraints();
+		gbc_comboBoxPhase.fill = GridBagConstraints.HORIZONTAL;
+		gbc_comboBoxPhase.insets = new Insets(0, 0, 5, 5);
+		gbc_comboBoxPhase.gridx = 1;
+		gbc_comboBoxPhase.gridy = 6;
+		defectsDetailsPanel.add(comboBoxPhase, gbc_comboBoxPhase);
 
-		lblAppModule = new JXLabel();
-		lblAppModule.setText("Application Module");
-		lblAppModule.setFont(new Font("Tahoma", Font.BOLD, 11));
-		lblAppModule.setBorder(new EmptyBorder(0, 20, 0, 10));
-		GridBagConstraints gbc_lblAppModule = new GridBagConstraints();
-		gbc_lblAppModule.anchor = GridBagConstraints.SOUTHEAST;
-		gbc_lblAppModule.insets = new Insets(0, 0, 5, 5);
-		gbc_lblAppModule.gridx = 2;
-		gbc_lblAppModule.gridy = 6;
-		detailsPanel.add(lblAppModule, gbc_lblAppModule);
-
+		lblAppModules = new JXLabel();
+		lblAppModules.setText("Application Module");
+		lblAppModules.setFont(new Font("Tahoma", Font.BOLD, 11));
+		lblAppModules.setBorder(new EmptyBorder(0, 20, 0, 10));
+		GridBagConstraints gbc_lblAppModules = new GridBagConstraints();
+		gbc_lblAppModules.anchor = GridBagConstraints.SOUTHEAST;
+		gbc_lblAppModules.insets = new Insets(0, 0, 5, 5);
+		gbc_lblAppModules.gridx = 2;
+		gbc_lblAppModules.gridy = 6;
+		defectsDetailsPanel.add(lblAppModules, gbc_lblAppModules);
+		
 		txtfldAppModules = new JXTextField();
 		txtfldAppModules.setOpaque(false);
 		txtfldAppModules.setEditable(false);
-		txtfldAppModules.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+		txtfldAppModules.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
 		txtfldAppModules.setBackground(new Color(0, 0, 0, 0));
 		GridBagConstraints gbc_txtfldAppModules = new GridBagConstraints();
-		gbc_txtfldAppModules.insets = new Insets(0, 0, 5, 0);
 		gbc_txtfldAppModules.fill = GridBagConstraints.HORIZONTAL;
+		gbc_txtfldAppModules.insets = new Insets(0, 0, 5, 0);
 		gbc_txtfldAppModules.gridx = 3;
 		gbc_txtfldAppModules.gridy = 6;
-		detailsPanel.add(txtfldAppModules, gbc_txtfldAppModules);
+		defectsDetailsPanel.add(txtfldAppModules, gbc_txtfldAppModules);
 
-		invizibleSpacerL = new JXTextField();
-		invizibleSpacerL.setOpaque(false);
-		invizibleSpacerL.setEditable(false);
-		invizibleSpacerL.setBorder(new EmptyBorder(5, 0, 5, 0));
-		invizibleSpacerL.setBackground(new Color(0, 0, 0, 0));
-		GridBagConstraints gbc_invizibleSpacerL = new GridBagConstraints();
-		gbc_invizibleSpacerL.insets = new Insets(0, 0, 5, 5);
-		gbc_invizibleSpacerL.fill = GridBagConstraints.HORIZONTAL;
-		gbc_invizibleSpacerL.gridx = 1;
-		gbc_invizibleSpacerL.gridy = 7;
-		detailsPanel.add(invizibleSpacerL, gbc_invizibleSpacerL);
+		textField_13 = new JXTextField();
+		textField_13.setOpaque(false);
+		textField_13.setEditable(false);
+		textField_13.setBorder(new EmptyBorder(5, 0, 5, 0));
+		textField_13.setBackground(new Color(0, 0, 0, 0));
+		GridBagConstraints gbc_textField_13 = new GridBagConstraints();
+		gbc_textField_13.fill = GridBagConstraints.HORIZONTAL;
+		gbc_textField_13.insets = new Insets(0, 0, 5, 5);
+		gbc_textField_13.gridx = 1;
+		gbc_textField_13.gridy = 7;
+		defectsDetailsPanel.add(textField_13, gbc_textField_13);
 
-		invizibleSpacerR = new JXTextField();
-		invizibleSpacerR.setOpaque(false);
-		invizibleSpacerR.setEditable(false);
-		invizibleSpacerR.setBorder(new EmptyBorder(5, 0, 5, 0));
-		invizibleSpacerR.setBackground(new Color(0, 0, 0, 0));
-		GridBagConstraints gbc_invizibleSpacerR = new GridBagConstraints();
-		gbc_invizibleSpacerR.insets = new Insets(0, 0, 5, 0);
-		gbc_invizibleSpacerR.fill = GridBagConstraints.HORIZONTAL;
-		gbc_invizibleSpacerR.gridx = 3;
-		gbc_invizibleSpacerR.gridy = 7;
-		detailsPanel.add(invizibleSpacerR, gbc_invizibleSpacerR);
-
+		textField_14 = new JXTextField();
+		textField_14.setOpaque(false);
+		textField_14.setEditable(false);
+		textField_14.setBorder(new EmptyBorder(5, 0, 5, 0));
+		textField_14.setBackground(new Color(0, 0, 0, 0));
+		GridBagConstraints gbc_textField_14 = new GridBagConstraints();
+		gbc_textField_14.fill = GridBagConstraints.HORIZONTAL;
+		gbc_textField_14.insets = new Insets(0, 0, 5, 0);
+		gbc_textField_14.gridx = 3;
+		gbc_textField_14.gridy = 7;
+		defectsDetailsPanel.add(textField_14, gbc_textField_14);
+		
 		lblRelease = new JXLabel();
-		lblRelease.setBorder(new EmptyBorder(0, 0, 0, 10));
-		lblRelease.setFont(new Font("Tahoma", Font.BOLD, 11));
 		lblRelease.setText("Release");
+		lblRelease.setFont(new Font("Tahoma", Font.BOLD, 11));
+		lblRelease.setBorder(new EmptyBorder(0, 0, 0, 10));
 		GridBagConstraints gbc_lblRelease = new GridBagConstraints();
 		gbc_lblRelease.anchor = GridBagConstraints.WEST;
 		gbc_lblRelease.insets = new Insets(0, 0, 5, 5);
 		gbc_lblRelease.gridx = 0;
 		gbc_lblRelease.gridy = 8;
-		detailsPanel.add(lblRelease, gbc_lblRelease);
-
+		defectsDetailsPanel.add(lblRelease, gbc_lblRelease);
+		
 		txtfldRelease = new JXTextField();
 		txtfldRelease.setOpaque(false);
-		txtfldRelease.setBackground(new Color(0, 0, 0, 0));
-		txtfldRelease.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
 		txtfldRelease.setEditable(false);
-		GridBagConstraints gbc_txtfldIdeIntegration = new GridBagConstraints();
-		gbc_txtfldIdeIntegration.insets = new Insets(0, 0, 5, 5);
-		gbc_txtfldIdeIntegration.fill = GridBagConstraints.HORIZONTAL;
-		gbc_txtfldIdeIntegration.gridx = 1;
-		gbc_txtfldIdeIntegration.gridy = 8;
-		detailsPanel.add(txtfldRelease, gbc_txtfldIdeIntegration);
+		txtfldRelease.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
+		txtfldRelease.setBackground(new Color(0, 0, 0, 0));
+		GridBagConstraints gbc_txtfldRelease = new GridBagConstraints();
+		gbc_txtfldRelease.fill = GridBagConstraints.HORIZONTAL;
+		gbc_txtfldRelease.insets = new Insets(0, 0, 5, 5);
+		gbc_txtfldRelease.gridx = 1;
+		gbc_txtfldRelease.gridy = 8;
+		defectsDetailsPanel.add(txtfldRelease, gbc_txtfldRelease);
 
-		lblDetectedInPush = new JXLabel();
-		lblDetectedInPush.setBorder(new EmptyBorder(0, 20, 0, 10));
-		lblDetectedInPush.setFont(new Font("Tahoma", Font.BOLD, 11));
-		lblDetectedInPush.setText("Detected in Build");
-		GridBagConstraints gbc_lblDetectedInPush = new GridBagConstraints();
-		gbc_lblDetectedInPush.anchor = GridBagConstraints.WEST;
-		gbc_lblDetectedInPush.insets = new Insets(0, 0, 5, 5);
-		gbc_lblDetectedInPush.gridx = 2;
-		gbc_lblDetectedInPush.gridy = 8;
-		detailsPanel.add(lblDetectedInPush, gbc_lblDetectedInPush);
+		lblDetectedInBuild = new JXLabel();
+		lblDetectedInBuild.setText("Detected in Build");
+		lblDetectedInBuild.setFont(new Font("Tahoma", Font.BOLD, 11));
+		lblDetectedInBuild.setBorder(new EmptyBorder(0, 20, 0, 10));
+		GridBagConstraints gbc_lblDetectedInBuild = new GridBagConstraints();
+		gbc_lblDetectedInBuild.anchor = GridBagConstraints.WEST;
+		gbc_lblDetectedInBuild.insets = new Insets(0, 0, 5, 5);
+		gbc_lblDetectedInBuild.gridx = 2;
+		gbc_lblDetectedInBuild.gridy = 8;
+		defectsDetailsPanel.add(lblDetectedInBuild, gbc_lblDetectedInBuild);
 
-		textfldDetectedInPush = new JXTextField();
-		textfldDetectedInPush.setOpaque(false);
-		textfldDetectedInPush.setBackground(new Color(0, 0, 0, 0));
-		textfldDetectedInPush.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
-		textfldDetectedInPush.setEditable(false);
-		GridBagConstraints gbc_textField_2 = new GridBagConstraints();
-		gbc_textField_2.insets = new Insets(0, 0, 5, 0);
-		gbc_textField_2.fill = GridBagConstraints.HORIZONTAL;
-		gbc_textField_2.gridx = 3;
-		gbc_textField_2.gridy = 8;
-		detailsPanel.add(textfldDetectedInPush, gbc_textField_2);
-
+		txtfldDetectedInBuild = new JXTextField();
+		txtfldDetectedInBuild.setOpaque(false);
+		txtfldDetectedInBuild.setEditable(false);
+		txtfldDetectedInBuild.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
+		txtfldDetectedInBuild.setBackground(new Color(0, 0, 0, 0));
+		GridBagConstraints gbc_txtfldDetectedInBuild = new GridBagConstraints();
+		gbc_txtfldDetectedInBuild.fill = GridBagConstraints.HORIZONTAL;
+		gbc_txtfldDetectedInBuild.insets = new Insets(0, 0, 5, 0);
+		gbc_txtfldDetectedInBuild.gridx = 3;
+		gbc_txtfldDetectedInBuild.gridy = 8;
+		defectsDetailsPanel.add(txtfldDetectedInBuild, gbc_txtfldDetectedInBuild);
+		
 		lblSprint = new JXLabel();
-		lblSprint.setBorder(new EmptyBorder(0, 0, 0, 10));
-		lblSprint.setFont(new Font("Tahoma", Font.BOLD, 11));
 		lblSprint.setText("Sprint");
+		lblSprint.setFont(new Font("Tahoma", Font.BOLD, 11));
+		lblSprint.setBorder(new EmptyBorder(0, 0, 0, 10));
 		GridBagConstraints gbc_lblSprint = new GridBagConstraints();
 		gbc_lblSprint.anchor = GridBagConstraints.WEST;
 		gbc_lblSprint.insets = new Insets(0, 0, 5, 5);
 		gbc_lblSprint.gridx = 0;
 		gbc_lblSprint.gridy = 9;
-		detailsPanel.add(lblSprint, gbc_lblSprint);
-
+		defectsDetailsPanel.add(lblSprint, gbc_lblSprint);
+		
 		txtfldSprint = new JXTextField();
 		txtfldSprint.setOpaque(false);
-		txtfldSprint.setBackground(new Color(0, 0, 0, 0));
-		txtfldSprint.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
 		txtfldSprint.setEditable(false);
-		GridBagConstraints gbc_txtfldMoreInfo = new GridBagConstraints();
-		gbc_txtfldMoreInfo.insets = new Insets(0, 0, 5, 5);
-		gbc_txtfldMoreInfo.fill = GridBagConstraints.HORIZONTAL;
-		gbc_txtfldMoreInfo.gridx = 1;
-		gbc_txtfldMoreInfo.gridy = 9;
-		detailsPanel.add(txtfldSprint, gbc_txtfldMoreInfo);
-
+		txtfldSprint.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
+		txtfldSprint.setBackground(new Color(0, 0, 0, 0));
+		GridBagConstraints gbc_txtfldSprint = new GridBagConstraints();
+		gbc_txtfldSprint.fill = GridBagConstraints.HORIZONTAL;
+		gbc_txtfldSprint.insets = new Insets(0, 0, 5, 5);
+		gbc_txtfldSprint.gridx = 1;
+		gbc_txtfldSprint.gridy = 9;
+		defectsDetailsPanel.add(txtfldSprint, gbc_txtfldSprint);
+		
 		lblDetectedInRelease = new JXLabel();
-		lblDetectedInRelease.setBorder(new EmptyBorder(0, 20, 0, 10));
-		lblDetectedInRelease.setFont(new Font("Tahoma", Font.BOLD, 11));
 		lblDetectedInRelease.setText("Detected in release");
+		lblDetectedInRelease.setFont(new Font("Tahoma", Font.BOLD, 11));
+		lblDetectedInRelease.setBorder(new EmptyBorder(0, 20, 0, 10));
 		GridBagConstraints gbc_lblDetectedInRelease = new GridBagConstraints();
 		gbc_lblDetectedInRelease.anchor = GridBagConstraints.WEST;
 		gbc_lblDetectedInRelease.insets = new Insets(0, 0, 5, 5);
 		gbc_lblDetectedInRelease.gridx = 2;
 		gbc_lblDetectedInRelease.gridy = 9;
-		detailsPanel.add(lblDetectedInRelease, gbc_lblDetectedInRelease);
-
+		defectsDetailsPanel.add(lblDetectedInRelease, gbc_lblDetectedInRelease);
+		
 		txtfldDetectedInRelease = new JXTextField();
 		txtfldDetectedInRelease.setOpaque(false);
-		txtfldDetectedInRelease.setBackground(new Color(0, 0, 0, 0));
-		txtfldDetectedInRelease.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
 		txtfldDetectedInRelease.setEditable(false);
-		GridBagConstraints gbc_txtfldBlaBla_1 = new GridBagConstraints();
-		gbc_txtfldBlaBla_1.insets = new Insets(0, 0, 5, 0);
-		gbc_txtfldBlaBla_1.fill = GridBagConstraints.HORIZONTAL;
-		gbc_txtfldBlaBla_1.gridx = 3;
-		gbc_txtfldBlaBla_1.gridy = 9;
-		detailsPanel.add(txtfldDetectedInRelease, gbc_txtfldBlaBla_1);
+		txtfldDetectedInRelease.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
+		txtfldDetectedInRelease.setBackground(new Color(0, 0, 0, 0));
+		GridBagConstraints gbc_txtfldDetectedInRelease = new GridBagConstraints();
+		gbc_txtfldDetectedInRelease.fill = GridBagConstraints.HORIZONTAL;
+		gbc_txtfldDetectedInRelease.insets = new Insets(0, 0, 5, 0);
+		gbc_txtfldDetectedInRelease.gridx = 3;
+		gbc_txtfldDetectedInRelease.gridy = 9;
+		defectsDetailsPanel.add(txtfldDetectedInRelease, gbc_txtfldDetectedInRelease);
 
-		lblFixedInPush = new JXLabel();
-		lblFixedInPush.setBorder(new EmptyBorder(0, 20, 0, 10));
-		lblFixedInPush.setFont(new Font("Tahoma", Font.BOLD, 11));
-		lblFixedInPush.setText("Fixed in Build");
-		GridBagConstraints gbc_lblFixedInPush = new GridBagConstraints();
-		gbc_lblFixedInPush.anchor = GridBagConstraints.WEST;
-		gbc_lblFixedInPush.insets = new Insets(0, 0, 0, 5);
-		gbc_lblFixedInPush.gridx = 2;
-		gbc_lblFixedInPush.gridy = 10;
-		detailsPanel.add(lblFixedInPush, gbc_lblFixedInPush);
+		lblFixedInBuild = new JXLabel();
+		lblFixedInBuild.setText("Fixed in Build");
+		lblFixedInBuild.setFont(new Font("Tahoma", Font.BOLD, 11));
+		lblFixedInBuild.setBorder(new EmptyBorder(0, 20, 0, 10));
+		GridBagConstraints gbc_lblFixedInBuild = new GridBagConstraints();
+		gbc_lblFixedInBuild.anchor = GridBagConstraints.WEST;
+		gbc_lblFixedInBuild.insets = new Insets(0, 0, 0, 5);
+		gbc_lblFixedInBuild.gridx = 2;
+		gbc_lblFixedInBuild.gridy = 10;
+		defectsDetailsPanel.add(lblFixedInBuild, gbc_lblFixedInBuild);
 
-		textfldFixedInPush = new JXTextField();
-		textfldFixedInPush.setOpaque(false);
-		textfldFixedInPush.setBackground(new Color(0, 0, 0, 0));
-		textfldFixedInPush.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
-		textfldFixedInPush.setEditable(false);
-		GridBagConstraints gbc_textField_3 = new GridBagConstraints();
-		gbc_textField_3.fill = GridBagConstraints.HORIZONTAL;
-		gbc_textField_3.gridx = 3;
-		gbc_textField_3.gridy = 10;
-		detailsPanel.add(textfldFixedInPush, gbc_textField_3);
+		txtfldFixedInBuild = new JXTextField();
+		txtfldFixedInBuild.setOpaque(false);
+		txtfldFixedInBuild.setEditable(false);
+		txtfldFixedInBuild.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
+		txtfldFixedInBuild.setBackground(new Color(0, 0, 0, 0));
+		GridBagConstraints gbc_txtfldFixedInBuild = new GridBagConstraints();
+		gbc_txtfldFixedInBuild.fill = GridBagConstraints.HORIZONTAL;
+		gbc_txtfldFixedInBuild.gridx = 3;
+		gbc_txtfldFixedInBuild.gridy = 10;
+		defectsDetailsPanel.add(txtfldFixedInBuild, gbc_txtfldFixedInBuild);
 
-		panel = new JXPanel();
-		GridBagConstraints gbc_panel = new GridBagConstraints();
-		gbc_panel.fill = GridBagConstraints.BOTH;
-		gbc_panel.gridx = 0;
-		gbc_panel.gridy = 4;
-		parentPanel.add(panel, gbc_panel);
-		GridBagLayout gbl_panel = new GridBagLayout();
-		gbl_panel.columnWidths = new int[] { 0, 0, 0 };
-		gbl_panel.rowHeights = new int[] { 0, 0 };
-		gbl_panel.columnWeights = new double[] { 0.0, 1.0, Double.MIN_VALUE };
-		gbl_panel.rowWeights = new double[] { 0.0, Double.MIN_VALUE };
-		panel.setLayout(gbl_panel);
-
+		atachementsPanel = new JXPanel();
+		GridBagConstraints gbc_atachementsPanel = new GridBagConstraints();
+		gbc_atachementsPanel.fill = GridBagConstraints.BOTH;
+		gbc_atachementsPanel.gridx = 0;
+		gbc_atachementsPanel.gridy = 4;
+		rootPanel.add(atachementsPanel, gbc_atachementsPanel);
+		GridBagLayout gbl_atachementsPanel = new GridBagLayout();
+		gbl_atachementsPanel.columnWidths = new int[]{0, 0, 0};
+		gbl_atachementsPanel.rowHeights = new int[]{0, 0};
+		gbl_atachementsPanel.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
+		gbl_atachementsPanel.rowWeights = new double[]{0.0, Double.MIN_VALUE};
+		atachementsPanel.setLayout(gbl_atachementsPanel);
+		
 		lblAttachments = new JXLabel();
-		lblAttachments.setBorder(new EmptyBorder(10, 7, 0, 10));
-		lblAttachments.setFont(new Font("Tahoma", Font.BOLD, 11));
 		lblAttachments.setText("Attachments");
+		lblAttachments.setFont(new Font("Tahoma", Font.BOLD, 11));
+		lblAttachments.setBorder(new EmptyBorder(10, 7, 0, 10));
 		GridBagConstraints gbc_lblAttachments = new GridBagConstraints();
 		gbc_lblAttachments.insets = new Insets(0, 0, 0, 5);
 		gbc_lblAttachments.gridx = 0;
 		gbc_lblAttachments.gridy = 0;
-		panel.add(lblAttachments, gbc_lblAttachments);
+		atachementsPanel.add(lblAttachments, gbc_lblAttachments);
 
-		lblLinksToFile = new JXLabel();
-		lblLinksToFile.setBorder(new EmptyBorder(10, 0, 0, 0));
-		lblLinksToFile.setLineWrap(true);
-		lblLinksToFile.setText("No attachments");
-		GridBagConstraints gbc_lblLinksToFile = new GridBagConstraints();
-		gbc_lblLinksToFile.fill = GridBagConstraints.HORIZONTAL;
-		gbc_lblLinksToFile.gridx = 1;
-		gbc_lblLinksToFile.gridy = 0;
-		panel.add(lblLinksToFile, gbc_lblLinksToFile);
+		listOfAttachments = new JXLabel();
+		listOfAttachments.setText("No attachments");
+		listOfAttachments.setLineWrap(true);
+		listOfAttachments.setBorder(new EmptyBorder(10, 0, 0, 0));
+		GridBagConstraints gbc_listOfAttachments = new GridBagConstraints();
+		gbc_listOfAttachments.fill = GridBagConstraints.HORIZONTAL;
+		gbc_listOfAttachments.gridx = 1;
+		gbc_listOfAttachments.gridy = 0;
+		atachementsPanel.add(listOfAttachments, gbc_listOfAttachments);
 	}
 
 	public void setTxtfldDescription(String description) {
@@ -674,7 +663,7 @@ public class DefectsDetailsPanel extends JPanel {
 	}
 
 	public void setTextfldPriority(String priority) {
-		this.textfldPriority.setText(priority);
+		this.txtfldPriority.setText(priority);
 	}
 
 	public void setTxtfldRelease(String release) {
@@ -682,7 +671,7 @@ public class DefectsDetailsPanel extends JPanel {
 	}
 
 	public void setTextfldFixedInPush(String fixedInPush) {
-		this.textfldFixedInPush.setText(fixedInPush);
+		this.txtfldFixedInBuild.setText(fixedInPush);
 	}
 
 	public void setTxtfldSprint(String sprint) {
@@ -710,11 +699,11 @@ public class DefectsDetailsPanel extends JPanel {
 	}
 
 	public void setTextfldStoryPoints(String storyPoints) {
-		this.textfldStoryPoints.setText(storyPoints);
+		this.txtfldStoryPoints.setText(storyPoints);
 	}
 
 	public void setTextfldDetectedInPush(String detectedInPush) {
-		this.textfldDetectedInPush.setText(detectedInPush);
+		this.txtfldDetectedInBuild.setText(detectedInPush);
 	}
 
 	public void setTxtfldDetectedInRelease(String detectedInRelease) {

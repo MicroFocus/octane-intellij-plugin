@@ -5,6 +5,8 @@ import com.hpe.adm.nga.sdk.model.FieldModel;
 import com.hpe.adm.nga.sdk.model.MultiReferenceFieldModel;
 import com.hpe.adm.nga.sdk.model.ReferenceFieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.View;
+import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
+import com.intellij.ui.components.JBScrollPane;
 import org.apache.commons.lang.CharEncoding;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -16,11 +18,6 @@ import java.util.StringJoiner;
 
 public class EntityDetailView implements View {
 
-    private static final String DEFECT = "defect";
-    private static final String TEST = "test";
-    private static final String USER_STORY = "work_item";
-    private static final String TASK = "task";
-
     private JPanel entityDetailsPanel;
 
 	public EntityDetailView() {
@@ -29,21 +26,25 @@ public class EntityDetailView implements View {
 
     @Override
     public JComponent getComponent() {
-
-        return new JScrollPane(entityDetailsPanel);
+        JBScrollPane component = new JBScrollPane(entityDetailsPanel);
+        component.setBorder(null);
+        return component;
     }
 
     //TODO: @osavencu: build it more generic (after it works)
     public void setEntityModel(EntityModel entityModel) {
-        String entityType = entityModel.getValue("type").getValue().toString();
+        Entity entityType = Entity.getEntityType(entityModel);
         switch (entityType) {
             case DEFECT:
                 setEntityModelForDefects(entityModel);
                 break;
-            case TEST:
+            case GHERKIN_TEST:
                 setEntityModelForTests(entityModel);
                 break;
-            case USER_STORY:
+            case MANUAL_TEST:
+                setEntityModelForTests(entityModel);
+                break;
+            case STORY:
                 setEntityModelForUserStory(entityModel);
                 break;
             case TASK:
@@ -84,9 +85,10 @@ public class EntityDetailView implements View {
     }
 
     private void setEntityModelForTests(EntityModel entityModel) {
-        TestDetailsPanel testDetailsPanel = new TestDetailsPanel();
+        TestDetailsPanel testDetailsPanel = new TestDetailsPanel(Entity.getEntityType(entityModel));
         testDetailsPanel.setTxtfldDescription(getDescriptionForEntityModel(entityModel));
         testDetailsPanel.setLblName(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_NAME)));
+        testDetailsPanel.setTestIcon(Entity.getEntityType(entityModel));
         testDetailsPanel.setTxtfldAppModules(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_APPMODULE)));
         testDetailsPanel.setTtxtfldDesigner(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_DESIGNER)));
         testDetailsPanel.setTxtfldManual(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_IS_MANUAL)));
@@ -107,7 +109,6 @@ public class EntityDetailView implements View {
     }
 
     private void setEntityModelForUserStory(EntityModel entityModel) {
-
         UserStoryDetailsPanel userStoryDetailsPanel = new UserStoryDetailsPanel();
         userStoryDetailsPanel.setTxtfldDescription(getDescriptionForEntityModel(entityModel));
         userStoryDetailsPanel.setLblName(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_NAME)));
