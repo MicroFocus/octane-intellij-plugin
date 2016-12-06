@@ -16,7 +16,7 @@ public class EntityService extends ServiceBase {
 
         Map<Entity, Query.QueryBuilder> myWorkFilter = new HashMap<>();
 
-        myWorkFilter.put(Entity.TEST, createPhaseQuery(Entity.TEST,"new", "inprogress"));
+        myWorkFilter.put(Entity.TEST, createPhaseQuery(Entity.TEST, "new", "indesign"));
         myWorkFilter.put(Entity.DEFECT, createPhaseQuery(Entity.DEFECT,"new", "inprogress", "intesting"));
         myWorkFilter.put(Entity.STORY, createPhaseQuery(Entity.STORY, "new", "inprogress", "intesting"));
         myWorkFilter.put(Entity.TASK, createPhaseQuery(Entity.TASK, "new", "inprogress"));
