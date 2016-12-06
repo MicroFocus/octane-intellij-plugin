@@ -1,12 +1,24 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.treetable;
 
+import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.View;
 import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.PacmanLoadingWidget;
 import com.hpe.adm.octane.ideplugins.intellij.util.Constants;
+import com.hpe.adm.octane.ideplugins.services.DownloadScriptService;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.intellij.icons.AllIcons;
+import com.intellij.ide.DataManager;
+import com.intellij.ide.actions.OpenProjectFileChooserDescriptor;
+import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.actionSystem.DataKeys;
+import com.intellij.openapi.fileChooser.FileChooser;
+import com.intellij.openapi.fileChooser.FileChooserDescriptor;
+import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
+import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.treeStructure.Tree;
@@ -19,10 +31,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 public class EntityTreeView implements View {
 
-    public interface EntityDoubleClickHandler{
+    public interface EntityDoubleClickHandler {
         void entityDoubleClicked(Entity entityType, Long entityId, EntityModel model);
     }
 
@@ -33,7 +47,10 @@ public class EntityTreeView implements View {
 
     private JButton refreshButton;
 
-    public EntityTreeView(){
+    @Inject
+    DownloadScriptService scriptService;
+
+    public EntityTreeView() {
 
         tree = new Tree();
         //Init with an empty model
@@ -44,7 +61,7 @@ public class EntityTreeView implements View {
         //tree.addMouseListener(createTreeMouseListener());
 
         //Add it to the root panel
-        rootPanel = new JPanel(new BorderLayout(0,0));
+        rootPanel = new JPanel(new BorderLayout(0, 0));
         scrollPane = new JBScrollPane();
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
 
@@ -53,9 +70,11 @@ public class EntityTreeView implements View {
 
         //Toolbar
         rootPanel.add(createToolbar(), BorderLayout.EAST);
+
+        tree.addMouseListener(createTreeMouseListener());
     }
 
-    public void addEntityDoubleClickHandler(EntityDoubleClickHandler handler){
+    public void addEntityDoubleClickHandler(EntityDoubleClickHandler handler) {
         tree.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
                 if (SwingUtilities.isLeftMouseButton(e)) {
@@ -63,13 +82,13 @@ public class EntityTreeView implements View {
                     TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
                     if (selRow != -1 && e.getClickCount() == 2) {
                         Object object = selPath.getLastPathComponent();
-                        if(object instanceof EntityModel) {
+                        if (object instanceof EntityModel) {
                             try {
                                 EntityModel entityModel = (EntityModel) object;
                                 Entity entityType = Entity.getEntityType(entityModel);
                                 Long entityId = Long.parseLong(entityModel.getValue("id").getValue().toString());
                                 handler.entityDoubleClicked(entityType, entityId, entityModel);
-                            } catch (Exception ex){
+                            } catch (Exception ex) {
                                 System.out.print(ex);
                             }
                         }
@@ -79,28 +98,76 @@ public class EntityTreeView implements View {
         });
     }
 
-    private MouseListener createTreeMouseListener(){
+    private VirtualFile chooseScriptFolder(Project project) {
+        FileChooserDescriptor descriptor = new OpenProjectFileChooserDescriptor(true);
+        descriptor.setHideIgnored(false);
+        descriptor.setRoots(project.getBaseDir());
+        descriptor.setTitle("Select Parent Folder");
+        descriptor.withTreeRootVisible(false);
+        VirtualFile[] virtualFile = FileChooser.chooseFiles(descriptor, null, null);
+
+        return (virtualFile.length != 1) ? null : virtualFile[0];
+    }
+
+    private File createTestScriptFile(String path, String fileName, String script) {
+        File f = new File(path + "/" + fileName);
+        try {
+            f.createNewFile();
+            if (script != null) {
+                Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(f), StandardCharsets.UTF_8));
+                out.append(script);
+                out.flush();
+                out.close();
+            }
+        } catch (IOException e) {
+            return null;
+        }
+        return f;
+    }
+
+    private void downloadScriptForGherkinTest(long gherkinTestId) {
+        DataContext dataContext = DataManager.getInstance().getDataContext();
+        Project project = DataKeys.PROJECT.getData(dataContext);
+        VirtualFile selectedFolder = chooseScriptFolder(project);
+        if (selectedFolder != null) {
+            String scriptContent = scriptService.getGherkinTestScriptContent(gherkinTestId);
+            String scriptFileName = "test #" + gherkinTestId + " script";
+            File scriptFile = createTestScriptFile(selectedFolder.getPath(), scriptFileName, scriptContent);
+
+            VirtualFile vFile = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(scriptFile);
+            FileEditorManager.getInstance(project).openFile(vFile, true, true);
+            project.getBaseDir().refresh(false, true);
+        }
+    }
+
+    private MouseListener createTreeMouseListener() {
         MouseListener ml = new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
 
                 if (SwingUtilities.isRightMouseButton(e)) {
+                    TreePath path = tree.getPathForLocation(e.getX(), e.getY());
+                    Object obj = path.getLastPathComponent();
 
-                    int row = tree.getClosestRowForLocation(e.getX(), e.getY());
-                    tree.setSelectionRow(row);
-                    JPopupMenu popup = new JPopupMenu();
-                    popup.add(new JMenuItem("Icecream!"));
-                    popup.show(e.getComponent(), e.getX(), e.getY());
+                    if (obj instanceof EntityModel) {
+                        EntityModel entityModel = (EntityModel) obj;
+                        Entity entityType = Entity.getEntityType(entityModel);
+                        JPopupMenu popup = new JPopupMenu();
+                        if (entityType == Entity.GHERKIN_TEST) {
+                            long id = Long.parseLong((String) entityModel.getValue("id").getValue().toString());
+                            System.out.println("A gherkin test " + id);
+                            JMenuItem downloadScriptItem = new JMenuItem("Download script");
+                            downloadScriptItem.addMouseListener(new MouseAdapter() {
+                                @Override
+                                public void mousePressed(MouseEvent e) {
+                                    super.mousePressed(e);
+                                    downloadScriptForGherkinTest(id);
+                                    System.out.println("will download script for " + id);
 
-                } else if (SwingUtilities.isLeftMouseButton(e)) {
-                    int selRow = tree.getRowForLocation(e.getX(), e.getY());
-                    TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
-
-                    if (selRow != -1) {
-                        if (e.getClickCount() == 1) {
-                            System.out.println("SINGLE CLICKKKKK!");
-                        } else if (e.getClickCount() == 2) {
-                            System.out.println("DDDDDOUBLE CLICKKKKK!");
+                                }
+                            });
+                            popup.add(downloadScriptItem);
                         }
+                        popup.show(e.getComponent(), e.getX(), e.getY());
                     }
                 }
             }
@@ -108,12 +175,12 @@ public class EntityTreeView implements View {
         return ml;
     }
 
-    private JComponent createToolbar(){
+    private JComponent createToolbar() {
 
         JPanel toolbar = new JPanel();
         toolbar.setLayout(new BoxLayout(toolbar, BoxLayout.Y_AXIS));
 
-        toolbar.setBorder(BorderFactory.createMatteBorder(0,1,0,0, JBColor.border()));
+        toolbar.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, JBColor.border()));
 
         refreshButton = createButton(IconLoader.findIcon(Constants.IMG_REFRESH_ICON));
         toolbar.add(refreshButton);
@@ -129,12 +196,12 @@ public class EntityTreeView implements View {
         return toolbar;
     }
 
-    private JButton createButton(Icon icon){
+    private JButton createButton(Icon icon) {
         JButton button = new JButton(icon);
         button.setBorderPainted(false);
         button.setContentAreaFilled(false);
         button.setOpaque(false);
-        button.setPreferredSize(new Dimension(30,30));
+        button.setPreferredSize(new Dimension(30, 30));
 
         button.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -156,7 +223,7 @@ public class EntityTreeView implements View {
     private void expandAllNodes(JTree tree) {
         int j = tree.getRowCount();
         int i = 0;
-        while(i < j) {
+        while (i < j) {
             tree.expandRow(i);
             i += 1;
             j = tree.getRowCount();
@@ -199,14 +266,13 @@ public class EntityTreeView implements View {
         });
     }
 
-    public void setTreeModel(TreeModel model){
+    public void setTreeModel(TreeModel model) {
         tree.setModel(model);
     }
 
-    public EntityTreeModel getTreeModel(){
+    public EntityTreeModel getTreeModel() {
         return (EntityTreeModel) tree.getModel();
     }
-
 
 
 }
