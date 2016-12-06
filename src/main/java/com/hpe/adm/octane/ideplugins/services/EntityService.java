@@ -1,21 +1,16 @@
 package com.hpe.adm.octane.ideplugins.services;
 
-import com.google.inject.Inject;
 import com.google.protobuf.ServiceException;
 import com.hpe.adm.nga.sdk.EntityList;
 import com.hpe.adm.nga.sdk.Query;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.filtering.Filter;
-import com.intellij.openapi.diagnostic.Logger;
 
 import java.util.*;
 
 
 public class EntityService extends ServiceBase {
-
-    @Inject
-    private static Logger logger;
 
     public Collection<EntityModel> getMyWork() {
 
