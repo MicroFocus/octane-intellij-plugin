@@ -45,6 +45,14 @@ class EntityTreeModel extends AbstractTreeModel {
         }
     }
 
+    public int size(){
+        int size = 0;
+        for(List<EntityModel> entityModels : groupedEntities.values()){
+            size += entityModels.size();
+        }
+        return size;
+    }
+
     @Override
     public Object getRoot() {
         return ROOT;
