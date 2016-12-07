@@ -6,6 +6,7 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.View;
 import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.PacmanLoadingWidget;
 import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.tree.FillingTree;
 import com.hpe.adm.octane.ideplugins.intellij.util.Constants;
+import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
 import com.hpe.adm.octane.ideplugins.services.DownloadScriptService;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.intellij.icons.AllIcons;
@@ -130,13 +131,19 @@ public class EntityTreeView implements View {
         Project project = DataKeys.PROJECT.getData(dataContext);
         VirtualFile selectedFolder = chooseScriptFolder(project);
         if (selectedFolder != null) {
-            String scriptContent = scriptService.getGherkinTestScriptContent(gherkinTestId);
-            String scriptFileName = "test #" + gherkinTestId + " script";
-            File scriptFile = createTestScriptFile(selectedFolder.getPath(), scriptFileName, scriptContent);
+            RestUtil.LOADING_MESSAGE = "Downloading script for gherkin test with id " + gherkinTestId;
+            RestUtil.runInBackground(
+                    () -> scriptService.getGherkinTestScriptContent(gherkinTestId),
+                    (scriptContent) -> {
+                        String scriptFileName = "test #" + gherkinTestId + " script";
+                        File scriptFile = createTestScriptFile(selectedFolder.getPath(), scriptFileName, scriptContent);
 
-            VirtualFile vFile = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(scriptFile);
-            FileEditorManager.getInstance(project).openFile(vFile, true, true);
-            project.getBaseDir().refresh(false, true);
+                        VirtualFile vFile = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(scriptFile);
+                        FileEditorManager.getInstance(project).openFile(vFile, true, true);
+                        project.getBaseDir().refresh(false, true);
+                    },
+                    project,
+                    "failed to download script for gherkin test with id " + gherkinTestId);
         }
     }
 
@@ -159,7 +166,8 @@ public class EntityTreeView implements View {
                                 @Override
                                 public void mousePressed(MouseEvent e) {
                                     super.mousePressed(e);
-                                    downloadScriptForGherkinTest(id);
+                                    if (SwingUtilities.isLeftMouseButton(e))
+                                        downloadScriptForGherkinTest(id);
                                 }
                             });
                             popup.add(downloadScriptItem);
