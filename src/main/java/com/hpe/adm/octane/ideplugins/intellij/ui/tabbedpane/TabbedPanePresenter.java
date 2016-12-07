@@ -50,7 +50,7 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
     public EntityTreeTablePresenter openMyWorkTab(String tabName) {
         EntityTreeTablePresenter presenter = entityTreeTablePresenterProvider.get();
         treeTablePresenters.add(presenter);
-        tabbedPaneView.addTab(tabName, presenter.getView().getComponent());
+        tabbedPaneView.addTabNoExit(tabName, presenter.getView().getComponent());
         return presenter;
     }
 

@@ -26,4 +26,8 @@ public class TabbedPaneView implements View {
         tabbedPane.addTab(title, component);
     }
 
+    public void addTabNoExit(String title, Component component) {
+        tabbedPane.addTabNoExit(title, component);
+    }
+
 }
