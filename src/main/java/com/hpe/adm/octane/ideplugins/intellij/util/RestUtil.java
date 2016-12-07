@@ -11,7 +11,7 @@ import java.util.function.Supplier;
 
 public class RestUtil {
 
-    private static final String LOADING_MESSAGE = "Fetching data from Octane...";
+    public static String LOADING_MESSAGE = "Fetching data from Octane...";
 
     private static NotificationUtil notificationService = new NotificationUtil();
 
@@ -23,7 +23,7 @@ public class RestUtil {
      * @param errorMessage if the provided supplier throws an exception, this error message is displayed (if it is not null)
      *                     and the provided consumer will not be executed.
      */
-    private static <T> void runInBackground(final Supplier<T> supplier,
+    public static <T> void runInBackground(final Supplier<T> supplier,
                                   final Consumer<T> consumer,
                                   final Project project,
                                   final String errorMessage) {
