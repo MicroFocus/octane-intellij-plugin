@@ -55,7 +55,7 @@ public class UserStoryDetailsPanel extends JPanel {
 
         rootPanel = new JXPanel();
         rootPanel.setBorder(new EmptyBorder(10, 30, 30, 30));
-        rootPanel.setPreferredSize(new Dimension(900, 380));
+//        rootPanel.setPreferredSize(new Dimension(900, 380));
         GridBagConstraints gbc_rootPanel = new GridBagConstraints();
         gbc_rootPanel.fill = GridBagConstraints.BOTH;
         gbc_rootPanel.gridx = 0;

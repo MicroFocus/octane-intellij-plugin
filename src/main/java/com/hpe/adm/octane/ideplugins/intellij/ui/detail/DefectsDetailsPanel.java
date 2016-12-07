@@ -73,7 +73,7 @@ public class DefectsDetailsPanel extends JPanel {
 		this.setLayout(gridBagLayout);
 
 		rootPanel = new JXPanel();
-		rootPanel.setPreferredSize(new Dimension(900, 450));
+//		rootPanel.setPreferredSize(new Dimension(900, 450));
 		rootPanel.setBorder(new EmptyBorder(10, 30, 30, 30));
 		GridBagConstraints gbc_rootPanel = new GridBagConstraints();
 		gbc_rootPanel.fill = GridBagConstraints.BOTH;

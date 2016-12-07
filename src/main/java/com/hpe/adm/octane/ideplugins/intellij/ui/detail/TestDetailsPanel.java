@@ -64,7 +64,7 @@ public class TestDetailsPanel extends JPanel {
 
         rootPanel = new JXPanel();
         rootPanel.setBorder(new EmptyBorder(10, 30, 30, 30));
-        rootPanel.setPreferredSize(new Dimension(900, 350));
+//        rootPanel.setPreferredSize(new Dimension(900, 350));
         GridBagConstraints gbc_rootPanel = new GridBagConstraints();
         gbc_rootPanel.fill = GridBagConstraints.BOTH;
         gbc_rootPanel.gridx = 0;
