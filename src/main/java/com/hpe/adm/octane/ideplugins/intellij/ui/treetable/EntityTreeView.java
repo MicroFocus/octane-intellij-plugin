@@ -5,9 +5,14 @@ import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.View;
 import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.PacmanLoadingWidget;
 import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.tree.FillingTree;
+import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
+import com.hpe.adm.octane.ideplugins.intellij.util.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
 import com.hpe.adm.octane.ideplugins.services.DownloadScriptService;
+import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
+import com.hpe.adm.octane.ideplugins.services.util.UrlParser;
+import com.intellij.icons.AllIcons;
 import com.intellij.ide.DataManager;
 import com.intellij.ide.actions.OpenProjectFileChooserDescriptor;
 import com.intellij.openapi.actionSystem.*;
@@ -15,6 +20,7 @@ import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.components.JBScrollPane;
@@ -27,6 +33,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.*;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 
 public class EntityTreeView implements View {
@@ -43,7 +50,13 @@ public class EntityTreeView implements View {
     private JButton refreshButton;
 
     @Inject
-    DownloadScriptService scriptService;
+    private DownloadScriptService scriptService;
+
+    @Inject
+    private UrlParser urlParser;
+
+    @Inject
+    private ConnectionSettingsProvider connectionSettingsProvider;
 
     public EntityTreeView() {
 
@@ -65,7 +78,7 @@ public class EntityTreeView implements View {
         //Toolbar
         rootPanel.add(createToolbar(), BorderLayout.EAST);
 
-        tree.addMouseListener(createTreeMouseListener());
+        tree.addMouseListener(createTreeContextMenu());
     }
 
     public void addEntityDoubleClickHandler(EntityDoubleClickHandler handler) {
@@ -143,7 +156,7 @@ public class EntityTreeView implements View {
     }
 
 
-    private MouseListener createTreeMouseListener() {
+    private MouseListener createTreeContextMenu() {
         MouseListener ml = new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
 
@@ -154,10 +167,34 @@ public class EntityTreeView implements View {
                     if (obj instanceof EntityModel) {
                         EntityModel entityModel = (EntityModel) obj;
                         Entity entityType = Entity.getEntityType(entityModel);
+
                         JPopupMenu popup = new JPopupMenu();
+
+                        JMenuItem viewInBrowserItem = new JMenuItem("View in browser", IconLoader.findIcon(Constants.IMG_BROWSER_ICON));
+                        viewInBrowserItem.addMouseListener(new MouseAdapter() {
+                            @Override
+                            public void mousePressed(MouseEvent mouseEvent) {
+                                Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+                                if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+                                    try {
+                                        URI uri =
+                                                UrlParser.createEntityWebURI(
+                                                        connectionSettingsProvider.getConnectionSettings(),
+                                                        entityType,
+                                                        Integer.valueOf(UiUtil.getUiDataFromModel(entityModel.getValue("id")))) ;
+
+                                        desktop.browse(uri);
+                                    } catch (Exception ex) {
+                                        ex.printStackTrace();
+                                    }
+                                }
+                            }
+                        });
+                        popup.add(viewInBrowserItem);
+
                         if (entityType == Entity.GHERKIN_TEST) {
                             long id = Long.parseLong(entityModel.getValue("id").getValue().toString());
-                            JMenuItem downloadScriptItem = new JMenuItem("Download script");
+                            JMenuItem downloadScriptItem = new JMenuItem("Download script", AllIcons.Actions.Download);
                             downloadScriptItem.addMouseListener(new MouseAdapter() {
                                 @Override
                                 public void mousePressed(MouseEvent e) {
@@ -168,6 +205,12 @@ public class EntityTreeView implements View {
                             });
                             popup.add(downloadScriptItem);
                         }
+
+                        //TODO implement me please
+                        popup.addSeparator();
+                        popup.add(new JMenuItem("Start work", IconLoader.findIcon(Constants.IMG_START_TIMER)));
+                        popup.add(new JMenuItem("Stop work", IconLoader.findIcon(Constants.IMG_STOP_TIMER)));
+
                         popup.show(e.getComponent(), e.getX(), e.getY());
                     }
                 }
