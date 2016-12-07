@@ -18,8 +18,8 @@ public class DetailsViewDefaultFields {
     public static final String FIELD_DETECTEDBY = "detected_by";
     public static final String FIELD_SEVERITY = "severity";
     public static final String FIELD_GROUP = "group_udf";
-    public static final String FIELD_ENVIROMENT = "enviroment";
-    public static final String FIELD_FEEDBACKTYPE_UDF = "feedback_type_udf";
+    public static final String FIELD_ENVIROMENT = "taxonomies";
+    public static final String FIELD_FEEDBACKTYPE = "feedback_type_udf";
     public static final String FIELD_STORYPOINTS = "story_points";
     public static final String FIELD_DETECTEDINPPUSH = "detected_in_build";
     public static final String FIELD_DETECTEDINRELEASE = "detected_in_release";
