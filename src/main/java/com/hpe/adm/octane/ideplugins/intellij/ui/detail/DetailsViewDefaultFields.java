@@ -17,7 +17,7 @@ public class DetailsViewDefaultFields {
     public static final String FIELD_SPRINT = "sprint";
     public static final String FIELD_DETECTEDBY = "detected_by";
     public static final String FIELD_SEVERITY = "severity";
-    public static final String FIELD_GROUP_UDF = "group_udf";
+    public static final String FIELD_GROUP = "group_udf";
     public static final String FIELD_ENVIROMENT = "taxonomies";
     public static final String FIELD_FEEDBACKTYPE_UDF = "feedback_type_udf";
     public static final String FIELD_STORYPOINTS = "story_points";
