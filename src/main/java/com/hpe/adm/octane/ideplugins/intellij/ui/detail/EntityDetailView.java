@@ -1,9 +1,6 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
 import com.hpe.adm.nga.sdk.model.EntityModel;
-import com.hpe.adm.nga.sdk.model.FieldModel;
-import com.hpe.adm.nga.sdk.model.MultiReferenceFieldModel;
-import com.hpe.adm.nga.sdk.model.ReferenceFieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.View;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.intellij.ui.components.JBScrollPane;
@@ -13,8 +10,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Entities;
 
 import javax.swing.*;
-import java.util.List;
-import java.util.StringJoiner;
+
+import static com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil.getUiDataFromModel;
 
 public class EntityDetailView implements View {
 
@@ -176,52 +173,5 @@ public class EntityDetailView implements View {
         descriptionDoc.outputSettings().prettyPrint(false);
         return descriptionDoc.text();
     }
-
-    private String getUiDataFromModel(FieldModel fieldModel) {
-        String result = "";
-        if (null != fieldModel) {
-            FieldModel tempFieldModel = null;
-            if (fieldModel instanceof ReferenceFieldModel) {
-                tempFieldModel = getValueOfChild((EntityModel) fieldModel.getValue(), "name");
-                if (null != tempFieldModel) {
-                    result = String.valueOf(tempFieldModel.getValue());
-                }
-            } else if (fieldModel instanceof MultiReferenceFieldModel) {
-                result = getValueOfChildren((List<EntityModel>) fieldModel.getValue(), "name");
-            } else {
-                result = String.valueOf(fieldModel.getValue());
-            }
-        }
-        return (null == result) ? " " : result;
-    }
-
-    private FieldModel getValueOfChild(EntityModel entityModel, String child) {
-        FieldModel result = null;
-        if (null != entityModel) {
-            for (FieldModel fieldModel : entityModel.getValues()) {
-                if (child.equals(fieldModel.getName())) {
-                    result = fieldModel;
-                }
-            }
-        }
-        return result;
-    }
-
-    private String getValueOfChildren(List<EntityModel> entityModelList, String child) {
-        StringJoiner result = new StringJoiner("; ");
-        String tempFieldModelValue = " ";
-        if (null != entityModelList) {
-            for (EntityModel entityModel : entityModelList) {
-                for (FieldModel fieldModel : entityModel.getValues()) {
-                    if (child.equals(fieldModel.getName())) {
-                        tempFieldModelValue = String.valueOf(fieldModel.getValue());
-                    }
-                }
-                result.add(tempFieldModelValue);
-            }
-        }
-        return result.toString();
-    }
-
 
 }

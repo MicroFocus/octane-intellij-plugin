@@ -2,7 +2,11 @@ package com.hpe.adm.octane.ideplugins.services.util;
 
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
 import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
+import com.hpe.adm.octane.ideplugins.services.exception.ServiceRuntimeException;
+import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 import static com.hpe.adm.octane.ideplugins.intellij.util.Constants.INVALID_URL_FORMAT_MESSAGE;
@@ -92,6 +96,35 @@ public class UrlParser {
             return url.substring(0,url.indexOf("#"));
         }
         return url;
+    }
+
+    /**
+     * Create an octane ui link from an entity
+     * @param connectionSettings
+     * @param entityType
+     * @param id
+     * @return
+     */
+    public static URI createEntityWebURI(ConnectionSettings connectionSettings, Entity entityType, Integer id){
+        //ex: http://myd-vm24085.hpeswlab.net:8080/ui/entity-navigation?p=1001/1002&entityType=test&id=1001
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(connectionSettings.getBaseUrl());
+        sb.append("/ui/entity-navigation?p=");
+        sb.append(connectionSettings.getSharedSpaceId() + "/" + connectionSettings.getWorkspaceId());
+        sb.append("&entityType=" + entityType.getTypeName());
+        sb.append("&id=" + id);
+
+        URI uri = null;
+
+        try {
+            uri = new URI(sb.toString());
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+            throw new ServiceRuntimeException(e);
+        }
+
+        return uri;
     }
 
 }

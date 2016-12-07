@@ -7,7 +7,7 @@ import com.intellij.util.ui.tree.AbstractTreeModel;
 import javax.swing.tree.TreePath;
 import java.util.*;
 
-public class EntityTreeModel extends AbstractTreeModel {
+class EntityTreeModel extends AbstractTreeModel {
 
     private static final String ROOT = "root";
     private TreeMap<EntityCategory, List<EntityModel>> groupedEntities = new TreeMap<>();
