@@ -96,7 +96,7 @@ public class EntityDetailView implements View {
         defectsDetailsPanel.setTxtfldBlocked(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_BLOCKED)));
         defectsDetailsPanel.setTxtfldBlockedReason(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_BLOCKEDBY)));
 //		defectsDetailsPanel.setTxtfldGroup(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_GROUP)));
-        defectsDetailsPanel.setTxtfldFeedbackType(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_FEEDBACKTYPE)));
+        defectsDetailsPanel.setTxtfldFeedbackType(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_FEEDBACKTYPE_UDF)));
 //		defectsDetailsPanel.setTxtfldEnviroment(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_ENVIROMENT)));
         defectsDetailsPanel.setTxtfldAppModules(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_APPMODULE)));
 

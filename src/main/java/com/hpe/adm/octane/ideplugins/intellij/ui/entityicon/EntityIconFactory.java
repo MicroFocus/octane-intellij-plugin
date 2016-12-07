@@ -10,8 +10,8 @@ import java.util.Map;
 
 public class EntityIconFactory {
 
-    private static final int ICON_HEIGHT = 25;
-    private static final int ICON_WIDTH = 25;
+    private static final int ICON_HEIGHT = 30;
+    private static final int ICON_WIDTH = 30;
     private static final Color FONT_COLOR = new Color(255,255,255);
 
     //Detail for unmapped entity type

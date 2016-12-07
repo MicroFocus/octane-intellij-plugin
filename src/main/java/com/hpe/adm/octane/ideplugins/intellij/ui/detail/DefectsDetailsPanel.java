@@ -720,8 +720,9 @@ public class DefectsDetailsPanel extends JPanel {
 	}
 
 	public void setTxtfldBlocked(String txtfldBlocked) {
-		this.txtfldBlocked.setText(txtfldBlocked);
-	}
+        txtfldBlocked = (txtfldBlocked == "true") ? "Yes" : "No";
+        this.txtfldBlocked.setText(txtfldBlocked);
+    }
 
 	public String getTxtfldBlockedReason() {
 		return txtfldBlockedReason.getText();

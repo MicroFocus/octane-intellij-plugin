@@ -11,7 +11,6 @@ import java.util.Collection;
 public class EntityTreeTablePresenter implements Presenter<EntityTreeView>{
 
     EntityTreeView entityTreeTableView;
-    EntityTreeModel entityTreeModel = new EntityTreeModel();
 
     @Inject
     EntityService entityService;
@@ -32,8 +31,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView>{
                 try {
                     entityTreeTableView.setLoading(true);
                     Collection<EntityModel> myWork = entityService.getMyWork();
-                    entityTreeModel.setEntities(myWork);
-                    SwingUtilities.invokeLater(() -> entityTreeTableView.setTreeModel(entityTreeModel));
+                    SwingUtilities.invokeLater(() -> entityTreeTableView.setTreeModel(new EntityTreeModel(myWork)));
                     return null;
                 } catch (Exception ex){
                     System.out.println(ex);

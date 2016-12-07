@@ -13,6 +13,7 @@ import javax.swing.tree.TreeNode;
 public class FillingTree extends Tree {
 
     public FillingTree() {
+        setUI(new FillingWideSelectionTreeUI());
     }
 
     public FillingTree(TreeNode root) {
@@ -33,6 +34,11 @@ public class FillingTree extends Tree {
             }
         }
         super.setUI(actualUI);
+    }
+
+    @Override
+    protected boolean isCustomUI() {
+        return true;
     }
 
 }
