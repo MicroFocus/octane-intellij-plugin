@@ -5,6 +5,7 @@ import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.View;
 import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.PacmanLoadingWidget;
 import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.tree.FillingTree;
+import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.nowork.NoWorkPanel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
 import com.hpe.adm.octane.ideplugins.intellij.util.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
@@ -23,10 +24,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBScrollPane;
 
 import javax.swing.*;
-import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -231,6 +232,7 @@ public class EntityTreeView implements View {
 
     private JComponent createToolbar() {
         ActionToolbar actionToolBar = ActionManager.getInstance().createActionToolbar("My Work actions", toolBarActionGroup, false);
+        actionToolBar.getComponent().setBorder(BorderFactory.createMatteBorder(0,1,0,0, JBColor.border()));
         return actionToolBar.getComponent();
     }
 
@@ -275,8 +277,14 @@ public class EntityTreeView implements View {
         });
     }
 
-    public void setTreeModel(TreeModel model) {
+    public void setTreeModel(EntityTreeModel model) {
         tree.setModel(model);
+
+        if(model.size() == 0){
+            scrollPane.setViewportView(new NoWorkPanel());
+        } else if(scrollPane.getViewport().getView() != tree){
+            scrollPane.setViewportView(tree);
+        }
     }
 
     public EntityTreeModel getTreeModel() {
