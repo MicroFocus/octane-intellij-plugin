@@ -5,30 +5,24 @@ import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.View;
 import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.PacmanLoadingWidget;
 import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.tree.FillingTree;
-import com.hpe.adm.octane.ideplugins.intellij.util.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
 import com.hpe.adm.octane.ideplugins.services.DownloadScriptService;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
-import com.intellij.icons.AllIcons;
 import com.intellij.ide.DataManager;
 import com.intellij.ide.actions.OpenProjectFileChooserDescriptor;
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.actionSystem.DataKeys;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBScrollPane;
 
 import javax.swing.*;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -59,7 +53,6 @@ public class EntityTreeView implements View {
 
         tree.setRootVisible(false);
         tree.setCellRenderer(new EntityTreeCellRenderer());
-        //tree.addMouseListener(createTreeMouseListener());
 
         //Add it to the root panel
         rootPanel = new JPanel(new BorderLayout(0, 0));
@@ -129,6 +122,7 @@ public class EntityTreeView implements View {
     private void downloadScriptForGherkinTest(long gherkinTestId) {
         DataContext dataContext = DataManager.getInstance().getDataContext();
         Project project = DataKeys.PROJECT.getData(dataContext);
+
         VirtualFile selectedFolder = chooseScriptFolder(project);
         if (selectedFolder != null) {
             RestUtil.LOADING_MESSAGE = "Downloading script for gherkin test with id " + gherkinTestId;
@@ -182,52 +176,22 @@ public class EntityTreeView implements View {
         return ml;
     }
 
+    private DefaultActionGroup toolBarActionGroup = new DefaultActionGroup();
+
+    public void addActionToToolbar(AnAction action){
+        toolBarActionGroup.addAction(action);
+    }
+
+    public void addSeparatorToToolbar(){
+        toolBarActionGroup.addSeparator();
+    }
+
     private JComponent createToolbar() {
-
-        JPanel toolbar = new JPanel();
-        toolbar.setLayout(new BoxLayout(toolbar, BoxLayout.Y_AXIS));
-
-        toolbar.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, JBColor.border()));
-
-        refreshButton = createButton(IconLoader.findIcon(Constants.IMG_REFRESH_ICON));
-        toolbar.add(refreshButton);
-
-        JButton expandAllButton = createButton(AllIcons.Actions.Expandall);
-        expandAllButton.addActionListener(event -> expandAllNodes(tree));
-        toolbar.add(expandAllButton);
-
-        JButton collapseAllButton = createButton(AllIcons.Actions.Collapseall);
-        collapseAllButton.addActionListener(event -> collapseAllNodes(tree));
-        toolbar.add(collapseAllButton);
-
-        return toolbar;
+        ActionToolbar actionToolBar = ActionManager.getInstance().createActionToolbar("My Work actions", toolBarActionGroup, false);
+        return actionToolBar.getComponent();
     }
 
-    private JButton createButton(Icon icon) {
-        JButton button = new JButton(icon);
-        button.setBorderPainted(false);
-        button.setContentAreaFilled(false);
-        button.setOpaque(false);
-        button.setPreferredSize(new Dimension(30, 30));
-
-        button.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                button.setBorderPainted(true);
-                button.setContentAreaFilled(true);
-                button.setOpaque(true);
-            }
-
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                button.setBorderPainted(false);
-                button.setContentAreaFilled(false);
-                button.setOpaque(false);
-            }
-        });
-
-        return button;
-    }
-
-    private void expandAllNodes(JTree tree) {
+    public void expandAllNodes() {
         int j = tree.getRowCount();
         int i = 0;
         while (i < j) {
@@ -237,7 +201,7 @@ public class EntityTreeView implements View {
         }
     }
 
-    private void collapseAllNodes(JTree tree) {
+    public void collapseAllNodes() {
         int j = tree.getRowCount();
         int i = 0;
         while (i < j) {
@@ -245,11 +209,6 @@ public class EntityTreeView implements View {
             i += 1;
             j = tree.getRowCount();
         }
-    }
-
-    //TODO: create proper wrapped handler
-    public void addRefreshButtonActionListener(ActionListener l) {
-        refreshButton.addActionListener(l);
     }
 
     @Override
