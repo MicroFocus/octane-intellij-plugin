@@ -115,7 +115,7 @@ public class EntityDetailView implements View {
         testDetailsPanel.setTtxtfldDesigner(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_DESIGNER)));
         testDetailsPanel.setTxtfldManual(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_IS_MANUAL)));
         testDetailsPanel.setTextRunInReleases(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_RUNS_IN_RELEASES)));
-        testDetailsPanel.setTxtfldTestType(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEST_SUBTYPE)));
+        testDetailsPanel.setTxtfldTestType(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEST_TYPE)));
         testDetailsPanel.setTxtfldTestingToolType(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TESTING_TOOL_TYPE)));
         testDetailsPanel.setTxtfldLastRuns(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_LAST_RUNS)));
         testDetailsPanel.setComboBoxPhase(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_PHASE)));
