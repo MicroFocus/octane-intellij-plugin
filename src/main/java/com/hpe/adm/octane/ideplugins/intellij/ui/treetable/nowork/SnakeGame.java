@@ -3,6 +3,7 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.treetable.nowork;
 import com.hpe.adm.octane.ideplugins.intellij.util.Constants;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ImageLoader;
+import com.intellij.util.ui.UIUtil;
 
 import javax.swing.*;
 import java.awt.*;
@@ -150,7 +151,7 @@ public class SnakeGame extends JPanel implements ActionListener {
         String msg = "Game Over";
         Font small = new Font("Helvetica", Font.BOLD, 14);
         FontMetrics metr = getFontMetrics(small);
-        g.setColor(Color.white);
+        g.setColor(UIUtil.getLabelBackground().brighter());
         g.setFont(small);
         g.drawString(msg, (boardWidth - metr.stringWidth(msg)) / 2, boardHeight / 2 - 20);
 

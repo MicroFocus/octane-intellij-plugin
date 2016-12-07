@@ -24,6 +24,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBScrollPane;
 
 import javax.swing.*;
@@ -231,6 +232,7 @@ public class EntityTreeView implements View {
 
     private JComponent createToolbar() {
         ActionToolbar actionToolBar = ActionManager.getInstance().createActionToolbar("My Work actions", toolBarActionGroup, false);
+        actionToolBar.getComponent().setBorder(BorderFactory.createMatteBorder(0,1,0,0, JBColor.border()));
         return actionToolBar.getComponent();
     }
 

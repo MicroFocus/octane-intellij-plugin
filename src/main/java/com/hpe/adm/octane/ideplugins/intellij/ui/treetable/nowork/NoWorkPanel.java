@@ -29,7 +29,7 @@ public class NoWorkPanel extends JPanel {
 		gbl_panelNoWork.rowWeights = new double[]{1.0, 1.0, Double.MIN_VALUE};
 		panelNoWork.setLayout(gbl_panelNoWork);
 		
-		JLabel lblCongratulationsForFinishing = new JLabel("Congratulations for finishing your work, you have no items assigned to you!");
+		JLabel lblCongratulationsForFinishing = new JLabel("Congratulations! You finished your work, there are no items assigned to you!");
 		GridBagConstraints gbc_lblCongratulationsForFinishing = new GridBagConstraints();
 		gbc_lblCongratulationsForFinishing.anchor = GridBagConstraints.SOUTH;
 		gbc_lblCongratulationsForFinishing.insets = new Insets(0, 0, 5, 0);
