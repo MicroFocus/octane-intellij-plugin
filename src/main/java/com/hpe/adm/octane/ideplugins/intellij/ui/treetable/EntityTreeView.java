@@ -133,11 +133,12 @@ public class EntityTreeView implements View {
         if (selectedFolder != null) {
             RestUtil.LOADING_MESSAGE = "Downloading script for gherkin test with id " + gherkinTestId;
             RestUtil.runInBackground(
-                    () -> scriptService.getGherkinTestScriptContent(gherkinTestId),
-                    (scriptContent) -> {
+                    () -> {
+                        String scriptContent = scriptService.getGherkinTestScriptContent(gherkinTestId);
                         String scriptFileName = "test #" + gherkinTestId + " script";
-                        File scriptFile = createTestScriptFile(selectedFolder.getPath(), scriptFileName, scriptContent);
-
+                        return createTestScriptFile(selectedFolder.getPath(), scriptFileName, scriptContent);
+                    },
+                    (scriptFile) -> {
                         VirtualFile vFile = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(scriptFile);
                         FileEditorManager.getInstance(project).openFile(vFile, true, true);
                         project.getBaseDir().refresh(false, true);
@@ -146,6 +147,7 @@ public class EntityTreeView implements View {
                     "failed to download script for gherkin test with id " + gherkinTestId);
         }
     }
+
 
     private MouseListener createTreeMouseListener() {
         MouseListener ml = new MouseAdapter() {
@@ -160,7 +162,7 @@ public class EntityTreeView implements View {
                         Entity entityType = Entity.getEntityType(entityModel);
                         JPopupMenu popup = new JPopupMenu();
                         if (entityType == Entity.GHERKIN_TEST) {
-                            long id = Long.parseLong((String) entityModel.getValue("id").getValue().toString());
+                            long id = Long.parseLong(entityModel.getValue("id").getValue().toString());
                             JMenuItem downloadScriptItem = new JMenuItem("Download script");
                             downloadScriptItem.addMouseListener(new MouseAdapter() {
                                 @Override
