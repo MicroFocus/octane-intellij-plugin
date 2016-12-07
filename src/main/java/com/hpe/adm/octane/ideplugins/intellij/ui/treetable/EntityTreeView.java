@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.View;
 import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.PacmanLoadingWidget;
+import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.tree.FillingTree;
 import com.hpe.adm.octane.ideplugins.intellij.util.Constants;
 import com.hpe.adm.octane.ideplugins.services.DownloadScriptService;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
@@ -21,7 +22,6 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBScrollPane;
-import com.intellij.ui.treeStructure.Tree;
 
 import javax.swing.*;
 import javax.swing.tree.TreeModel;
@@ -42,7 +42,7 @@ public class EntityTreeView implements View {
 
     private JPanel rootPanel;
 
-    private Tree tree;
+    private FillingTree tree;
     private JBScrollPane scrollPane;
 
     private JButton refreshButton;
@@ -52,7 +52,7 @@ public class EntityTreeView implements View {
 
     public EntityTreeView() {
 
-        tree = new Tree();
+        tree = new FillingTree();
         //Init with an empty model
         tree.setModel(new EntityTreeModel());
 
