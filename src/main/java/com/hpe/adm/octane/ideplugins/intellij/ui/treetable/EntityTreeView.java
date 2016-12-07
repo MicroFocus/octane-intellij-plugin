@@ -152,9 +152,9 @@ public class EntityTreeView implements View {
     private MouseListener createTreeMouseListener() {
         MouseListener ml = new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
+                TreePath path = tree.getPathForLocation(e.getX(), e.getY());
 
-                if (SwingUtilities.isRightMouseButton(e)) {
-                    TreePath path = tree.getPathForLocation(e.getX(), e.getY());
+                if (SwingUtilities.isRightMouseButton(e) && path != null) {
                     Object obj = path.getLastPathComponent();
 
                     if (obj instanceof EntityModel) {
