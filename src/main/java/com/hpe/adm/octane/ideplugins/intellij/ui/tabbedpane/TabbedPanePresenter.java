@@ -8,6 +8,7 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.EntityDetailPresenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.EntityDetailView;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeTablePresenter;
+import com.hpe.adm.octane.ideplugins.intellij.util.Constants;
 import com.hpe.adm.octane.ideplugins.services.EntityService;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 
@@ -53,7 +54,7 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
         this.tabbedPaneView = tabbedPaneView;
 
         //open test entity tree view
-        EntityTreeTablePresenter presenter = openMyWorkTab("My work");
+        EntityTreeTablePresenter presenter = openMyWorkTab(Constants.TAB_MY_WORK_TITLE);
         presenter.addEntityDoubleClickHandler((entityType, entityId, model) -> {
             //openDetailTab(model); //would still work, but it will be partially loaded in the future
             try {
