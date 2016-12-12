@@ -81,7 +81,7 @@ class EntityTreeCellRenderer implements TreeCellRenderer {
                         "No release");
 
                 rowPanel.addDetailsTop(getStoryPoints(entityModel));
-                rowPanel.addDetailsTop("Author: " + UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_AUTHOR)));
+                rowPanel.addDetailsTop("Author: " + UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_AUTHOR), FIELD_FULL_NAME));
 
                 addProgress(rowPanel, entityModel);
             }
@@ -92,7 +92,7 @@ class EntityTreeCellRenderer implements TreeCellRenderer {
                         "No release");
 
                 rowPanel.addDetailsTop(getStoryPoints(entityModel));
-                rowPanel.addDetailsTop("Author: " + UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_AUTHOR)));
+                rowPanel.addDetailsTop("Author: " + UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_AUTHOR), FIELD_FULL_NAME));
 
                 addProgress(rowPanel, entityModel);
             }
@@ -102,7 +102,7 @@ class EntityTreeCellRenderer implements TreeCellRenderer {
                         UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_TEST_TYPE)),
                         "");
 
-                rowPanel.addDetailsTop("Author: " + UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_AUTHOR)));
+                rowPanel.addDetailsTop("Author: " + UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_AUTHOR), FIELD_FULL_NAME));
                 rowPanel.addDetailsBottom("Automation status: " + UiUtil.getUiDataFromModel(entityModel.getValue("automation_status")));
 
                 //addProgress(rowPanel, entityModel);
@@ -114,7 +114,7 @@ class EntityTreeCellRenderer implements TreeCellRenderer {
                         "");
 
                 //rowPanel.addDetailsTop(UiUtil.getUiDataFromModel(entityModel.getValue());
-                rowPanel.addDetailsTop("Author: " + UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_AUTHOR)));
+                rowPanel.addDetailsTop("Author: " + UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_AUTHOR), FIELD_FULL_NAME));
 
                 rowPanel.addDetailsBottom("Steps: " + UiUtil.getUiDataFromModel(entityModel.getValue("steps_num")));
 

@@ -53,4 +53,7 @@ public class DetailsViewDefaultFields {
     public static final String FIELD_LAST_MODIFIED = "last_modified";
     public static final String FIELD_ESTIMATED_HOURS = "estimated_hours";
 
+    //inner user prop
+    public static final String FIELD_FULL_NAME = "full_name";
+
 }
