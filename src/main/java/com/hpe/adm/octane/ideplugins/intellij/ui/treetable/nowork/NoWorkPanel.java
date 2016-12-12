@@ -24,17 +24,26 @@ public class NoWorkPanel extends JPanel {
 		JPanel panelNoWork = new JPanel();
 		GridBagLayout gbl_panelNoWork = new GridBagLayout();
 		gbl_panelNoWork.columnWidths = new int[]{364, 0};
-		gbl_panelNoWork.rowHeights = new int[]{14, 14, 0};
+		gbl_panelNoWork.rowHeights = new int[]{0, 14, 14, 0};
 		gbl_panelNoWork.columnWeights = new double[]{1.0, Double.MIN_VALUE};
-		gbl_panelNoWork.rowWeights = new double[]{1.0, 1.0, Double.MIN_VALUE};
+		gbl_panelNoWork.rowWeights = new double[]{1.0, 0.0, 1.0, Double.MIN_VALUE};
 		panelNoWork.setLayout(gbl_panelNoWork);
+		
+		JLabel label = new JLabel("");
+		label.setIcon(new ImageIcon(NoWorkPanel.class.getResource("/images/unidrag.png")));
+		GridBagConstraints gbc_label = new GridBagConstraints();
+		gbc_label.anchor = GridBagConstraints.SOUTH;
+		gbc_label.insets = new Insets(0, 0, 5, 0);
+		gbc_label.gridx = 0;
+		gbc_label.gridy = 0;
+		panelNoWork.add(label, gbc_label);
 		
 		JLabel lblCongratulationsForFinishing = new JLabel("Congratulations! You finished your work, there are no items assigned to you!");
 		GridBagConstraints gbc_lblCongratulationsForFinishing = new GridBagConstraints();
 		gbc_lblCongratulationsForFinishing.anchor = GridBagConstraints.SOUTH;
 		gbc_lblCongratulationsForFinishing.insets = new Insets(0, 0, 5, 0);
 		gbc_lblCongratulationsForFinishing.gridx = 0;
-		gbc_lblCongratulationsForFinishing.gridy = 0;
+		gbc_lblCongratulationsForFinishing.gridy = 1;
 		panelNoWork.add(lblCongratulationsForFinishing, gbc_lblCongratulationsForFinishing);
 		
 		JXHyperlink lblFeelFreeTo = new JXHyperlink(new AbstractAction("Feel free to discuss this with your manager... or have some fun!") {
@@ -49,7 +58,7 @@ public class NoWorkPanel extends JPanel {
 		GridBagConstraints gbc_lblFeelFreeTo = new GridBagConstraints();
 		gbc_lblFeelFreeTo.anchor = GridBagConstraints.NORTH;
 		gbc_lblFeelFreeTo.gridx = 0;
-		gbc_lblFeelFreeTo.gridy = 1;
+		gbc_lblFeelFreeTo.gridy = 2;
 		panelNoWork.add(lblFeelFreeTo, gbc_lblFeelFreeTo);
 		
 		rootPanel.add(panelNoWork, BorderLayout.CENTER);
