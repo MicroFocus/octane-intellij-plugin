@@ -1,5 +1,6 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.treetable.nowork;
 
+import com.hpe.adm.octane.ideplugins.intellij.util.Constants;
 import com.intellij.util.ui.UIUtil;
 import org.jdesktop.swingx.JXHyperlink;
 
@@ -8,6 +9,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 
 public class NoWorkPanel extends JPanel {
+
+	private static final String NO_WORK_TEXT = "You're Awesome! You finished all your work!";
+    private static final String NO_WORK_LINK_TEXT = "You may want to talk with your team leader... or have some fun!";
 
 	private JPanel rootPanel;
 
@@ -30,7 +34,7 @@ public class NoWorkPanel extends JPanel {
 		panelNoWork.setLayout(gbl_panelNoWork);
 		
 		JLabel label = new JLabel("");
-		label.setIcon(new ImageIcon(NoWorkPanel.class.getResource("/images/unidrag.png")));
+		label.setIcon(new ImageIcon(NoWorkPanel.class.getResource(Constants.IMG_UNIDRAG_SMALL)));
 		GridBagConstraints gbc_label = new GridBagConstraints();
 		gbc_label.anchor = GridBagConstraints.SOUTH;
 		gbc_label.insets = new Insets(0, 0, 5, 0);
@@ -38,7 +42,7 @@ public class NoWorkPanel extends JPanel {
 		gbc_label.gridy = 0;
 		panelNoWork.add(label, gbc_label);
 		
-		JLabel lblCongratulationsForFinishing = new JLabel("Congratulations! You finished your work, there are no items assigned to you!");
+		JLabel lblCongratulationsForFinishing = new JLabel(NO_WORK_TEXT);
 		GridBagConstraints gbc_lblCongratulationsForFinishing = new GridBagConstraints();
 		gbc_lblCongratulationsForFinishing.anchor = GridBagConstraints.SOUTH;
 		gbc_lblCongratulationsForFinishing.insets = new Insets(0, 0, 5, 0);
@@ -46,7 +50,7 @@ public class NoWorkPanel extends JPanel {
 		gbc_lblCongratulationsForFinishing.gridy = 1;
 		panelNoWork.add(lblCongratulationsForFinishing, gbc_lblCongratulationsForFinishing);
 		
-		JXHyperlink lblFeelFreeTo = new JXHyperlink(new AbstractAction("Feel free to discuss this with your manager... or have some fun!") {
+		JXHyperlink lblFeelFreeTo = new JXHyperlink(new AbstractAction(NO_WORK_LINK_TEXT) {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				showGame();

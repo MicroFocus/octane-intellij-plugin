@@ -25,9 +25,9 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView>{
 
     public void refresh(){
 
-//        Collection<EntityModel> myWork = entityService.getMyWork();
-//        entityTreeModel.setEntities(myWork);
-//        entityTreeTableView.setTreeModel(entityTreeModel);
+        // Collection<EntityModel> myWork = entityService.getMyWork();
+        // entityTreeModel.setEntities(myWork);
+        // entityTreeTableView.setTreeModel(entityTreeModel);
 
         //Async get
         SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
