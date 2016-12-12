@@ -48,13 +48,8 @@ public class EntityTreeView implements View {
     private FillingTree tree;
     private JBScrollPane scrollPane;
 
-    private JButton refreshButton;
-
     @Inject
     private DownloadScriptService scriptService;
-
-    @Inject
-    private UrlParser urlParser;
 
     @Inject
     private ConnectionSettingsProvider connectionSettingsProvider;
@@ -134,7 +129,8 @@ public class EntityTreeView implements View {
     }
 
     private void downloadScriptForGherkinTest(long gherkinTestId) {
-        DataContext dataContext = DataManager.getInstance().getDataContext();
+        @SuppressWarnings("deprecation")
+		DataContext dataContext = DataManager.getInstance().getDataContext();
         Project project = DataKeys.PROJECT.getData(dataContext);
 
         VirtualFile selectedFolder = chooseScriptFolder(project);

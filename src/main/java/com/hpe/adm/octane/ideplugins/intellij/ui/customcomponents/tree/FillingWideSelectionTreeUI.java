@@ -307,6 +307,9 @@ public class FillingWideSelectionTreeUI extends BasicTreeUI {
 
         final int xOffset = tree.getParent() instanceof JViewport ? ((JViewport)tree.getParent()).getViewPosition().x : 0;
 
+        customPaintRow(g, clipBounds, insets, bounds, path, row, isExpanded, hasBeenExpanded, isLeaf);
+
+        /*
         if (path != null && myWideSelection) {
             boolean selected = tree.isPathSelected(path);
             Graphics2D rowGraphics = (Graphics2D)g.create();
@@ -354,6 +357,7 @@ public class FillingWideSelectionTreeUI extends BasicTreeUI {
         else {
             customPaintRow(g, clipBounds, insets, bounds, path, row, isExpanded, hasBeenExpanded, isLeaf);
         }
+        */
     }
 
     /**

@@ -2,6 +2,7 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.treetable;
 
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
+import com.intellij.ui.JBColor;
 import com.intellij.util.ui.UIUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jdesktop.swingx.JXLabel;
@@ -23,7 +24,7 @@ class EntityModelRow extends JPanel{
 	private JPanel panelDetailsBottom;
 	private JXLabel lblEntityRelease;
 
-    private static final EntityIconFactory ENTITY_ICON_FACTORY = new EntityIconFactory(45,45,Color.WHITE);
+    private static final EntityIconFactory ENTITY_ICON_FACTORY = new EntityIconFactory(40,40,Color.WHITE);
 
     public EntityModelRow() {
         initUI();
@@ -36,30 +37,32 @@ class EntityModelRow extends JPanel{
 
 	private void initUI(){
         GridBagLayout gbl_rootPanel = new GridBagLayout();
-        gbl_rootPanel.columnWidths = new int[]{0, 0, 0, 0};
+        gbl_rootPanel.columnWidths = new int[]{0, 150, 0, 0};
         gbl_rootPanel.rowHeights = new int[]{20, 20, 0};
-        gbl_rootPanel.columnWeights = new double[]{0.0, 0.0, 1.0, Double.MIN_VALUE};
+        gbl_rootPanel.columnWeights = new double[]{0.0, 1.0, 1.0, Double.MIN_VALUE};
         gbl_rootPanel.rowWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
         setLayout(gbl_rootPanel);
 
         panelIcon = new JPanel();
+
         FlowLayout flowLayout_1 = (FlowLayout) panelIcon.getLayout();
         flowLayout_1.setVgap(2);
         GridBagConstraints gbc_panelIcon = new GridBagConstraints();
         gbc_panelIcon.gridheight = 2;
         gbc_panelIcon.fill = GridBagConstraints.HORIZONTAL;
-        gbc_panelIcon.insets = new Insets(0, 0, 0, 0);
+        gbc_panelIcon.insets = new Insets(5, 0, 0, 0);
         gbc_panelIcon.gridx = 0;
         gbc_panelIcon.gridy = 0;
         add(panelIcon, gbc_panelIcon);
         panelIcon.setOpaque(true);
         panelIcon.setBackground(transparentColor);
         
-        lblEntityName = createLabel();
+        lblEntityName = new JXLabel();
+        lblEntityName.setHorizontalAlignment(SwingConstants.LEFT);
         lblEntityName.setForeground(fontColor);
         GridBagConstraints gbc_lblEntityName = new GridBagConstraints();
+        gbc_lblEntityName.fill = GridBagConstraints.HORIZONTAL;
         gbc_lblEntityName.insets = new Insets(5, 0, 0, 0);
-        gbc_lblEntityName.anchor = GridBagConstraints.WEST;
         gbc_lblEntityName.gridx = 1;
         gbc_lblEntityName.gridy = 0;
         add(lblEntityName, gbc_lblEntityName);
@@ -70,7 +73,7 @@ class EntityModelRow extends JPanel{
         fl_panelDetailsTop.setHgap(10);
         fl_panelDetailsTop.setAlignment(FlowLayout.TRAILING);
         GridBagConstraints gbc_panelDetailsTop = new GridBagConstraints();
-        gbc_panelDetailsTop.insets = new Insets(5, 0, 0, 10);
+        gbc_panelDetailsTop.insets = new Insets(5, 10, 0, 10);
         gbc_panelDetailsTop.fill = GridBagConstraints.HORIZONTAL;
         gbc_panelDetailsTop.gridx = 2;
         gbc_panelDetailsTop.gridy = 0;
@@ -78,11 +81,10 @@ class EntityModelRow extends JPanel{
         panelDetailsTop.setOpaque(true);
         panelDetailsTop.setBackground(transparentColor);
         
-        lblEntityRelease = createLabel();
+        lblEntityRelease = new JXLabel();
         lblEntityRelease.setHorizontalAlignment(SwingConstants.LEFT);
         GridBagConstraints gbc_lblEntityId = new GridBagConstraints();
-        gbc_lblEntityId.insets = new Insets(0, 0, 5, 0);
-        gbc_lblEntityId.anchor = GridBagConstraints.WEST;
+        gbc_lblEntityId.fill = GridBagConstraints.HORIZONTAL;
         gbc_lblEntityId.gridx = 1;
         gbc_lblEntityId.gridy = 1;
         add(lblEntityRelease, gbc_lblEntityId);
@@ -94,7 +96,7 @@ class EntityModelRow extends JPanel{
         flowLayout.setHgap(10);
         flowLayout.setAlignment(FlowLayout.TRAILING);
         GridBagConstraints gbc_panelDetailsBottom = new GridBagConstraints();
-        gbc_panelDetailsBottom.insets = new Insets(0, 0, 5, 10);
+        gbc_panelDetailsBottom.insets = new Insets(0, 10, 0, 10);
         gbc_panelDetailsBottom.fill = GridBagConstraints.HORIZONTAL;
         gbc_panelDetailsBottom.gridx = 2;
         gbc_panelDetailsBottom.gridy = 1;
@@ -123,25 +125,24 @@ class EntityModelRow extends JPanel{
 	}
 	
     public void addDetailsTop(String text){
-    	panelDetailsTop.add(createSeparator());
-        panelDetailsTop.add(createLabel(text));
+       	text = "   " + text.trim();
+       	JXLabel lbl = new JXLabel(text);
+       	lbl.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, JBColor.border()));
+        panelDetailsTop.add(lbl);
     }
 
     public void addDetailsBottom(String text){
-       	panelDetailsBottom.add(createSeparator());
-       	panelDetailsBottom.add(createLabel(text));
+       	text = "   " + text.trim();
+       	JXLabel lbl = new JXLabel(text);
+       	lbl.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, JBColor.border()));
+       	panelDetailsBottom.add(lbl);
     }
+    
     
     private JSeparator createSeparator(){
     	JSeparator separator = new JSeparator(SwingConstants.VERTICAL);
     	separator.setPreferredSize(new Dimension(1, 15));
     	return separator;
-    }
-
-    private JXLabel createLabel(){
-        JXLabel lbl = new JXLabel();
-        lbl.setForeground(fontColor);
-        return lbl;
     }
 
 	private JXLabel createLabel(String text){
