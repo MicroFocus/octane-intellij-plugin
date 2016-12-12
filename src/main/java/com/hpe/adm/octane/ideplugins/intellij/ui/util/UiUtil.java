@@ -11,16 +11,20 @@ import java.util.StringJoiner;
 public class UiUtil {
 
     public static String getUiDataFromModel(FieldModel fieldModel) {
+        return getUiDataFromModel(fieldModel, "name");
+    }
+
+    public static String getUiDataFromModel(FieldModel fieldModel, String neededProperty) {
         String result = "";
         if (null != fieldModel) {
             FieldModel tempFieldModel = null;
             if (fieldModel instanceof ReferenceFieldModel) {
-                tempFieldModel = getValueOfChild((EntityModel) fieldModel.getValue(), "name");
+                tempFieldModel = getValueOfChild((EntityModel) fieldModel.getValue(), neededProperty);
                 if (null != tempFieldModel) {
                     result = String.valueOf(tempFieldModel.getValue());
                 }
             } else if (fieldModel instanceof MultiReferenceFieldModel) {
-                result = getValueOfChildren((List<EntityModel>) fieldModel.getValue(), "name");
+                result = getValueOfChildren((List<EntityModel>) fieldModel.getValue(), neededProperty);
             } else {
                 result = String.valueOf(fieldModel.getValue());
             }
