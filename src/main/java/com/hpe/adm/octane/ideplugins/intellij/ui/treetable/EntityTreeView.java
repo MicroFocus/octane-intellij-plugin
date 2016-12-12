@@ -37,6 +37,8 @@ import java.io.*;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 
+import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
+
 public class EntityTreeView implements View {
 
     public interface EntityDoubleClickHandler {
@@ -67,6 +69,7 @@ public class EntityTreeView implements View {
         rootPanel = new JPanel(new BorderLayout(0, 0));
         scrollPane = new JBScrollPane();
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
+        scrollPane.setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_NEVER);
 
         rootPanel.add(scrollPane, BorderLayout.CENTER);
         scrollPane.setViewportView(tree);

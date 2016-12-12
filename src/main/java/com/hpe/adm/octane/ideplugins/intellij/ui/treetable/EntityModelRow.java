@@ -57,7 +57,7 @@ class EntityModelRow extends JPanel{
         panelIcon.setOpaque(true);
         panelIcon.setBackground(transparentColor);
         
-        lblEntityName = new JXLabel();
+        lblEntityName = createLabel("");
         lblEntityName.setHorizontalAlignment(SwingConstants.LEFT);
         lblEntityName.setForeground(fontColor);
         GridBagConstraints gbc_lblEntityName = new GridBagConstraints();
@@ -81,10 +81,11 @@ class EntityModelRow extends JPanel{
         panelDetailsTop.setOpaque(true);
         panelDetailsTop.setBackground(transparentColor);
         
-        lblEntityRelease = new JXLabel();
+        lblEntityRelease = createLabel("");
         lblEntityRelease.setHorizontalAlignment(SwingConstants.LEFT);
         GridBagConstraints gbc_lblEntityId = new GridBagConstraints();
         gbc_lblEntityId.fill = GridBagConstraints.HORIZONTAL;
+        gbc_lblEntityId.insets = new Insets(5, 0, 3, 0);
         gbc_lblEntityId.gridx = 1;
         gbc_lblEntityId.gridy = 1;
         add(lblEntityRelease, gbc_lblEntityId);
@@ -96,7 +97,7 @@ class EntityModelRow extends JPanel{
         flowLayout.setHgap(10);
         flowLayout.setAlignment(FlowLayout.TRAILING);
         GridBagConstraints gbc_panelDetailsBottom = new GridBagConstraints();
-        gbc_panelDetailsBottom.insets = new Insets(0, 10, 0, 10);
+        gbc_panelDetailsBottom.insets = new Insets(0, 10, 3, 10);
         gbc_panelDetailsBottom.fill = GridBagConstraints.HORIZONTAL;
         gbc_panelDetailsBottom.gridx = 2;
         gbc_panelDetailsBottom.gridy = 1;
@@ -126,23 +127,16 @@ class EntityModelRow extends JPanel{
 	
     public void addDetailsTop(String text){
        	text = "   " + text.trim();
-       	JXLabel lbl = new JXLabel(text);
+       	JXLabel lbl = createLabel(text);
        	lbl.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, JBColor.border()));
         panelDetailsTop.add(lbl);
     }
 
     public void addDetailsBottom(String text){
        	text = "   " + text.trim();
-       	JXLabel lbl = new JXLabel(text);
+       	JXLabel lbl = createLabel(text);
        	lbl.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, JBColor.border()));
        	panelDetailsBottom.add(lbl);
-    }
-    
-    
-    private JSeparator createSeparator(){
-    	JSeparator separator = new JSeparator(SwingConstants.VERTICAL);
-    	separator.setPreferredSize(new Dimension(1, 15));
-    	return separator;
     }
 
 	private JXLabel createLabel(String text){

@@ -36,7 +36,10 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView>{
                 try {
                     entityTreeTableView.setLoading(true);
                     Collection<EntityModel> myWork = entityService.getMyWork();
-                    SwingUtilities.invokeLater(() -> entityTreeTableView.setTreeModel(new EntityTreeModel(myWork)));
+                    SwingUtilities.invokeLater(() -> {
+                        entityTreeTableView.setTreeModel(new EntityTreeModel(myWork));
+                        entityTreeTableView.expandAllNodes();
+                    });
                     return null;
                 } catch (Exception ex){
                     System.out.println(ex);
