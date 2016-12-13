@@ -33,7 +33,6 @@ public class TabbedPaneView implements View {
         Project project = DataKeys.PROJECT.getData(dataContext);
         editorTabs = new JBEditorTabs(project, ActionManager.getInstance(), IdeFocusManager.getGlobalInstance(), () -> {});
         editorTabs.setTabDraggingEnabled(true);
-        editorTabs.setTabSidePaintBorder(1);
 
         rootPanel.add(editorTabs.getComponent(), BorderLayout.CENTER);
     }
@@ -44,23 +43,18 @@ public class TabbedPaneView implements View {
     }
 
 
-    public TabInfo addTab(String title, JComponent component) {
-        return addTab(title, null, component, true);
+    public TabInfo addTab(String title, String tooltip, Icon icon, JComponent component) {
+        return addTab(title, tooltip, icon, component, true);
     }
 
-    public TabInfo addTab(String title, Icon icon, JComponent component) {
-        return addTab(title, icon, component, true);
-    }
-
-    public TabInfo addTab(String title, JComponent component, boolean isClosable) {
-        return addTab(title, null, component, isClosable);
-    }
-
-    public TabInfo addTab(String title, Icon icon, JComponent component, boolean isClosable) {
+    public TabInfo addTab(String title, String tooltip, Icon icon, JComponent component, boolean isClosable) {
         TabInfo tabInfo = new TabInfo(component);
 
         if(icon != null) {
             tabInfo.setIcon(icon);
+        }
+        if(tooltip != null){
+            tabInfo.setTooltipText(tooltip);
         }
 
         tabInfo.setText(title);
@@ -110,12 +104,11 @@ public class TabbedPaneView implements View {
     }
 
     private void closeAllExcept(TabInfo exceptTabInfo){
-        System.out.println("close clicked!");
-//        editorTabs.getTabs().forEach(tabInfo -> {
-//           if(isClosable(tabInfo) && !tabInfo.equals(exceptTabInfo)){
-//               editorTabs.removeTab(tabInfo);
-//           }
-//        });
+        editorTabs.getTabs().forEach(tabInfo -> {
+           if(isClosable(tabInfo) && !tabInfo.equals(exceptTabInfo)){
+               editorTabs.removeTab(tabInfo);
+           }
+        });
     }
 
     private boolean isClosable(TabInfo tabInfo){

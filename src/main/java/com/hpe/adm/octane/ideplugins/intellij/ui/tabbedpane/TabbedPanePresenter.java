@@ -37,7 +37,7 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
     public EntityTreeTablePresenter openMyWorkTab() {
         EntityTreeTablePresenter presenter = entityTreeTablePresenterProvider.get();
         Icon myWorkIcon = IconLoader.findIcon(Constants.IMG_MYWORK);
-        tabbedPaneView.addTab(Constants.TAB_MY_WORK_TITLE, myWorkIcon , presenter.getView().getComponent(), false);
+        tabbedPaneView.addTab(Constants.TAB_MY_WORK_TITLE, null, myWorkIcon , presenter.getView().getComponent(), false);
         return presenter;
     }
 
@@ -46,7 +46,7 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
         presenter.setEntity(entityModel);
 
         Entity entityType = Entity.getEntityType(entityModel);
-        //String entityName = EntityDetailView.getNameForEntity(Entity.getEntityType(entityModel));
+        String entityName = entityModel.getValue("name").getValue().toString();
         String entityId = entityModel.getValue("id").getValue().toString();
         String tabId = entityType.name() + entityId;
 
@@ -58,6 +58,7 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
 
             TabInfo tabInfo = tabbedPaneView.addTab(
                     entityId,
+                    entityName,
                     tabIcon,
                     presenter.getView().getComponent());
 
