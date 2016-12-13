@@ -19,10 +19,10 @@ import java.awt.*;
 import static com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil.getUiDataFromModel;
 
 public class GeneralEntityDetailsPanel extends JPanel {
-    private JXLabel lblName;
     private JXPanel entityDetailsPanel;
     private JXTextArea descriptionDetails;
     private boolean hasAttachment = false;
+    private HeaderPanel headerPanel;
 
 
     public GeneralEntityDetailsPanel(EntityModel entityModel) {
@@ -50,23 +50,14 @@ public class GeneralEntityDetailsPanel extends JPanel {
         gbl_rootPanel.rowWeights = new double[]{0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE};
         rootPanel.setLayout(gbl_rootPanel);
 
-        JXPanel headerPanel = new JXPanel();
+        headerPanel = new HeaderPanel();
         headerPanel.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
-        FlowLayout fl_headerPanel = (FlowLayout) headerPanel.getLayout();
-        fl_headerPanel.setHgap(0);
-        fl_headerPanel.setAlignment(FlowLayout.LEFT);
         GridBagConstraints gbc_headerPanel = new GridBagConstraints();
         gbc_headerPanel.insets = new Insets(0, 0, 5, 0);
-        gbc_headerPanel.fill = GridBagConstraints.BOTH;
+        gbc_headerPanel.fill = GridBagConstraints.HORIZONTAL;
         gbc_headerPanel.gridx = 0;
         gbc_headerPanel.gridy = 0;
         rootPanel.add(headerPanel, gbc_headerPanel);
-
-        lblName = new JXLabel();
-        lblName.setText("Name");
-        lblName.setFont(new Font("Tahoma", Font.BOLD, 12));
-        lblName.setBorder(null);
-        headerPanel.add(lblName);
 
         JXPanel descriptionPanel = new JXPanel();
         descriptionPanel.setBorder(new EmptyBorder(10, 0, 10, 0));
@@ -155,7 +146,7 @@ public class GeneralEntityDetailsPanel extends JPanel {
     }
 
     private void drawGeneralDetailsForEntity(EntityModel entityModel) {
-        this.lblName.setText(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_NAME)));
+        headerPanel.setPhaseDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_PHASE)));
         this.descriptionDetails.setText(getDescriptionForEntityModel(entityModel));
     }
 
@@ -171,27 +162,27 @@ public class GeneralEntityDetailsPanel extends JPanel {
         JXPanel ret = null;
         switch (Entity.getEntityType(entityModel)) {
             case DEFECT:
-                this.lblName.setIcon(new ImageIcon(TaskDetailsPanel.class.getResource("/images/defectIcon.png")));
+                headerPanel.setEntityIcon(new ImageIcon(TaskDetailsPanel.class.getResource("/images/defectIcon.png")));
                 hasAttachment = false;
                 ret = updateUiWithDefectDetails(entityModel);
                 break;
             case GHERKIN_TEST:
-                this.lblName.setIcon(new ImageIcon(TaskDetailsPanel.class.getResource("/images/gerkinTestIcon.png")));
+                headerPanel.setEntityIcon(new ImageIcon(TaskDetailsPanel.class.getResource("/images/gerkinTestIcon.png")));
                 hasAttachment = false;
                 ret = updateUiWithTestsDetails(entityModel);
                 break;
             case MANUAL_TEST:
-                this.lblName.setIcon(new ImageIcon(TaskDetailsPanel.class.getResource("/images/manualTestIcon.png")));
+                headerPanel.setEntityIcon(new ImageIcon(TaskDetailsPanel.class.getResource("/images/manualTestIcon.png")));
                 hasAttachment = false;
                 ret = updateUiWithTestsDetails(entityModel);
                 break;
             case USER_STORY:
-                this.lblName.setIcon(new ImageIcon(TaskDetailsPanel.class.getResource("/images/userStoryIcon.png")));
+                headerPanel.setEntityIcon(new ImageIcon(TaskDetailsPanel.class.getResource("/images/userStoryIcon.png")));
                 hasAttachment = false;
                 ret = updateUiWithUserStoryDetails(entityModel);
                 break;
             case TASK:
-                this.lblName.setIcon(new ImageIcon(TaskDetailsPanel.class.getResource("/images/taskIcon.png")));
+                headerPanel.setEntityIcon(new ImageIcon(TaskDetailsPanel.class.getResource("/images/taskIcon.png")));
                 ret = updateUiWithTaskDetails(entityModel);
                 hasAttachment = false;
                 break;

@@ -1,5 +1,6 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
+import com.intellij.ui.JBColor;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
 
@@ -66,7 +67,7 @@ public class UserStoryDetailsPanel extends JXPanel {
         gbc_ownerDetails.gridx = 1;
         gbc_ownerDetails.gridy = 0;
         detailsPanelLeft.add(ownerDetails, gbc_ownerDetails);
-        ownerDetails.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+        ownerDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         ownerDetails.setText(" ");
 
         JXLabel featureLabel = new JXLabel();
@@ -82,7 +83,7 @@ public class UserStoryDetailsPanel extends JXPanel {
 
         featureDetails = new JXLabel();
         featureDetails.setText("                                          ");
-        featureDetails.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+        featureDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_featureDetails = new GridBagConstraints();
         gbc_featureDetails.anchor = GridBagConstraints.SOUTH;
         gbc_featureDetails.fill = GridBagConstraints.HORIZONTAL;
@@ -104,7 +105,7 @@ public class UserStoryDetailsPanel extends JXPanel {
 
         sprintDetails = new JXLabel();
         sprintDetails.setText(" ");
-        sprintDetails.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+        sprintDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_sprintDetails = new GridBagConstraints();
         gbc_sprintDetails.anchor = GridBagConstraints.SOUTH;
         gbc_sprintDetails.fill = GridBagConstraints.HORIZONTAL;
@@ -126,7 +127,7 @@ public class UserStoryDetailsPanel extends JXPanel {
 
         storyPointsDetails = new JXLabel();
         storyPointsDetails.setText(" ");
-        storyPointsDetails.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+        storyPointsDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_storyPointsDetails = new GridBagConstraints();
         gbc_storyPointsDetails.anchor = GridBagConstraints.SOUTH;
         gbc_storyPointsDetails.fill = GridBagConstraints.HORIZONTAL;
@@ -148,7 +149,7 @@ public class UserStoryDetailsPanel extends JXPanel {
 
         blockedDetails = new JXLabel();
         blockedDetails.setText(" ");
-        blockedDetails.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+        blockedDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_blockedDetails = new GridBagConstraints();
         gbc_blockedDetails.anchor = GridBagConstraints.SOUTH;
         gbc_blockedDetails.fill = GridBagConstraints.HORIZONTAL;
@@ -170,7 +171,7 @@ public class UserStoryDetailsPanel extends JXPanel {
 
         lastRunsDetails = new JXLabel();
         lastRunsDetails.setText(" ");
-        lastRunsDetails.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+        lastRunsDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_lastRunsDetails = new GridBagConstraints();
         gbc_lastRunsDetails.anchor = GridBagConstraints.SOUTH;
         gbc_lastRunsDetails.fill = GridBagConstraints.HORIZONTAL;
@@ -192,7 +193,7 @@ public class UserStoryDetailsPanel extends JXPanel {
 
         lastModifiedDetails = new JXLabel();
         lastModifiedDetails.setText(" ");
-        lastModifiedDetails.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+        lastModifiedDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_lastModifiedDetails = new GridBagConstraints();
         gbc_lastModifiedDetails.anchor = GridBagConstraints.SOUTH;
         gbc_lastModifiedDetails.fill = GridBagConstraints.HORIZONTAL;
@@ -223,7 +224,7 @@ public class UserStoryDetailsPanel extends JXPanel {
 
         teamDetails = new JXLabel();
         teamDetails.setText(" ");
-        teamDetails.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+        teamDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_teamDetails = new GridBagConstraints();
         gbc_teamDetails.anchor = GridBagConstraints.SOUTH;
         gbc_teamDetails.fill = GridBagConstraints.HORIZONTAL;
@@ -252,7 +253,7 @@ public class UserStoryDetailsPanel extends JXPanel {
         gbc_enviromentDetails.gridy = 1;
         detailsPanelRight.add(enviromentDetails, gbc_enviromentDetails);
         enviromentDetails.setText(" ");
-        enviromentDetails.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+        enviromentDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
 
         JXLabel appModulesLabel = new JXLabel();
         appModulesLabel.setText("Application Module");
@@ -267,7 +268,7 @@ public class UserStoryDetailsPanel extends JXPanel {
 
         appModuleDetails = new JXLabel();
         appModuleDetails.setText(" ");
-        appModuleDetails.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+        appModuleDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_appModuleDetails = new GridBagConstraints();
         gbc_appModuleDetails.anchor = GridBagConstraints.SOUTH;
         gbc_appModuleDetails.fill = GridBagConstraints.HORIZONTAL;
@@ -289,7 +290,7 @@ public class UserStoryDetailsPanel extends JXPanel {
 
         itemOriginDetails = new JXLabel();
         itemOriginDetails.setText(" ");
-        itemOriginDetails.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+        itemOriginDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_itemOriginDetails = new GridBagConstraints();
         gbc_itemOriginDetails.anchor = GridBagConstraints.SOUTH;
         gbc_itemOriginDetails.fill = GridBagConstraints.HORIZONTAL;
@@ -311,7 +312,7 @@ public class UserStoryDetailsPanel extends JXPanel {
 
         blockedReasonDetails = new JXLabel();
         blockedReasonDetails.setText(" ");
-        blockedReasonDetails.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+        blockedReasonDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_blockedReasonDetails = new GridBagConstraints();
         gbc_blockedReasonDetails.anchor = GridBagConstraints.SOUTH;
         gbc_blockedReasonDetails.fill = GridBagConstraints.HORIZONTAL;
@@ -340,7 +341,7 @@ public class UserStoryDetailsPanel extends JXPanel {
         gbc_releaseDetails.gridy = 5;
         detailsPanelRight.add(releaseDetails, gbc_releaseDetails);
         releaseDetails.setText(" ");
-        releaseDetails.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+        releaseDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
 
         JXLabel creationTimeLabel = new JXLabel();
         creationTimeLabel.setText("Creation time");
@@ -355,7 +356,7 @@ public class UserStoryDetailsPanel extends JXPanel {
 
         creationTimeDetails = new JXLabel();
         creationTimeDetails.setText(" ");
-        creationTimeDetails.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+        creationTimeDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_creationTimeDetails = new GridBagConstraints();
         gbc_creationTimeDetails.anchor = GridBagConstraints.SOUTH;
         gbc_creationTimeDetails.fill = GridBagConstraints.HORIZONTAL;

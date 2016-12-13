@@ -1,5 +1,6 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
+import com.intellij.ui.JBColor;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
 
@@ -55,7 +56,7 @@ public class TaskDetailsPanel extends JXPanel {
 
         storyDetails = new JXLabel();
         storyDetails.setText("                                          ");
-        storyDetails.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+        storyDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_storyDetails = new GridBagConstraints();
         gbc_storyDetails.anchor = GridBagConstraints.SOUTH;
         gbc_storyDetails.fill = GridBagConstraints.HORIZONTAL;
@@ -77,7 +78,7 @@ public class TaskDetailsPanel extends JXPanel {
 
         authorDetails = new JXLabel();
         authorDetails.setText(" ");
-        authorDetails.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+        authorDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_authorDetails = new GridBagConstraints();
         gbc_authorDetails.anchor = GridBagConstraints.SOUTH;
         gbc_authorDetails.fill = GridBagConstraints.HORIZONTAL;
@@ -104,7 +105,7 @@ public class TaskDetailsPanel extends JXPanel {
         gbc_ownerDetails.gridx = 1;
         gbc_ownerDetails.gridy = 2;
         detailsPanelLeft.add(ownerDetails, gbc_ownerDetails);
-        ownerDetails.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+        ownerDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         ownerDetails.setText(" ");
 
         JXLabel creationTimeLabel = new JXLabel();
@@ -120,7 +121,7 @@ public class TaskDetailsPanel extends JXPanel {
 
         creationTimeDetails = new JXLabel();
         creationTimeDetails.setText(" ");
-        creationTimeDetails.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+        creationTimeDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_creationTimeDetails = new GridBagConstraints();
         gbc_creationTimeDetails.fill = GridBagConstraints.HORIZONTAL;
         gbc_creationTimeDetails.insets = new Insets(0, 0, 5, 0);
@@ -141,7 +142,7 @@ public class TaskDetailsPanel extends JXPanel {
 
         lastModifiedDetails = new JXLabel();
         lastModifiedDetails.setText(" ");
-        lastModifiedDetails.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+        lastModifiedDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_lastModifiedDetails = new GridBagConstraints();
         gbc_lastModifiedDetails.fill = GridBagConstraints.HORIZONTAL;
         gbc_lastModifiedDetails.gridx = 1;
@@ -171,7 +172,7 @@ public class TaskDetailsPanel extends JXPanel {
 
         taskTypeDetails = new JXLabel();
         taskTypeDetails.setText(" ");
-        taskTypeDetails.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+        taskTypeDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_taskTypeDetails = new GridBagConstraints();
         gbc_taskTypeDetails.fill = GridBagConstraints.HORIZONTAL;
         gbc_taskTypeDetails.insets = new Insets(0, 0, 5, 0);
@@ -199,7 +200,7 @@ public class TaskDetailsPanel extends JXPanel {
         gbc_sprintDetails.gridy = 1;
         detailsPanelRight.add(sprintDetails, gbc_sprintDetails);
         sprintDetails.setText(" ");
-        sprintDetails.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+        sprintDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
 
         JXLabel estimatedHoursLabel = new JXLabel();
         estimatedHoursLabel.setBorder(new EmptyBorder(0, 30, 0, 10));
@@ -214,7 +215,7 @@ public class TaskDetailsPanel extends JXPanel {
 
         estimatedHoursDetails = new JXLabel();
         estimatedHoursDetails.setText(" ");
-        estimatedHoursDetails.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+        estimatedHoursDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_estimatedHoursDetails = new GridBagConstraints();
         gbc_estimatedHoursDetails.fill = GridBagConstraints.HORIZONTAL;
         gbc_estimatedHoursDetails.insets = new Insets(0, 0, 5, 0);
@@ -235,7 +236,7 @@ public class TaskDetailsPanel extends JXPanel {
 
         investedHoursDetails = new JXLabel();
         investedHoursDetails.setText(" ");
-        investedHoursDetails.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+        investedHoursDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_investedHoursDetails = new GridBagConstraints();
         gbc_investedHoursDetails.fill = GridBagConstraints.HORIZONTAL;
         gbc_investedHoursDetails.gridx = 1;

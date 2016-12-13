@@ -1,5 +1,6 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
+import com.intellij.ui.JBColor;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
 
@@ -64,7 +65,7 @@ public class DefectsDetailsPanel extends JXPanel {
 
         featureDetails = new JXLabel();
         featureDetails.setText("                                          ");
-        featureDetails.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+        featureDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_featureDetails = new GridBagConstraints();
         gbc_featureDetails.anchor = GridBagConstraints.SOUTH;
         gbc_featureDetails.fill = GridBagConstraints.HORIZONTAL;
@@ -86,7 +87,7 @@ public class DefectsDetailsPanel extends JXPanel {
 
         severityDetails = new JXLabel();
         severityDetails.setText(" ");
-        severityDetails.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+        severityDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_severityDetails = new GridBagConstraints();
         gbc_severityDetails.anchor = GridBagConstraints.SOUTH;
         gbc_severityDetails.fill = GridBagConstraints.HORIZONTAL;
@@ -108,7 +109,7 @@ public class DefectsDetailsPanel extends JXPanel {
 
         sprintDetails = new JXLabel();
         sprintDetails.setText(" ");
-        sprintDetails.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+        sprintDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_sprintDetails = new GridBagConstraints();
         gbc_sprintDetails.anchor = GridBagConstraints.SOUTH;
         gbc_sprintDetails.fill = GridBagConstraints.HORIZONTAL;
@@ -130,7 +131,7 @@ public class DefectsDetailsPanel extends JXPanel {
 
         storyPointsDetails = new JXLabel();
         storyPointsDetails.setText(" ");
-        storyPointsDetails.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+        storyPointsDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_storyPointsDetails = new GridBagConstraints();
         gbc_storyPointsDetails.anchor = GridBagConstraints.SOUTH;
         gbc_storyPointsDetails.fill = GridBagConstraints.HORIZONTAL;
@@ -152,7 +153,7 @@ public class DefectsDetailsPanel extends JXPanel {
 
         blockedDetails = new JXLabel();
         blockedDetails.setText(" ");
-        blockedDetails.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+        blockedDetails.setBorder(new MatteBorder(0, 0, 1, 0, (JBColor.border())));
         GridBagConstraints gbc_blockedDetails = new GridBagConstraints();
         gbc_blockedDetails.anchor = GridBagConstraints.SOUTH;
         gbc_blockedDetails.fill = GridBagConstraints.HORIZONTAL;
@@ -174,7 +175,7 @@ public class DefectsDetailsPanel extends JXPanel {
 
         enviromentDetails = new JXLabel();
         enviromentDetails.setText(" ");
-        enviromentDetails.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+        enviromentDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_enviromentDetails = new GridBagConstraints();
         gbc_enviromentDetails.anchor = GridBagConstraints.SOUTH;
         gbc_enviromentDetails.fill = GridBagConstraints.HORIZONTAL;
@@ -196,7 +197,7 @@ public class DefectsDetailsPanel extends JXPanel {
 
         releaseDetails = new JXLabel();
         releaseDetails.setText(" ");
-        releaseDetails.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+        releaseDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_releaseDetails = new GridBagConstraints();
         gbc_releaseDetails.anchor = GridBagConstraints.SOUTH;
         gbc_releaseDetails.fill = GridBagConstraints.HORIZONTAL;
@@ -218,7 +219,7 @@ public class DefectsDetailsPanel extends JXPanel {
 
         defectTypeDetails = new JXLabel();
         defectTypeDetails.setText(" ");
-        defectTypeDetails.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+        defectTypeDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_defectTypeDetails = new GridBagConstraints();
         gbc_defectTypeDetails.anchor = GridBagConstraints.SOUTH;
         gbc_defectTypeDetails.fill = GridBagConstraints.HORIZONTAL;
@@ -240,7 +241,7 @@ public class DefectsDetailsPanel extends JXPanel {
 
         lastModifiedDetails = new JXLabel();
         lastModifiedDetails.setText(" ");
-        lastModifiedDetails.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+        lastModifiedDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_lastModifiedDetails = new GridBagConstraints();
         gbc_lastModifiedDetails.anchor = GridBagConstraints.SOUTH;
         gbc_lastModifiedDetails.fill = GridBagConstraints.HORIZONTAL;
@@ -278,7 +279,7 @@ public class DefectsDetailsPanel extends JXPanel {
         gbc_ownerDetails.gridx = 1;
         gbc_ownerDetails.gridy = 0;
         detailsPanelRight.add(ownerDetails, gbc_ownerDetails);
-        ownerDetails.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+        ownerDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         ownerDetails.setText(" ");
 
         JXLabel detectedByLabel = new JXLabel();
@@ -294,7 +295,7 @@ public class DefectsDetailsPanel extends JXPanel {
 
         detectedByDetails = new JXLabel();
         detectedByDetails.setText(" ");
-        detectedByDetails.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+        detectedByDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_detectedByDetails = new GridBagConstraints();
         gbc_detectedByDetails.anchor = GridBagConstraints.SOUTH;
         gbc_detectedByDetails.fill = GridBagConstraints.HORIZONTAL;
@@ -316,7 +317,7 @@ public class DefectsDetailsPanel extends JXPanel {
 
         teamDetails = new JXLabel();
         teamDetails.setText(" ");
-        teamDetails.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+        teamDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_teamDetails = new GridBagConstraints();
         gbc_teamDetails.anchor = GridBagConstraints.SOUTH;
         gbc_teamDetails.fill = GridBagConstraints.HORIZONTAL;
@@ -338,7 +339,7 @@ public class DefectsDetailsPanel extends JXPanel {
 
         priorityDetails = new JXLabel();
         priorityDetails.setText(" ");
-        priorityDetails.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+        priorityDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_priorityDetails = new GridBagConstraints();
         gbc_priorityDetails.anchor = GridBagConstraints.SOUTH;
         gbc_priorityDetails.fill = GridBagConstraints.HORIZONTAL;
@@ -360,7 +361,7 @@ public class DefectsDetailsPanel extends JXPanel {
 
         blockedReasonDetails = new JXLabel();
         blockedReasonDetails.setText(" ");
-        blockedReasonDetails.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+        blockedReasonDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_blockedReasonDetails = new GridBagConstraints();
         gbc_blockedReasonDetails.anchor = GridBagConstraints.SOUTH;
         gbc_blockedReasonDetails.fill = GridBagConstraints.HORIZONTAL;
@@ -382,7 +383,7 @@ public class DefectsDetailsPanel extends JXPanel {
 
         appModuleDetails = new JXLabel();
         appModuleDetails.setText(" ");
-        appModuleDetails.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+        appModuleDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_appModuleDetails = new GridBagConstraints();
         gbc_appModuleDetails.anchor = GridBagConstraints.SOUTH;
         gbc_appModuleDetails.fill = GridBagConstraints.HORIZONTAL;
@@ -404,7 +405,7 @@ public class DefectsDetailsPanel extends JXPanel {
 
         detectedInReleaseDetails = new JXLabel();
         detectedInReleaseDetails.setText(" ");
-        detectedInReleaseDetails.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+        detectedInReleaseDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_detectedInReleaseDetails = new GridBagConstraints();
         gbc_detectedInReleaseDetails.anchor = GridBagConstraints.SOUTH;
         gbc_detectedInReleaseDetails.fill = GridBagConstraints.HORIZONTAL;
@@ -426,7 +427,7 @@ public class DefectsDetailsPanel extends JXPanel {
 
         creationTimeDetails = new JXLabel();
         creationTimeDetails.setText(" ");
-        creationTimeDetails.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+        creationTimeDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_creationTimeDetails = new GridBagConstraints();
         gbc_creationTimeDetails.anchor = GridBagConstraints.SOUTH;
         gbc_creationTimeDetails.fill = GridBagConstraints.HORIZONTAL;
@@ -448,7 +449,7 @@ public class DefectsDetailsPanel extends JXPanel {
 
         closedOnDetails = new JXLabel();
         closedOnDetails.setText(" ");
-        closedOnDetails.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+        closedOnDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_closedOnDetails = new GridBagConstraints();
         gbc_closedOnDetails.anchor = GridBagConstraints.SOUTH;
         gbc_closedOnDetails.fill = GridBagConstraints.HORIZONTAL;

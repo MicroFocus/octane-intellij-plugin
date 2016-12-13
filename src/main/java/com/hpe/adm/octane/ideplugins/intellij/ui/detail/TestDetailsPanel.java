@@ -1,5 +1,6 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
+import com.intellij.ui.JBColor;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
 
@@ -43,6 +44,7 @@ public class TestDetailsPanel extends JXPanel {
         detailsPanelLeft.setLayout(gbl_detailsPanelLeft);
 
         JXLabel testTypeLabel = new JXLabel();
+        testTypeLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
         testTypeLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
         testTypeLabel.setText("Test type");
         GridBagConstraints gbc_testTypeLabel = new GridBagConstraints();
@@ -53,7 +55,7 @@ public class TestDetailsPanel extends JXPanel {
         detailsPanelLeft.add(testTypeLabel, gbc_testTypeLabel);
 
         testTypeDetails = new JXLabel();
-        testTypeDetails.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+        testTypeDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         testTypeDetails.setText("                              ");
         GridBagConstraints gbc_testTypeDetails = new GridBagConstraints();
         gbc_testTypeDetails.anchor = GridBagConstraints.SOUTH;
@@ -64,6 +66,7 @@ public class TestDetailsPanel extends JXPanel {
         detailsPanelLeft.add(testTypeDetails, gbc_testTypeDetails);
 
         JXLabel testToolTypeLabel = new JXLabel();
+        testToolTypeLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
         testToolTypeLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
         testToolTypeLabel.setText("Test tool type");
         GridBagConstraints gbc_testToolTypeLabel = new GridBagConstraints();
@@ -74,7 +77,7 @@ public class TestDetailsPanel extends JXPanel {
         detailsPanelLeft.add(testToolTypeLabel, gbc_testToolTypeLabel);
 
         testToolTypeDetails = new JXLabel();
-        testToolTypeDetails.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+        testToolTypeDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         testToolTypeDetails.setText(" ");
         GridBagConstraints gbc_testToolTypeDetails = new GridBagConstraints();
         gbc_testToolTypeDetails.anchor = GridBagConstraints.SOUTH;
@@ -85,6 +88,7 @@ public class TestDetailsPanel extends JXPanel {
         detailsPanelLeft.add(testToolTypeDetails, gbc_testToolTypeDetails);
 
         JXLabel estimatedDurationLabel = new JXLabel();
+        estimatedDurationLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
         estimatedDurationLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
         estimatedDurationLabel.setText("Estimated Duration");
         GridBagConstraints gbc_estimatedDurationLabel = new GridBagConstraints();
@@ -95,7 +99,7 @@ public class TestDetailsPanel extends JXPanel {
         detailsPanelLeft.add(estimatedDurationLabel, gbc_estimatedDurationLabel);
 
         estimatedDurationDetails = new JXLabel();
-        estimatedDurationDetails.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+        estimatedDurationDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_estimatedDurationDetails = new GridBagConstraints();
         gbc_estimatedDurationDetails.anchor = GridBagConstraints.SOUTH;
         gbc_estimatedDurationDetails.fill = GridBagConstraints.HORIZONTAL;
@@ -105,6 +109,7 @@ public class TestDetailsPanel extends JXPanel {
         detailsPanelLeft.add(estimatedDurationDetails, gbc_estimatedDurationDetails);
 
         JXLabel coveredContentLabel = new JXLabel();
+        coveredContentLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
         coveredContentLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
         coveredContentLabel.setText("Covered content");
         GridBagConstraints gbc_coveredContentLabel = new GridBagConstraints();
@@ -115,7 +120,7 @@ public class TestDetailsPanel extends JXPanel {
         detailsPanelLeft.add(coveredContentLabel, gbc_coveredContentLabel);
 
         coveredContentDetails = new JXLabel();
-        coveredContentDetails.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+        coveredContentDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_coveredContentDetails = new GridBagConstraints();
         gbc_coveredContentDetails.anchor = GridBagConstraints.SOUTH;
         gbc_coveredContentDetails.fill = GridBagConstraints.HORIZONTAL;
@@ -125,6 +130,7 @@ public class TestDetailsPanel extends JXPanel {
         detailsPanelLeft.add(coveredContentDetails, gbc_coveredContentDetails);
 
         JXLabel applicationModulesLabel = new JXLabel();
+        applicationModulesLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
         applicationModulesLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
         applicationModulesLabel.setText("Application modules");
         GridBagConstraints gbc_applicationModulesLabel = new GridBagConstraints();
@@ -134,7 +140,7 @@ public class TestDetailsPanel extends JXPanel {
         detailsPanelLeft.add(applicationModulesLabel, gbc_applicationModulesLabel);
 
         applicationModulesDetails = new JXLabel();
-        applicationModulesDetails.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+        applicationModulesDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_applicationModulesDetails = new GridBagConstraints();
         gbc_applicationModulesDetails.anchor = GridBagConstraints.SOUTH;
         gbc_applicationModulesDetails.fill = GridBagConstraints.HORIZONTAL;
@@ -153,6 +159,7 @@ public class TestDetailsPanel extends JXPanel {
         detailsPanelRight.setLayout(gbl_detailsPanelRight);
 
         JXLabel ownerLabel = new JXLabel();
+        ownerLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
         ownerLabel.setBorder(new EmptyBorder(0, 30, 0, 10));
         ownerLabel.setText("Owner");
         GridBagConstraints gbc_ownerLabel = new GridBagConstraints();
@@ -163,7 +170,7 @@ public class TestDetailsPanel extends JXPanel {
         detailsPanelRight.add(ownerLabel, gbc_ownerLabel);
 
         ownerDetails = new JXLabel();
-        ownerDetails.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+        ownerDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         ownerDetails.setText(" ");
         GridBagConstraints gbc_ownerDetails = new GridBagConstraints();
         gbc_ownerDetails.fill = GridBagConstraints.HORIZONTAL;
@@ -174,6 +181,7 @@ public class TestDetailsPanel extends JXPanel {
         detailsPanelRight.add(ownerDetails, gbc_ownerDetails);
 
         JXLabel designerLabel = new JXLabel();
+        designerLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
         designerLabel.setBorder(new EmptyBorder(0, 30, 0, 10));
         designerLabel.setText("Designer");
         GridBagConstraints gbc_designerLabel = new GridBagConstraints();
@@ -184,7 +192,7 @@ public class TestDetailsPanel extends JXPanel {
         detailsPanelRight.add(designerLabel, gbc_designerLabel);
 
         designerDetails = new JXLabel();
-        designerDetails.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+        designerDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_designerDetails = new GridBagConstraints();
         gbc_designerDetails.fill = GridBagConstraints.HORIZONTAL;
         gbc_designerDetails.anchor = GridBagConstraints.SOUTH;
@@ -194,6 +202,7 @@ public class TestDetailsPanel extends JXPanel {
         detailsPanelRight.add(designerDetails, gbc_designerDetails);
 
         JXLabel createdLabel = new JXLabel();
+        createdLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
         createdLabel.setBorder(new EmptyBorder(0, 30, 0, 10));
         createdLabel.setText("Created");
         GridBagConstraints gbc_createdLabel = new GridBagConstraints();
@@ -204,7 +213,7 @@ public class TestDetailsPanel extends JXPanel {
         detailsPanelRight.add(createdLabel, gbc_createdLabel);
 
         createdDetails = new JXLabel();
-        createdDetails.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+        createdDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_createdDetails = new GridBagConstraints();
         gbc_createdDetails.fill = GridBagConstraints.HORIZONTAL;
         gbc_createdDetails.anchor = GridBagConstraints.SOUTH;
@@ -214,6 +223,7 @@ public class TestDetailsPanel extends JXPanel {
         detailsPanelRight.add(createdDetails, gbc_createdDetails);
 
         JXLabel lastModifiedLabel = new JXLabel();
+        lastModifiedLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
         lastModifiedLabel.setBorder(new EmptyBorder(0, 30, 0, 10));
         lastModifiedLabel.setText("Last modified");
         GridBagConstraints gbc_lastModifiedLabel = new GridBagConstraints();
@@ -224,7 +234,7 @@ public class TestDetailsPanel extends JXPanel {
         detailsPanelRight.add(lastModifiedLabel, gbc_lastModifiedLabel);
 
         lastModifiedDetails = new JXLabel();
-        lastModifiedDetails.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+        lastModifiedDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_lastModifiedDetails = new GridBagConstraints();
         gbc_lastModifiedDetails.fill = GridBagConstraints.HORIZONTAL;
         gbc_lastModifiedDetails.anchor = GridBagConstraints.SOUTH;
