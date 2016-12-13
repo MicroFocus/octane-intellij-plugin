@@ -21,10 +21,13 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
+import com.intellij.openapi.vcs.VcsShowConfirmationOption;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBScrollPane;
+import com.intellij.util.ui.ConfirmationDialog;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.tree.TreePath;
@@ -137,20 +140,38 @@ public class EntityTreeView implements View {
 
         VirtualFile selectedFolder = chooseScriptFolder(project);
         if (selectedFolder != null) {
-            RestUtil.LOADING_MESSAGE = "Downloading script for gherkin test with id " + gherkinTestId;
-            RestUtil.runInBackground(
-                    () -> {
-                        String scriptContent = scriptService.getGherkinTestScriptContent(gherkinTestId);
-                        String scriptFileName = "test #" + gherkinTestId + " script";
-                        return createTestScriptFile(selectedFolder.getPath(), scriptFileName, scriptContent);
-                    },
-                    (scriptFile) -> {
-                        VirtualFile vFile = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(scriptFile);
-                        FileEditorManager.getInstance(project).openFile(vFile, true, true);
-                        project.getBaseDir().refresh(false, true);
-                    },
-                    project,
-                    "failed to download script for gherkin test with id " + gherkinTestId);
+            String scriptFileName = "test #" + gherkinTestId + " script";
+            boolean shouldDownloadScript = true;
+            if (selectedFolder.findChild(scriptFileName) != null) {
+                String title = "Confirm file overwrite";
+                String message = "Selected destination folder already contains a file named \"" +
+                        scriptFileName + "\". Do you want to overwrite this file?";
+
+                ConfirmationDialog dialog = new ConfirmationDialog(project, message, title,
+                        null, VcsShowConfirmationOption.STATIC_SHOW_CONFIRMATION) {
+                    @Override
+                    public void setDoNotAskOption(@Nullable DoNotAskOption doNotAsk) {
+                        super.setDoNotAskOption(null);
+                    }
+                };
+                shouldDownloadScript = dialog.showAndGet();
+            }
+
+            if (shouldDownloadScript) {
+                RestUtil.LOADING_MESSAGE = "Downloading script for gherkin test with id " + gherkinTestId;
+                RestUtil.runInBackground(
+                        () -> {
+                            String scriptContent = scriptService.getGherkinTestScriptContent(gherkinTestId);
+                            return createTestScriptFile(selectedFolder.getPath(), scriptFileName, scriptContent);
+                        },
+                        (scriptFile) -> {
+                            VirtualFile vFile = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(scriptFile);
+                            FileEditorManager.getInstance(project).openFile(vFile, true, true);
+                            project.getBaseDir().refresh(false, true);
+                        },
+                        project,
+                        "failed to download script for gherkin test with id " + gherkinTestId);
+            }
         }
     }
 
@@ -180,7 +201,7 @@ public class EntityTreeView implements View {
                                                 UrlParser.createEntityWebURI(
                                                         connectionSettingsProvider.getConnectionSettings(),
                                                         entityType,
-                                                        Integer.valueOf(UiUtil.getUiDataFromModel(entityModel.getValue("id")))) ;
+                                                        Integer.valueOf(UiUtil.getUiDataFromModel(entityModel.getValue("id"))));
 
                                         desktop.browse(uri);
                                     } catch (Exception ex) {
@@ -220,17 +241,17 @@ public class EntityTreeView implements View {
 
     private DefaultActionGroup toolBarActionGroup = new DefaultActionGroup();
 
-    public void addActionToToolbar(AnAction action){
+    public void addActionToToolbar(AnAction action) {
         toolBarActionGroup.addAction(action);
     }
 
-    public void addSeparatorToToolbar(){
+    public void addSeparatorToToolbar() {
         toolBarActionGroup.addSeparator();
     }
 
     private JComponent createToolbar() {
         ActionToolbar actionToolBar = ActionManager.getInstance().createActionToolbar("My Work actions", toolBarActionGroup, false);
-        actionToolBar.getComponent().setBorder(BorderFactory.createMatteBorder(0,1,0,0, JBColor.border()));
+        actionToolBar.getComponent().setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, JBColor.border()));
         return actionToolBar.getComponent();
     }
 
@@ -278,9 +299,9 @@ public class EntityTreeView implements View {
     public void setTreeModel(EntityTreeModel model) {
         tree.setModel(model);
 
-        if(model.size() == 0){
+        if (model.size() == 0) {
             scrollPane.setViewportView(new NoWorkPanel());
-        } else if(scrollPane.getViewport().getView() != tree){
+        } else if (scrollPane.getViewport().getView() != tree) {
             scrollPane.setViewportView(tree);
         }
     }
