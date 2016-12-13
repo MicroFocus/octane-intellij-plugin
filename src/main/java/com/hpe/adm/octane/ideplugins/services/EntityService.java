@@ -113,7 +113,7 @@ public class EntityService extends ServiceBase {
         }
 
         if (queryBuilder != null) {
-            return entityList.get().query(queryBuilder.build()).execute();
+            return entityList.get().query(queryBuilder.build()).addOrderBy("id", true).execute();
         } else {
             return entityList.get().execute();
         }
