@@ -110,7 +110,7 @@ class EntityModelRow extends JPanel{
 
 	public void setIcon(Entity entityType){
 		panelIcon.removeAll();
-		panelIcon.add(ENTITY_ICON_FACTORY.getIcon(entityType), BorderLayout.CENTER);
+		panelIcon.add(ENTITY_ICON_FACTORY.getIconAsComponent(entityType), BorderLayout.CENTER);
 	}
 	
 	public void setEntityName(String text){

@@ -1,17 +1,13 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.entityicon;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.swing.JComponent;
-import javax.swing.SwingConstants;
-
+import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import org.jdesktop.swingx.JXLabel;
 
-import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.util.HashMap;
+import java.util.Map;
 
 public class EntityIconFactory {
 
@@ -26,7 +22,8 @@ public class EntityIconFactory {
     //map to color and short text
     private final Map<Entity, IconDetail> iconDetailMap = new HashMap<>();
   
-    private final Map<Entity, JComponent> iconMap = new HashMap<>();
+    private final Map<Entity, JComponent> iconComponentMap = new HashMap<>();
+    private final Map<Entity, Image> iconImageMap = new HashMap<>();
    
     public EntityIconFactory(){	
     	init();
@@ -46,10 +43,11 @@ public class EntityIconFactory {
         iconDetailMap.put(Entity.MANUAL_TEST, new IconDetail(new Color(96,121,141), "MT"));
         iconDetailMap.put(Entity.GHERKIN_TEST, new IconDetail(new Color(120,196,192), "GT"));
         
-        iconDetailMap.keySet().forEach(entity -> iconMap.put(entity, createIcon(entity)));
+        iconDetailMap.keySet().forEach(entity -> iconComponentMap.put(entity, createIconAsComponent(entity)));
+        iconComponentMap.keySet().forEach(entity -> iconImageMap.put(entity, createIconAsImage(entity)));
     }
     
-    private JComponent createIcon(Entity entity){
+    private JComponent createIconAsComponent(Entity entity){
     	IconDetail iconDetail = iconDetailMap.containsKey(entity) ? iconDetailMap.get(entity) : unmapedEntityIconDetail;
     	
         //Make the label
@@ -71,8 +69,26 @@ public class EntityIconFactory {
         return label;
     }
 
-    public JComponent getIcon(Entity entity){
-      	return iconMap.get(entity);
+    private Image createIconAsImage(Entity entity){
+        JComponent lblIcon = getIconAsComponent(entity);
+        lblIcon.setBounds(0,0,iconWidth,iconHeight);
+        JFrame frame = new JFrame();
+        frame.getContentPane().setLayout(null);
+        frame.getContentPane().add(lblIcon);
+        frame.pack();
+
+        BufferedImage image = new BufferedImage(iconWidth, iconHeight, BufferedImage.TYPE_INT_ARGB);
+        Graphics g = image.createGraphics();
+        lblIcon.paint(g);
+
+        return image;
+    }
+
+    public JComponent getIconAsComponent(Entity entity){
+      	return iconComponentMap.get(entity);
+    }
+    public Image getIconAsImage(Entity entity){
+        return iconImageMap.get(entity);
     }
 
 }
