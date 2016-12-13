@@ -5,16 +5,12 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
 
 public class MainView implements View {
 
-    private final Border marginBorder = new EmptyBorder(5,5,5,5);
     private final JPanel rootPanel = new JPanel();
 
     public MainView(){
-        rootPanel.setBorder(marginBorder);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(1, 1);
         rootPanel.setLayout(gridLayoutManager);
     }
