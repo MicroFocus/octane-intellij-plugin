@@ -52,13 +52,9 @@ class EntityTreeCellRenderer implements TreeCellRenderer {
             rowPanel.setBorder(BorderFactory.createMatteBorder(0,0,1,0,JBColor.border()));
         	rowPanel.setIcon(Entity.getEntityType(entityModel));
 
-            //assume it has a name at least
-            String name =
-                    UiUtil.getUiDataFromModel(entityModel.getValue("id"))
-                    + ": "
-                    + UiUtil.getUiDataFromModel(entityModel.getValue("name"));
-
-            rowPanel.setEntityName(name);
+            rowPanel.setEntityName(
+                    UiUtil.getUiDataFromModel(entityModel.getValue("id")),
+                    UiUtil.getUiDataFromModel(entityModel.getValue("name")));
 
             String phase = "Phase: " + UiUtil.getUiDataFromModel(entityModel.getValue("phase"));
             rowPanel.addDetailsTop(phase);
