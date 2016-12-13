@@ -1,406 +1,301 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
-import com.intellij.ui.JBColor;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
-import org.jdesktop.swingx.JXTextArea;
-import org.jdesktop.swingx.JXTextField;
 
-import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
-public class TaskDetailsPanel extends JPanel {
-    private JXPanel rootPanel;
-    private JXLabel lblDescription;
-    private JXTextArea txtfldDescription;
-    private JXPanel taskDetailsPanel;
-    private JXLabel lblStory;
-    private JXTextField txtfldStory;
-    private JXLabel lblOwner;
-    private JXTextField txtfldOwner;
-    private JXLabel lblAuthor;
-    private JXTextField txtfldAuthor;
-    private JXLabel lblType;
-    private JXTextField txtfldType;
-    private JXLabel lblEstimatedHours;
-    private JXTextField txtfldEstimatedHours;
-    private JXLabel lblCreationTime;
-    private JXTextField txtfldCreationTime;
-    private JXLabel lblInvestedHours;
-    private JXTextField textInvestedHours;
-    private JXLabel lblLastModified;
-    private JXTextField txtfldLastModified;
-    private JXLabel lblRemainingHours;
-    private JXTextField txtfldRemainingHours;
-    private JXLabel lblPhase;
-    private JComboBox comboBoxPhase;
-    private JXPanel nameAndIconPanel;
-    private JXLabel lblName;
+public class TaskDetailsPanel extends JXPanel {
+    private static final long serialVersionUID = -7172388625845199450L;
+    private JXLabel ownerDetails;
+    private JXLabel storyDetails;
+    private JXLabel authorDetails;
+    private JXLabel sprintDetails;
+    private JXLabel creationTimeDetails;
+    private JXLabel lastModifiedDetails;
+    private JXLabel taskTypeDetails;
+    private JXLabel estimatedHoursDetails;
+    private JXLabel investedHoursDetails;
+
 
     public TaskDetailsPanel() {
         setBorder(null);
-        setBounds(100, 100, 900, 300);
-        GridBagLayout gridBagLayout = new GridBagLayout();
-        gridBagLayout.columnWidths = new int[]{0, 0};
-        gridBagLayout.rowHeights = new int[]{0, 0};
-        gridBagLayout.columnWeights = new double[]{1.0, Double.MIN_VALUE};
-        gridBagLayout.rowWeights = new double[]{1.0, Double.MIN_VALUE};
-        this.setLayout(gridBagLayout);
+        setLayout(new BorderLayout(0, 0));
 
-        rootPanel = new JXPanel();
-//        rootPanel.setPreferredSize(new Dimension(900, 300));
-        rootPanel.setBorder(new EmptyBorder(10, 30, 30, 30));
-        GridBagConstraints gbc_rootPanel = new GridBagConstraints();
-        gbc_rootPanel.fill = GridBagConstraints.BOTH;
-        gbc_rootPanel.gridx = 0;
-        gbc_rootPanel.gridy = 0;
-        add(rootPanel, gbc_rootPanel);
-        GridBagLayout gbl_rootPanel = new GridBagLayout();
-        gbl_rootPanel.columnWidths = new int[]{0, 0};
-        gbl_rootPanel.rowHeights = new int[]{0, 0, 0, 0, 0};
-        gbl_rootPanel.columnWeights = new double[]{1.0, Double.MIN_VALUE};
-        gbl_rootPanel.rowWeights = new double[]{0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
-        rootPanel.setLayout(gbl_rootPanel);
+        JXPanel detailsPanelMain = new JXPanel();
+        detailsPanelMain.setBorder(null);
+        add(detailsPanelMain, BorderLayout.CENTER);
+        detailsPanelMain.setLayout(new BorderLayout(0, 0));
+        detailsPanelMain.setMinimumSize(new Dimension(0, 0));
 
-        nameAndIconPanel = new JXPanel();
-        nameAndIconPanel.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
-        FlowLayout flowLayout = (FlowLayout) nameAndIconPanel.getLayout();
-        flowLayout.setHgap(0);
-        flowLayout.setAlignment(FlowLayout.LEFT);
-        GridBagConstraints gbc_nameAndIconPanel = new GridBagConstraints();
-        gbc_nameAndIconPanel.insets = new Insets(0, 0, 5, 0);
-        gbc_nameAndIconPanel.fill = GridBagConstraints.BOTH;
-        gbc_nameAndIconPanel.gridx = 0;
-        gbc_nameAndIconPanel.gridy = 0;
-        rootPanel.add(nameAndIconPanel, gbc_nameAndIconPanel);
-        
-        lblName = new JXLabel();
-        lblName.setIcon(new ImageIcon(TaskDetailsPanel.class.getResource("/images/taskIcon.png")));
-        lblName.setText("Name");
-        lblName.setFont(new Font("Tahoma", Font.BOLD, 12));
-        lblName.setBorder(null);
-        nameAndIconPanel.add(lblName);
-        
-        lblDescription = new JXLabel();
-        lblDescription.setText("Description");
-        lblDescription.setFont(new Font("Tahoma", Font.BOLD, 11));
-        lblDescription.setBorder(null);
-        GridBagConstraints gbc_lblDescription = new GridBagConstraints();
-        gbc_lblDescription.anchor = GridBagConstraints.NORTHWEST;
-        gbc_lblDescription.insets = new Insets(0, 0, 5, 0);
-        gbc_lblDescription.gridx = 0;
-        gbc_lblDescription.gridy = 1;
-        rootPanel.add(lblDescription, gbc_lblDescription);
-        
-        txtfldDescription = new JXTextArea();
-        txtfldDescription.setText("Description");
-        txtfldDescription.setOpaque(false);
-        txtfldDescription.setLineWrap(true);
-        txtfldDescription.setEditable(false);
-        txtfldDescription.setBorder(null);
-        txtfldDescription.setBackground(new Color(0, 0, 0, 0));
-        GridBagConstraints gbc_txtfldDescription = new GridBagConstraints();
-        gbc_txtfldDescription.fill = GridBagConstraints.BOTH;
-        gbc_txtfldDescription.insets = new Insets(0, 0, 5, 0);
-        gbc_txtfldDescription.gridx = 0;
-        gbc_txtfldDescription.gridy = 2;
-        rootPanel.add(txtfldDescription, gbc_txtfldDescription);
+        JXPanel detailsPanelLeft = new JXPanel();
+        detailsPanelLeft.setBorder(null);
+        detailsPanelMain.add(detailsPanelLeft, BorderLayout.WEST);
+        GridBagLayout gbl_detailsPanelLeft = new GridBagLayout();
+        gbl_detailsPanelLeft.columnWidths = new int[]{0, 0};
+        gbl_detailsPanelLeft.rowHeights = new int[]{0, 0, 0, 0, 0, 0};
+        gbl_detailsPanelLeft.columnWeights = new double[]{0.0, 1.0};
+        gbl_detailsPanelLeft.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+        detailsPanelLeft.setLayout(gbl_detailsPanelLeft);
 
-        taskDetailsPanel = new JXPanel();
-        taskDetailsPanel.setBorder(new EmptyBorder(10, 0, 0, 0));
-        GridBagConstraints gbc_taskDetailsPanel = new GridBagConstraints();
-        gbc_taskDetailsPanel.fill = GridBagConstraints.BOTH;
-        gbc_taskDetailsPanel.gridx = 0;
-        gbc_taskDetailsPanel.gridy = 3;
-        rootPanel.add(taskDetailsPanel, gbc_taskDetailsPanel);
-        GridBagLayout gbl_taskDetailsPanel = new GridBagLayout();
-        gbl_taskDetailsPanel.columnWidths = new int[]{0, 0, 0, 0, 0};
-        gbl_taskDetailsPanel.rowHeights = new int[]{0, 0, 0, 0, 0, 0};
-        gbl_taskDetailsPanel.columnWeights = new double[]{0.0, 1.0, 0.0, 1.0, Double.MIN_VALUE};
-        gbl_taskDetailsPanel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
-        taskDetailsPanel.setLayout(gbl_taskDetailsPanel);
-        
-        lblStory = new JXLabel();
-        lblStory.setText("Story");
-        lblStory.setFont(new Font("Tahoma", Font.BOLD, 11));
-        lblStory.setBorder(new EmptyBorder(0, 0, 0, 10));
-        GridBagConstraints gbc_lblStory = new GridBagConstraints();
-        gbc_lblStory.anchor = GridBagConstraints.WEST;
-        gbc_lblStory.insets = new Insets(0, 0, 5, 5);
-        gbc_lblStory.gridx = 0;
-        gbc_lblStory.gridy = 0;
-        taskDetailsPanel.add(lblStory, gbc_lblStory);
-        
-        txtfldStory = new JXTextField();
-        txtfldStory.setOpaque(false);
-        txtfldStory.setEditable(false);
-        txtfldStory.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
-        txtfldStory.setBackground(new Color(0, 0, 0, 0));
-        GridBagConstraints gbc_txtfldStory = new GridBagConstraints();
-        gbc_txtfldStory.fill = GridBagConstraints.HORIZONTAL;
-        gbc_txtfldStory.insets = new Insets(0, 0, 5, 5);
-        gbc_txtfldStory.gridx = 1;
-        gbc_txtfldStory.gridy = 0;
-        taskDetailsPanel.add(txtfldStory, gbc_txtfldStory);
-        
-        lblOwner = new JXLabel();
-        lblOwner.setText("Owner");
-        lblOwner.setFont(new Font("Tahoma", Font.BOLD, 11));
-        lblOwner.setBorder(new EmptyBorder(0, 30, 0, 10));
-        GridBagConstraints gbc_lblOwner = new GridBagConstraints();
-        gbc_lblOwner.anchor = GridBagConstraints.WEST;
-        gbc_lblOwner.insets = new Insets(0, 0, 5, 5);
-        gbc_lblOwner.gridx = 2;
-        gbc_lblOwner.gridy = 0;
-        taskDetailsPanel.add(lblOwner, gbc_lblOwner);
-        
-        txtfldOwner = new JXTextField();
-        txtfldOwner.setOpaque(false);
-        txtfldOwner.setEditable(false);
-        txtfldOwner.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
-        txtfldOwner.setBackground(new Color(0, 0, 0, 0));
-        GridBagConstraints gbc_txtfldOwner = new GridBagConstraints();
-        gbc_txtfldOwner.fill = GridBagConstraints.HORIZONTAL;
-        gbc_txtfldOwner.insets = new Insets(0, 0, 5, 0);
-        gbc_txtfldOwner.gridx = 3;
-        gbc_txtfldOwner.gridy = 0;
-        taskDetailsPanel.add(txtfldOwner, gbc_txtfldOwner);
-        
-        lblAuthor = new JXLabel();
-        lblAuthor.setText("Author");
-        lblAuthor.setFont(new Font("Tahoma", Font.BOLD, 11));
-        lblAuthor.setBorder(new EmptyBorder(0, 0, 0, 10));
-        GridBagConstraints gbc_lblAuthor = new GridBagConstraints();
-        gbc_lblAuthor.anchor = GridBagConstraints.WEST;
-        gbc_lblAuthor.insets = new Insets(0, 0, 5, 5);
-        gbc_lblAuthor.gridx = 0;
-        gbc_lblAuthor.gridy = 1;
-        taskDetailsPanel.add(lblAuthor, gbc_lblAuthor);
-        
-        txtfldAuthor = new JXTextField();
-        txtfldAuthor.setOpaque(false);
-        txtfldAuthor.setEditable(false);
-        txtfldAuthor.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
-        txtfldAuthor.setBackground(new Color(0, 0, 0, 0));
-        GridBagConstraints gbc_txtfldAuthor = new GridBagConstraints();
-        gbc_txtfldAuthor.fill = GridBagConstraints.HORIZONTAL;
-        gbc_txtfldAuthor.insets = new Insets(0, 0, 5, 5);
-        gbc_txtfldAuthor.gridx = 1;
-        gbc_txtfldAuthor.gridy = 1;
-        taskDetailsPanel.add(txtfldAuthor, gbc_txtfldAuthor);
-        
-        lblType = new JXLabel();
-        lblType.setText("Type");
-        lblType.setFont(new Font("Tahoma", Font.BOLD, 11));
-        lblType.setBorder(new EmptyBorder(0, 30, 0, 10));
-        GridBagConstraints gbc_lblType = new GridBagConstraints();
-        gbc_lblType.anchor = GridBagConstraints.WEST;
-        gbc_lblType.insets = new Insets(0, 0, 5, 5);
-        gbc_lblType.gridx = 2;
-        gbc_lblType.gridy = 1;
-        taskDetailsPanel.add(lblType, gbc_lblType);
-        
-        txtfldType = new JXTextField();
-        txtfldType.setOpaque(false);
-        txtfldType.setEditable(false);
-        txtfldType.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
-        txtfldType.setBackground(new Color(0, 0, 0, 0));
-        GridBagConstraints gbc_txtfldType = new GridBagConstraints();
-        gbc_txtfldType.fill = GridBagConstraints.HORIZONTAL;
-        gbc_txtfldType.insets = new Insets(0, 0, 5, 0);
-        gbc_txtfldType.gridx = 3;
-        gbc_txtfldType.gridy = 1;
-        taskDetailsPanel.add(txtfldType, gbc_txtfldType);
-        
-        lblEstimatedHours = new JXLabel();
-        lblEstimatedHours.setText("Estimated hours");
-        lblEstimatedHours.setFont(new Font("Tahoma", Font.BOLD, 11));
-        lblEstimatedHours.setBorder(new EmptyBorder(0, 0, 0, 10));
-        GridBagConstraints gbc_lblEstimatedHours = new GridBagConstraints();
-        gbc_lblEstimatedHours.anchor = GridBagConstraints.WEST;
-        gbc_lblEstimatedHours.insets = new Insets(0, 0, 5, 5);
-        gbc_lblEstimatedHours.gridx = 0;
-        gbc_lblEstimatedHours.gridy = 2;
-        taskDetailsPanel.add(lblEstimatedHours, gbc_lblEstimatedHours);
-        
-        txtfldEstimatedHours = new JXTextField();
-        txtfldEstimatedHours.setOpaque(false);
-        txtfldEstimatedHours.setEditable(false);
-        txtfldEstimatedHours.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
-        txtfldEstimatedHours.setBackground(new Color(0, 0, 0, 0));
-        GridBagConstraints gbc_txtfldEstimatedHours = new GridBagConstraints();
-        gbc_txtfldEstimatedHours.fill = GridBagConstraints.HORIZONTAL;
-        gbc_txtfldEstimatedHours.insets = new Insets(0, 0, 5, 5);
-        gbc_txtfldEstimatedHours.gridx = 1;
-        gbc_txtfldEstimatedHours.gridy = 2;
-        taskDetailsPanel.add(txtfldEstimatedHours, gbc_txtfldEstimatedHours);
-        
-        lblCreationTime = new JXLabel();
-        lblCreationTime.setText("Creation Time");
-        lblCreationTime.setFont(new Font("Tahoma", Font.BOLD, 11));
-        lblCreationTime.setBorder(new EmptyBorder(0, 30, 0, 10));
-        GridBagConstraints gbc_lblCreationTime = new GridBagConstraints();
-        gbc_lblCreationTime.anchor = GridBagConstraints.WEST;
-        gbc_lblCreationTime.insets = new Insets(0, 0, 5, 5);
-        gbc_lblCreationTime.gridx = 2;
-        gbc_lblCreationTime.gridy = 2;
-        taskDetailsPanel.add(lblCreationTime, gbc_lblCreationTime);
-        
-        txtfldCreationTime = new JXTextField();
-        txtfldCreationTime.setOpaque(false);
-        txtfldCreationTime.setEditable(false);
-        txtfldCreationTime.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
-        txtfldCreationTime.setBackground(new Color(0, 0, 0, 0));
-        GridBagConstraints gbc_txtfldCreationTime = new GridBagConstraints();
-        gbc_txtfldCreationTime.fill = GridBagConstraints.HORIZONTAL;
-        gbc_txtfldCreationTime.insets = new Insets(0, 0, 5, 0);
-        gbc_txtfldCreationTime.gridx = 3;
-        gbc_txtfldCreationTime.gridy = 2;
-        taskDetailsPanel.add(txtfldCreationTime, gbc_txtfldCreationTime);
-        
-        lblInvestedHours = new JXLabel();
-        lblInvestedHours.setText("Invested hours");
-        lblInvestedHours.setFont(new Font("Tahoma", Font.BOLD, 11));
-        lblInvestedHours.setBorder(new EmptyBorder(0, 0, 0, 10));
-        GridBagConstraints gbc_lblInvestedHours = new GridBagConstraints();
-        gbc_lblInvestedHours.anchor = GridBagConstraints.WEST;
-        gbc_lblInvestedHours.insets = new Insets(0, 0, 5, 5);
-        gbc_lblInvestedHours.gridx = 0;
-        gbc_lblInvestedHours.gridy = 3;
-        taskDetailsPanel.add(lblInvestedHours, gbc_lblInvestedHours);
-        
-        textInvestedHours = new JXTextField();
-        textInvestedHours.setOpaque(false);
-        textInvestedHours.setEditable(false);
-        textInvestedHours.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
-        textInvestedHours.setBackground(new Color(0, 0, 0, 0));
-        GridBagConstraints gbc_textInvestedHours = new GridBagConstraints();
-        gbc_textInvestedHours.fill = GridBagConstraints.HORIZONTAL;
-        gbc_textInvestedHours.insets = new Insets(0, 0, 5, 5);
-        gbc_textInvestedHours.gridx = 1;
-        gbc_textInvestedHours.gridy = 3;
-        taskDetailsPanel.add(textInvestedHours, gbc_textInvestedHours);
-        
-        lblLastModified = new JXLabel();
-        lblLastModified.setText("Last modified");
-        lblLastModified.setFont(new Font("Tahoma", Font.BOLD, 11));
-        lblLastModified.setBorder(new EmptyBorder(0, 30, 0, 10));
-        GridBagConstraints gbc_lblLastModified = new GridBagConstraints();
-        gbc_lblLastModified.anchor = GridBagConstraints.WEST;
-        gbc_lblLastModified.insets = new Insets(0, 0, 5, 5);
-        gbc_lblLastModified.gridx = 2;
-        gbc_lblLastModified.gridy = 3;
-        taskDetailsPanel.add(lblLastModified, gbc_lblLastModified);
-        
-        txtfldLastModified = new JXTextField();
-        txtfldLastModified.setOpaque(false);
-        txtfldLastModified.setEditable(false);
-        txtfldLastModified.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
-        txtfldLastModified.setBackground(new Color(0, 0, 0, 0));
-        GridBagConstraints gbc_txtfldLastModified = new GridBagConstraints();
-        gbc_txtfldLastModified.fill = GridBagConstraints.HORIZONTAL;
-        gbc_txtfldLastModified.insets = new Insets(0, 0, 5, 0);
-        gbc_txtfldLastModified.gridx = 3;
-        gbc_txtfldLastModified.gridy = 3;
-        taskDetailsPanel.add(txtfldLastModified, gbc_txtfldLastModified);
-        
-        lblRemainingHours = new JXLabel();
-        lblRemainingHours.setText("Remaining Hours");
-        lblRemainingHours.setFont(new Font("Tahoma", Font.BOLD, 11));
-        lblRemainingHours.setBorder(new EmptyBorder(0, 0, 0, 10));
-        GridBagConstraints gbc_lblRemainingHours = new GridBagConstraints();
-        gbc_lblRemainingHours.anchor = GridBagConstraints.WEST;
-        gbc_lblRemainingHours.insets = new Insets(0, 0, 0, 5);
-        gbc_lblRemainingHours.gridx = 0;
-        gbc_lblRemainingHours.gridy = 4;
-        taskDetailsPanel.add(lblRemainingHours, gbc_lblRemainingHours);
-        
-        txtfldRemainingHours = new JXTextField();
-        txtfldRemainingHours.setOpaque(false);
-        txtfldRemainingHours.setEditable(false);
-        txtfldRemainingHours.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
-        txtfldRemainingHours.setBackground(new Color(0, 0, 0, 0));
-        GridBagConstraints gbc_txtfldRemainingHours = new GridBagConstraints();
-        gbc_txtfldRemainingHours.fill = GridBagConstraints.HORIZONTAL;
-        gbc_txtfldRemainingHours.insets = new Insets(0, 0, 0, 5);
-        gbc_txtfldRemainingHours.gridx = 1;
-        gbc_txtfldRemainingHours.gridy = 4;
-        taskDetailsPanel.add(txtfldRemainingHours, gbc_txtfldRemainingHours);
-        
-        lblPhase = new JXLabel();
-        lblPhase.setText("Phase");
-        lblPhase.setFont(new Font("Tahoma", Font.BOLD, 11));
-        lblPhase.setBorder(new EmptyBorder(0, 30, 0, 10));
-        GridBagConstraints gbc_lblPhase = new GridBagConstraints();
-        gbc_lblPhase.anchor = GridBagConstraints.WEST;
-        gbc_lblPhase.insets = new Insets(0, 0, 0, 5);
-        gbc_lblPhase.gridx = 2;
-        gbc_lblPhase.gridy = 4;
-        taskDetailsPanel.add(lblPhase, gbc_lblPhase);
-        
-        comboBoxPhase = new JComboBox();
-        comboBoxPhase.setEditable(true);
-        comboBoxPhase.setBorder(new EmptyBorder(0, 0, 0, 0));
-        GridBagConstraints gbc_comboBoxPhase = new GridBagConstraints();
-        gbc_comboBoxPhase.fill = GridBagConstraints.HORIZONTAL;
-        gbc_comboBoxPhase.gridx = 3;
-        gbc_comboBoxPhase.gridy = 4;
-        taskDetailsPanel.add(comboBoxPhase, gbc_comboBoxPhase);
+        JXLabel storyLabel = new JXLabel();
+        storyLabel.setText("Story");
+        storyLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
+        storyLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
+        GridBagConstraints gbc_storyLabel = new GridBagConstraints();
+        gbc_storyLabel.anchor = GridBagConstraints.WEST;
+        gbc_storyLabel.insets = new Insets(0, 0, 5, 5);
+        gbc_storyLabel.gridx = 0;
+        gbc_storyLabel.gridy = 0;
+        detailsPanelLeft.add(storyLabel, gbc_storyLabel);
+
+        storyDetails = new JXLabel();
+        storyDetails.setText("                                          ");
+        storyDetails.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+        GridBagConstraints gbc_storyDetails = new GridBagConstraints();
+        gbc_storyDetails.anchor = GridBagConstraints.SOUTH;
+        gbc_storyDetails.fill = GridBagConstraints.HORIZONTAL;
+        gbc_storyDetails.insets = new Insets(0, 0, 5, 0);
+        gbc_storyDetails.gridx = 1;
+        gbc_storyDetails.gridy = 0;
+        detailsPanelLeft.add(storyDetails, gbc_storyDetails);
+
+        JXLabel authorLabel = new JXLabel();
+        authorLabel.setText("Author");
+        authorLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
+        authorLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
+        GridBagConstraints gbc_authorLabel = new GridBagConstraints();
+        gbc_authorLabel.anchor = GridBagConstraints.WEST;
+        gbc_authorLabel.insets = new Insets(0, 0, 5, 5);
+        gbc_authorLabel.gridx = 0;
+        gbc_authorLabel.gridy = 1;
+        detailsPanelLeft.add(authorLabel, gbc_authorLabel);
+
+        authorDetails = new JXLabel();
+        authorDetails.setText(" ");
+        authorDetails.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+        GridBagConstraints gbc_authorDetails = new GridBagConstraints();
+        gbc_authorDetails.anchor = GridBagConstraints.SOUTH;
+        gbc_authorDetails.fill = GridBagConstraints.HORIZONTAL;
+        gbc_authorDetails.insets = new Insets(0, 0, 5, 0);
+        gbc_authorDetails.gridx = 1;
+        gbc_authorDetails.gridy = 1;
+        detailsPanelLeft.add(authorDetails, gbc_authorDetails);
+
+        JXLabel ownerLabel = new JXLabel();
+        GridBagConstraints gbc_ownerLabel = new GridBagConstraints();
+        gbc_ownerLabel.anchor = GridBagConstraints.WEST;
+        gbc_ownerLabel.insets = new Insets(0, 0, 5, 5);
+        gbc_ownerLabel.gridx = 0;
+        gbc_ownerLabel.gridy = 2;
+        detailsPanelLeft.add(ownerLabel, gbc_ownerLabel);
+        ownerLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
+        ownerLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
+        ownerLabel.setText("Owner");
+
+        ownerDetails = new JXLabel();
+        GridBagConstraints gbc_ownerDetails = new GridBagConstraints();
+        gbc_ownerDetails.fill = GridBagConstraints.HORIZONTAL;
+        gbc_ownerDetails.insets = new Insets(0, 0, 5, 0);
+        gbc_ownerDetails.gridx = 1;
+        gbc_ownerDetails.gridy = 2;
+        detailsPanelLeft.add(ownerDetails, gbc_ownerDetails);
+        ownerDetails.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+        ownerDetails.setText(" ");
+
+        JXLabel creationTimeLabel = new JXLabel();
+        creationTimeLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
+        creationTimeLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
+        creationTimeLabel.setText("Creation time");
+        GridBagConstraints gbc_creationTimeLabel = new GridBagConstraints();
+        gbc_creationTimeLabel.anchor = GridBagConstraints.WEST;
+        gbc_creationTimeLabel.insets = new Insets(0, 0, 5, 5);
+        gbc_creationTimeLabel.gridx = 0;
+        gbc_creationTimeLabel.gridy = 3;
+        detailsPanelLeft.add(creationTimeLabel, gbc_creationTimeLabel);
+
+        creationTimeDetails = new JXLabel();
+        creationTimeDetails.setText(" ");
+        creationTimeDetails.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+        GridBagConstraints gbc_creationTimeDetails = new GridBagConstraints();
+        gbc_creationTimeDetails.fill = GridBagConstraints.HORIZONTAL;
+        gbc_creationTimeDetails.insets = new Insets(0, 0, 5, 0);
+        gbc_creationTimeDetails.gridx = 1;
+        gbc_creationTimeDetails.gridy = 3;
+        detailsPanelLeft.add(creationTimeDetails, gbc_creationTimeDetails);
+
+        JXLabel lastModifiedLabel = new JXLabel();
+        lastModifiedLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
+        lastModifiedLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
+        lastModifiedLabel.setText("Last modified");
+        GridBagConstraints gbc_lastModifiedLabel = new GridBagConstraints();
+        gbc_lastModifiedLabel.anchor = GridBagConstraints.WEST;
+        gbc_lastModifiedLabel.insets = new Insets(0, 0, 0, 5);
+        gbc_lastModifiedLabel.gridx = 0;
+        gbc_lastModifiedLabel.gridy = 4;
+        detailsPanelLeft.add(lastModifiedLabel, gbc_lastModifiedLabel);
+
+        lastModifiedDetails = new JXLabel();
+        lastModifiedDetails.setText(" ");
+        lastModifiedDetails.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+        GridBagConstraints gbc_lastModifiedDetails = new GridBagConstraints();
+        gbc_lastModifiedDetails.fill = GridBagConstraints.HORIZONTAL;
+        gbc_lastModifiedDetails.gridx = 1;
+        gbc_lastModifiedDetails.gridy = 4;
+        detailsPanelLeft.add(lastModifiedDetails, gbc_lastModifiedDetails);
+
+        JXPanel detailsPanelRight = new JXPanel();
+        detailsPanelRight.setBorder(null);
+        detailsPanelMain.add(detailsPanelRight, BorderLayout.CENTER);
+        GridBagLayout gbl_detailsPanelRight = new GridBagLayout();
+        gbl_detailsPanelRight.columnWidths = new int[]{0, 0, 0};
+        gbl_detailsPanelRight.rowHeights = new int[]{0, 0, 0, 0, 0};
+        gbl_detailsPanelRight.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
+        gbl_detailsPanelRight.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+        detailsPanelRight.setLayout(gbl_detailsPanelRight);
+
+        JXLabel taskTypeLabel = new JXLabel();
+        taskTypeLabel.setBorder(new EmptyBorder(0, 30, 0, 10));
+        taskTypeLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
+        taskTypeLabel.setText("Type");
+        GridBagConstraints gbc_taskTypeLabel = new GridBagConstraints();
+        gbc_taskTypeLabel.anchor = GridBagConstraints.WEST;
+        gbc_taskTypeLabel.insets = new Insets(0, 0, 5, 5);
+        gbc_taskTypeLabel.gridx = 0;
+        gbc_taskTypeLabel.gridy = 0;
+        detailsPanelRight.add(taskTypeLabel, gbc_taskTypeLabel);
+
+        taskTypeDetails = new JXLabel();
+        taskTypeDetails.setText(" ");
+        taskTypeDetails.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+        GridBagConstraints gbc_taskTypeDetails = new GridBagConstraints();
+        gbc_taskTypeDetails.fill = GridBagConstraints.HORIZONTAL;
+        gbc_taskTypeDetails.insets = new Insets(0, 0, 5, 0);
+        gbc_taskTypeDetails.gridx = 1;
+        gbc_taskTypeDetails.gridy = 0;
+        detailsPanelRight.add(taskTypeDetails, gbc_taskTypeDetails);
+
+        JXLabel sprintLabel = new JXLabel();
+        GridBagConstraints gbc_sprintLabel = new GridBagConstraints();
+        gbc_sprintLabel.anchor = GridBagConstraints.WEST;
+        gbc_sprintLabel.insets = new Insets(0, 0, 5, 5);
+        gbc_sprintLabel.gridx = 0;
+        gbc_sprintLabel.gridy = 1;
+        detailsPanelRight.add(sprintLabel, gbc_sprintLabel);
+        sprintLabel.setText("Sprint");
+        sprintLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
+        sprintLabel.setBorder(new EmptyBorder(0, 30, 0, 10));
+
+        sprintDetails = new JXLabel();
+        GridBagConstraints gbc_sprintDetails = new GridBagConstraints();
+        gbc_sprintDetails.anchor = GridBagConstraints.SOUTH;
+        gbc_sprintDetails.fill = GridBagConstraints.HORIZONTAL;
+        gbc_sprintDetails.insets = new Insets(0, 0, 5, 0);
+        gbc_sprintDetails.gridx = 1;
+        gbc_sprintDetails.gridy = 1;
+        detailsPanelRight.add(sprintDetails, gbc_sprintDetails);
+        sprintDetails.setText(" ");
+        sprintDetails.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+
+        JXLabel estimatedHoursLabel = new JXLabel();
+        estimatedHoursLabel.setBorder(new EmptyBorder(0, 30, 0, 10));
+        estimatedHoursLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
+        estimatedHoursLabel.setText("Estimated hours");
+        GridBagConstraints gbc_estimatedHoursLabel = new GridBagConstraints();
+        gbc_estimatedHoursLabel.anchor = GridBagConstraints.WEST;
+        gbc_estimatedHoursLabel.insets = new Insets(0, 0, 5, 5);
+        gbc_estimatedHoursLabel.gridx = 0;
+        gbc_estimatedHoursLabel.gridy = 2;
+        detailsPanelRight.add(estimatedHoursLabel, gbc_estimatedHoursLabel);
+
+        estimatedHoursDetails = new JXLabel();
+        estimatedHoursDetails.setText(" ");
+        estimatedHoursDetails.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+        GridBagConstraints gbc_estimatedHoursDetails = new GridBagConstraints();
+        gbc_estimatedHoursDetails.fill = GridBagConstraints.HORIZONTAL;
+        gbc_estimatedHoursDetails.insets = new Insets(0, 0, 5, 0);
+        gbc_estimatedHoursDetails.gridx = 1;
+        gbc_estimatedHoursDetails.gridy = 2;
+        detailsPanelRight.add(estimatedHoursDetails, gbc_estimatedHoursDetails);
+
+        JXLabel investedHoursLabel = new JXLabel();
+        investedHoursLabel.setBorder(new EmptyBorder(0, 30, 0, 10));
+        investedHoursLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
+        investedHoursLabel.setText("Invested hours");
+        GridBagConstraints gbc_investedHoursLabel = new GridBagConstraints();
+        gbc_investedHoursLabel.anchor = GridBagConstraints.WEST;
+        gbc_investedHoursLabel.insets = new Insets(0, 0, 0, 5);
+        gbc_investedHoursLabel.gridx = 0;
+        gbc_investedHoursLabel.gridy = 3;
+        detailsPanelRight.add(investedHoursLabel, gbc_investedHoursLabel);
+
+        investedHoursDetails = new JXLabel();
+        investedHoursDetails.setText(" ");
+        investedHoursDetails.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+        GridBagConstraints gbc_investedHoursDetails = new GridBagConstraints();
+        gbc_investedHoursDetails.fill = GridBagConstraints.HORIZONTAL;
+        gbc_investedHoursDetails.gridx = 1;
+        gbc_investedHoursDetails.gridy = 3;
+        detailsPanelRight.add(investedHoursDetails, gbc_investedHoursDetails);
+
+        addComponentListener(new ComponentAdapter() {
+            public void componentResized(ComponentEvent e) {
+                double halfWidth = detailsPanelMain.getWidth() / 2;
+                detailsPanelLeft.setPreferredSize(new Dimension((int) halfWidth, detailsPanelMain.getHeight()));
+                detailsPanelRight.setPreferredSize(new Dimension((int) halfWidth, detailsPanelMain.getHeight()));
+                detailsPanelMain.updateUI();
+                detailsPanelMain.repaint();
+            }
+        });
     }
 
-    public String getComboBoxPhase() {
-        return comboBoxPhase.getSelectedItem().toString();
+
+    public void setOwnerDetails(String ownerDetails) {
+        this.ownerDetails.setText(ownerDetails);
     }
 
-    public void setComboBoxPhase(String phaseName) {
-         this.comboBoxPhase.getEditor().setItem(phaseName);
+
+    public void setStoryDetails(String featureDetails) {
+        this.storyDetails.setText(featureDetails);
     }
 
-    public void setLblName(String lblName) {
-        this.lblName.setText(lblName);
+
+    public void setAuthorDetails(String severityDetails) {
+        this.authorDetails.setText(severityDetails);
     }
 
-    public void setTxtfldDescription(String txtfldDescription) {
-        this.txtfldDescription.setText(txtfldDescription);
+
+    public void setSprintDetails(String sprintDetails) {
+        this.sprintDetails.setText(sprintDetails);
     }
 
-    public void setTxtfldType(String txtfldType) {
-        this.txtfldType.setText(txtfldType);
+
+    public void setCreationTimeDetails(String creationTypeDetails) {
+        this.creationTimeDetails.setText(creationTypeDetails);
     }
 
-    public void setTxtfldAuthor(String txtfldAuthor) {
-        this.txtfldAuthor.setText(txtfldAuthor);
+
+    public void setLastModifiedDetails(String lastModifiedDetails) {
+        this.lastModifiedDetails.setText(lastModifiedDetails);
     }
 
-    public void setTxtfldOwner(String txtfldOwner) {
-        this.txtfldOwner.setText(txtfldOwner);
+
+    public void setTaskTypeDetails(String taskTypeDetails) {
+        this.taskTypeDetails.setText(taskTypeDetails);
     }
 
-    public void setTxtfldEstimatedHours(String txtfldEstimatedHours) {
-        this.txtfldEstimatedHours.setText(txtfldEstimatedHours);
+
+    public void setEstimatedHoursDetails(String estimatedHoursDetails) {
+        this.estimatedHoursDetails.setText(estimatedHoursDetails);
     }
 
-    public void setTxtfldStory(String txtfldStory) {
-        this.txtfldStory.setText(txtfldStory);
-    }
 
-    public void setTextInvestedHours(String textInvestedHours) {
-        this.textInvestedHours.setText(textInvestedHours);
+    public void setInvestedHoursDetails(String investedHoursDetails) {
+        this.investedHoursDetails.setText(investedHoursDetails);
     }
-
-    public void setTxtfldRemainingHours(String txtfldRemainingHours) {
-        this.txtfldRemainingHours.setText(txtfldRemainingHours);
-    }
-
-    public void setTxtfldCreationTime(String txtfldCreationTime) {
-        this.txtfldCreationTime.setText(txtfldCreationTime);
-    }
-
-    public void setTxtfldLastModified(String txtfldLastModified) {
-        this.txtfldLastModified.setText(txtfldLastModified);
-    }
-
 
 }

@@ -14,10 +14,10 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
     @Inject
     EntityService entityService;
 
-    public EntityDetailPresenter(){
+    public EntityDetailPresenter() {
     }
 
-    public EntityDetailView getView(){
+    public EntityDetailView getView() {
         return entityDetailView;
     }
 
@@ -27,7 +27,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
         this.entityDetailView = entityDetailView;
     }
 
-    public void setEntity(EntityModel model){
+    public void setEntity(EntityModel model) {
         entityDetailView.setEntityModel(model);
     }
 
