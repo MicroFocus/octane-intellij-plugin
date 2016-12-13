@@ -24,7 +24,7 @@ class EntityModelRow extends JPanel{
 	private JPanel panelDetailsBottom;
 	private JXLabel lblEntityRelease;
 
-    private static final EntityIconFactory ENTITY_ICON_FACTORY = new EntityIconFactory(40,40,Color.WHITE);
+    private static final EntityIconFactory ENTITY_ICON_FACTORY = new EntityIconFactory(40,40,17,Color.WHITE);
 
     public EntityModelRow() {
         initUI();

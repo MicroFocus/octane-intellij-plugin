@@ -29,10 +29,11 @@ public class EntityIconFactory {
     	init();
     }
     
-    public EntityIconFactory(int iconHeight, int iconWidth, Color fontColor){
+    public EntityIconFactory(int iconHeight, int iconWidth, int fontSize, Color fontColor){
     	this.iconHeight = iconHeight;
     	this.iconWidth = iconWidth;
     	this.fontColor = fontColor;
+        this.fontSize = fontSize;
     	init();
     }
     

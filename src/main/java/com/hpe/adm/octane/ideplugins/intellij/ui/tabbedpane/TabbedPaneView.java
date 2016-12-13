@@ -7,7 +7,6 @@ import com.intellij.ide.ui.UISettings;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.ShadowAction;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.ui.tabs.impl.JBEditorTabs;
@@ -67,7 +66,7 @@ public class TabbedPaneView implements View {
         tabInfo.setText(title);
 
         if(isClosable) {
-            addCloseActionToTab(component, tabInfo);
+            addCloseActionToTab(tabInfo);
         }
 
         editorTabs.addTab(tabInfo);
@@ -76,20 +75,18 @@ public class TabbedPaneView implements View {
         return tabInfo;
     }
 
-    private void addCloseActionToTab(JComponent component, TabInfo tabInfo){
+    private void addCloseActionToTab(TabInfo tabInfo){
         DefaultActionGroup defaultActionGroup = new DefaultActionGroup();
-        defaultActionGroup.addAction(new CloseTab(component, tabInfo));
+        defaultActionGroup.addAction(new CloseTab(tabInfo));
         tabInfo.setTabLabelActions(defaultActionGroup, TABBED_PANE_PLACE);
     }
 
     private class CloseTab extends AnAction implements DumbAware {
 
-        ShadowAction myShadow;
         private final TabInfo myTabInfo;
 
-        CloseTab(JComponent c, TabInfo info) {
+        CloseTab(TabInfo info) {
             myTabInfo = info;
-            myShadow = new ShadowAction(this, ActionManager.getInstance().getAction(IdeActions.ACTION_CLOSE), c);
         }
 
         @Override
@@ -113,11 +110,12 @@ public class TabbedPaneView implements View {
     }
 
     private void closeAllExcept(TabInfo exceptTabInfo){
-        editorTabs.getTabs().forEach(tabInfo -> {
-           if(isClosable(tabInfo) && !tabInfo.equals(exceptTabInfo)){
-               editorTabs.removeTab(tabInfo);
-           }
-        });
+        System.out.println("close clicked!");
+//        editorTabs.getTabs().forEach(tabInfo -> {
+//           if(isClosable(tabInfo) && !tabInfo.equals(exceptTabInfo)){
+//               editorTabs.removeTab(tabInfo);
+//           }
+//        });
     }
 
     private boolean isClosable(TabInfo tabInfo){
