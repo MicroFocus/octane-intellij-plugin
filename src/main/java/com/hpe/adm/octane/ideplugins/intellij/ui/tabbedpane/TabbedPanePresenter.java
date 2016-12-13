@@ -5,12 +5,12 @@ import com.google.inject.Provider;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.EntityDetailPresenter;
-import com.hpe.adm.octane.ideplugins.intellij.ui.detail.EntityDetailView;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeTablePresenter;
 import com.hpe.adm.octane.ideplugins.intellij.util.Constants;
 import com.hpe.adm.octane.ideplugins.services.EntityService;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
+import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.tabs.TabInfo;
 
 import javax.swing.*;
@@ -32,11 +32,12 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
 
     private Map<String, TabInfo> detailTabInfo = new HashMap<>();
 
-    private static EntityIconFactory entityIconFactory = new EntityIconFactory(20,20,8,Color.WHITE);
+    private static EntityIconFactory entityIconFactory = new EntityIconFactory(20,20,10,Color.WHITE);
 
-    public EntityTreeTablePresenter openMyWorkTab(String tabName) {
+    public EntityTreeTablePresenter openMyWorkTab() {
         EntityTreeTablePresenter presenter = entityTreeTablePresenterProvider.get();
-        tabbedPaneView.addTab(tabName, presenter.getView().getComponent(), false);
+        Icon myWorkIcon = IconLoader.findIcon(Constants.IMG_MYWORK);
+        tabbedPaneView.addTab(Constants.TAB_MY_WORK_TITLE, myWorkIcon , presenter.getView().getComponent(), false);
         return presenter;
     }
 
@@ -45,7 +46,7 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
         presenter.setEntity(entityModel);
 
         Entity entityType = Entity.getEntityType(entityModel);
-        String entityName = EntityDetailView.getNameForEntity(Entity.getEntityType(entityModel));
+        //String entityName = EntityDetailView.getNameForEntity(Entity.getEntityType(entityModel));
         String entityId = entityModel.getValue("id").getValue().toString();
         String tabId = entityType.name() + entityId;
 
@@ -56,7 +57,7 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
             ImageIcon tabIcon = new ImageIcon(entityIconFactory.getIconAsImage(entityType));
 
             TabInfo tabInfo = tabbedPaneView.addTab(
-                    entityName + " | " + entityId,
+                    entityId,
                     tabIcon,
                     presenter.getView().getComponent());
 
@@ -74,7 +75,9 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
         this.tabbedPaneView = tabbedPaneView;
 
         //open test entity tree view
-        EntityTreeTablePresenter presenter = openMyWorkTab(Constants.TAB_MY_WORK_TITLE);
+        EntityTreeTablePresenter presenter = openMyWorkTab();
+
+        //TODO: atoth: entity should be reloaded in the future
         presenter.addEntityDoubleClickHandler((entityType, entityId, model) -> {
             openDetailTab(model); //would still work, but it will be partially loaded in the future
 //            try {
@@ -83,5 +86,6 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
 //                ex.printStackTrace();
 //            }
         });
+
     }
 }
