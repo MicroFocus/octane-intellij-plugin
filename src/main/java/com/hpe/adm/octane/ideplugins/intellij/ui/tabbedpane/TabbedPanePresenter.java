@@ -11,9 +11,10 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeTablePresen
 import com.hpe.adm.octane.ideplugins.intellij.util.Constants;
 import com.hpe.adm.octane.ideplugins.services.EntityService;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
+import com.intellij.ui.tabs.TabInfo;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
 
@@ -23,25 +24,36 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
     EntityService entityService;
 
     @Inject
-    Provider<EntityDetailPresenter> entityDetailPresenterProvider;
+    private Provider<EntityDetailPresenter> entityDetailPresenterProvider;
     @Inject
-    Provider<EntityTreeTablePresenter> entityTreeTablePresenterProvider;
+    private Provider<EntityTreeTablePresenter> entityTreeTablePresenterProvider;
 
-    List<EntityDetailPresenter> detailPresenters = new ArrayList<>();
-    List<EntityTreeTablePresenter> treeTablePresenters = new ArrayList<>();
+    private Map<String, TabInfo> detailTabInfo = new HashMap<>();
 
     public EntityTreeTablePresenter openMyWorkTab(String tabName) {
         EntityTreeTablePresenter presenter = entityTreeTablePresenterProvider.get();
-        treeTablePresenters.add(presenter);
-        tabbedPaneView.addTabNoExit(tabName, presenter.getView().getComponent());
+        tabbedPaneView.addTab(tabName, presenter.getView().getComponent(), false);
         return presenter;
     }
 
+    /**
+     * Model needs to have the logical name defined
+     * @param entityModel
+     */
     public void openDetailTab(EntityModel entityModel) {
         EntityDetailPresenter presenter = entityDetailPresenterProvider.get();
-        detailPresenters.add(presenter);
         presenter.setEntity(entityModel);
-        tabbedPaneView.addTab(EntityDetailView.getNameForEntity(Entity.getEntityType(entityModel)) + " | " + entityModel.getValue("id").getValue().toString(), presenter.getView().getComponent());
+
+        String entityName = EntityDetailView.getNameForEntity(Entity.getEntityType(entityModel));
+        String entityId = entityModel.getValue("id").getValue().toString();
+        String tabId = Entity.getEntityType(entityModel).name() + entityId;
+
+        if(detailTabInfo.containsKey(tabId) && tabbedPaneView.hasTabWithTabInfo(detailTabInfo.get(tabId))){
+            tabbedPaneView.selectTabWithTabInfo(detailTabInfo.get(tabId), false);
+        } else {
+            TabInfo tabInfo = tabbedPaneView.addTab(entityName + " | " + entityId, presenter.getView().getComponent());
+            detailTabInfo.put(tabId, tabInfo);
+        }
     }
 
     public TabbedPaneView getView() {
@@ -64,16 +76,5 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
             }
         });
 
-        try {
-            openDetailTab(entityService.findEntity(Entity.USER_STORY, Long.valueOf(159001)));
-            openDetailTab(entityService.findEntity(Entity.TASK, Long.valueOf(52003)));
-            openDetailTab(entityService.findEntity(Entity.TEST, Long.valueOf(231018)));
-            openDetailTab(entityService.findEntity(Entity.DEFECT, Long.valueOf(163015)));
-        } catch (ServiceException e) {
-            e.printStackTrace();
-        }
-
     }
-
-
 }
