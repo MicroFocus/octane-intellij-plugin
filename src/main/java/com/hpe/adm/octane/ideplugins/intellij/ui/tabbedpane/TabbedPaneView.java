@@ -68,13 +68,6 @@ public class TabbedPaneView implements View {
         return tabInfo;
     }
 
-    public TabInfo addEmptyTab(JComponent component) {
-        TabInfo tabInfo = new TabInfo(component);
-        tabInfo.setText(" ");
-        editorTabs.addTab(tabInfo);
-        editorTabs.select(tabInfo, false);
-        return tabInfo;
-    }
     private void addCloseActionToTab(TabInfo tabInfo){
         DefaultActionGroup defaultActionGroup = new DefaultActionGroup();
         defaultActionGroup.addAction(new CloseTab(tabInfo));
