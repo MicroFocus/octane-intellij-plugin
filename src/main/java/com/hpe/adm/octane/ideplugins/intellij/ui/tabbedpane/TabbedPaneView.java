@@ -33,41 +33,12 @@ public class TabbedPaneView implements View {
         Project project = DataKeys.PROJECT.getData(dataContext);
         editorTabs = new JBEditorTabs(project, ActionManager.getInstance(), IdeFocusManager.getGlobalInstance(), () -> {});
         editorTabs.setTabDraggingEnabled(true);
+        setTabsContextMenu(editorTabs);
 
         rootPanel.add(editorTabs.getComponent(), BorderLayout.CENTER);
     }
 
-    @Override
-    public JComponent getComponent() {
-        return editorTabs.getComponent();
-    }
-
-
-    public TabInfo addTab(String title, String tooltip, Icon icon, JComponent component) {
-        return addTab(title, tooltip, icon, component, true);
-    }
-
-    public TabInfo addTab(String title, String tooltip, Icon icon, JComponent component, boolean isClosable) {
-        TabInfo tabInfo = new TabInfo(component);
-
-        if(icon != null) {
-            tabInfo.setIcon(icon);
-        }
-        if(tooltip != null){
-            tabInfo.setTooltipText(tooltip);
-        }
-
-        tabInfo.setText(title);
-
-        //tabInfo.
-
-        if(isClosable) {
-            addCloseActionToTab(tabInfo);
-        }
-
-        editorTabs.addTab(tabInfo);
-        editorTabs.select(tabInfo, false);
-
+    private void setTabsContextMenu(JBEditorTabs editorTabs){
         DefaultActionGroup contextMenuActionGroup = new DefaultActionGroup();
         contextMenuActionGroup.addAction(new AnAction() {
             @Override
@@ -103,10 +74,38 @@ public class TabbedPaneView implements View {
                 closeAll();
             }
         });
-
-
         editorTabs.setPopupGroup(contextMenuActionGroup, TABBED_PANE_PLACE, true);
+    }
 
+    @Override
+    public JComponent getComponent() {
+        return editorTabs.getComponent();
+    }
+
+
+    public TabInfo addTab(String title, String tooltip, Icon icon, JComponent component) {
+        return addTab(title, tooltip, icon, component, true);
+    }
+
+    public TabInfo addTab(String title, String tooltip, Icon icon, JComponent component, boolean isClosable) {
+        TabInfo tabInfo = new TabInfo(component);
+
+        if(icon != null) {
+            tabInfo.setIcon(icon);
+        }
+        if(tooltip != null){
+            tabInfo.setTooltipText(tooltip);
+        }
+
+        tabInfo.setText(title);
+
+        //tabInfo.
+
+        if(isClosable) {
+            addCloseActionToTab(tabInfo);
+        }
+
+        editorTabs.addTab(tabInfo);
         return tabInfo;
     }
 

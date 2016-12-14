@@ -54,7 +54,6 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
         if(detailTabInfo.containsKey(tabId) && tabbedPaneView.hasTabWithTabInfo(detailTabInfo.get(tabId))){
             tabbedPaneView.selectTabWithTabInfo(detailTabInfo.get(tabId), false);
         } else {
-
             ImageIcon tabIcon = new ImageIcon(entityIconFactory.getIconAsImage(entityType));
 
             TabInfo tabInfo = tabbedPaneView.addTab(
@@ -62,6 +61,8 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
                     entityName,
                     tabIcon,
                     presenter.getView().getComponent());
+
+            tabbedPaneView.selectTabWithTabInfo(tabInfo, false);
 
             detailTabInfo.put(tabId, tabInfo);
         }
