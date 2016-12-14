@@ -8,9 +8,9 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.nowork.NoWorkPanel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
 import com.hpe.adm.octane.ideplugins.intellij.util.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
-import com.hpe.adm.octane.ideplugins.services.DownloadScriptService;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
+import com.hpe.adm.octane.ideplugins.services.nonentity.DownloadScriptService;
 import com.hpe.adm.octane.ideplugins.services.util.UrlParser;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.DataManager;
@@ -150,7 +150,7 @@ public class EntityTreeView implements View {
     }
 
     private void downloadScriptForGherkinTest(EntityModel gherkinTest) {
-		DataContext dataContext = DataManager.getInstance().getDataContext();
+        DataContext dataContext = DataManager.getInstance().getDataContext();
         Project project = DataKeys.PROJECT.getData(dataContext);
 
         VirtualFile selectedFolder = chooseScriptFolder(project);
