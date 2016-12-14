@@ -59,12 +59,52 @@ public class TabbedPaneView implements View {
 
         tabInfo.setText(title);
 
+        //tabInfo.
+
         if(isClosable) {
             addCloseActionToTab(tabInfo);
         }
 
         editorTabs.addTab(tabInfo);
         editorTabs.select(tabInfo, false);
+
+        DefaultActionGroup contextMenuActionGroup = new DefaultActionGroup();
+        contextMenuActionGroup.addAction(new AnAction() {
+            @Override
+            public void update(final AnActionEvent e) {
+                e.getPresentation().setText("Close");
+            }
+
+            @Override
+            public void actionPerformed(AnActionEvent e) {
+                if(isClosable(editorTabs.getTargetInfo())){
+                    editorTabs.removeTab(editorTabs.getTargetInfo());
+                }
+            }
+        });
+        contextMenuActionGroup.addAction(new AnAction() {
+            @Override
+            public void update(final AnActionEvent e) {
+                e.getPresentation().setText("Close Others");
+            }
+
+            @Override
+            public void actionPerformed(AnActionEvent e) {
+                closeAllExcept(editorTabs.getTargetInfo());
+            }
+        });
+        contextMenuActionGroup.addAction(new AnAction() {
+            @Override
+            public void update(final AnActionEvent e) {
+                e.getPresentation().setText("Close All");
+            }
+
+            @Override
+            public void actionPerformed(AnActionEvent e) {
+                closeAll();
+            }
+        });
+        editorTabs.setPopupGroup(contextMenuActionGroup, TABBED_PANE_PLACE, true);
 
         return tabInfo;
     }
@@ -101,6 +141,10 @@ public class TabbedPaneView implements View {
                 }
             }
         }
+    }
+
+    private void closeAll(){
+        closeAllExcept(null);
     }
 
     private void closeAllExcept(TabInfo exceptTabInfo){
