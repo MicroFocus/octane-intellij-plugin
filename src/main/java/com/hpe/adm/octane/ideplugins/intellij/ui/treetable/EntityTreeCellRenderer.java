@@ -5,6 +5,7 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.intellij.ui.JBColor;
 import org.apache.commons.lang.StringUtils;
+import org.jdesktop.swingx.JXLabel;
 
 import javax.swing.*;
 import javax.swing.tree.TreeCellRenderer;
@@ -28,8 +29,9 @@ class EntityTreeCellRenderer implements TreeCellRenderer {
             int count = model.getChildCount(value);
             String labelText = category.getName() + " (" + count + ")";
 
-            JLabel lbl = new JLabel(labelText);
-            lbl.setPreferredSize(new Dimension(200,25));
+            JXLabel lbl = new JXLabel(labelText);
+            Font font = new Font(lbl.getFont().getFontName(), Font.BOLD, lbl.getFont().getSize() + 4);
+            lbl.setFont(font);
             if(selected && hasFocus) {
                 lbl.setForeground(new Color(255,255,255));
             }

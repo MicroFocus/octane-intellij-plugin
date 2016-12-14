@@ -257,10 +257,13 @@ class FillingTree extends JTree {
         }
 
         private boolean shouldPaintLines() {
-            if (UIUtil.isUnderAquaBasedLookAndFeel() || UIUtil.isUnderDarcula() || UIUtil.isUnderIntelliJLaF()) {
-                return false;
-            }
-            return myForceDontPaintLines || !"None".equals(tree.getClientProperty("JTree.lineStyle"));
+//          if (UIUtil.isUnderAquaBasedLookAndFeel() || UIUtil.isUnderDarcula() || UIUtil.isUnderIntelliJLaF()) {
+//              return false;
+//          }
+//          return myForceDontPaintLines || !"None".equals(tree.getClientProperty("JTree.lineStyle"));
+
+            //never paint the lines
+            return false;
         }
 
         @Override

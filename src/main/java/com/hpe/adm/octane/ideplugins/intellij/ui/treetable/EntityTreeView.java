@@ -82,6 +82,8 @@ public class EntityTreeView implements View {
         rootPanel.add(createToolbar(), BorderLayout.EAST);
 
         tree.addMouseListener(createTreeContextMenu());
+
+        tree.setRowHeight(50);
     }
 
     public void addEntityKeyHandler(TreeViewKeyHandler handler) {
