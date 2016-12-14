@@ -335,12 +335,4 @@ public class EntityTreeView implements View {
         }
     }
 
-    public interface EntityDoubleClickHandler {
-        void entityDoubleClicked(Entity entityType, Long entityId, EntityModel model);
-    }
-
-    public interface TreeViewKeyHandler {
-        void keyPressed(KeyEvent event, Entity selectedEntityType, Long selectedEntityId, EntityModel model);
-    }
-
 }
