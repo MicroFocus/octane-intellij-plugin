@@ -31,6 +31,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -80,6 +81,7 @@ public class EntityTreeView implements View {
         rootPanel.add(createToolbar(), BorderLayout.EAST);
 
         tree.addMouseListener(createTreeContextMenu());
+        tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
     }
 
     public void addEntityDoubleClickHandler(EntityDoubleClickHandler handler) {
