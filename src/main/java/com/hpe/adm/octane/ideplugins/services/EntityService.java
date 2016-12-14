@@ -1,6 +1,7 @@
 package com.hpe.adm.octane.ideplugins.services;
 
 import com.hpe.adm.nga.sdk.EntityList;
+import com.hpe.adm.nga.sdk.EntityListService;
 import com.hpe.adm.nga.sdk.Query;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
@@ -12,7 +13,12 @@ import java.util.*;
 
 public class EntityService extends ServiceBase {
 
-    public Collection<EntityModel> getMyWork() {
+    /**
+     * Can specify which fields to fetch for which entity
+     * @param fieldListMap if there is no entry for an entity type all fields are fetched
+     * @return
+     */
+    public Collection<EntityModel> getMyWork(Map<Entity, List<String>> fieldListMap) {
 
         Map<Entity, Query.QueryBuilder> myWorkFilter = new HashMap<>();
 
@@ -32,7 +38,7 @@ public class EntityService extends ServiceBase {
         //TODO, known subtypes should be under same rest call
         myWorkFilter.keySet().forEach(entityType -> {
                     Query.QueryBuilder query = myWorkFilter.get(entityType).and(currentUserQuery);
-                    result.addAll(findEntities(entityType, query));
+                    result.addAll(findEntities(entityType, query, fieldListMap.get(entityType)));
                 }
         );
 
@@ -95,7 +101,7 @@ public class EntityService extends ServiceBase {
         }
     }
 
-    public Collection<EntityModel> findEntities(Entity entity, Query.QueryBuilder query) {
+    public Collection<EntityModel> findEntities(Entity entity, Query.QueryBuilder query, List<String> fields) {
         EntityList entityList = getOctane().entityList(entity.getApiEntityName());
 
         Query.QueryBuilder queryBuilder = null;
@@ -112,11 +118,16 @@ public class EntityService extends ServiceBase {
             }
         }
 
+        EntityListService.Get getRequest = entityList.get();
         if (queryBuilder != null) {
-            return entityList.get().query(queryBuilder.build()).addOrderBy("id", true).execute();
-        } else {
-            return entityList.get().execute();
+            getRequest = getRequest.query(queryBuilder.build());
         }
+        if(fields != null && fields.size() !=0){
+            getRequest = getRequest.addFields(fields.toArray(new String[]{}));
+        }
+        getRequest.addOrderBy("id", true);
+
+        return getRequest.execute();
     }
 
     /**

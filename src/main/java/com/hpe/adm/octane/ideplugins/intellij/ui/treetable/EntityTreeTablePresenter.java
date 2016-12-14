@@ -12,6 +12,7 @@ import com.intellij.openapi.util.IconLoader;
 
 import javax.swing.*;
 import java.util.Collection;
+import java.util.HashMap;
 
 public class EntityTreeTablePresenter implements Presenter<EntityTreeView>{
 
@@ -35,7 +36,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView>{
             protected Void doInBackground() throws Exception {
                 try {
                     entityTreeTableView.setLoading(true);
-                    Collection<EntityModel> myWork = entityService.getMyWork();
+                    Collection<EntityModel> myWork = entityService.getMyWork(new HashMap<>());
                     SwingUtilities.invokeLater(() -> {
                         entityTreeTableView.setTreeModel(new EntityTreeModel(myWork));
                         entityTreeTableView.expandAllNodes();
