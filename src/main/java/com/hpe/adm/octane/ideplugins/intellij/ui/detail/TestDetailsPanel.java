@@ -244,15 +244,18 @@ public class TestDetailsPanel extends JXPanel {
 
         addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent e) {
-                double halfWidth = detailsPanelMain.getWidth() / 2;
-                detailsPanelLeft.setPreferredSize(new Dimension((int) halfWidth, detailsPanelMain.getHeight()));
-                detailsPanelRight.setPreferredSize(new Dimension((int) halfWidth, detailsPanelMain.getHeight()));
-                detailsPanelMain.updateUI();
-                detailsPanelMain.repaint();
+                int halfWidth = detailsPanelMain.getWidth() / 2;
+                int height = detailsPanelMain.getHeight();
+
+                if(halfWidth!=0 && height!=0) {
+                    detailsPanelLeft.setPreferredSize(new Dimension((int) halfWidth, detailsPanelMain.getHeight()));
+                    detailsPanelRight.setPreferredSize(new Dimension((int) halfWidth, detailsPanelMain.getHeight()));
+                    detailsPanelMain.updateUI();
+                    detailsPanelMain.repaint();
+                }
             }
         });
     }
-
 
     public void setTestTypeDetails(String testTypeDetails) {
         this.testTypeDetails.setText(testTypeDetails);

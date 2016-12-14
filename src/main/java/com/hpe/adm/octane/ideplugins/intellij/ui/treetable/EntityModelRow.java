@@ -114,7 +114,7 @@ class EntityModelRow extends JPanel{
 	}
 	
 	public void setEntityName(String id, String name){
-        lblEntityName.setText("<html><body><b>"+id+":</b>&nbsp;" + name + "</body><html>");
+        lblEntityName.setText("<html><body><b>"+id+"</b>&nbsp;" + name + "</body><html>");
 	}
 	
 	public void setEntityDetails(String details, String defaultText){
