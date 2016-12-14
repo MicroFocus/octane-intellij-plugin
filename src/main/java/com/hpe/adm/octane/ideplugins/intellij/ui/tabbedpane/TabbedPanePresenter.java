@@ -15,6 +15,7 @@ import com.intellij.ui.tabs.TabInfo;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -86,6 +87,13 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
 //            } catch (ServiceException ex){
 //                ex.printStackTrace();
 //            }
+        });
+
+        //TODO: atoth: entity should be reloaded in the future
+        presenter.addEntityKeyHandler((event, selectedEntityType, selectedEntityId, model) -> {
+            if (event.getKeyCode()==KeyEvent.VK_ENTER){
+                openDetailTab(model);  //would still work, but it will be partially loaded in the future
+            }
         });
 
     }

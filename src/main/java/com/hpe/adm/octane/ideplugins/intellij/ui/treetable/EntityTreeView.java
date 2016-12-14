@@ -32,9 +32,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import javax.swing.tree.TreePath;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 import java.io.*;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
@@ -45,6 +43,10 @@ public class EntityTreeView implements View {
 
     public interface EntityDoubleClickHandler {
         void entityDoubleClicked(Entity entityType, Long entityId, EntityModel model);
+    }
+
+    public interface TreeViewKeyHandler {
+        void keyPressed(KeyEvent event, Entity selectedEntityType, Long selectedEntityId, EntityModel model);
     }
 
     private JPanel rootPanel;
@@ -82,6 +84,27 @@ public class EntityTreeView implements View {
         tree.addMouseListener(createTreeContextMenu());
     }
 
+    public void addEntityKeyHandler(TreeViewKeyHandler handler) {
+        tree.addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent e) {
+                if (tree.getSelectionCount() == 1) {
+                    TreePath selPath = tree.getSelectionPath();
+                    Object object = selPath.getLastPathComponent();
+                    if (object instanceof EntityModel) {
+                        try {
+                            EntityModel entityModel = (EntityModel) object;
+                            Entity entityType = Entity.getEntityType(entityModel);
+                            Long entityId = Long.parseLong(entityModel.getValue("id").getValue().toString());
+                            handler.keyPressed(e, entityType, entityId, entityModel);
+                        } catch (Exception ex) {
+                            //TODO: logger and error bubble
+                        }
+                    }
+                }
+            }
+        });
+    }
+
     public void addEntityDoubleClickHandler(EntityDoubleClickHandler handler) {
         tree.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
@@ -97,7 +120,7 @@ public class EntityTreeView implements View {
                                 Long entityId = Long.parseLong(entityModel.getValue("id").getValue().toString());
                                 handler.entityDoubleClicked(entityType, entityId, entityModel);
                             } catch (Exception ex) {
-                                System.out.print(ex);
+                                //TODO: logger and error bubble
                             }
                         }
                     }
@@ -309,6 +332,5 @@ public class EntityTreeView implements View {
     public EntityTreeModel getTreeModel() {
         return (EntityTreeModel) tree.getModel();
     }
-
 
 }

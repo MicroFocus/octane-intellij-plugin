@@ -74,7 +74,6 @@ public class TabbedPaneView implements View {
             public void update(final AnActionEvent e) {
                 e.getPresentation().setText("Close");
             }
-
             @Override
             public void actionPerformed(AnActionEvent e) {
                 if(isClosable(editorTabs.getTargetInfo())){
@@ -104,6 +103,8 @@ public class TabbedPaneView implements View {
                 closeAll();
             }
         });
+
+
         editorTabs.setPopupGroup(contextMenuActionGroup, TABBED_PANE_PLACE, true);
 
         return tabInfo;
@@ -133,6 +134,7 @@ public class TabbedPaneView implements View {
 
         @Override
         public void actionPerformed(final AnActionEvent e) {
+            System.out.println("Close action performed: " + myTabInfo.getText());
             if (BitUtil.isSet(e.getModifiers(), InputEvent.ALT_MASK)) {
                 closeAllExcept(myTabInfo);
             } else {
