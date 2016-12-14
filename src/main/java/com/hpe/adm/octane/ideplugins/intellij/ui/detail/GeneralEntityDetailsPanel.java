@@ -27,7 +27,7 @@ public class GeneralEntityDetailsPanel extends JPanel {
 
     public GeneralEntityDetailsPanel(EntityModel entityModel) {
         setBorder(null);
-        setBounds(100, 100, 900, 430);
+        setBounds(100, 100, 900, 350);
         GridBagLayout gridBagLayout = new GridBagLayout();
         gridBagLayout.columnWidths = new int[]{0, 0};
         gridBagLayout.rowHeights = new int[]{0, 0};
@@ -45,9 +45,9 @@ public class GeneralEntityDetailsPanel extends JPanel {
         add(rootPanel, gbc_rootPanel);
         GridBagLayout gbl_rootPanel = new GridBagLayout();
         gbl_rootPanel.columnWidths = new int[]{0, 0};
-        gbl_rootPanel.rowHeights = new int[]{0, 0, 0, 0, 0};
+        gbl_rootPanel.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0};
         gbl_rootPanel.columnWeights = new double[]{1.0, Double.MIN_VALUE};
-        gbl_rootPanel.rowWeights = new double[]{0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE};
+        gbl_rootPanel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
         rootPanel.setLayout(gbl_rootPanel);
 
         headerPanel = new HeaderPanel();
@@ -71,7 +71,7 @@ public class GeneralEntityDetailsPanel extends JPanel {
         gbl_descriptionPanel.columnWidths = new int[]{0, 0};
         gbl_descriptionPanel.rowHeights = new int[]{0, 0, 0};
         gbl_descriptionPanel.columnWeights = new double[]{1.0, Double.MIN_VALUE};
-        gbl_descriptionPanel.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
+        gbl_descriptionPanel.rowWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
         descriptionPanel.setLayout(gbl_descriptionPanel);
 
         JXLabel lblDescription = new JXLabel();
@@ -109,9 +109,10 @@ public class GeneralEntityDetailsPanel extends JPanel {
         JXPanel atachementsPanel = new JXPanel();
         atachementsPanel.setBorder(new MatteBorder(1, 0, 0, 0, JBColor.border()));
         GridBagConstraints gbc_atachementsPanel = new GridBagConstraints();
-        gbc_atachementsPanel.fill = GridBagConstraints.BOTH;
+        gbc_atachementsPanel.anchor = GridBagConstraints.SOUTH;
+        gbc_atachementsPanel.fill = GridBagConstraints.HORIZONTAL;
         gbc_atachementsPanel.gridx = 0;
-        gbc_atachementsPanel.gridy = 3;
+        gbc_atachementsPanel.gridy = 5;
         rootPanel.add(atachementsPanel, gbc_atachementsPanel);
         GridBagLayout gbl_atachementsPanel = new GridBagLayout();
         gbl_atachementsPanel.columnWidths = new int[]{0, 0, 0};
@@ -164,28 +165,28 @@ public class GeneralEntityDetailsPanel extends JPanel {
         switch (Entity.getEntityType(entityModel)) {
             case DEFECT:
                 headerPanel.setEntityIcon(new ImageIcon(TaskDetailsPanel.class.getResource("/images/defectIcon.png")));
-                hasAttachment = false;
+                hasAttachment = true;
                 ret = updateUiWithDefectDetails(entityModel);
                 break;
             case GHERKIN_TEST:
                 headerPanel.setEntityIcon(new ImageIcon(TaskDetailsPanel.class.getResource("/images/gerkinTestIcon.png")));
-                hasAttachment = false;
+                hasAttachment = true;
                 ret = updateUiWithTestsDetails(entityModel);
                 break;
             case MANUAL_TEST:
                 headerPanel.setEntityIcon(new ImageIcon(TaskDetailsPanel.class.getResource("/images/manualTestIcon.png")));
-                hasAttachment = false;
+                hasAttachment = true;
                 ret = updateUiWithTestsDetails(entityModel);
                 break;
             case USER_STORY:
                 headerPanel.setEntityIcon(new ImageIcon(TaskDetailsPanel.class.getResource("/images/userStoryIcon.png")));
-                hasAttachment = false;
+                hasAttachment = true;
                 ret = updateUiWithUserStoryDetails(entityModel);
                 break;
             case TASK:
                 headerPanel.setEntityIcon(new ImageIcon(TaskDetailsPanel.class.getResource("/images/taskIcon.png")));
                 ret = updateUiWithTaskDetails(entityModel);
-                hasAttachment = false;
+                hasAttachment = true;
                 break;
         }
         return ret;
