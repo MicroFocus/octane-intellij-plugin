@@ -107,4 +107,8 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView>{
     public void addEntityDoubleClickHandler(EntityTreeView.EntityDoubleClickHandler handler) {
         getView().addEntityDoubleClickHandler(handler);
     }
+
+    public void addEntityKeyHandler(EntityTreeView.TreeViewKeyHandler handler) {
+        getView().addEntityKeyHandler(handler);
+    }
 }

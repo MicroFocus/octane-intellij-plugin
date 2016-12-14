@@ -15,6 +15,7 @@ import com.intellij.ui.tabs.TabInfo;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -53,7 +54,6 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
         if(detailTabInfo.containsKey(tabId) && tabbedPaneView.hasTabWithTabInfo(detailTabInfo.get(tabId))){
             tabbedPaneView.selectTabWithTabInfo(detailTabInfo.get(tabId), false);
         } else {
-
             ImageIcon tabIcon = new ImageIcon(entityIconFactory.getIconAsImage(entityType));
 
             TabInfo tabInfo = tabbedPaneView.addTab(
@@ -61,6 +61,8 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
                     entityName,
                     tabIcon,
                     presenter.getView().getComponent());
+
+            tabbedPaneView.selectTabWithTabInfo(tabInfo, false);
 
             detailTabInfo.put(tabId, tabInfo);
         }
@@ -86,6 +88,13 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
 //            } catch (ServiceException ex){
 //                ex.printStackTrace();
 //            }
+        });
+
+        //TODO: atoth: entity should be reloaded in the future
+        presenter.addEntityKeyHandler((event, selectedEntityType, selectedEntityId, model) -> {
+            if (event.getKeyCode()==KeyEvent.VK_ENTER){
+                openDetailTab(model);  //would still work, but it will be partially loaded in the future
+            }
         });
 
     }
