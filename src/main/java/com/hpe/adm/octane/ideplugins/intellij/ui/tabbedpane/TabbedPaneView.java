@@ -9,8 +9,11 @@ import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.tabs.TabInfo;
+import com.intellij.ui.tabs.TabsUtil;
+import com.intellij.ui.tabs.UiDecorator;
 import com.intellij.ui.tabs.impl.JBEditorTabs;
 import com.intellij.util.BitUtil;
+import com.intellij.util.ui.TimedDeadzone;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,7 +21,7 @@ import java.awt.event.InputEvent;
 
 public class TabbedPaneView implements View {
 
-    private static final String TABBED_PANE_PLACE = "Octane plugin tabbed pane";
+    private static final String TABBED_PANE_PLACE = "OctaneTabbedPane";
 
     private final JPanel rootPanel;
     private JBEditorTabs editorTabs;
@@ -32,7 +35,16 @@ public class TabbedPaneView implements View {
         DataContext dataContext = DataManager.getInstance().getDataContext();
         Project project = DataKeys.PROJECT.getData(dataContext);
         editorTabs = new JBEditorTabs(project, ActionManager.getInstance(), IdeFocusManager.getGlobalInstance(), () -> {});
-        editorTabs.setTabDraggingEnabled(true);
+
+        //Edit presentation
+        editorTabs
+                .setTabDraggingEnabled(true)
+                .setUiDecorator(
+                () -> new UiDecorator.UiDecoration(null, new Insets(TabsUtil.TAB_VERTICAL_PADDING, 8, TabsUtil.TAB_VERTICAL_PADDING, 8)))
+                .setTabLabelActionsMouseDeadzone(TimedDeadzone.NULL)
+                .setGhostsAlwaysVisible(true)
+                .setTabLabelActionsAutoHide(false);
+
         setTabsContextMenu(editorTabs);
 
         rootPanel.add(editorTabs.getComponent(), BorderLayout.CENTER);
@@ -133,7 +145,6 @@ public class TabbedPaneView implements View {
 
         @Override
         public void actionPerformed(final AnActionEvent e) {
-            System.out.println("Close action performed: " + myTabInfo.getText());
             if (BitUtil.isSet(e.getModifiers(), InputEvent.ALT_MASK)) {
                 closeAllExcept(myTabInfo);
             } else {
