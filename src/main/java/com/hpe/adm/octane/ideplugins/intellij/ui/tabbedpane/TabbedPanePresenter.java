@@ -38,20 +38,18 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
         return presenter;
     }
 
-    public void openDetailTab(Entity entityType, Long entityId) {
+    public void openDetailTab(Entity entityType, Long entityId, String entityName) {
         EntityDetailPresenter presenter = entityDetailPresenterProvider.get();
         presenter.setEntity(entityType, entityId);
-//        String entityName = entityModel.getValue("name").getValue().toString();
         String tabId = entityType.name() + entityId;
         ImageIcon tabIcon = new ImageIcon(entityIconFactory.getIconAsImage(entityType));
 
         TabInfo tabInfo = tabbedPaneView.addTab(
                 String.valueOf(entityId),
-                "details",
+                entityName,
                 tabIcon,
                 presenter.getView().getComponent());
-        
-        tabbedPaneView.selectTabWithTabInfo(tabInfo, false);
+
         detailTabInfo.put(tabId, tabInfo);
     }
 
@@ -66,25 +64,46 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
 
         //open test entity tree view
         EntityTreeTablePresenter presenter = openMyWorkTab();
+        initHandlers(presenter);
+    }
 
-        //TODO: atoth: entity should be reloaded in the future
-        presenter.addEntityDoubleClickHandler((entityType, entityId, model) -> {
+    private void initHandlers(EntityTreeTablePresenter presenter){
+        presenter.addEntityClickHandler((mouseEvent, entityType, entityId, model) -> {
+
+            //Need the name for the tab tooltip
+            String entityName = model.getValue("name").getValue().toString();
             String tabId = entityType.name() + entityId;
-            if (detailTabInfo.containsKey(tabId) && tabbedPaneView.hasTabWithTabInfo(detailTabInfo.get(tabId))) {
-                tabbedPaneView.selectTabWithTabInfo(detailTabInfo.get(tabId), false);
-            } else {
-                openDetailTab(entityType, entityId);
+
+            //double click
+            if(SwingUtilities.isLeftMouseButton(mouseEvent) && mouseEvent.getClickCount() == 2){
+                if (detailTabInfo.containsKey(tabId) && tabbedPaneView.hasTabWithTabInfo(detailTabInfo.get(tabId))) {
+                    tabbedPaneView.selectTabWithTabInfo(detailTabInfo.get(tabId), false);
+                } else {
+                    openDetailTab(entityType, entityId, entityName);
+                    tabbedPaneView.selectTabWithTabInfo(detailTabInfo.get(tabId), false);
+                }
             }
-
+            //Middle click
+            else if(SwingUtilities.isMiddleMouseButton(mouseEvent)){
+                if (!detailTabInfo.containsKey(tabId) && !tabbedPaneView.hasTabWithTabInfo(detailTabInfo.get(tabId))) {
+                    openDetailTab(entityType, entityId, entityName);
+                }
+            }
         });
-
-        //TODO: atoth: entity should be reloaded in the future
         presenter.addEntityKeyHandler((event, selectedEntityType, selectedEntityId, model) -> {
             if (event.getKeyCode() == KeyEvent.VK_ENTER) {
-                openDetailTab(selectedEntityType, selectedEntityId);  //would still work, but it will be partially loaded in the future
+                //Need the name for the tab tooltip
+                String entityName = model.getValue("name").getValue().toString();
+                String tabId = selectedEntityType.name() + selectedEntityId;
+
+                if (detailTabInfo.containsKey(tabId) && tabbedPaneView.hasTabWithTabInfo(detailTabInfo.get(tabId))) {
+                    tabbedPaneView.selectTabWithTabInfo(detailTabInfo.get(tabId), false);
+                } else {
+                    openDetailTab(selectedEntityType, selectedEntityId, entityName);
+                    tabbedPaneView.selectTabWithTabInfo(detailTabInfo.get(tabId), false);
+                }
             }
         });
-
     }
 }
 
