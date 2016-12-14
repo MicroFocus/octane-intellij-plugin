@@ -62,28 +62,34 @@ public class EntityTreeView implements View {
 
     public EntityTreeView() {
 
-        tree = new FillingTree();
+        scrollPane = new JBScrollPane();
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
+        scrollPane.setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_NEVER);
+
+        tree = initTree();
+
+        //Add it to the root panel
+        rootPanel = new JPanel(new BorderLayout(0, 0));
+        rootPanel.add(scrollPane, BorderLayout.CENTER);
+
+        scrollPane.setViewportView(tree);
+
+        //Toolbar
+        rootPanel.add(createToolbar(), BorderLayout.EAST);
+    }
+
+    private FillingTree initTree(){
+        FillingTree tree = new FillingTree();
         //Init with an empty model
         tree.setModel(new EntityTreeModel());
 
         tree.setRootVisible(false);
         tree.setCellRenderer(new EntityTreeCellRenderer());
 
-        //Add it to the root panel
-        rootPanel = new JPanel(new BorderLayout(0, 0));
-        scrollPane = new JBScrollPane();
-        scrollPane.setBorder(BorderFactory.createEmptyBorder());
-        scrollPane.setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_NEVER);
-
-        rootPanel.add(scrollPane, BorderLayout.CENTER);
-        scrollPane.setViewportView(tree);
-
-        //Toolbar
-        rootPanel.add(createToolbar(), BorderLayout.EAST);
-
         tree.addMouseListener(createTreeContextMenu());
-
         tree.setRowHeight(50);
+
+        return tree;
     }
 
     public void addEntityKeyHandler(TreeViewKeyHandler handler) {
@@ -324,7 +330,7 @@ public class EntityTreeView implements View {
 
         if (model.size() == 0) {
             scrollPane.setViewportView(new NoWorkPanel());
-        } else if (scrollPane.getViewport().getView() != tree) {
+        } else {
             scrollPane.setViewportView(tree);
         }
     }
