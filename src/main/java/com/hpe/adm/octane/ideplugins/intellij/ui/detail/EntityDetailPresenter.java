@@ -1,17 +1,20 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
 import com.google.inject.Inject;
-import com.google.protobuf.ServiceException;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
 import com.hpe.adm.octane.ideplugins.services.EntityService;
+import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
+
+import javax.swing.*;
+import java.util.List;
 
 public class EntityDetailPresenter implements Presenter<EntityDetailView> {
 
-    EntityDetailView entityDetailView;
-    EntityModel entityModel;
+    private EntityDetailView entityDetailView;
     @Inject
+    private
     EntityService entityService;
 
     public EntityDetailPresenter() {
@@ -27,18 +30,33 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
         this.entityDetailView = entityDetailView;
     }
 
-    public void setEntity(EntityModel model) {
-        entityDetailView.setEntityModel(model);
+    public void setEntity(Entity entityType, Long entityId) {
+
+        SwingWorker<Void, EntityModel> worker = new SwingWorker<Void, EntityModel>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                EntityModel entityModel = null;
+                try {
+                    try {
+                        entityModel = entityService.findEntity(entityType, entityId);
+                        Thread.sleep(1000);
+                    } catch (ServiceException e) {
+                        e.printStackTrace();
+                    }
+                    publish(entityModel);
+                    return null;
+                } catch (Exception ex) {
+                    throw ex;
+                }
+            }
+
+            @Override
+            protected void process(List<EntityModel> chunks) {
+                entityDetailView.setEntityModel(chunks.get(0));
+            }
+
+        };
+        worker.execute();
     }
 
-    public void setEntity(Long entityId, Entity entityType) {
-        EntityModel entityModel = null;
-        try {
-            entityModel = entityService.findEntity(entityType, entityId);
-        } catch (ServiceException e) {
-            e.printStackTrace();
-        }
-        this.setEntity(entityModel);
-
-    }
 }

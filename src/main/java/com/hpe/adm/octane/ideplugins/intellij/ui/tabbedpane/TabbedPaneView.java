@@ -28,7 +28,6 @@ public class TabbedPaneView implements View {
         rootPanel.setLayout(new BorderLayout(0, 0));
 
         //Init tabbed pane
-        @SuppressWarnings("deprecation")
         DataContext dataContext = DataManager.getInstance().getDataContext();
         Project project = DataKeys.PROJECT.getData(dataContext);
         editorTabs = new JBEditorTabs(project, ActionManager.getInstance(), IdeFocusManager.getGlobalInstance(), () -> {});
@@ -69,38 +68,17 @@ public class TabbedPaneView implements View {
         return tabInfo;
     }
 
+    public TabInfo addEmptyTab(JComponent component) {
+        TabInfo tabInfo = new TabInfo(component);
+        tabInfo.setText(" ");
+        editorTabs.addTab(tabInfo);
+        editorTabs.select(tabInfo, false);
+        return tabInfo;
+    }
     private void addCloseActionToTab(TabInfo tabInfo){
         DefaultActionGroup defaultActionGroup = new DefaultActionGroup();
         defaultActionGroup.addAction(new CloseTab(tabInfo));
         tabInfo.setTabLabelActions(defaultActionGroup, TABBED_PANE_PLACE);
-    }
-
-    private class CloseTab extends AnAction implements DumbAware {
-
-        private final TabInfo myTabInfo;
-
-        CloseTab(TabInfo info) {
-            myTabInfo = info;
-        }
-
-        @Override
-        public void update(final AnActionEvent e) {
-            e.getPresentation().setIcon(AllIcons.Actions.Close);
-            e.getPresentation().setHoveredIcon(AllIcons.Actions.CloseHovered);
-            e.getPresentation().setVisible(UISettings.getInstance().SHOW_CLOSE_BUTTON);
-            e.getPresentation().setText("Close. Alt-click to close others.");
-        }
-
-        @Override
-        public void actionPerformed(final AnActionEvent e) {
-            if (BitUtil.isSet(e.getModifiers(), InputEvent.ALT_MASK)) {
-                closeAllExcept(myTabInfo);
-            } else {
-                if(isClosable(myTabInfo)){
-                    editorTabs.removeTab(myTabInfo);
-                }
-            }
-        }
     }
 
     private void closeAllExcept(TabInfo exceptTabInfo){
@@ -130,6 +108,34 @@ public class TabbedPaneView implements View {
 
     public void selectTabWithTabInfo(TabInfo tabInfo, boolean requestFocus){
         editorTabs.select(tabInfo, requestFocus);
+    }
+
+    private class CloseTab extends AnAction implements DumbAware {
+
+        private final TabInfo myTabInfo;
+
+        CloseTab(TabInfo info) {
+            myTabInfo = info;
+        }
+
+        @Override
+        public void update(final AnActionEvent e) {
+            e.getPresentation().setIcon(AllIcons.Actions.Close);
+            e.getPresentation().setHoveredIcon(AllIcons.Actions.CloseHovered);
+            e.getPresentation().setVisible(UISettings.getInstance().SHOW_CLOSE_BUTTON);
+            e.getPresentation().setText("Close. Alt-click to close others.");
+        }
+
+        @Override
+        public void actionPerformed(final AnActionEvent e) {
+            if (BitUtil.isSet(e.getModifiers(), InputEvent.ALT_MASK)) {
+                closeAllExcept(myTabInfo);
+            } else {
+                if (isClosable(myTabInfo)) {
+                    editorTabs.removeTab(myTabInfo);
+                }
+            }
+        }
     }
 
 }
