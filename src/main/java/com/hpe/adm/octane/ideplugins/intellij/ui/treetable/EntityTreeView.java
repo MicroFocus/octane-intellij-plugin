@@ -133,14 +133,15 @@ public class EntityTreeView implements View {
         return f;
     }
 
-    private void downloadScriptForGherkinTest(long gherkinTestId) {
-        @SuppressWarnings("deprecation")
+    private void downloadScriptForGherkinTest(EntityModel gherkinTest) {
 		DataContext dataContext = DataManager.getInstance().getDataContext();
         Project project = DataKeys.PROJECT.getData(dataContext);
 
         VirtualFile selectedFolder = chooseScriptFolder(project);
         if (selectedFolder != null) {
-            String scriptFileName = "test #" + gherkinTestId + " script";
+            long gherkinTestId = Long.parseLong(gherkinTest.getValue("id").getValue().toString());
+            String gherkinTestName = gherkinTest.getValue("name").getValue().toString();
+            String scriptFileName = gherkinTestName + "-" + gherkinTestId + ".feature";
             boolean shouldDownloadScript = true;
             if (selectedFolder.findChild(scriptFileName) != null) {
                 String title = "Confirm file overwrite";
@@ -213,14 +214,13 @@ public class EntityTreeView implements View {
                         popup.add(viewInBrowserItem);
 
                         if (entityType == Entity.GHERKIN_TEST) {
-                            long id = Long.parseLong(entityModel.getValue("id").getValue().toString());
                             JMenuItem downloadScriptItem = new JMenuItem("Download script", AllIcons.Actions.Download);
                             downloadScriptItem.addMouseListener(new MouseAdapter() {
                                 @Override
                                 public void mousePressed(MouseEvent e) {
                                     super.mousePressed(e);
                                     if (SwingUtilities.isLeftMouseButton(e))
-                                        downloadScriptForGherkinTest(id);
+                                        downloadScriptForGherkinTest(entityModel);
                                 }
                             });
                             popup.add(downloadScriptItem);
