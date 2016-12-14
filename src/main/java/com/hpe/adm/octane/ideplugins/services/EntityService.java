@@ -1,11 +1,9 @@
 package com.hpe.adm.octane.ideplugins.services;
 
-import com.google.inject.Inject;
 import com.google.protobuf.ServiceException;
 import com.hpe.adm.nga.sdk.EntityList;
 import com.hpe.adm.nga.sdk.Query;
 import com.hpe.adm.nga.sdk.model.EntityModel;
-import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.filtering.Filter;
 
@@ -14,14 +12,12 @@ import java.util.*;
 
 public class EntityService extends ServiceBase {
 
-    @Inject
-    ConnectionSettingsProvider connectionSettingsProvider;
-
     public Collection<EntityModel> getMyWork() {
 
         Map<Entity, Query.QueryBuilder> myWorkFilter = new HashMap<>();
 
-        myWorkFilter.put(Entity.TEST, createPhaseQuery(Entity.TEST,"new", "indesign"));
+        myWorkFilter.put(Entity.GHERKIN_TEST, createPhaseQuery(Entity.TEST,"new", "indesign"));
+        myWorkFilter.put(Entity.MANUAL_TEST, createPhaseQuery(Entity.TEST,"new", "indesign"));
         myWorkFilter.put(Entity.DEFECT, createPhaseQuery(Entity.DEFECT,"new", "inprogress", "intesting"));
         myWorkFilter.put(Entity.USER_STORY, createPhaseQuery(Entity.USER_STORY, "new", "inprogress", "intesting"));
         myWorkFilter.put(Entity.TASK, createPhaseQuery(Entity.TASK, "new", "inprogress"));
