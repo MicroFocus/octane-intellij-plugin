@@ -42,11 +42,11 @@ import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
 public class EntityTreeView implements View {
 
     public interface EntityDoubleClickHandler {
-        void entityDoubleClicked(Entity entityType, Long entityId, EntityModel model);
+        void entityDoubleClicked(MouseEvent mouseEvent, Entity entityType, Long entityId, EntityModel model);
     }
 
     public interface TreeViewKeyHandler {
-        void keyPressed(KeyEvent event, Entity selectedEntityType, Long selectedEntityId, EntityModel model);
+        void keyPressed(KeyEvent keyEvent, Entity selectedEntityType, Long selectedEntityId, EntityModel model);
     }
 
     private JPanel rootPanel;
@@ -105,28 +105,26 @@ public class EntityTreeView implements View {
         });
     }
 
-    public void addEntityDoubleClickHandler(EntityDoubleClickHandler handler) {
+    public void addEntityMouseHandler(EntityDoubleClickHandler handler) {
         tree.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
-                if (SwingUtilities.isLeftMouseButton(e)) {
                     int selRow = tree.getRowForLocation(e.getX(), e.getY());
                     TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
-                    if (selRow != -1 && e.getClickCount() == 2) {
+                    if (selRow != -1) {
                         Object object = selPath.getLastPathComponent();
                         if (object instanceof EntityModel) {
                             try {
                                 EntityModel entityModel = (EntityModel) object;
                                 Entity entityType = Entity.getEntityType(entityModel);
                                 Long entityId = Long.parseLong(entityModel.getValue("id").getValue().toString());
-                                handler.entityDoubleClicked(entityType, entityId, entityModel);
+                                handler.entityDoubleClicked(e, entityType, entityId, entityModel);
                             } catch (Exception ex) {
                                 //TODO: logger and error bubble
                             }
                         }
                     }
                 }
-            }
-        });
+            });
     }
 
     private VirtualFile chooseScriptFolder(Project project) {

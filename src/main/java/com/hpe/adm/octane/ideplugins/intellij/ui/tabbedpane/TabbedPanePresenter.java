@@ -42,7 +42,7 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
         return presenter;
     }
 
-    public void openDetailTab(EntityModel entityModel) {
+    public void openDetailTab(EntityModel entityModel, boolean selectTab) {
         EntityDetailPresenter presenter = entityDetailPresenterProvider.get();
         presenter.setEntity(entityModel);
 
@@ -52,7 +52,9 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
         String tabId = entityType.name() + entityId;
 
         if(detailTabInfo.containsKey(tabId) && tabbedPaneView.hasTabWithTabInfo(detailTabInfo.get(tabId))){
-            tabbedPaneView.selectTabWithTabInfo(detailTabInfo.get(tabId), false);
+            if(selectTab) {
+                tabbedPaneView.selectTabWithTabInfo(detailTabInfo.get(tabId), false);
+            }
         } else {
             ImageIcon tabIcon = new ImageIcon(entityIconFactory.getIconAsImage(entityType));
 
@@ -62,8 +64,9 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
                     tabIcon,
                     presenter.getView().getComponent());
 
-            tabbedPaneView.selectTabWithTabInfo(tabInfo, false);
-
+            if(selectTab) {
+                tabbedPaneView.selectTabWithTabInfo(tabInfo, false);
+            }
             detailTabInfo.put(tabId, tabInfo);
         }
     }
@@ -81,21 +84,24 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
         EntityTreeTablePresenter presenter = openMyWorkTab();
 
         //TODO: atoth: entity should be reloaded in the future
-        presenter.addEntityDoubleClickHandler((entityType, entityId, model) -> {
-            openDetailTab(model); //would still work, but it will be partially loaded in the future
-//            try {
-//                openDetailTab(entityService.findEntity(entityType, entityId));
-//            } catch (ServiceException ex){
-//                ex.printStackTrace();
-//            }
-        });
+//        try {
+//          openDetailTab(entityService.findEntity(entityType, entityId));
+//        } catch (ServiceException ex){
+//          ex.printStackTrace();
+//        }
+        presenter.addEntityClickHandler((mouseEvent, entityType, entityId, model) -> {
+            if(SwingUtilities.isLeftMouseButton(mouseEvent) && mouseEvent.getClickCount() >= 2){
+                openDetailTab(model, true);
+            }
+            if(SwingUtilities.isMiddleMouseButton(mouseEvent)){
+                openDetailTab(model, false);
+            }
 
-        //TODO: atoth: entity should be reloaded in the future
-        presenter.addEntityKeyHandler((event, selectedEntityType, selectedEntityId, model) -> {
-            if (event.getKeyCode()==KeyEvent.VK_ENTER){
-                openDetailTab(model);  //would still work, but it will be partially loaded in the future
+        });
+        presenter.addEntityKeyHandler((keyEvent, selectedEntityType, selectedEntityId, model) -> {
+            if (keyEvent.getKeyCode()==KeyEvent.VK_ENTER){
+                openDetailTab(model, true);  //would still work, but it will be partially loaded in the future
             }
         });
-
     }
 }

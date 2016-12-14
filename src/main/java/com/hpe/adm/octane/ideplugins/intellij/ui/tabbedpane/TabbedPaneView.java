@@ -12,12 +12,15 @@ import com.intellij.ui.tabs.TabInfo;
 import com.intellij.ui.tabs.TabsUtil;
 import com.intellij.ui.tabs.UiDecorator;
 import com.intellij.ui.tabs.impl.JBEditorTabs;
+import com.intellij.ui.tabs.impl.TabLabel;
 import com.intellij.util.BitUtil;
 import com.intellij.util.ui.TimedDeadzone;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.InputEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class TabbedPaneView implements View {
 
@@ -46,6 +49,19 @@ public class TabbedPaneView implements View {
                 .setTabLabelActionsAutoHide(false);
 
         setTabsContextMenu(editorTabs);
+
+        //Close tab with middle click
+        editorTabs.addTabMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if(SwingUtilities.isMiddleMouseButton(e) && e.getSource() instanceof TabLabel){
+                    TabLabel tabLabel = (TabLabel) e.getSource();
+                    if(isClosable(tabLabel.getInfo())){
+                        editorTabs.removeTab(tabLabel.getInfo());
+                    }
+                }
+            }
+        });
 
         rootPanel.add(editorTabs.getComponent(), BorderLayout.CENTER);
     }
