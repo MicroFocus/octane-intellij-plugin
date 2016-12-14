@@ -147,6 +147,7 @@ public class GeneralEntityDetailsPanel extends JPanel {
 
     private void drawGeneralDetailsForEntity(EntityModel entityModel) {
         headerPanel.setPhaseDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_PHASE)));
+        headerPanel.setNameDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_NAME)));
         this.descriptionDetails.setText(getDescriptionForEntityModel(entityModel));
     }
 

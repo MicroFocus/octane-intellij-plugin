@@ -1,9 +1,9 @@
 package com.hpe.adm.octane.ideplugins.services;
 
-import com.google.protobuf.ServiceException;
 import com.hpe.adm.nga.sdk.EntityList;
 import com.hpe.adm.nga.sdk.Query;
 import com.hpe.adm.nga.sdk.model.EntityModel;
+import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.filtering.Filter;
 
@@ -19,6 +19,8 @@ public class EntityService extends ServiceBase {
         myWorkFilter.put(Entity.GHERKIN_TEST, createPhaseQuery(Entity.TEST,"new", "indesign"));
         myWorkFilter.put(Entity.MANUAL_TEST, createPhaseQuery(Entity.TEST,"new", "indesign"));
         myWorkFilter.put(Entity.DEFECT, createPhaseQuery(Entity.DEFECT,"new", "inprogress", "intesting"));
+        myWorkFilter.put(Entity.TEST, createPhaseQuery(Entity.TEST, "new", "indesign"));
+        myWorkFilter.put(Entity.DEFECT, createPhaseQuery(Entity.DEFECT, "new", "inprogress", "intesting"));
         myWorkFilter.put(Entity.USER_STORY, createPhaseQuery(Entity.USER_STORY, "new", "inprogress", "intesting"));
         myWorkFilter.put(Entity.TASK, createPhaseQuery(Entity.TASK, "new", "inprogress"));
 
@@ -39,19 +41,20 @@ public class EntityService extends ServiceBase {
 
     /**
      * Constructs a metaphase query builder to match "logical_name":"metaphase.entity.phasename",
+     *
      * @param entity
      * @param phases
      * @return
      */
-    private Query.QueryBuilder createPhaseQuery(Entity entity, String... phases){
+    private Query.QueryBuilder createPhaseQuery(Entity entity, String... phases) {
         Query.QueryBuilder phaseQueryBuilder = null;
-        for(String phaseName: phases){
+        for (String phaseName : phases) {
             String phaseLogicalName = "metaphase." + entity.getTypeName() + "." + phaseName;
             Query.QueryBuilder currentPhaseQueryBuilder =
                     new Query.QueryBuilder("metaphase", Query::equalTo,
                             new Query.QueryBuilder("logical_name", Query::equalTo, phaseLogicalName)
                     );
-            if(phaseQueryBuilder == null){
+            if (phaseQueryBuilder == null) {
                 phaseQueryBuilder = currentPhaseQueryBuilder;
             } else {
                 phaseQueryBuilder = phaseQueryBuilder.or(currentPhaseQueryBuilder);
@@ -63,28 +66,29 @@ public class EntityService extends ServiceBase {
 
     /**
      * All filters have && between them, used for simple filtering
+     *
      * @param entity
      * @param filters
      * @return
      */
-    public Collection<EntityModel> findEntities(Entity entity, Filter... filters){
+    public Collection<EntityModel> findEntities(Entity entity, Filter... filters) {
         EntityList entityList = getOctane().entityList(entity.getApiEntityName());
 
         Query.QueryBuilder queryBuilder = null;
 
-        if(entity.isSubtype()){
+        if (entity.isSubtype()) {
             queryBuilder = entity.createMatchSubtypeQueryBuilder();
         }
 
-        for(Filter filter : filters){
-            if(queryBuilder == null) {
+        for (Filter filter : filters) {
+            if (queryBuilder == null) {
                 queryBuilder = filter.createQueryBuilder();
             } else {
                 queryBuilder = queryBuilder.and(filter.createQueryBuilder());
             }
         }
 
-        if(queryBuilder != null){
+        if (queryBuilder != null) {
             return entityList.get().query(queryBuilder.build()).execute();
         } else {
             return entityList.get().execute();
@@ -118,20 +122,21 @@ public class EntityService extends ServiceBase {
     /**
      * TODO: this method is really inefficient for subtypes
      * Can return multiple entity types
+     *
      * @param entityFilters
      * @return
      */
-    public Collection<EntityModel> findEntities(Map<Entity, List<Filter>> entityFilters){
+    public Collection<EntityModel> findEntities(Map<Entity, List<Filter>> entityFilters) {
         Collection<EntityModel> result = new ArrayList<>();
 
-        for(Entity entity : entityFilters.keySet()){
+        for (Entity entity : entityFilters.keySet()) {
             result.addAll(findEntities(entity, entityFilters.get(entity).toArray(new Filter[]{})));
         }
 
         return result;
     }
+
     /**
-     *
      * @param entityType
      * @param entityId
      * @return
