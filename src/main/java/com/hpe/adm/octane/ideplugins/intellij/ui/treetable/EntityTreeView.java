@@ -3,7 +3,7 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.treetable;
 import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.View;
-import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.PacmanLoadingWidget;
+import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.LoadingWidget;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.nowork.NoWorkPanel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
 import com.hpe.adm.octane.ideplugins.intellij.util.Constants;
@@ -42,24 +42,15 @@ import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
 
 public class EntityTreeView implements View {
 
-    public interface EntityDoubleClickHandler {
-        void entityDoubleClicked(Entity entityType, Long entityId, EntityModel model);
-    }
-
-    public interface TreeViewKeyHandler {
-        void keyPressed(KeyEvent event, Entity selectedEntityType, Long selectedEntityId, EntityModel model);
-    }
-
     private JPanel rootPanel;
-
     private FillingTree tree;
     private JBScrollPane scrollPane;
-
     @Inject
     private DownloadScriptService scriptService;
-
     @Inject
     private ConnectionSettingsProvider connectionSettingsProvider;
+    private DefaultActionGroup toolBarActionGroup = new DefaultActionGroup();
+    private LoadingWidget loadingWidget = new LoadingWidget();
 
     public EntityTreeView() {
 
@@ -264,8 +255,6 @@ public class EntityTreeView implements View {
         return ml;
     }
 
-    private DefaultActionGroup toolBarActionGroup = new DefaultActionGroup();
-
     public void addActionToToolbar(AnAction action) {
         toolBarActionGroup.addAction(action);
     }
@@ -305,8 +294,6 @@ public class EntityTreeView implements View {
         return rootPanel;
     }
 
-    private PacmanLoadingWidget loadingWidget = new PacmanLoadingWidget("Loading...");
-
     public void setLoading(boolean isLoading) {
         SwingUtilities.invokeLater(() -> {
             if (isLoading) {
@@ -321,6 +308,10 @@ public class EntityTreeView implements View {
         });
     }
 
+    public EntityTreeModel getTreeModel() {
+        return (EntityTreeModel) tree.getModel();
+    }
+
     public void setTreeModel(EntityTreeModel model) {
         tree.setModel(model);
 
@@ -331,8 +322,12 @@ public class EntityTreeView implements View {
         }
     }
 
-    public EntityTreeModel getTreeModel() {
-        return (EntityTreeModel) tree.getModel();
+    public interface EntityDoubleClickHandler {
+        void entityDoubleClicked(Entity entityType, Long entityId, EntityModel model);
+    }
+
+    public interface TreeViewKeyHandler {
+        void keyPressed(KeyEvent event, Entity selectedEntityType, Long selectedEntityId, EntityModel model);
     }
 
 }
