@@ -2,6 +2,7 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
+import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.ui.JBColor;
 import org.apache.commons.lang.CharEncoding;
 import org.jdesktop.swingx.JXLabel;
@@ -150,6 +151,10 @@ public class GeneralEntityDetailsPanel extends JPanel {
         headerPanel.setPhaseDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_PHASE)));
         headerPanel.setNameDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_NAME)));
         this.descriptionDetails.setText(getDescriptionForEntityModel(entityModel));
+    }
+
+    public void drawRefreshButton(AnAction refreshAction) {
+        headerPanel.createRefreshButton(refreshAction);
     }
 
     private String getDescriptionForEntityModel(EntityModel entityModel) {

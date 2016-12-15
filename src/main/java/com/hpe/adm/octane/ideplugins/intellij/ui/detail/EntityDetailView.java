@@ -3,6 +3,7 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.View;
 import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.LoadingWidget;
+import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.ui.components.JBScrollPane;
 
 import javax.swing.*;
@@ -14,7 +15,7 @@ import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS;
 public class EntityDetailView implements View {
 
     private JBScrollPane component = new JBScrollPane(new LoadingWidget());
-    private JPanel entityDetailsPanel;
+    private GeneralEntityDetailsPanel entityDetailsPanel;
 
     public EntityDetailView() {
 
@@ -31,6 +32,14 @@ public class EntityDetailView implements View {
     public void setEntityModel(EntityModel entityModel) {
         entityDetailsPanel = new GeneralEntityDetailsPanel(entityModel);
         component.setViewportView(entityDetailsPanel);
+    }
+
+    public void setRefreshEntityButton(AnAction refreshAction) {
+        entityDetailsPanel.drawRefreshButton(refreshAction);
+    }
+
+    public void doRefresh() {
+        component.setViewportView(new JBScrollPane(new LoadingWidget()));
     }
 
 }
