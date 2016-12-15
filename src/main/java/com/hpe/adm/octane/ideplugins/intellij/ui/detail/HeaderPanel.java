@@ -5,6 +5,7 @@ import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.ui.components.JBScrollPane;
+import org.jdesktop.swingx.JXHyperlink;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
 
@@ -20,6 +21,7 @@ public class HeaderPanel extends JPanel {
     private JXLabel phaseDetails;
     private JBScrollPane refreshButtonPanel;
     private DefaultActionGroup buttonActionGroup;
+    private JXHyperlink entityLinkToBrowser;
 
 
     public HeaderPanel() {
@@ -32,8 +34,14 @@ public class HeaderPanel extends JPanel {
 
         nameDetails = new JXLabel();
         nameDetails.setIcon(new ImageIcon(HeaderPanel.class.getResource("/images/defectIcon.png")));
-        nameDetails.setText("Name");
         nameAndIconPanel.add(nameDetails);
+
+        entityLinkToBrowser = new JXHyperlink();
+        entityLinkToBrowser.setClickedColor(new Color(102, 205, 170));
+        entityLinkToBrowser.setBorder(new EmptyBorder(0, 5, 0, 0));
+        entityLinkToBrowser.setUnclickedColor(Color.BLACK);
+        entityLinkToBrowser.setText("Name");
+        nameAndIconPanel.add(entityLinkToBrowser);
 
         JXPanel phasePanel = new JXPanel();
         FlowLayout flowLayout_1 = (FlowLayout) phasePanel.getLayout();
@@ -69,7 +77,7 @@ public class HeaderPanel extends JPanel {
     }
 
     public void setNameDetails(String nameDetails) {
-        this.nameDetails.setText(nameDetails);
+        this.entityLinkToBrowser.setText(nameDetails);
     }
 
     public void setPhaseDetails(String phaseDetails) {
@@ -79,7 +87,6 @@ public class HeaderPanel extends JPanel {
     public void setEntityIcon(ImageIcon entityIcon) {
         this.nameDetails.setIcon(entityIcon);
     }
-
 
     public void setRefreshButton() {
         this.refreshButtonPanel.setVisible(true);
@@ -94,6 +101,11 @@ public class HeaderPanel extends JPanel {
         buttonsPanel.add(actionToolBar.getComponent(), BorderLayout.CENTER);
 
         refreshButtonPanel.setViewportView(buttonsPanel);
+    }
+
+    public void addActionToEntityLink(AbstractAction action) {
+        entityLinkToBrowser.setAction(action);
+
     }
 
 

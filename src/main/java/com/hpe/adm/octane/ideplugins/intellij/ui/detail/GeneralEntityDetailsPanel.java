@@ -1,7 +1,9 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
 import com.hpe.adm.nga.sdk.model.EntityModel;
+import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
+import com.hpe.adm.octane.ideplugins.services.util.UrlParser;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.ui.JBColor;
 import org.apache.commons.lang.CharEncoding;
@@ -16,6 +18,9 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.io.IOException;
+import java.net.URI;
 
 import static com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil.getUiDataFromModel;
 
@@ -149,9 +154,10 @@ public class GeneralEntityDetailsPanel extends JPanel {
     }
 
     private void drawGeneralDetailsForEntity(EntityModel entityModel) {
+
         headerPanel.setPhaseDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_PHASE)));
-        headerPanel.setNameDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_NAME)));
         this.descriptionDetails.setText(getDescriptionForEntityModel(entityModel));
+        headerPanel.addActionToEntityLink(new GoToBrowser(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_NAME)), entityModel));
     }
 
     public void drawRefreshButton(AnAction refreshAction) {
@@ -202,13 +208,10 @@ public class GeneralEntityDetailsPanel extends JPanel {
         TestDetailsPanel testDetailsPanel = new TestDetailsPanel();
         testDetailsPanel.setApplicationModulesDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_APPMODULE)));
         testDetailsPanel.setDesignerDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_DESIGNER)));
-//        testDetailsPanel.setTxtfldManual(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_IS_MANUAL)));
-//        testDetailsPanel.setTextRunInReleases(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_RUNS_IN_RELEASES)));
         testDetailsPanel.setTestTypeDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEST_TYPE)));
         testDetailsPanel.setTestToolTypeDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TESTING_TOOL_TYPE)));
         testDetailsPanel.setCreatedDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_CREATED)));
         testDetailsPanel.setOwnerDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_OWNER)));
-//        testDetailsPanel.setTxtfldFeature(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_FEATURE)));
         testDetailsPanel.setEstimatedDurationDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_ESTIMATED_DURATTION)));
         testDetailsPanel.setLastModifiedDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_LAST_MODIFIED)));
         testDetailsPanel.setCoveredContentDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_COVERED_CONTENT)));
@@ -275,4 +278,27 @@ public class GeneralEntityDetailsPanel extends JPanel {
         return userStoryDetailsPanel;
     }
 
+    private static class GoToBrowser extends AbstractAction {
+        private EntityModel entityModel;
+        private Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+
+        public GoToBrowser(String entityName, EntityModel entityModel) {
+            this.entityModel = entityModel;
+            super.putValue(Action.NAME, entityName);
+            super.putValue(Action.SHORT_DESCRIPTION, "Sample Action Description");
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            URI uri =
+                    UrlParser.createEntityWebURI(Entity.getEntityType(entityModel), Integer.valueOf(UiUtil.getUiDataFromModel(entityModel.getValue("id"))));
+            try {
+                desktop.browse(uri);
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+        }
+    }
 }
+
+
