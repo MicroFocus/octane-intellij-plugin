@@ -108,7 +108,7 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
         if(newConnectionSettings != null){
             connectionSettingsProvider.setConnectionSettings(newConnectionSettings);
             //remove the hash and remove extra stuff if successful
-            SwingUtilities.invokeLater(() -> connectionSettingsView.setServerUrl(UrlParser.createUrlFromConnectionSettings(newConnectionSettings)));
+            connectionSettingsView.setServerUrl(UrlParser.createUrlFromConnectionSettings(newConnectionSettings));
             connectionSettingsView.setConnectionStatusSuccess();
         }
     }
