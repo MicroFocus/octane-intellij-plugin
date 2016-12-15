@@ -39,7 +39,6 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                 try {
                     try {
                         entityModel = entityService.findEntity(entityType, entityId);
-                        Thread.sleep(1000);
                     } catch (ServiceException e) {
                         e.printStackTrace();
                     }

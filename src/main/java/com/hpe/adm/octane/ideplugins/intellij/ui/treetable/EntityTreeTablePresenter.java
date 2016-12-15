@@ -35,7 +35,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView>{
             protected Void doInBackground() throws Exception {
                 try {
                     entityTreeTableView.setLoading(true);
-                    Collection<EntityModel> myWork = entityService.getMyWork();
+                    Collection<EntityModel> myWork = entityService.getMyWork(EntityTreeCellRenderer.getEntityFieldMap());
                     SwingUtilities.invokeLater(() -> {
                         entityTreeTableView.setTreeModel(new EntityTreeModel(myWork));
                         entityTreeTableView.expandAllNodes();
@@ -104,7 +104,11 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView>{
         refresh();
     }
 
-    public void addEntityDoubleClickHandler(EntityTreeView.EntityDoubleClickHandler handler) {
-        getView().addEntityDoubleClickHandler(handler);
+    public void addEntityClickHandler(EntityTreeView.EntityDoubleClickHandler handler) {
+        getView().addEntityMouseHandler(handler);
+    }
+
+    public void addEntityKeyHandler(EntityTreeView.TreeViewKeyHandler handler) {
+        getView().addEntityKeyHandler(handler);
     }
 }

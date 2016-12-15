@@ -22,7 +22,7 @@
     <applicationService serviceInterface="com.hpe.adm.octane.ideplugins.intellij.settings.IdePersistentConnectionSettingsProvider"
                         serviceImplementation="com.hpe.adm.octane.ideplugins.intellij.settings.IdePersistentConnectionSettingsProvider"/>
     <applicationConfigurable id="com.hpe.adm.octane.ideplugins.intellij.settings.ConnectionSettingsConfigurable"
-                             displayName="Octane Settings"
+                             displayName="HPE ALM Octane Settings"
                              instance="com.hpe.adm.octane.ideplugins.intellij.settings.ConnectionSettingsConfigurable"/>
     <checkinHandlerFactory implementation="com.hpe.adm.octane.ideplugins.intellij.gitcommit.OctaneCheckinHandlerFactory" />
   </extensions>

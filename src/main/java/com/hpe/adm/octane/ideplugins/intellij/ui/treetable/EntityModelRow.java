@@ -85,7 +85,7 @@ class EntityModelRow extends JPanel{
         lblEntityRelease.setHorizontalAlignment(SwingConstants.LEFT);
         GridBagConstraints gbc_lblEntityId = new GridBagConstraints();
         gbc_lblEntityId.fill = GridBagConstraints.HORIZONTAL;
-        gbc_lblEntityId.insets = new Insets(5, 0, 3, 0);
+        gbc_lblEntityId.insets = new Insets(5, 0, 5, 0);
         gbc_lblEntityId.gridx = 1;
         gbc_lblEntityId.gridy = 1;
         add(lblEntityRelease, gbc_lblEntityId);
@@ -97,7 +97,7 @@ class EntityModelRow extends JPanel{
         flowLayout.setHgap(10);
         flowLayout.setAlignment(FlowLayout.TRAILING);
         GridBagConstraints gbc_panelDetailsBottom = new GridBagConstraints();
-        gbc_panelDetailsBottom.insets = new Insets(0, 10, 3, 10);
+        gbc_panelDetailsBottom.insets = new Insets(0, 10, 5, 10);
         gbc_panelDetailsBottom.fill = GridBagConstraints.HORIZONTAL;
         gbc_panelDetailsBottom.gridx = 2;
         gbc_panelDetailsBottom.gridy = 1;

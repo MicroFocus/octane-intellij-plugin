@@ -3,14 +3,14 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.treetable;
 import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.View;
-import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.PacmanLoadingWidget;
+import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.LoadingWidget;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.nowork.NoWorkPanel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
 import com.hpe.adm.octane.ideplugins.intellij.util.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
-import com.hpe.adm.octane.ideplugins.services.DownloadScriptService;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
+import com.hpe.adm.octane.ideplugins.services.nonentity.DownloadScriptService;
 import com.hpe.adm.octane.ideplugins.services.util.UrlParser;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.DataManager;
@@ -31,10 +31,9 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 import java.io.*;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
@@ -44,66 +43,96 @@ import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
 public class EntityTreeView implements View {
 
     public interface EntityDoubleClickHandler {
-        void entityDoubleClicked(Entity entityType, Long entityId, EntityModel model);
+        void entityDoubleClicked(MouseEvent mouseEvent, Entity entityType, Long entityId, EntityModel model);
+    }
+
+    public interface TreeViewKeyHandler {
+        void keyPressed(KeyEvent keyEvent, Entity selectedEntityType, Long selectedEntityId, EntityModel model);
     }
 
     private JPanel rootPanel;
-
     private FillingTree tree;
     private JBScrollPane scrollPane;
-
     @Inject
     private DownloadScriptService scriptService;
-
     @Inject
     private ConnectionSettingsProvider connectionSettingsProvider;
+    private DefaultActionGroup toolBarActionGroup = new DefaultActionGroup();
+    private LoadingWidget loadingWidget = new LoadingWidget();
 
     public EntityTreeView() {
 
-        tree = new FillingTree();
+        scrollPane = new JBScrollPane();
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
+        scrollPane.setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_NEVER);
+
+        tree = initTree();
+
+        //Add it to the root panel
+        rootPanel = new JPanel(new BorderLayout(0, 0));
+        rootPanel.add(scrollPane, BorderLayout.CENTER);
+
+        scrollPane.setViewportView(tree);
+
+        //Toolbar
+        rootPanel.add(createToolbar(), BorderLayout.EAST);
+    }
+
+    private FillingTree initTree(){
+        FillingTree tree = new FillingTree();
         //Init with an empty model
         tree.setModel(new EntityTreeModel());
 
         tree.setRootVisible(false);
         tree.setCellRenderer(new EntityTreeCellRenderer());
 
-        //Add it to the root panel
-        rootPanel = new JPanel(new BorderLayout(0, 0));
-        scrollPane = new JBScrollPane();
-        scrollPane.setBorder(BorderFactory.createEmptyBorder());
-        scrollPane.setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_NEVER);
-
-        rootPanel.add(scrollPane, BorderLayout.CENTER);
-        scrollPane.setViewportView(tree);
-
-        //Toolbar
-        rootPanel.add(createToolbar(), BorderLayout.EAST);
-
         tree.addMouseListener(createTreeContextMenu());
+        tree.setRowHeight(50);
+        tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        return tree;
     }
 
-    public void addEntityDoubleClickHandler(EntityDoubleClickHandler handler) {
+    public void addEntityKeyHandler(TreeViewKeyHandler handler) {
+        tree.addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent e) {
+                if (tree.getSelectionCount() == 1) {
+                    TreePath selPath = tree.getSelectionPath();
+                    Object object = selPath.getLastPathComponent();
+                    if (object instanceof EntityModel) {
+                        try {
+                            EntityModel entityModel = (EntityModel) object;
+                            Entity entityType = Entity.getEntityType(entityModel);
+                            Long entityId = Long.parseLong(entityModel.getValue("id").getValue().toString());
+                            handler.keyPressed(e, entityType, entityId, entityModel);
+                        } catch (Exception ex) {
+                            //TODO: logger and error bubble
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    public void addEntityMouseHandler(EntityDoubleClickHandler handler) {
         tree.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
-                if (SwingUtilities.isLeftMouseButton(e)) {
                     int selRow = tree.getRowForLocation(e.getX(), e.getY());
                     TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
-                    if (selRow != -1 && e.getClickCount() == 2) {
+                    if (selRow != -1) {
                         Object object = selPath.getLastPathComponent();
                         if (object instanceof EntityModel) {
                             try {
                                 EntityModel entityModel = (EntityModel) object;
                                 Entity entityType = Entity.getEntityType(entityModel);
                                 Long entityId = Long.parseLong(entityModel.getValue("id").getValue().toString());
-                                handler.entityDoubleClicked(entityType, entityId, entityModel);
+                                handler.entityDoubleClicked(e, entityType, entityId, entityModel);
                             } catch (Exception ex) {
-                                System.out.print(ex);
+                                //TODO: logger and error bubble
                             }
                         }
                     }
                 }
-            }
-        });
+            });
     }
 
     private VirtualFile chooseScriptFolder(Project project) {
@@ -133,14 +162,15 @@ public class EntityTreeView implements View {
         return f;
     }
 
-    private void downloadScriptForGherkinTest(long gherkinTestId) {
-        @SuppressWarnings("deprecation")
-		DataContext dataContext = DataManager.getInstance().getDataContext();
+    private void downloadScriptForGherkinTest(EntityModel gherkinTest) {
+        DataContext dataContext = DataManager.getInstance().getDataContext();
         Project project = DataKeys.PROJECT.getData(dataContext);
 
         VirtualFile selectedFolder = chooseScriptFolder(project);
         if (selectedFolder != null) {
-            String scriptFileName = "test #" + gherkinTestId + " script";
+            long gherkinTestId = Long.parseLong(gherkinTest.getValue("id").getValue().toString());
+            String gherkinTestName = gherkinTest.getValue("name").getValue().toString();
+            String scriptFileName = gherkinTestName + "-" + gherkinTestId + ".feature";
             boolean shouldDownloadScript = true;
             if (selectedFolder.findChild(scriptFileName) != null) {
                 String title = "Confirm file overwrite";
@@ -213,14 +243,13 @@ public class EntityTreeView implements View {
                         popup.add(viewInBrowserItem);
 
                         if (entityType == Entity.GHERKIN_TEST) {
-                            long id = Long.parseLong(entityModel.getValue("id").getValue().toString());
                             JMenuItem downloadScriptItem = new JMenuItem("Download script", AllIcons.Actions.Download);
                             downloadScriptItem.addMouseListener(new MouseAdapter() {
                                 @Override
                                 public void mousePressed(MouseEvent e) {
                                     super.mousePressed(e);
                                     if (SwingUtilities.isLeftMouseButton(e))
-                                        downloadScriptForGherkinTest(id);
+                                        downloadScriptForGherkinTest(entityModel);
                                 }
                             });
                             popup.add(downloadScriptItem);
@@ -238,8 +267,6 @@ public class EntityTreeView implements View {
         };
         return ml;
     }
-
-    private DefaultActionGroup toolBarActionGroup = new DefaultActionGroup();
 
     public void addActionToToolbar(AnAction action) {
         toolBarActionGroup.addAction(action);
@@ -280,8 +307,6 @@ public class EntityTreeView implements View {
         return rootPanel;
     }
 
-    private PacmanLoadingWidget loadingWidget = new PacmanLoadingWidget("Loading...");
-
     public void setLoading(boolean isLoading) {
         SwingUtilities.invokeLater(() -> {
             if (isLoading) {
@@ -296,19 +321,18 @@ public class EntityTreeView implements View {
         });
     }
 
+    public EntityTreeModel getTreeModel() {
+        return (EntityTreeModel) tree.getModel();
+    }
+
     public void setTreeModel(EntityTreeModel model) {
         tree.setModel(model);
 
         if (model.size() == 0) {
             scrollPane.setViewportView(new NoWorkPanel());
-        } else if (scrollPane.getViewport().getView() != tree) {
+        } else {
             scrollPane.setViewportView(tree);
         }
     }
-
-    public EntityTreeModel getTreeModel() {
-        return (EntityTreeModel) tree.getModel();
-    }
-
 
 }
