@@ -76,6 +76,7 @@ public class GeneralEntityDetailsPanel extends JPanel {
         descriptionPanel.setLayout(gbl_descriptionPanel);
 
         JXLabel lblDescription = new JXLabel();
+        lblDescription.setFont(new Font("Tahoma", Font.BOLD, 11));
         lblDescription.setText("Description");
         GridBagConstraints gbc_lblDescription = new GridBagConstraints();
         gbc_lblDescription.anchor = GridBagConstraints.WEST;
@@ -170,28 +171,28 @@ public class GeneralEntityDetailsPanel extends JPanel {
         switch (Entity.getEntityType(entityModel)) {
             case DEFECT:
                 headerPanel.setEntityIcon(new ImageIcon(TaskDetailsPanel.class.getResource("/images/defectIcon.png")));
-                hasAttachment = true;
+                hasAttachment = false;
                 ret = updateUiWithDefectDetails(entityModel);
                 break;
             case GHERKIN_TEST:
                 headerPanel.setEntityIcon(new ImageIcon(TaskDetailsPanel.class.getResource("/images/gerkinTestIcon.png")));
-                hasAttachment = true;
+                hasAttachment = false;
                 ret = updateUiWithTestsDetails(entityModel);
                 break;
             case MANUAL_TEST:
                 headerPanel.setEntityIcon(new ImageIcon(TaskDetailsPanel.class.getResource("/images/manualTestIcon.png")));
-                hasAttachment = true;
+                hasAttachment = false;
                 ret = updateUiWithTestsDetails(entityModel);
                 break;
             case USER_STORY:
                 headerPanel.setEntityIcon(new ImageIcon(TaskDetailsPanel.class.getResource("/images/userStoryIcon.png")));
-                hasAttachment = true;
+                hasAttachment = false;
                 ret = updateUiWithUserStoryDetails(entityModel);
                 break;
             case TASK:
                 headerPanel.setEntityIcon(new ImageIcon(TaskDetailsPanel.class.getResource("/images/taskIcon.png")));
                 ret = updateUiWithTaskDetails(entityModel);
-                hasAttachment = true;
+                hasAttachment = false;
                 break;
         }
         return ret;

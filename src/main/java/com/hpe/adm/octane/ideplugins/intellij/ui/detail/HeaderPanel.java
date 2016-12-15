@@ -47,7 +47,7 @@ public class HeaderPanel extends JPanel {
         phasePanel.add(currentPhaseLabel);
 
         phaseDetails = new JXLabel();
-        phaseDetails.setBorder(new EmptyBorder(0, 0, 0, 5));
+        phaseDetails.setBorder(new EmptyBorder(0, 0, 0, 10));
         phaseDetails.setFont(new Font("Tahoma", Font.ITALIC, 11));
         phaseDetails.setText("phase");
         phasePanel.add(phaseDetails);
@@ -55,6 +55,7 @@ public class HeaderPanel extends JPanel {
         JXLabel nextPhaseLink = new JXLabel();
         nextPhaseLink.setFont(new Font("Tahoma", Font.BOLD, 11));
         nextPhaseLink.setText("|  Move to next phase");
+        nextPhaseLink.setVisible(false);
         phasePanel.add(nextPhaseLink);
 
         refreshButtonPanel = new JBScrollPane();
