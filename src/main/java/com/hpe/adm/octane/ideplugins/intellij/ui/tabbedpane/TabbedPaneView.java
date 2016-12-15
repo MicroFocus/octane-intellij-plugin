@@ -21,6 +21,7 @@ import java.awt.*;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.List;
 
 public class TabbedPaneView implements View {
 
@@ -126,14 +127,16 @@ public class TabbedPaneView implements View {
 
         tabInfo.setText(title);
 
-        //tabInfo.
-
         if(isClosable) {
             addCloseActionToTab(tabInfo);
         }
 
         editorTabs.addTab(tabInfo);
         return tabInfo;
+    }
+
+    public List<TabInfo> getTabInfos(){
+        return editorTabs.getTabs();
     }
 
     private void addCloseActionToTab(TabInfo tabInfo){

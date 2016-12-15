@@ -2,6 +2,7 @@ package com.hpe.adm.octane.ideplugins.intellij.ui;
 
 import com.google.inject.Inject;
 import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
+import com.hpe.adm.octane.ideplugins.intellij.settings.IdePersistentSettings;
 import com.hpe.adm.octane.ideplugins.intellij.ui.components.WelcomeViewComponent;
 import com.hpe.adm.octane.ideplugins.intellij.ui.main.MainPresenter;
 import com.hpe.adm.octane.ideplugins.services.TestService;
@@ -24,6 +25,9 @@ public class EntryPoint implements ToolWindowFactory {
 
     @Inject
     private ConnectionSettingsProvider connectionSettingsProvider;
+
+    @Inject
+    private IdePersistentSettings settings;
 
     @Override
     public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
