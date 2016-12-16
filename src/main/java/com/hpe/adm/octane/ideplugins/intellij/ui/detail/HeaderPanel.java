@@ -4,6 +4,7 @@ import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBScrollPane;
 import org.jdesktop.swingx.JXHyperlink;
 import org.jdesktop.swingx.JXLabel;
@@ -39,8 +40,9 @@ public class HeaderPanel extends JPanel {
         entityLinkToBrowser = new JXHyperlink();
         entityLinkToBrowser.setClickedColor(new Color(102, 205, 170));
         entityLinkToBrowser.setBorder(new EmptyBorder(0, 5, 0, 0));
-        entityLinkToBrowser.setUnclickedColor(Color.BLACK);
+        entityLinkToBrowser.setUnclickedColor(JBColor.foreground());
         entityLinkToBrowser.setText("Name");
+        entityLinkToBrowser.setBorderPainted(false);
         nameAndIconPanel.add(entityLinkToBrowser);
 
         JXPanel phasePanel = new JXPanel();
