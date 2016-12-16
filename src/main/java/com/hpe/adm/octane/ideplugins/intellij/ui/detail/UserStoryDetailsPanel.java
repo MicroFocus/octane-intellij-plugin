@@ -9,6 +9,7 @@ import javax.swing.border.MatteBorder;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.util.Objects;
 
 public class UserStoryDetailsPanel extends JXPanel {
     private static final long serialVersionUID = -7172388625845199450L;
@@ -17,7 +18,7 @@ public class UserStoryDetailsPanel extends JXPanel {
     private JXLabel sprintDetails;
     private JXLabel storyPointsDetails;
     private JXLabel blockedDetails;
-    private JXLabel enviromentDetails;
+    private JXLabel authorDetails;
     private JXLabel releaseDetails;
     private JXLabel lastModifiedDetails;
     private JXLabel teamDetails;
@@ -115,7 +116,7 @@ public class UserStoryDetailsPanel extends JXPanel {
         detailsPanelLeft.add(sprintDetails, gbc_sprintDetails);
 
         JXLabel storyPointsLabel = new JXLabel();
-        storyPointsLabel.setText("Story Points");
+        storyPointsLabel.setText("Story points");
         storyPointsLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
         storyPointsLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
         GridBagConstraints gbc_storyPointsLabel = new GridBagConstraints();
@@ -233,30 +234,30 @@ public class UserStoryDetailsPanel extends JXPanel {
         gbc_teamDetails.gridy = 0;
         detailsPanelRight.add(teamDetails, gbc_teamDetails);
 
-        JXLabel enviromentLabel = new JXLabel();
-        GridBagConstraints gbc_enviromentLabel = new GridBagConstraints();
-        gbc_enviromentLabel.anchor = GridBagConstraints.WEST;
-        gbc_enviromentLabel.insets = new Insets(0, 0, 5, 5);
-        gbc_enviromentLabel.gridx = 0;
-        gbc_enviromentLabel.gridy = 1;
-        detailsPanelRight.add(enviromentLabel, gbc_enviromentLabel);
-        enviromentLabel.setText("Enviroment");
-        enviromentLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
-        enviromentLabel.setBorder(new EmptyBorder(0, 30, 0, 10));
+        JXLabel authorLabel = new JXLabel();
+        GridBagConstraints gbc_authorLabel = new GridBagConstraints();
+        gbc_authorLabel.anchor = GridBagConstraints.WEST;
+        gbc_authorLabel.insets = new Insets(0, 0, 5, 5);
+        gbc_authorLabel.gridx = 0;
+        gbc_authorLabel.gridy = 1;
+        detailsPanelRight.add(authorLabel, gbc_authorLabel);
+        authorLabel.setText("Author");
+        authorLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
+        authorLabel.setBorder(new EmptyBorder(0, 30, 0, 10));
 
-        enviromentDetails = new JXLabel();
-        GridBagConstraints gbc_enviromentDetails = new GridBagConstraints();
-        gbc_enviromentDetails.anchor = GridBagConstraints.SOUTH;
-        gbc_enviromentDetails.fill = GridBagConstraints.HORIZONTAL;
-        gbc_enviromentDetails.insets = new Insets(0, 0, 5, 0);
-        gbc_enviromentDetails.gridx = 1;
-        gbc_enviromentDetails.gridy = 1;
-        detailsPanelRight.add(enviromentDetails, gbc_enviromentDetails);
-        enviromentDetails.setText(" ");
-        enviromentDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
+        authorDetails = new JXLabel();
+        GridBagConstraints gbc_authorDetails = new GridBagConstraints();
+        gbc_authorDetails.anchor = GridBagConstraints.SOUTH;
+        gbc_authorDetails.fill = GridBagConstraints.HORIZONTAL;
+        gbc_authorDetails.insets = new Insets(0, 0, 5, 0);
+        gbc_authorDetails.gridx = 1;
+        gbc_authorDetails.gridy = 1;
+        detailsPanelRight.add(authorDetails, gbc_authorDetails);
+        authorDetails.setText(" ");
+        authorDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
 
         JXLabel appModulesLabel = new JXLabel();
-        appModulesLabel.setText("Application Module");
+        appModulesLabel.setText("Application module");
         appModulesLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
         appModulesLabel.setBorder(new EmptyBorder(0, 30, 0, 10));
         GridBagConstraints gbc_appModulesLabel = new GridBagConstraints();
@@ -300,7 +301,7 @@ public class UserStoryDetailsPanel extends JXPanel {
         detailsPanelRight.add(itemOriginDetails, gbc_itemOriginDetails);
 
         JXLabel blockedReasonLabel = new JXLabel();
-        blockedReasonLabel.setText("Blocked Reason");
+        blockedReasonLabel.setText("Blocked reason");
         blockedReasonLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
         blockedReasonLabel.setBorder(new EmptyBorder(0, 30, 0, 10));
         GridBagConstraints gbc_blockedReasonLabel = new GridBagConstraints();
@@ -396,11 +397,12 @@ public class UserStoryDetailsPanel extends JXPanel {
     }
 
     public void setBlockedDetails(String blockedDetails) {
+        blockedDetails = (Objects.equals("true", blockedDetails)) ? "yes" : "no";
         this.blockedDetails.setText(blockedDetails);
     }
 
-    public void setEnviromentDetails(String enviromentDetails) {
-        this.enviromentDetails.setText(enviromentDetails);
+    public void setAuthorDetailsDetails(String authorDetails) {
+        this.authorDetails.setText(authorDetails);
     }
 
     public void setReleaseDetails(String releaseDetails) {

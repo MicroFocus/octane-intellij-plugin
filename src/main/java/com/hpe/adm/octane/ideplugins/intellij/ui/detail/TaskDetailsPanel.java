@@ -15,7 +15,7 @@ public class TaskDetailsPanel extends JXPanel {
     private JXLabel ownerDetails;
     private JXLabel storyDetails;
     private JXLabel authorDetails;
-    private JXLabel sprintDetails;
+    private JXLabel remainingHoursDetails;
     private JXLabel creationTimeDetails;
     private JXLabel lastModifiedDetails;
     private JXLabel taskTypeDetails;
@@ -100,6 +100,7 @@ public class TaskDetailsPanel extends JXPanel {
 
         ownerDetails = new JXLabel();
         GridBagConstraints gbc_ownerDetails = new GridBagConstraints();
+        gbc_ownerDetails.anchor = GridBagConstraints.SOUTH;
         gbc_ownerDetails.fill = GridBagConstraints.HORIZONTAL;
         gbc_ownerDetails.insets = new Insets(0, 0, 5, 0);
         gbc_ownerDetails.gridx = 1;
@@ -123,6 +124,7 @@ public class TaskDetailsPanel extends JXPanel {
         creationTimeDetails.setText(" ");
         creationTimeDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_creationTimeDetails = new GridBagConstraints();
+        gbc_creationTimeDetails.anchor = GridBagConstraints.SOUTH;
         gbc_creationTimeDetails.fill = GridBagConstraints.HORIZONTAL;
         gbc_creationTimeDetails.insets = new Insets(0, 0, 5, 0);
         gbc_creationTimeDetails.gridx = 1;
@@ -144,6 +146,7 @@ public class TaskDetailsPanel extends JXPanel {
         lastModifiedDetails.setText(" ");
         lastModifiedDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_lastModifiedDetails = new GridBagConstraints();
+        gbc_lastModifiedDetails.anchor = GridBagConstraints.SOUTH;
         gbc_lastModifiedDetails.fill = GridBagConstraints.HORIZONTAL;
         gbc_lastModifiedDetails.gridx = 1;
         gbc_lastModifiedDetails.gridy = 4;
@@ -174,33 +177,34 @@ public class TaskDetailsPanel extends JXPanel {
         taskTypeDetails.setText(" ");
         taskTypeDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_taskTypeDetails = new GridBagConstraints();
+        gbc_taskTypeDetails.anchor = GridBagConstraints.SOUTH;
         gbc_taskTypeDetails.fill = GridBagConstraints.HORIZONTAL;
         gbc_taskTypeDetails.insets = new Insets(0, 0, 5, 0);
         gbc_taskTypeDetails.gridx = 1;
         gbc_taskTypeDetails.gridy = 0;
         detailsPanelRight.add(taskTypeDetails, gbc_taskTypeDetails);
 
-        JXLabel sprintLabel = new JXLabel();
-        GridBagConstraints gbc_sprintLabel = new GridBagConstraints();
-        gbc_sprintLabel.anchor = GridBagConstraints.WEST;
-        gbc_sprintLabel.insets = new Insets(0, 0, 5, 5);
-        gbc_sprintLabel.gridx = 0;
-        gbc_sprintLabel.gridy = 1;
-        detailsPanelRight.add(sprintLabel, gbc_sprintLabel);
-        sprintLabel.setText("Sprint");
-        sprintLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
-        sprintLabel.setBorder(new EmptyBorder(0, 30, 0, 10));
+        JXLabel remainingHoursLabel = new JXLabel();
+        GridBagConstraints gbc_remainingHoursLabel = new GridBagConstraints();
+        gbc_remainingHoursLabel.anchor = GridBagConstraints.WEST;
+        gbc_remainingHoursLabel.insets = new Insets(0, 0, 5, 5);
+        gbc_remainingHoursLabel.gridx = 0;
+        gbc_remainingHoursLabel.gridy = 1;
+        detailsPanelRight.add(remainingHoursLabel, gbc_remainingHoursLabel);
+        remainingHoursLabel.setText("Remaining hours");
+        remainingHoursLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
+        remainingHoursLabel.setBorder(new EmptyBorder(0, 30, 0, 10));
 
-        sprintDetails = new JXLabel();
-        GridBagConstraints gbc_sprintDetails = new GridBagConstraints();
-        gbc_sprintDetails.anchor = GridBagConstraints.SOUTH;
-        gbc_sprintDetails.fill = GridBagConstraints.HORIZONTAL;
-        gbc_sprintDetails.insets = new Insets(0, 0, 5, 0);
-        gbc_sprintDetails.gridx = 1;
-        gbc_sprintDetails.gridy = 1;
-        detailsPanelRight.add(sprintDetails, gbc_sprintDetails);
-        sprintDetails.setText(" ");
-        sprintDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
+        remainingHoursDetails = new JXLabel();
+        GridBagConstraints gbc_remainingHoursDetails = new GridBagConstraints();
+        gbc_remainingHoursDetails.anchor = GridBagConstraints.SOUTH;
+        gbc_remainingHoursDetails.fill = GridBagConstraints.HORIZONTAL;
+        gbc_remainingHoursDetails.insets = new Insets(0, 0, 5, 0);
+        gbc_remainingHoursDetails.gridx = 1;
+        gbc_remainingHoursDetails.gridy = 1;
+        detailsPanelRight.add(remainingHoursDetails, gbc_remainingHoursDetails);
+        remainingHoursDetails.setText(" ");
+        remainingHoursDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
 
         JXLabel estimatedHoursLabel = new JXLabel();
         estimatedHoursLabel.setBorder(new EmptyBorder(0, 30, 0, 10));
@@ -217,6 +221,7 @@ public class TaskDetailsPanel extends JXPanel {
         estimatedHoursDetails.setText(" ");
         estimatedHoursDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_estimatedHoursDetails = new GridBagConstraints();
+        gbc_estimatedHoursDetails.anchor = GridBagConstraints.SOUTH;
         gbc_estimatedHoursDetails.fill = GridBagConstraints.HORIZONTAL;
         gbc_estimatedHoursDetails.insets = new Insets(0, 0, 5, 0);
         gbc_estimatedHoursDetails.gridx = 1;
@@ -238,6 +243,7 @@ public class TaskDetailsPanel extends JXPanel {
         investedHoursDetails.setText(" ");
         investedHoursDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_investedHoursDetails = new GridBagConstraints();
+        gbc_investedHoursDetails.anchor = GridBagConstraints.SOUTH;
         gbc_investedHoursDetails.fill = GridBagConstraints.HORIZONTAL;
         gbc_investedHoursDetails.gridx = 1;
         gbc_investedHoursDetails.gridy = 3;
@@ -274,8 +280,8 @@ public class TaskDetailsPanel extends JXPanel {
     }
 
 
-    public void setSprintDetails(String sprintDetails) {
-        this.sprintDetails.setText(sprintDetails);
+    public void setRemainingHoursDetails(String remainingHoursDetails) {
+        this.remainingHoursDetails.setText(remainingHoursDetails);
     }
 
 

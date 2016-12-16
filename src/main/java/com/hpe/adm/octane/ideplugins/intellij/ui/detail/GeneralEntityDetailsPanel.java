@@ -182,12 +182,12 @@ public class GeneralEntityDetailsPanel extends JPanel {
             case GHERKIN_TEST:
                 headerPanel.setEntityIcon(new ImageIcon(TaskDetailsPanel.class.getResource("/images/gerkinTestIcon.png")));
                 hasAttachment = false;
-                ret = updateUiWithTestsDetails(entityModel);
+                ret = updateUiWithTestsDetails(entityModel, true);
                 break;
             case MANUAL_TEST:
                 headerPanel.setEntityIcon(new ImageIcon(TaskDetailsPanel.class.getResource("/images/manualTestIcon.png")));
                 hasAttachment = false;
-                ret = updateUiWithTestsDetails(entityModel);
+                ret = updateUiWithTestsDetails(entityModel, false);
                 break;
             case USER_STORY:
                 headerPanel.setEntityIcon(new ImageIcon(TaskDetailsPanel.class.getResource("/images/userStoryIcon.png")));
@@ -203,7 +203,7 @@ public class GeneralEntityDetailsPanel extends JPanel {
         return ret;
     }
 
-    private JXPanel updateUiWithTestsDetails(EntityModel entityModel) {
+    private JXPanel updateUiWithTestsDetails(EntityModel entityModel, boolean isGherkin) {
         TestDetailsPanel testDetailsPanel = new TestDetailsPanel();
         testDetailsPanel.setApplicationModulesDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_APPMODULE)));
         testDetailsPanel.setDesignerDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_DESIGNER)));
@@ -214,7 +214,9 @@ public class GeneralEntityDetailsPanel extends JPanel {
         testDetailsPanel.setEstimatedDurationDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_ESTIMATED_DURATTION)));
         testDetailsPanel.setLastModifiedDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_LAST_MODIFIED)));
         testDetailsPanel.setCoveredContentDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_COVERED_CONTENT)));
-
+        if (isGherkin) {
+            testDetailsPanel.setAutomationStatusDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_AUTOMATION_STATUS)));
+        }
         return testDetailsPanel;
     }
 
@@ -251,7 +253,7 @@ public class GeneralEntityDetailsPanel extends JPanel {
         taskDetailsPanel.setLastModifiedDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_LAST_MODIFIED)));
 
         taskDetailsPanel.setTaskTypeDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TASK_TYPE)));
-        taskDetailsPanel.setSprintDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_SPRINT)));
+        taskDetailsPanel.setRemainingHoursDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_REMAINING_HOURS)));
         taskDetailsPanel.setEstimatedHoursDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_ESTIMATED_HOURS)));
         taskDetailsPanel.setInvestedHoursDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_INVESTED_HOURS)));
         return taskDetailsPanel;
@@ -268,7 +270,7 @@ public class GeneralEntityDetailsPanel extends JPanel {
         userStoryDetailsPanel.setLastModifiedDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_LAST_MODIFIED)));
 
         userStoryDetailsPanel.setTeamDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEAM)));
-        userStoryDetailsPanel.setEnviromentDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_ENVIROMENT)));
+        userStoryDetailsPanel.setAuthorDetailsDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_AUTHOR), "full_name"));
         userStoryDetailsPanel.setAppModuleDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_APPMODULE)));
         userStoryDetailsPanel.setItemOriginDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_ITEM_ORIGIN)));
         userStoryDetailsPanel.setBlockedReasonDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_BLOCKED_REASON)));
