@@ -154,7 +154,6 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
     }
 
     private Pair<Entity, Long> getDataFromTabKey(JSONObject jsonObject){
-        JSONObject json = new JSONObject();
         Entity entity = Entity.valueOf(jsonObject.getString("type"));
         Long id = jsonObject.getLong("id");
         return Pair.create(entity,id);
