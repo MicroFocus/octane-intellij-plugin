@@ -1,13 +1,16 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.treetable.nowork.snake;
 
 import com.intellij.util.ImageLoader;
+import com.intellij.util.containers.HashSet;
 
 import javax.swing.*;
+import javax.swing.Timer;
 import java.awt.*;
-import java.awt.event.*;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Deque;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.*;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -193,23 +196,31 @@ public class SnakeGame extends JPanel {
 	/**
 	 * This sets the game state to WON if there is not more space to put an apple
 	 */
-	private void placeRandomApple(){		
-		int randX = ThreadLocalRandom.current().nextInt(0, horizontalPosCount);
-		int randY = ThreadLocalRandom.current().nextInt(0, verticalPosCount);
-		SpritePos candidatePos = new SpritePos(randX, randY);
+	private void placeRandomApple(){
+		Set<SpritePos> possiblePositions = new HashSet<>();
+		for(int x = 0; x<horizontalPosCount; x++){
+			for(int y = 0; y<verticalPosCount; y++){
+                SpritePos pos = new SpritePos(x,y);
+                if(!snakeBody.contains(pos)){
+                    possiblePositions.add(pos);
+                }
+			}
+		}
 
-		int boardSize = horizontalPosCount * verticalPosCount;
-		if(snakeBody.size() >= boardSize){
-			applePos = null;
-			gameState = GameState.WON; //nice
+		if(possiblePositions.size() <= 1){
+            applePos = null;
+            gameState = GameState.WON; //nice
             backgroundColor = octaneGreen;
-			return;
-		} else if(snakeBody.contains(candidatePos)){
-			placeRandomApple();
-		}
-		else {
-			applePos = new SpritePos(randX, randY);
-		}
+            return;
+        }
+
+		//Pick a random element of the set
+        int index = ThreadLocalRandom.current().nextInt(0, possiblePositions.size());
+        Iterator<SpritePos> iter = possiblePositions.iterator();
+        for (int i = 0; i < index; i++) {
+            iter.next();
+        }
+        applePos = iter.next();
 	}
 
 	private void initGame(){
