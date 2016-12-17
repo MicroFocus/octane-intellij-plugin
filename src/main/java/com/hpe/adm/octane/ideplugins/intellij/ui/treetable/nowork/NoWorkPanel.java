@@ -1,5 +1,6 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.treetable.nowork;
 
+import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.nowork.snake.SnakeGame;
 import com.hpe.adm.octane.ideplugins.intellij.util.Constants;
 import com.intellij.util.ui.UIUtil;
 import org.jdesktop.swingx.JXHyperlink;
@@ -8,6 +9,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 
+/**
+ * Panel shown to the user when his MY WORK tree has no items
+ */
 public class NoWorkPanel extends JPanel {
 
 	private static final String NO_WORK_TEXT = "You're Awesome! You finished all your work!";
@@ -73,29 +77,10 @@ public class NoWorkPanel extends JPanel {
 	 */
 	public void showGame(){
 		rootPanel.removeAll();
-		
-		JPanel snakePanel = new JPanel();
-		rootPanel.add(snakePanel, BorderLayout.CENTER);
-		GridBagLayout gbl_snakePanel = new GridBagLayout();
-		gbl_snakePanel.columnWidths = new int[]{0, 0};
-		gbl_snakePanel.rowHeights = new int[]{0, 0};
-		gbl_snakePanel.columnWeights = new double[]{1.0, Double.MIN_VALUE};
-		gbl_snakePanel.rowWeights = new double[]{1.0, Double.MIN_VALUE};
-		snakePanel.setLayout(gbl_snakePanel);
-        snakePanel.setOpaque(false);
-
-		//80%
-		int snakeHeight = (int) rootPanel.getSize().getHeight() * 8/10;
-		int snakeWidth = (int) rootPanel.getSize().getWidth() * 8/10;
-		SnakeGame snakeBoard = new SnakeGame(new Dimension(snakeWidth, snakeHeight));
-
-		GridBagConstraints gbc_snakeBoard = new GridBagConstraints();
-		gbc_snakeBoard.gridx = 0;
-		gbc_snakeBoard.gridy = 0;
-		snakePanel.add(snakeBoard, gbc_snakeBoard);
-
+		SnakeGame snakeGame = new SnakeGame();
+		rootPanel.add(snakeGame, BorderLayout.CENTER);
 		rootPanel.repaint();
 		rootPanel.revalidate();
-		snakeBoard.requestFocus();
+		snakeGame.requestFocus();
 	}
 }

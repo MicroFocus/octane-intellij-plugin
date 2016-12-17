@@ -1,11 +1,15 @@
-package com.hpe.adm.octane.ideplugins.intellij.ui.treetable.nowork;
+package com.hpe.adm.octane.ideplugins.intellij.ui.treetable.nowork.snake;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
-public class SnakeTestFrame extends JFrame {
+/**
+ * Allows you to try out the snake game hidden in the IDE plugin
+ */
+class SnakeTestFrame extends JFrame {
 
+	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 
 	/**
@@ -19,7 +23,7 @@ public class SnakeTestFrame extends JFrame {
 
                 JPanel panel = new JPanel(new BorderLayout(0,0));
                 panel.setPreferredSize(new Dimension(800, 600));
-                panel.add(new ResizableSnakeGame(), BorderLayout.CENTER);
+                panel.add(new SnakeGame(), BorderLayout.CENTER);
                 frame.getContentPane().add(panel);
 
                 //Display the window.
