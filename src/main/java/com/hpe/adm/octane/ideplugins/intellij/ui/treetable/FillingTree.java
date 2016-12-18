@@ -3,6 +3,7 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.treetable;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Conditions;
 import com.intellij.openapi.util.SystemInfo;
+import com.intellij.ui.treeStructure.Tree;
 import com.intellij.util.ui.MouseEventAdapter;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.util.ui.tree.WideSelectionTreeUI;
@@ -21,18 +22,41 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-/**
- * Will make the cell inside the row the width of the tree, had to @Override setUI
- */
-class FillingTree extends JTree {
+class FillingTree extends Tree {
 
-    FillingWideSelectionTreeUI ui = new FillingWideSelectionTreeUI();
+    private FillingWideSelectionTreeUI ui = new FillingWideSelectionTreeUI();
 
     public FillingTree() {
         setUI(ui);
     }
 
-    static class FillingWideSelectionTreeUI extends BasicTreeUI {
+    /**
+     * This is a custom component, it should always have the same type of UI
+     * @param ui
+     */
+    @Override
+    public void setUI(final TreeUI ui) {
+        if(ui instanceof  FillingWideSelectionTreeUI) {
+            super.setUI(ui);
+        } else {
+            //this is probably triggered by a LAF change
+            //Makes sure all the colors are right
+            this.ui = new FillingWideSelectionTreeUI();
+
+            //Reset the same type of ui with the correct colors from LAF
+            super.setUI(this.ui);
+        }
+    }
+
+    @Override
+    protected boolean isCustomUI() {
+        return true;
+    }
+
+    /**
+     * Will make the cell inside the row the width of the tree, had to @Override setUI
+     */
+    private static class FillingWideSelectionTreeUI extends BasicTreeUI {
         public static final String TREE_TABLE_TREE_KEY = "TreeTableTree";
 
         @NonNls
@@ -52,7 +76,7 @@ class FillingTree extends JTree {
 
         @SuppressWarnings("unchecked")
         public FillingWideSelectionTreeUI() {
-            this(true, Conditions.<Integer>alwaysTrue());
+            this(true, Conditions.alwaysTrue());
         }
 
         /**
