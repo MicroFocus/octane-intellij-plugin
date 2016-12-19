@@ -97,6 +97,7 @@ public class GeneralEntityDetailsPanel extends JPanel {
         descriptionDetails.setLineWrap(true);
         descriptionDetails.setEditable(false);
         descriptionDetails.setBorder(null);
+        descriptionDetails.setFont(new Font("Tahoma", Font.PLAIN, 11));
         descriptionDetails.setBackground(new Color(0, 0, 0, 0));
         GridBagConstraints gbc_descriptionDetails = new GridBagConstraints();
         gbc_descriptionDetails.fill = GridBagConstraints.BOTH;
