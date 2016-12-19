@@ -33,9 +33,6 @@ public class OctaneCheckinHandler extends CheckinHandler {
     public static EntityModel activatedItem;
 
     @Inject
-    private DownloadScriptService scriptService;
-
-    @Inject
     private CommitMessageService commitMessageService;
 
     private CheckinProjectPanel panel;
