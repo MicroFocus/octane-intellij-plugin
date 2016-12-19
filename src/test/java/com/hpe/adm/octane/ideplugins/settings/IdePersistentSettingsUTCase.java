@@ -1,6 +1,6 @@
 package com.hpe.adm.octane.ideplugins.settings;
 
-import com.hpe.adm.octane.ideplugins.intellij.settings.IdePersistentSettings;
+import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import org.jdom.output.XMLOutputter;
 import org.json.JSONObject;
 import org.junit.Assert;
@@ -11,22 +11,22 @@ public class IdePersistentSettingsUTCase {
     @Test
     public void testSettingsStateManagement(){
         //Add some stuff to a settings object
-        IdePersistentSettings settings1 = new IdePersistentSettings();
+        IdePluginPersistentState settings1 = new IdePluginPersistentState();
         JSONObject json = new JSONObject("{\"value\": \"test\"}");
-        settings1.setSetting(IdePersistentSettings.Key.OPEN_TABS, json);
-        settings1.setSetting(IdePersistentSettings.Key.ACTIVE_WORK_ITEM, json);
+        settings1.saveState(IdePluginPersistentState.Key.OPEN_TABS, json);
+        settings1.saveState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM, json);
 
         //Create a new settings object, load it's state from the prev
-        IdePersistentSettings settings2 = new IdePersistentSettings();
+        IdePluginPersistentState settings2 = new IdePluginPersistentState();
         settings2.loadState(settings1.getState());
 
         //assert key are equal
         Assert.assertEquals(
-                settings1.getSetting(IdePersistentSettings.Key.OPEN_TABS).toString(),
-                settings2.getSetting(IdePersistentSettings.Key.OPEN_TABS).toString());
+                settings1.loadState(IdePluginPersistentState.Key.OPEN_TABS).toString(),
+                settings2.loadState(IdePluginPersistentState.Key.OPEN_TABS).toString());
         Assert.assertEquals(
-                settings1.getSetting(IdePersistentSettings.Key.ACTIVE_WORK_ITEM).toString(),
-                settings2.getSetting(IdePersistentSettings.Key.ACTIVE_WORK_ITEM).toString());
+                settings1.loadState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM).toString(),
+                settings2.loadState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM).toString());
 
         //check if the states are equal
         XMLOutputter outputter = new XMLOutputter();

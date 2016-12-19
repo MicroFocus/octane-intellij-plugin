@@ -9,12 +9,14 @@ import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.tabs.TabInfo;
+import com.intellij.ui.tabs.TabsListener;
 import com.intellij.ui.tabs.TabsUtil;
 import com.intellij.ui.tabs.UiDecorator;
 import com.intellij.ui.tabs.impl.JBEditorTabs;
 import com.intellij.ui.tabs.impl.TabLabel;
 import com.intellij.util.BitUtil;
 import com.intellij.util.ui.TimedDeadzone;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -37,6 +39,7 @@ public class TabbedPaneView implements View {
         //Init tabbed pane
         DataContext dataContext = DataManager.getInstance().getDataContext();
         Project project = DataKeys.PROJECT.getData(dataContext);
+
         editorTabs = new JBEditorTabs(project, ActionManager.getInstance(), IdeFocusManager.getGlobalInstance(), project);
 
         //Edit presentation
@@ -177,6 +180,10 @@ public class TabbedPaneView implements View {
 
     public void selectTabWithTabInfo(TabInfo tabInfo, boolean requestFocus){
         editorTabs.select(tabInfo, requestFocus);
+    }
+
+    public void addTabsListener(@NotNull TabsListener listener) {
+        editorTabs.addListener(listener);
     }
 
     private class CloseTab extends AnAction implements DumbAware {

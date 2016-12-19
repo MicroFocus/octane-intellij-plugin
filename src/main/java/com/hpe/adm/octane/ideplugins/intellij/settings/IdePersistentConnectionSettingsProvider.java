@@ -2,11 +2,14 @@ package com.hpe.adm.octane.ideplugins.intellij.settings;
 
 import com.hpe.adm.octane.ideplugins.services.connection.BasicConnectionSettingProvider;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
+import com.intellij.ide.DataManager;
 import com.intellij.ide.passwordSafe.PasswordSafe;
 import com.intellij.ide.passwordSafe.PasswordSafeException;
+import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.actionSystem.DataKeys;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
-import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jdom.Element;
@@ -14,11 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @State(
-        name = "ConnectionSettings",
-        storages = {
-                @Storage(
-                        file = "$APP_CONFIG$/octane_connection_settings.xml"
-                )}
+        name = "OctanePluginConnectionSettings"
 )
 public class IdePersistentConnectionSettingsProvider extends BasicConnectionSettingProvider implements PersistentStateComponent<Element> {
 
@@ -91,7 +90,7 @@ public class IdePersistentConnectionSettingsProvider extends BasicConnectionSett
     @NotNull
     private void encryptPassword(String password) {
         try {
-            PasswordSafe.getInstance().storePassword (null, IdePersistentConnectionSettingsProvider.class, OCTANE_PASSWORD_KEY, password);
+            PasswordSafe.getInstance().storePassword (getCurrentProject(), IdePersistentConnectionSettingsProvider.class, OCTANE_PASSWORD_KEY, password);
         } catch (NullPointerException | PasswordSafeException e) {
             //log.info("Couldn't get password for key [" + OCTANE_PASSWORD_KEY + "]", e);
         }
@@ -101,12 +100,17 @@ public class IdePersistentConnectionSettingsProvider extends BasicConnectionSett
     private String decryptPassword() {
         String password;
         try {
-            password = PasswordSafe.getInstance().getPassword(null, IdePersistentConnectionSettingsProvider.class, OCTANE_PASSWORD_KEY);
+            password = PasswordSafe.getInstance().getPassword(getCurrentProject(), IdePersistentConnectionSettingsProvider.class, OCTANE_PASSWORD_KEY);
         } catch (NullPointerException | PasswordSafeException e) {
             //log.info("Couldn't get password for key [" + OCTANE_PASSWORD_KEY + "]", e);
             password = "";
         }
         return StringUtil.notNullize(password);
+    }
+
+    private static Project getCurrentProject(){
+        DataContext dataContext = DataManager.getInstance().getDataContext();
+        return DataKeys.PROJECT.getData(dataContext);
     }
 
 }
