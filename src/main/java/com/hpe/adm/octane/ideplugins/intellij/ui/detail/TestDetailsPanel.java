@@ -21,6 +21,8 @@ public class TestDetailsPanel extends JXPanel {
     private JXLabel designerDetails;
     private JXLabel createdDetails;
     private JXLabel lastModifiedDetails;
+    private JXLabel automationStatusLabel;
+    private JXLabel automationStatusDetails;
 
 
     public TestDetailsPanel() {
@@ -90,7 +92,7 @@ public class TestDetailsPanel extends JXPanel {
         JXLabel estimatedDurationLabel = new JXLabel();
         estimatedDurationLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
         estimatedDurationLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
-        estimatedDurationLabel.setText("Estimated Duration");
+        estimatedDurationLabel.setText("Estimated duration");
         GridBagConstraints gbc_estimatedDurationLabel = new GridBagConstraints();
         gbc_estimatedDurationLabel.anchor = GridBagConstraints.WEST;
         gbc_estimatedDurationLabel.insets = new Insets(0, 0, 5, 5);
@@ -153,9 +155,9 @@ public class TestDetailsPanel extends JXPanel {
         detailsPanelMain.add(detailsPanelRight, BorderLayout.CENTER);
         GridBagLayout gbl_detailsPanelRight = new GridBagLayout();
         gbl_detailsPanelRight.columnWidths = new int[]{0, 0, 0};
-        gbl_detailsPanelRight.rowHeights = new int[]{0, 0, 0, 0, 0};
+        gbl_detailsPanelRight.rowHeights = new int[]{0, 0, 0, 0, 0, 0};
         gbl_detailsPanelRight.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
-        gbl_detailsPanelRight.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+        gbl_detailsPanelRight.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
         detailsPanelRight.setLayout(gbl_detailsPanelRight);
 
         JXLabel ownerLabel = new JXLabel();
@@ -228,7 +230,7 @@ public class TestDetailsPanel extends JXPanel {
         lastModifiedLabel.setText("Last modified");
         GridBagConstraints gbc_lastModifiedLabel = new GridBagConstraints();
         gbc_lastModifiedLabel.anchor = GridBagConstraints.WEST;
-        gbc_lastModifiedLabel.insets = new Insets(0, 0, 0, 5);
+        gbc_lastModifiedLabel.insets = new Insets(0, 0, 5, 5);
         gbc_lastModifiedLabel.gridx = 0;
         gbc_lastModifiedLabel.gridy = 3;
         detailsPanelRight.add(lastModifiedLabel, gbc_lastModifiedLabel);
@@ -236,12 +238,35 @@ public class TestDetailsPanel extends JXPanel {
         lastModifiedDetails = new JXLabel();
         lastModifiedDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_lastModifiedDetails = new GridBagConstraints();
+        gbc_lastModifiedDetails.insets = new Insets(0, 0, 5, 0);
         gbc_lastModifiedDetails.fill = GridBagConstraints.HORIZONTAL;
         gbc_lastModifiedDetails.anchor = GridBagConstraints.SOUTH;
         gbc_lastModifiedDetails.gridx = 1;
         gbc_lastModifiedDetails.gridy = 3;
         detailsPanelRight.add(lastModifiedDetails, gbc_lastModifiedDetails);
-
+        
+        automationStatusLabel = new JXLabel();
+        automationStatusLabel.setText("Automation status");
+        automationStatusLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
+        automationStatusLabel.setBorder(new EmptyBorder(0, 30, 0, 10));
+        GridBagConstraints gbc_automationStatusLabel = new GridBagConstraints();
+        gbc_automationStatusLabel.insets = new Insets(0, 0, 0, 5);
+        gbc_automationStatusLabel.gridx = 0;
+        gbc_automationStatusLabel.gridy = 4;
+        detailsPanelRight.add(automationStatusLabel, gbc_automationStatusLabel);
+        
+        automationStatusDetails = new JXLabel();
+        automationStatusDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
+        GridBagConstraints gbc_automationStatusDetails = new GridBagConstraints();
+        gbc_automationStatusDetails.anchor = GridBagConstraints.SOUTH;
+        gbc_automationStatusDetails.fill = GridBagConstraints.HORIZONTAL;
+        gbc_automationStatusDetails.gridx = 1;
+        gbc_automationStatusDetails.gridy = 4;
+        detailsPanelRight.add(automationStatusDetails, gbc_automationStatusDetails);
+        
+        automationStatusLabel.setVisible(false);
+        automationStatusDetails.setVisible(false);
+        
         addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent e) {
                 int halfWidth = detailsPanelMain.getWidth() / 2;
@@ -293,5 +318,15 @@ public class TestDetailsPanel extends JXPanel {
         this.lastModifiedDetails.setText(lastModifiedDetails);
     }
 
+	public JXLabel getAutomationStatusDetails() {
+		return automationStatusDetails;
+	}
+
+	public void setAutomationStatusDetails(String automationStatusDetails) {
+		this.automationStatusLabel.setVisible(true);
+        this.automationStatusDetails.setVisible(true);
+		this.automationStatusDetails.setText(automationStatusDetails);
+	}
+    
 
 }

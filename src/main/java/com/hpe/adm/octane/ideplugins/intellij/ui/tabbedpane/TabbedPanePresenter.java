@@ -1,10 +1,7 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.tabbedpane;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.hpe.adm.octane.ideplugins.intellij.settings.IdePersistentSettings;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.EntityDetailPresenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
@@ -12,14 +9,13 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeTablePresen
 import com.hpe.adm.octane.ideplugins.intellij.util.Constants;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.intellij.openapi.util.IconLoader;
-import com.intellij.openapi.util.Pair;
 import com.intellij.ui.tabs.TabInfo;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.util.HashMap;
+import java.util.Map;
 
 public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
 
@@ -30,13 +26,11 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
 
     @Inject
     private Provider<EntityDetailPresenter> entityDetailPresenterProvider;
+
     @Inject
     private Provider<EntityTreeTablePresenter> entityTreeTablePresenterProvider;
 
-    @Inject
-    private IdePersistentSettings settings;
-
-    private BiMap<String, TabInfo> detailTabInfo = HashBiMap.create();
+    private Map<String, TabInfo> detailTabInfo = new HashMap<>();
 
     public EntityTreeTablePresenter openMyWorkTab() {
         EntityTreeTablePresenter presenter = entityTreeTablePresenterProvider.get();
@@ -48,7 +42,8 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
     public void openDetailTab(Entity entityType, Long entityId, String entityName) {
         EntityDetailPresenter presenter = entityDetailPresenterProvider.get();
         presenter.setEntity(entityType, entityId);
-        String tabId = getDetailTabKey(entityType, entityId);
+        String tabId = createTabId(entityType, entityId);
+
         ImageIcon tabIcon = new ImageIcon(entityIconFactory.getIconAsImage(entityType));
 
         TabInfo tabInfo = tabbedPaneView.addTab(
@@ -58,7 +53,6 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
                 presenter.getView().getComponent());
 
         detailTabInfo.put(tabId, tabInfo);
-        syncOpenDetailTabsWithSettings();
     }
 
     public TabbedPaneView getView() {
@@ -73,7 +67,6 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
         //open test entity tree view
         EntityTreeTablePresenter presenter = openMyWorkTab();
         initHandlers(presenter);
-        openSavedDetailTabs();
     }
 
     private void initHandlers(EntityTreeTablePresenter presenter){
@@ -81,84 +74,64 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
 
             //Need the name for the tab tooltip
             String entityName = model.getValue("name").getValue().toString();
-            String tabId = getDetailTabKey(entityType, entityId);
+            String tabId = entityType.name() + entityId;
 
             //double click
             if(SwingUtilities.isLeftMouseButton(mouseEvent) && mouseEvent.getClickCount() == 2){
-                if (detailTabInfo.containsKey(tabId) && tabbedPaneView.hasTabWithTabInfo(detailTabInfo.get(tabId))) {
-                    tabbedPaneView.selectTabWithTabInfo(detailTabInfo.get(tabId), false);
+                if(isDetailTabAlreadyOpen(tabId)){
+                    selectDetailTab(tabId);
                 } else {
                     openDetailTab(entityType, entityId, entityName);
-                    tabbedPaneView.selectTabWithTabInfo(detailTabInfo.get(tabId), false);
+                    selectDetailTab(tabId);
                 }
             }
+
             //Middle click
             else if(SwingUtilities.isMiddleMouseButton(mouseEvent)){
-                if (!detailTabInfo.containsKey(tabId) && !tabbedPaneView.hasTabWithTabInfo(detailTabInfo.get(tabId))) {
+                if(!isDetailTabAlreadyOpen(tabId)){
                     openDetailTab(entityType, entityId, entityName);
                 }
             }
         });
 
-        //Enter key
         presenter.addEntityKeyHandler((event, selectedEntityType, selectedEntityId, model) -> {
             if (event.getKeyCode() == KeyEvent.VK_ENTER) {
                 //Need the name for the tab tooltip
                 String entityName = model.getValue("name").getValue().toString();
-                String tabId = getDetailTabKey(selectedEntityType, selectedEntityId);
+                String tabId = createTabId(selectedEntityType, selectedEntityId);
 
-                if (detailTabInfo.containsKey(tabId) && tabbedPaneView.hasTabWithTabInfo(detailTabInfo.get(tabId))) {
-                    tabbedPaneView.selectTabWithTabInfo(detailTabInfo.get(tabId), false);
+                if(isDetailTabAlreadyOpen(tabId)){
+                    selectDetailTab(tabId);
                 } else {
                     openDetailTab(selectedEntityType, selectedEntityId, entityName);
-                    tabbedPaneView.selectTabWithTabInfo(detailTabInfo.get(tabId), false);
+                    selectDetailTab(tabId);
                 }
             }
         });
     }
 
+    private void selectDetailTab(String tabId){
+        tabbedPaneView.selectTabWithTabInfo(detailTabInfo.get(tabId), false);
+    }
+
     /**
-     * TODO atoth, this is a really inefficient way to do things
+     * Create an ID that identifies what entity detail tabs you have open, used as a mapkey
+     * Use {@link #isDetailTabAlreadyOpen(String tabId)} or {@link #isDetailTabAlreadyOpen(Entity entityType, Long entityId)}
+     * to see if a tab is already open
+     * @param entityType
+     * @param entityId
+     * @return a unique key for a detail tab
      */
-    private void syncOpenDetailTabsWithSettings(){
-        JSONArray jsonArray = new JSONArray();
-        for(TabInfo tabInfo : tabbedPaneView.getTabInfos()){
-            String tabKey = detailTabInfo.inverse().get(tabInfo);
-            if(tabKey!=null) {
-                jsonArray.put(new JSONObject(tabKey));
-            }
-        }
-
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("tabs", jsonArray);
-        settings.setSetting(IdePersistentSettings.Key.OPEN_TABS, jsonObject);
+    private String createTabId(Entity entityType, Long entityId){
+        return entityType.name() + entityId;
     }
 
-    private void openSavedDetailTabs(){
-        JSONObject jsonObject = settings.getSetting(IdePersistentSettings.Key.OPEN_TABS);
-        if(jsonObject!=null){
-            JSONArray array = jsonObject.getJSONArray("tabs");
-            for (int i = 0; i < array.length(); i++) {
-                JSONObject obj = array.getJSONObject(i);
-                Pair<Entity, Long> pair = getDataFromTabKey(obj);
-                openDetailTab(pair.first, pair.second, "IDUNNO");
-            }
-        }
+    public boolean isDetailTabAlreadyOpen(Entity entityType, Long entityId){
+        return isDetailTabAlreadyOpen(createTabId(entityType, entityId));
     }
 
-    private String getDetailTabKey(Entity entityType, Long entityId){
-        JSONObject json = new JSONObject();
-        json.put("type", entityType.name());
-        json.put("id", entityId);
-        return json.toString();
+    private boolean isDetailTabAlreadyOpen(String tabId){
+        return detailTabInfo.containsKey(tabId) && tabbedPaneView.hasTabWithTabInfo(detailTabInfo.get(tabId));
     }
-
-    private Pair<Entity, Long> getDataFromTabKey(JSONObject jsonObject){
-        Entity entity = Entity.valueOf(jsonObject.getString("type"));
-        Long id = jsonObject.getLong("id");
-        return Pair.create(entity,id);
-    }
-
-
 }
 

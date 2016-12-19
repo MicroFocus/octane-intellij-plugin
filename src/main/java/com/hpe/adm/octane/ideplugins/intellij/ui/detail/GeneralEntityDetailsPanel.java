@@ -1,7 +1,9 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
 import com.hpe.adm.nga.sdk.model.EntityModel;
+import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
+import com.hpe.adm.octane.ideplugins.services.util.UrlParser;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.ui.JBColor;
 import org.apache.commons.lang.CharEncoding;
@@ -16,6 +18,9 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.io.IOException;
+import java.net.URI;
 
 import static com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil.getUiDataFromModel;
 
@@ -46,9 +51,9 @@ public class GeneralEntityDetailsPanel extends JPanel {
         add(rootPanel, gbc_rootPanel);
         GridBagLayout gbl_rootPanel = new GridBagLayout();
         gbl_rootPanel.columnWidths = new int[]{0, 0};
-        gbl_rootPanel.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0};
+        gbl_rootPanel.rowHeights = new int[]{0, 0, 0, 0, 0};
         gbl_rootPanel.columnWeights = new double[]{1.0, Double.MIN_VALUE};
-        gbl_rootPanel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+        gbl_rootPanel.rowWeights = new double[]{0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE};
         rootPanel.setLayout(gbl_rootPanel);
 
         headerPanel = new HeaderPanel();
@@ -76,6 +81,7 @@ public class GeneralEntityDetailsPanel extends JPanel {
         descriptionPanel.setLayout(gbl_descriptionPanel);
 
         JXLabel lblDescription = new JXLabel();
+        lblDescription.setFont(new Font("Tahoma", Font.BOLD, 11));
         lblDescription.setText("Description");
         GridBagConstraints gbc_lblDescription = new GridBagConstraints();
         gbc_lblDescription.anchor = GridBagConstraints.WEST;
@@ -110,10 +116,9 @@ public class GeneralEntityDetailsPanel extends JPanel {
         JXPanel atachementsPanel = new JXPanel();
         atachementsPanel.setBorder(new MatteBorder(1, 0, 0, 0, JBColor.border()));
         GridBagConstraints gbc_atachementsPanel = new GridBagConstraints();
-        gbc_atachementsPanel.anchor = GridBagConstraints.SOUTH;
-        gbc_atachementsPanel.fill = GridBagConstraints.HORIZONTAL;
+        gbc_atachementsPanel.fill = GridBagConstraints.BOTH;
         gbc_atachementsPanel.gridx = 0;
-        gbc_atachementsPanel.gridy = 5;
+        gbc_atachementsPanel.gridy = 3;
         rootPanel.add(atachementsPanel, gbc_atachementsPanel);
         GridBagLayout gbl_atachementsPanel = new GridBagLayout();
         gbl_atachementsPanel.columnWidths = new int[]{0, 0, 0};
@@ -148,9 +153,10 @@ public class GeneralEntityDetailsPanel extends JPanel {
     }
 
     private void drawGeneralDetailsForEntity(EntityModel entityModel) {
+
         headerPanel.setPhaseDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_PHASE)));
-        headerPanel.setNameDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_NAME)));
         this.descriptionDetails.setText(getDescriptionForEntityModel(entityModel));
+        headerPanel.addActionToEntityLink(new GoToBrowser(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_NAME)), entityModel));
     }
 
     public void drawRefreshButton(AnAction refreshAction) {
@@ -170,48 +176,47 @@ public class GeneralEntityDetailsPanel extends JPanel {
         switch (Entity.getEntityType(entityModel)) {
             case DEFECT:
                 headerPanel.setEntityIcon(new ImageIcon(TaskDetailsPanel.class.getResource("/images/defectIcon.png")));
-                hasAttachment = true;
+                hasAttachment = false;
                 ret = updateUiWithDefectDetails(entityModel);
                 break;
             case GHERKIN_TEST:
                 headerPanel.setEntityIcon(new ImageIcon(TaskDetailsPanel.class.getResource("/images/gerkinTestIcon.png")));
-                hasAttachment = true;
-                ret = updateUiWithTestsDetails(entityModel);
+                hasAttachment = false;
+                ret = updateUiWithTestsDetails(entityModel, true);
                 break;
             case MANUAL_TEST:
                 headerPanel.setEntityIcon(new ImageIcon(TaskDetailsPanel.class.getResource("/images/manualTestIcon.png")));
-                hasAttachment = true;
-                ret = updateUiWithTestsDetails(entityModel);
+                hasAttachment = false;
+                ret = updateUiWithTestsDetails(entityModel, false);
                 break;
             case USER_STORY:
                 headerPanel.setEntityIcon(new ImageIcon(TaskDetailsPanel.class.getResource("/images/userStoryIcon.png")));
-                hasAttachment = true;
+                hasAttachment = false;
                 ret = updateUiWithUserStoryDetails(entityModel);
                 break;
             case TASK:
                 headerPanel.setEntityIcon(new ImageIcon(TaskDetailsPanel.class.getResource("/images/taskIcon.png")));
                 ret = updateUiWithTaskDetails(entityModel);
-                hasAttachment = true;
+                hasAttachment = false;
                 break;
         }
         return ret;
     }
 
-    private JXPanel updateUiWithTestsDetails(EntityModel entityModel) {
+    private JXPanel updateUiWithTestsDetails(EntityModel entityModel, boolean isGherkin) {
         TestDetailsPanel testDetailsPanel = new TestDetailsPanel();
         testDetailsPanel.setApplicationModulesDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_APPMODULE)));
         testDetailsPanel.setDesignerDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_DESIGNER)));
-//        testDetailsPanel.setTxtfldManual(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_IS_MANUAL)));
-//        testDetailsPanel.setTextRunInReleases(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_RUNS_IN_RELEASES)));
         testDetailsPanel.setTestTypeDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEST_TYPE)));
         testDetailsPanel.setTestToolTypeDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TESTING_TOOL_TYPE)));
         testDetailsPanel.setCreatedDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_CREATED)));
         testDetailsPanel.setOwnerDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_OWNER)));
-//        testDetailsPanel.setTxtfldFeature(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_FEATURE)));
         testDetailsPanel.setEstimatedDurationDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_ESTIMATED_DURATTION)));
         testDetailsPanel.setLastModifiedDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_LAST_MODIFIED)));
         testDetailsPanel.setCoveredContentDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_COVERED_CONTENT)));
-
+        if (isGherkin) {
+            testDetailsPanel.setAutomationStatusDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_AUTOMATION_STATUS)));
+        }
         return testDetailsPanel;
     }
 
@@ -248,7 +253,7 @@ public class GeneralEntityDetailsPanel extends JPanel {
         taskDetailsPanel.setLastModifiedDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_LAST_MODIFIED)));
 
         taskDetailsPanel.setTaskTypeDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TASK_TYPE)));
-        taskDetailsPanel.setSprintDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_SPRINT)));
+        taskDetailsPanel.setRemainingHoursDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_REMAINING_HOURS)));
         taskDetailsPanel.setEstimatedHoursDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_ESTIMATED_HOURS)));
         taskDetailsPanel.setInvestedHoursDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_INVESTED_HOURS)));
         return taskDetailsPanel;
@@ -265,7 +270,7 @@ public class GeneralEntityDetailsPanel extends JPanel {
         userStoryDetailsPanel.setLastModifiedDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_LAST_MODIFIED)));
 
         userStoryDetailsPanel.setTeamDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEAM)));
-        userStoryDetailsPanel.setEnviromentDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_ENVIROMENT)));
+        userStoryDetailsPanel.setAuthorDetailsDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_AUTHOR), "full_name"));
         userStoryDetailsPanel.setAppModuleDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_APPMODULE)));
         userStoryDetailsPanel.setItemOriginDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_ITEM_ORIGIN)));
         userStoryDetailsPanel.setBlockedReasonDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_BLOCKED_REASON)));
@@ -274,4 +279,27 @@ public class GeneralEntityDetailsPanel extends JPanel {
         return userStoryDetailsPanel;
     }
 
+    private static class GoToBrowser extends AbstractAction {
+        private EntityModel entityModel;
+        private Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+
+        public GoToBrowser(String entityName, EntityModel entityModel) {
+            this.entityModel = entityModel;
+            super.putValue(Action.NAME, entityName);
+            super.putValue(Action.SHORT_DESCRIPTION, "Sample Action Description");
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            URI uri =
+                    UrlParser.createEntityWebURI(Entity.getEntityType(entityModel), Integer.valueOf(UiUtil.getUiDataFromModel(entityModel.getValue("id"))));
+            try {
+                desktop.browse(uri);
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+        }
+    }
 }
+
+

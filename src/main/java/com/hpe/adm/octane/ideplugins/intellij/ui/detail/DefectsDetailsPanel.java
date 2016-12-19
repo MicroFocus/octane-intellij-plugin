@@ -9,6 +9,7 @@ import javax.swing.border.MatteBorder;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.util.Objects;
 
 public class DefectsDetailsPanel extends JXPanel {
     private static final long serialVersionUID = -7172388625845199450L;
@@ -119,7 +120,7 @@ public class DefectsDetailsPanel extends JXPanel {
         detailsPanelLeft.add(sprintDetails, gbc_sprintDetails);
 
         JXLabel storyPointsLabel = new JXLabel();
-        storyPointsLabel.setText("Story Points");
+        storyPointsLabel.setText("Story points");
         storyPointsLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
         storyPointsLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
         GridBagConstraints gbc_storyPointsLabel = new GridBagConstraints();
@@ -163,7 +164,7 @@ public class DefectsDetailsPanel extends JXPanel {
         detailsPanelLeft.add(blockedDetails, gbc_blockedDetails);
 
         JXLabel enviromentLabel = new JXLabel();
-        enviromentLabel.setText("Enviroment");
+        enviromentLabel.setText("Environment");
         enviromentLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
         enviromentLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
         GridBagConstraints gbc_enviromentLabel = new GridBagConstraints();
@@ -349,7 +350,7 @@ public class DefectsDetailsPanel extends JXPanel {
         detailsPanelRight.add(priorityDetails, gbc_priorityDetails);
 
         JXLabel blockedReasonLabel = new JXLabel();
-        blockedReasonLabel.setText("Blocked Reason");
+        blockedReasonLabel.setText("Blocked reason");
         blockedReasonLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
         blockedReasonLabel.setBorder(new EmptyBorder(0, 30, 0, 10));
         GridBagConstraints gbc_blockedReasonLabel = new GridBagConstraints();
@@ -371,7 +372,7 @@ public class DefectsDetailsPanel extends JXPanel {
         detailsPanelRight.add(blockedReasonDetails, gbc_blockedReasonDetails);
 
         JXLabel appModulesLabel = new JXLabel();
-        appModulesLabel.setText("Application Module");
+        appModulesLabel.setText("Application module");
         appModulesLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
         appModulesLabel.setBorder(new EmptyBorder(0, 30, 0, 10));
         GridBagConstraints gbc_appModulesLabel = new GridBagConstraints();
@@ -499,6 +500,7 @@ public class DefectsDetailsPanel extends JXPanel {
 
 
     public void setBlockedDetails(String blockedDetails) {
+        blockedDetails = (Objects.equals("true", blockedDetails)) ? "yes" : "no";
         this.blockedDetails.setText(blockedDetails);
     }
 

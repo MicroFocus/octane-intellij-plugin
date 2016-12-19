@@ -7,6 +7,7 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.components.WelcomeViewComponent
 import com.hpe.adm.octane.ideplugins.intellij.ui.main.MainPresenter;
 import com.hpe.adm.octane.ideplugins.services.TestService;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
+import com.hpe.adm.octane.ideplugins.services.nonentity.SharedSpaceLevelRequestService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowFactory;
@@ -18,11 +19,11 @@ import org.jetbrains.annotations.NotNull;
  */
 public class EntryPoint implements ToolWindowFactory {
 
+    @Inject
+    SharedSpaceLevelRequestService sharedSpaceLevelRequestService;
     private ToolWindow toolWindow;
-
     @Inject
     private TestService testService;
-
     @Inject
     private ConnectionSettingsProvider connectionSettingsProvider;
 
@@ -40,11 +41,12 @@ public class EntryPoint implements ToolWindowFactory {
                 testService.testConnection(connectionSettingsProvider.getConnectionSettings());
                 //In case the connection is valid show a generalView at the start
                 MainPresenter mainPresenter = PluginModule.getInstance(MainPresenter.class);
-                setContent(mainPresenter.getView());
+                String workspaceDisplayName = " [" + sharedSpaceLevelRequestService.getCurrentWorkspaceName() + "]";
+                setContent(mainPresenter.getView(), workspaceDisplayName);
 
             } catch (Exception ex){
                 //Otherwise show the welcome view
-                setContent(new WelcomeViewComponent());
+                setContent(new WelcomeViewComponent(), "");
             }
         };
 
@@ -53,10 +55,10 @@ public class EntryPoint implements ToolWindowFactory {
         connectionSettingsProvider.addChangeHandler(mainToolWindowContentControl);
     }
 
-    private void setContent(HasComponent hasComponent){
+    private void setContent(HasComponent hasComponent, String workspaceName) {
         ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
         toolWindow.getContentManager().removeAllContents(true);
-        toolWindow.getContentManager().addContent(contentFactory.createContent(hasComponent.getComponent(), "", false));
+        toolWindow.getContentManager().addContent(contentFactory.createContent(hasComponent.getComponent(), workspaceName, false));
     }
 
 }

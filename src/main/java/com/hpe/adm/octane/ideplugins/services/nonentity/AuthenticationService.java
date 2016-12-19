@@ -22,8 +22,6 @@ public class AuthenticationService extends ServiceBase {
 
     protected boolean authenticate() {
         ConnectionSettings connectionSettings = connectionSettingsProvider.getConnectionSettings();
-//        ConnectionSettings connectionSettings = new ConnectionSettings("http://localhost:8080", 2001L, 1002L,
-//                "sa@nga", "Welcome1");
 
         UserAuthorisation auth = new UserAuthorisation(connectionSettings.getUserName(), connectionSettings.getPassword());
         httpClient = HttpClient.getInstance();

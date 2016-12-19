@@ -1,6 +1,8 @@
 package com.hpe.adm.octane.ideplugins.services.util;
 
+import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
+import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
 import com.hpe.adm.octane.ideplugins.services.exception.ServiceRuntimeException;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
@@ -12,7 +14,6 @@ import java.net.URL;
 import static com.hpe.adm.octane.ideplugins.intellij.util.Constants.INVALID_URL_FORMAT_MESSAGE;
 
 public class UrlParser {
-
     public static ConnectionSettings resolveConnectionSettings(String url, String userName, String password) throws ServiceException {
 
         ConnectionSettings connectionSettings = new ConnectionSettings();
@@ -21,10 +22,10 @@ public class UrlParser {
         try {
             siteUrl = new URL(url);
             siteUrl.toURI(); // does the extra checking required for validation of URI
-            if(!"http".equals(siteUrl.getProtocol()) && !"https".equals(siteUrl.getProtocol())){
+            if (!"http".equals(siteUrl.getProtocol()) && !"https".equals(siteUrl.getProtocol())) {
                 throw new Exception();
             }
-        } catch (Exception ex){
+        } catch (Exception ex) {
             throw new ServiceException(INVALID_URL_FORMAT_MESSAGE);
         }
 
@@ -40,7 +41,7 @@ public class UrlParser {
 
                 baseUrl = siteUrl.getProtocol() + "://" + siteUrl.getHost();
                 //Add port if not the default
-                if(siteUrl.getPort() != 80 && siteUrl.getPort() != -1){
+                if (siteUrl.getPort() != 80 && siteUrl.getPort() != -1) {
                     baseUrl += ":" + siteUrl.getPort();
                 }
 
@@ -48,10 +49,10 @@ public class UrlParser {
                 sharedspaceId = Long.valueOf(split[0].substring(split[0].indexOf("p=") + 2));
                 workspaceId = Long.valueOf(split[1]);
 
-                if(sharedspaceId<0)
+                if (sharedspaceId < 0)
                     throw new Exception();
 
-                if(workspaceId<0)
+                if (workspaceId < 0)
                     throw new Exception();
 
 
@@ -74,15 +75,16 @@ public class UrlParser {
 
     /**
      * Create an octane url from a connection settings object
+     *
      * @param connectionSettings {@link ConnectionSettings} object
      * @return octane browser url or null if if any of the req. fields are missing (base url, workspace id, shared space id)
      */
-    public static String createUrlFromConnectionSettings(ConnectionSettings connectionSettings){
+    public static String createUrlFromConnectionSettings(ConnectionSettings connectionSettings) {
 
-        if(connectionSettings.getBaseUrl() == null ||
+        if (connectionSettings.getBaseUrl() == null ||
                 connectionSettings.getWorkspaceId() == null ||
                 connectionSettings.getSharedSpaceId() == null) {
-            return  null;
+            return null;
         }
 
         return connectionSettings.getBaseUrl()
@@ -91,21 +93,22 @@ public class UrlParser {
                 + "/" + connectionSettings.getWorkspaceId();
     }
 
-    public static String removeHash(String url){
-        if(url.contains("#")){
-            return url.substring(0,url.indexOf("#"));
+    public static String removeHash(String url) {
+        if (url.contains("#")) {
+            return url.substring(0, url.indexOf("#"));
         }
         return url;
     }
 
     /**
      * Create an octane ui link from an entity
+     *
      * @param connectionSettings
      * @param entityType
      * @param id
      * @return
      */
-    public static URI createEntityWebURI(ConnectionSettings connectionSettings, Entity entityType, Integer id){
+    public static URI createEntityWebURI(ConnectionSettings connectionSettings, Entity entityType, Integer id) {
         //ex: http://myd-vm24085.hpeswlab.net:8080/ui/entity-navigation?p=1001/1002&entityType=test&id=1001
         StringBuilder sb = new StringBuilder();
 
@@ -125,6 +128,11 @@ public class UrlParser {
         }
 
         return uri;
+    }
+
+    public static URI createEntityWebURI(Entity entityType, Integer id) {
+        ConnectionSettingsProvider connectionSettingsProvider = PluginModule.getInstance(ConnectionSettingsProvider.class);
+        return createEntityWebURI(connectionSettingsProvider.getConnectionSettings(), entityType, id);
     }
 
 }
