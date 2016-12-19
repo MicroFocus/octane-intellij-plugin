@@ -1,5 +1,6 @@
 package com.hpe.adm.octane.ideplugins.intellij.gitcommit;
 
+import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.intellij.openapi.vcs.CheckinProjectPanel;
 import com.intellij.openapi.vcs.changes.CommitContext;
 import com.intellij.openapi.vcs.checkin.CheckinHandler;
@@ -14,6 +15,8 @@ public class OctaneCheckinHandlerFactory extends CheckinHandlerFactory {
     @NotNull
     @Override
     public CheckinHandler createHandler(@NotNull CheckinProjectPanel panel, @NotNull CommitContext commitContext) {
-        return new OctaneCheckinHandler(panel);
+        CheckinHandler checkinHandler = new OctaneCheckinHandler(panel);
+        PluginModule.getInjectorSupplier().injectMembers(checkinHandler);
+        return checkinHandler;
     }
 }

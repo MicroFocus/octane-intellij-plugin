@@ -2,6 +2,7 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.treetable;
 
 import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.model.EntityModel;
+import com.hpe.adm.octane.ideplugins.intellij.gitcommit.OctaneCheckinHandler;
 import com.hpe.adm.octane.ideplugins.intellij.ui.View;
 import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.LoadingWidget;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.nowork.NoWorkPanel;
@@ -255,10 +256,29 @@ public class EntityTreeView implements View {
                             popup.add(downloadScriptItem);
                         }
 
-                        //TODO implement me please
-                        popup.addSeparator();
-                        popup.add(new JMenuItem("Start work", IconLoader.findIcon(Constants.IMG_START_TIMER)));
-                        popup.add(new JMenuItem("Stop work", IconLoader.findIcon(Constants.IMG_STOP_TIMER)));
+                        if (entityType == Entity.DEFECT || entityType == Entity.USER_STORY) {
+                            popup.addSeparator();
+                            boolean isActivated = OctaneCheckinHandler.activatedItem == entityModel;
+                            JMenuItem activateItem = null;
+                            if (isActivated) {
+                                activateItem = new JMenuItem("Stop work", IconLoader.findIcon(Constants.IMG_STOP_TIMER));
+                            } else {
+                                activateItem = new JMenuItem("Start work", IconLoader.findIcon(Constants.IMG_START_TIMER));
+                            }
+
+                            activateItem.addMouseListener(new MouseAdapter() {
+                                @Override
+                                public void mousePressed(MouseEvent e) {
+                                    super.mousePressed(e);
+                                    if (isActivated) {
+                                        OctaneCheckinHandler.activatedItem = null;
+                                    } else {
+                                        OctaneCheckinHandler.activatedItem = entityModel;
+                                    }
+                                }
+                            });
+                            popup.add(activateItem);
+                        }
 
                         popup.show(e.getComponent(), e.getX(), e.getY());
                     }

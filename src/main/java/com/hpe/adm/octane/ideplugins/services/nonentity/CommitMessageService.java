@@ -15,6 +15,7 @@ import org.junit.Test;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,7 +26,6 @@ import java.util.stream.Collectors;
 public class CommitMessageService extends AuthenticationService {
 
     public boolean validateCommitMessage(String commitMessage, Entity entityType, long entityId) {
-        RCommandClient r;
         String type;
         switch (entityType) {
             case DEFECT:
@@ -42,7 +42,10 @@ public class CommitMessageService extends AuthenticationService {
                 ConnectionSettings connectionSettings = connectionSettingsProvider.getConnectionSettings();
                 HttpRequest request = requestFactory.buildGetRequest(connectionSettings.getBaseUrl() + "/internal-api/shared_spaces/" +
                         connectionSettings.getSharedSpaceId() + "/workspaces/" + connectionSettings.getWorkspaceId() +
-                        "/ali/validateCommitPattern?comment=" + commitMessage);
+                        "/ali/validateCommitPattern?comment=" + URLEncoder.encode(commitMessage, "UTF-8"));
+
+                System.out.println(request.getUrl().toString());
+
                 HttpResponse response = request.execute();
 
                 BufferedReader buffer = new BufferedReader(new InputStreamReader(response.getContent()));
@@ -54,7 +57,6 @@ public class CommitMessageService extends AuthenticationService {
                         return true;
                     }
                 }
-                return matchedIdsArray.contains(new JsonPrimitive(entityId));
             } catch (IOException e) {
                 e.printStackTrace();
             }
