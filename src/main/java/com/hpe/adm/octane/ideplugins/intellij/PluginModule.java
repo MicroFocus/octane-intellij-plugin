@@ -37,28 +37,6 @@ public class PluginModule extends AbstractModule {
     private Project project;
     private static final Map<Project, Supplier<Injector>> injectorMap = new HashMap<>();
 
-    private static class ProjectScope implements Scope {
-
-        private Map<Key<?>,Object> store = new HashMap<>();
-
-        @Override
-        public <T> Provider<T> scope(Key<T> key, Provider<T> unscoped) {
-            return () -> {
-                // Lookup instance
-                T instance = (T) store.get(key);
-                if (instance==null) {
-
-                    // Create instance
-                    instance = unscoped.get();
-                    store.put(key, instance);
-                }
-                return instance;
-            };
-        }
-    }
-
-    private ProjectScope objectScope = new ProjectScope();
-
     public PluginModule(Project project) {
         this.project = project;
         injectorSupplier = Suppliers.memoize(() -> Guice.createInjector(this));
