@@ -13,6 +13,7 @@ import com.hpe.adm.octane.ideplugins.intellij.util.Constants;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.tabs.TabInfo;
+import com.intellij.ui.tabs.TabsListener;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -80,19 +81,29 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
         EntityTreeTablePresenter presenter = openMyWorkTab();
         initHandlers(presenter);
 
-        //loadDetailTabsFromPersistentState();
+        loadDetailTabsFromPersistentState();
     }
 
     private void initHandlers(EntityTreeTablePresenter presenter){
 
-        //Save tab state b4 ide close
-//        ApplicationManager.getApplication().addApplicationListener(new ApplicationAdapter() {
-//            @Override
-//            public void applicationExiting() {
-//                saveDetailTabsToPersistentState();
-//                super.applicationExiting();
-//            }
-//        });
+        //TODO atoth: only save once at the end
+        tabbedPaneView.addTabsListener(new TabsListener() {
+            @Override
+            public void selectionChanged(TabInfo oldSelection, TabInfo newSelection) {}
+
+            @Override
+            public void beforeSelectionChanged(TabInfo oldSelection, TabInfo newSelection) {}
+
+            @Override
+            public void tabRemoved(TabInfo tabToRemove) {
+                saveDetailTabsToPersistentState();
+            }
+
+            @Override
+            public void tabsMoved() {
+                saveDetailTabsToPersistentState();
+            }
+        });
 
         presenter.addEntityClickHandler((mouseEvent, entityType, entityId, model) -> {
 
