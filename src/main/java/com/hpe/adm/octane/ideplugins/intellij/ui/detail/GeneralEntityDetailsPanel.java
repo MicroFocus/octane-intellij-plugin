@@ -1,6 +1,7 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
 import com.hpe.adm.nga.sdk.model.EntityModel;
+import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
@@ -24,6 +25,7 @@ import java.io.IOException;
 import java.net.URI;
 
 import static com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil.getUiDataFromModel;
+import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.*;
 
 public class GeneralEntityDetailsPanel extends JPanel {
     private JXPanel entityDetailsPanel;
@@ -99,6 +101,7 @@ public class GeneralEntityDetailsPanel extends JPanel {
         descriptionDetails.setLineWrap(true);
         descriptionDetails.setEditable(false);
         descriptionDetails.setBorder(null);
+        descriptionDetails.setFont(new Font("Tahoma", Font.PLAIN, 11));
         descriptionDetails.setBackground(new Color(0, 0, 0, 0));
         GridBagConstraints gbc_descriptionDetails = new GridBagConstraints();
         gbc_descriptionDetails.fill = GridBagConstraints.BOTH;
@@ -178,29 +181,30 @@ public class GeneralEntityDetailsPanel extends JPanel {
 
     private JXPanel drawSpecificDetailsForEntity(EntityModel entityModel) {
         JXPanel ret = null;
+        EntityIconFactory entityIconFactory = new EntityIconFactory(26, 26, 12);
         switch (Entity.getEntityType(entityModel)) {
             case DEFECT:
-                headerPanel.setEntityIcon(new ImageIcon(TaskDetailsPanel.class.getResource("/images/defectIcon.png")));
+                headerPanel.setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(DEFECT)));
                 hasAttachment = false;
                 ret = updateUiWithDefectDetails(entityModel);
                 break;
             case GHERKIN_TEST:
-                headerPanel.setEntityIcon(new ImageIcon(TaskDetailsPanel.class.getResource("/images/gerkinTestIcon.png")));
+                headerPanel.setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(GHERKIN_TEST)));
                 hasAttachment = false;
                 ret = updateUiWithTestsDetails(entityModel, true);
                 break;
             case MANUAL_TEST:
-                headerPanel.setEntityIcon(new ImageIcon(TaskDetailsPanel.class.getResource("/images/manualTestIcon.png")));
+                headerPanel.setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(MANUAL_TEST)));
                 hasAttachment = false;
                 ret = updateUiWithTestsDetails(entityModel, false);
                 break;
             case USER_STORY:
-                headerPanel.setEntityIcon(new ImageIcon(TaskDetailsPanel.class.getResource("/images/userStoryIcon.png")));
+                headerPanel.setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(USER_STORY)));
                 hasAttachment = false;
                 ret = updateUiWithUserStoryDetails(entityModel);
                 break;
             case TASK:
-                headerPanel.setEntityIcon(new ImageIcon(TaskDetailsPanel.class.getResource("/images/taskIcon.png")));
+                headerPanel.setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(TASK)));
                 ret = updateUiWithTaskDetails(entityModel);
                 hasAttachment = false;
                 break;

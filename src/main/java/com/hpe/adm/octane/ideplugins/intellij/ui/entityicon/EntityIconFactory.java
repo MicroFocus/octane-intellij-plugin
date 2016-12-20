@@ -11,19 +11,16 @@ import java.util.Map;
 
 public class EntityIconFactory {
 
+    //Detail for unmapped entity type
+    private final IconDetail unmapedEntityIconDetail = new IconDetail(new Color(0,0,0,0), "", true);
+    //map to color and short text
+    private final Map<Entity, IconDetail> iconDetailMap = new HashMap<>();
+    private final Map<Entity, JComponent> iconComponentMap = new HashMap<>();
+    private final Map<Entity, Image> iconImageMap = new HashMap<>();
     private int iconHeight = 30;
     private int iconWidth = 30;
     private Color fontColor = new Color(255,255,255);
     private int fontSize = 15;
-
-    //Detail for unmapped entity type
-    private final IconDetail unmapedEntityIconDetail = new IconDetail(new Color(0,0,0,0), "", true);
-
-    //map to color and short text
-    private final Map<Entity, IconDetail> iconDetailMap = new HashMap<>();
-  
-    private final Map<Entity, JComponent> iconComponentMap = new HashMap<>();
-    private final Map<Entity, Image> iconImageMap = new HashMap<>();
    
     public EntityIconFactory(){	
     	init();
@@ -35,6 +32,13 @@ public class EntityIconFactory {
     	this.fontColor = fontColor;
         this.fontSize = fontSize;
     	init();
+    }
+
+    public EntityIconFactory(int iconHeight, int iconWidth, int fontSize){
+        this.iconHeight = iconHeight;
+        this.iconWidth = iconWidth;
+        this.fontSize = fontSize;
+        init();
     }
     
     private void init(){
