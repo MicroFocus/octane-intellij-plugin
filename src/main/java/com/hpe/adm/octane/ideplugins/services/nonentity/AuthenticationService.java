@@ -4,14 +4,10 @@ import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.authorisation.UserAuthorisation;
 import com.hpe.adm.nga.sdk.network.HttpClient;
 import com.hpe.adm.nga.sdk.network.HttpRequestFactory;
-import com.hpe.adm.octane.ideplugins.services.ServiceBase;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 
-/**
- * Created by dulaut on 12/14/2016.
- */
-public class AuthenticationService extends ServiceBase {
+public class AuthenticationService{
 
     @Inject
     protected ConnectionSettingsProvider connectionSettingsProvider;
@@ -29,4 +25,5 @@ public class AuthenticationService extends ServiceBase {
 
         return httpClient.authenticate();
     }
+
 }

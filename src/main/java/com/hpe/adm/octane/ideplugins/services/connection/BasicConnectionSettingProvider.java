@@ -13,7 +13,7 @@ public class BasicConnectionSettingProvider implements ConnectionSettingsProvide
         this.connectionSettings = connectionSettings;
     }
 
-    static List<Runnable> changeHandlers = new ArrayList<>();
+    private List<Runnable> changeHandlers = new ArrayList<>();
 
     @Override
     public void addChangeHandler(Runnable changeHandler) {
@@ -31,8 +31,10 @@ public class BasicConnectionSettingProvider implements ConnectionSettingsProvide
 
     @Override
     public void setConnectionSettings(ConnectionSettings connectionSettings) {
-        this.connectionSettings = connectionSettings;
-        callChangeHandlers();
+        if(!this.connectionSettings.equals(connectionSettings)){
+            this.connectionSettings = connectionSettings;
+            callChangeHandlers();
+        }
     }
 
 }

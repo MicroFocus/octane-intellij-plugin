@@ -26,7 +26,7 @@
     <projectService serviceInterface="com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState"
                     serviceImplementation="com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState"/>
 
-    <applicationConfigurable id="com.hpe.adm.octane.ideplugins.intellij.settings.ConnectionSettingsConfigurable"
+    <projectConfigurable id="com.hpe.adm.octane.ideplugins.intellij.settings.ConnectionSettingsConfigurable"
                              displayName="HPE ALM Octane Settings"
                              instance="com.hpe.adm.octane.ideplugins.intellij.settings.ConnectionSettingsConfigurable"/>
 

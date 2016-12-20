@@ -1,16 +1,25 @@
 package com.hpe.adm.octane.ideplugins.services;
 
+import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.EntityList;
 import com.hpe.adm.nga.sdk.EntityListService;
 import com.hpe.adm.nga.sdk.Query;
 import com.hpe.adm.nga.sdk.model.EntityModel;
+import com.hpe.adm.octane.ideplugins.services.connection.OctaneProvider;
 import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 
 import java.util.*;
 
 
-public class EntityService extends ServiceBase {
+public class EntityService {
+
+    @Inject
+    private UserService userService;
+
+    @Inject
+    private OctaneProvider octaneProvider;
+
 
     public Collection<EntityModel> getMyWork() {
         return getMyWork(new HashMap<>());
@@ -32,7 +41,7 @@ public class EntityService extends ServiceBase {
         myWorkFilter.put(Entity.TASK, createPhaseQuery(Entity.TASK, "new", "inprogress"));
 
         Query.QueryBuilder currentUserQuery = new Query.QueryBuilder("owner", Query::equalTo,
-                new Query.QueryBuilder("id", Query::equalTo, getCurrentUserId()));
+                new Query.QueryBuilder("id", Query::equalTo, userService.getCurrentUserId()));
 
         Collection<EntityModel> result = new ArrayList<>();
 
@@ -76,7 +85,7 @@ public class EntityService extends ServiceBase {
     }
 
     public Collection<EntityModel> findEntities(Entity entity, Query.QueryBuilder query, Set<String> fields) {
-        EntityList entityList = getOctane().entityList(entity.getApiEntityName());
+        EntityList entityList = octaneProvider.getOctane().entityList(entity.getApiEntityName());
 
         Query.QueryBuilder queryBuilder = null;
 
@@ -113,7 +122,7 @@ public class EntityService extends ServiceBase {
     public EntityModel findEntity(Entity entityType, Long entityId) throws ServiceException {
         EntityModel result;
         try {
-            result = getOctane().entityList(entityType.getApiEntityName()).at(entityId.intValue()).get().execute();
+            result = octaneProvider.getOctane().entityList(entityType.getApiEntityName()).at(entityId.intValue()).get().execute();
         } catch (Exception e) {
             throw new ServiceException("Failed to get the entity with id = '" + entityId + "' and type '" + entityType + "' ", e);
         }

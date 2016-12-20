@@ -1,8 +1,10 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
+import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.View;
 import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.LoadingWidget;
+import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.ui.components.JBScrollPane;
 
@@ -17,6 +19,9 @@ public class EntityDetailView implements View {
     private JBScrollPane component = new JBScrollPane(new LoadingWidget());
     private GeneralEntityDetailsPanel entityDetailsPanel;
 
+    @Inject
+    private ConnectionSettingsProvider connectionSettingsProvider;
+
     public EntityDetailView() {
 
     }
@@ -30,7 +35,7 @@ public class EntityDetailView implements View {
     }
 
     public void setEntityModel(EntityModel entityModel) {
-        entityDetailsPanel = new GeneralEntityDetailsPanel(entityModel);
+        entityDetailsPanel = new GeneralEntityDetailsPanel(entityModel, connectionSettingsProvider.getConnectionSettings());
         component.setViewportView(entityDetailsPanel);
     }
 
