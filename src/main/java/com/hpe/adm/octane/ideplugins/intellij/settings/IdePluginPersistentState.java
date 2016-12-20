@@ -29,11 +29,16 @@ public class IdePluginPersistentState implements PersistentStateComponent<Elemen
     public enum Key {
         ACTIVE_WORK_ITEM,
         OPEN_TABS,
+        SELECTED_TAB
     }
 
     public void saveState(Key key, JSONObject value){
         stateMap.put(key, value);
         changedHandlers.forEach(changedHandler -> changedHandler.stateChanged(key, value));
+    }
+
+    public void clearState(Key key){
+        stateMap.remove(key);
     }
 
     public JSONObject loadState(Key key){

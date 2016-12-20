@@ -82,6 +82,7 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
         initHandlers(presenter);
 
         loadDetailTabsFromPersistentState();
+        selectSelectedTabToFromPersistentState();
     }
 
     private void initHandlers(EntityTreeTablePresenter presenter){
@@ -89,7 +90,9 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
         //TODO atoth: only save once at the end
         tabbedPaneView.addTabsListener(new TabsListener() {
             @Override
-            public void selectionChanged(TabInfo oldSelection, TabInfo newSelection) {}
+            public void selectionChanged(TabInfo oldSelection, TabInfo newSelection) {
+                saveSelectedTabToToPersistentState(detailTabInfo.inverse().get(newSelection));
+            }
 
             @Override
             public void beforeSelectionChanged(TabInfo oldSelection, TabInfo newSelection) {}
@@ -177,6 +180,24 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
 
         jsonObject.put("openDetailTabs", jsonArray);
         idePluginPersistentState.saveState(IdePluginPersistentState.Key.OPEN_TABS, jsonObject);
+    }
+
+    private void saveSelectedTabToToPersistentState(DetailTabKey selectedTab){
+        //My work is null (not a detail tab) good enough for now
+        if(selectedTab==null){
+            idePluginPersistentState.clearState(IdePluginPersistentState.Key.SELECTED_TAB);
+        } else {
+            idePluginPersistentState.saveState(IdePluginPersistentState.Key.SELECTED_TAB, DetailTabKey.toJsonObject(selectedTab));
+        }
+    }
+
+    private void selectSelectedTabToFromPersistentState(){
+        JSONObject jsonObject =  idePluginPersistentState.loadState(IdePluginPersistentState.Key.SELECTED_TAB);
+        if(jsonObject == null) return;
+        DetailTabKey selectedTabKey = DetailTabKey.fromJsonObject(jsonObject);
+        if(detailTabInfo.containsKey(selectedTabKey)){
+            selectDetailTab(selectedTabKey);
+        }
     }
 
 }
