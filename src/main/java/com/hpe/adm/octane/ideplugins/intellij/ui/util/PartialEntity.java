@@ -27,6 +27,8 @@ public class PartialEntity extends EntityTypeIdPair {
     }
 
     public static PartialEntity fromJsonObject(JSONObject jsonObject){
+        if (jsonObject == null)
+            return null;
         EntityTypeIdPair entityTypeIdPair = EntityTypeIdPair.fromJsonObject(jsonObject);
         String entityName = jsonObject.getString("entityName");
 
