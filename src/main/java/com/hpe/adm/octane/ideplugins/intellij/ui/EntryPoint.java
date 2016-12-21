@@ -5,7 +5,10 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.components.WelcomeViewComponent
 import com.hpe.adm.octane.ideplugins.intellij.ui.main.MainPresenter;
 import com.hpe.adm.octane.ideplugins.services.TestService;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
+import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
+import com.hpe.adm.octane.ideplugins.services.exception.ServiceRuntimeException;
 import com.hpe.adm.octane.ideplugins.services.nonentity.SharedSpaceLevelRequestService;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowFactory;
@@ -16,6 +19,8 @@ import org.jetbrains.annotations.NotNull;
  * Entry point, will create the IntelliJ tool window
  */
 public class EntryPoint implements ToolWindowFactory {
+
+    private static final Logger log = Logger.getInstance(EntryPoint.class);
 
     /**
      * This method can be called by multiple IntelliJ's running at the same time,
@@ -55,6 +60,15 @@ public class EntryPoint implements ToolWindowFactory {
                 setContent(toolWindow, mainPresenter.getView(), workspaceDisplayName);
 
             } catch (Exception ex){
+                //TODO: atoth custom logger
+                if(ex instanceof ServiceException || ex instanceof ServiceRuntimeException){
+                    //No connection settings configured, but not an error
+                    log.info(ex);
+                } else {
+                    //No connection settings configured, but not an error
+                    log.error(ex);
+                }
+
                 //Otherwise show the welcome view
                 setContent(toolWindow, new WelcomeViewComponent(project), "");
             }

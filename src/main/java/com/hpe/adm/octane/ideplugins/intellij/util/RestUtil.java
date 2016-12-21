@@ -24,11 +24,24 @@ public class RestUtil {
      *                     and the provided consumer will not be executed.
      */
     public static <T> void runInBackground(final Supplier<T> supplier,
-                                  final Consumer<T> consumer,
-                                  final Project project,
-                                  final String errorMessage) {
+                                           final Consumer<T> consumer,
+                                           final Project project,
+                                           final String errorMessage) {
+
+        runInBackground(supplier,consumer,project, LOADING_MESSAGE);
+    }
+
+    /**
+     * @param errorMessage if the provided supplier throws an exception, this error message is displayed (if it is not null)
+     *                     and the provided consumer will not be executed.
+     */
+    public static <T> void runInBackground(final Supplier<T> supplier,
+                                           final Consumer<T> consumer,
+                                           final Project project,
+                                           final String errorMessage,
+                                           final String loadingMessage) {
         ApplicationManager.getApplication().invokeLater(() -> {
-            Task.Backgroundable backgroundTask = new Task.Backgroundable(project, LOADING_MESSAGE, true) {
+            Task.Backgroundable backgroundTask = new Task.Backgroundable(project, loadingMessage, true) {
                 public void run(@NotNull ProgressIndicator indicator) {
                     try {
                         final T result = supplier.get();

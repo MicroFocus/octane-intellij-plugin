@@ -1,8 +1,8 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.tabbedpane;
 
+import com.google.inject.Inject;
 import com.hpe.adm.octane.ideplugins.intellij.ui.View;
 import com.intellij.icons.AllIcons;
-import com.intellij.ide.DataManager;
 import com.intellij.ide.ui.UISettings;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.DumbAware;
@@ -32,13 +32,14 @@ public class TabbedPaneView implements View {
     private final JPanel rootPanel;
     private JBEditorTabs editorTabs;
 
-    public TabbedPaneView(){
+    @Inject
+    public TabbedPaneView(Project project){
         rootPanel = new JPanel();
         rootPanel.setLayout(new BorderLayout(0, 0));
 
         //Init tabbed pane
-        DataContext dataContext = DataManager.getInstance().getDataContext();
-        Project project = DataKeys.PROJECT.getData(dataContext);
+        //DataContext dataContext = DataManager.getInstance().getDataContext();
+        //Project project = DataKeys.PROJECT.getData(dataContext);
 
         editorTabs = new JBEditorTabs(project, ActionManager.getInstance(), IdeFocusManager.getGlobalInstance(), project);
 

@@ -4,10 +4,12 @@ import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.EntityList;
 import com.hpe.adm.nga.sdk.EntityListService;
 import com.hpe.adm.nga.sdk.Query;
+import com.hpe.adm.nga.sdk.exception.OctaneException;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.services.connection.OctaneProvider;
 import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
+import com.hpe.adm.octane.ideplugins.services.util.SdkUtil;
 
 import java.util.*;
 
@@ -124,7 +126,11 @@ public class EntityService {
         try {
             result = octaneProvider.getOctane().entityList(entityType.getApiEntityName()).at(entityId.intValue()).get().execute();
         } catch (Exception e) {
-            throw new ServiceException("Failed to get the entity with id = '" + entityId + "' and type '" + entityType + "' ", e);
+            String message = "Failed to get " + entityType.name() + ": " + entityId;
+            if(e instanceof OctaneException){
+                message = message + "<br>" + SdkUtil.getMessageFromOctaneException((OctaneException) e);
+            }
+            throw new ServiceException(message, e);
         }
 
         return result;

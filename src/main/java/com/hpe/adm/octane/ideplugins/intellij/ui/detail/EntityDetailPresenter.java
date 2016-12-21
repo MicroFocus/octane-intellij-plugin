@@ -1,18 +1,16 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
 import com.google.inject.Inject;
-import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
 import com.hpe.adm.octane.ideplugins.intellij.util.Constants;
+import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
 import com.hpe.adm.octane.ideplugins.services.EntityService;
 import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
+import com.hpe.adm.octane.ideplugins.services.exception.ServiceRuntimeException;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.util.IconLoader;
-
-import javax.swing.*;
-import java.util.List;
 
 public class EntityDetailPresenter implements Presenter<EntityDetailView> {
 
@@ -39,31 +37,23 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
     public void setEntity(Entity entityType, Long entityId) {
         this.entityType = entityType;
         this.entityId = entityId;
-        SwingWorker<Void, EntityModel> worker = new SwingWorker<Void, EntityModel>() {
-            @Override
-            protected Void doInBackground() throws Exception {
-                EntityModel entityModel = null;
-                try {
+
+        RestUtil.runInBackground(
+                () -> {
                     try {
-                        entityModel = entityService.findEntity(entityType, entityId);
-                    } catch (ServiceException e) {
-                        e.printStackTrace();
+                        return entityService.findEntity(entityType, entityId);
+                    } catch (ServiceException ex) {
+                        entityDetailView.setErrorMessage(ex.getMessage());
+                        throw new ServiceRuntimeException(ex.getMessage());
                     }
-                    publish(entityModel);
-                    return null;
-                } catch (Exception ex) {
-                    throw ex;
-                }
-            }
-
-            @Override
-            protected void process(List<EntityModel> chunks) {
-                entityDetailView.setEntityModel(chunks.get(0));
-                entityDetailView.setRefreshEntityButton(new EntityRefreshAction());
-            }
-
-        };
-        worker.execute();
+                },
+                (entityModel) -> {
+                    entityDetailView.setEntityModel(entityModel);
+                    entityDetailView.setRefreshEntityButton(new EntityRefreshAction());
+                },
+                null,
+                "Failed to fetch entity: " + entityType.name() + ": " + entityId,
+                "Loading entity " + entityType.name() + ": " + entityId);
     }
 
     private final class EntityRefreshAction extends AnAction {

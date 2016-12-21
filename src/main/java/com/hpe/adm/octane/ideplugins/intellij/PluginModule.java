@@ -91,6 +91,11 @@ public class PluginModule extends AbstractModule {
     private ConnectionSettings previousConnectionSettings = new ConnectionSettings();
     private Octane octane;
 
+    @Provides
+    Project getProject(){
+        return project;
+    }
+
     /**
      * @return authenticated instance of Octane, with current connection settings
      */

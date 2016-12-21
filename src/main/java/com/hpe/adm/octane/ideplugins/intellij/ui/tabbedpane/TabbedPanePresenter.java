@@ -65,7 +65,7 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
 
         detailTabInfo.put(tabKey, tabInfo);
 
-        //saveDetailTabsToPersistentState();
+        saveDetailTabsToPersistentState();
     }
 
     public TabbedPaneView getView() {
@@ -87,7 +87,7 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
 
     private void initHandlers(EntityTreeTablePresenter presenter){
 
-        //TODO atoth: only save once at the end
+        //TODO atoth: should only save once at the end
         tabbedPaneView.addTabsListener(new TabsListener() {
             @Override
             public void selectionChanged(TabInfo oldSelection, TabInfo newSelection) {
@@ -174,9 +174,7 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
         tabbedPaneView.getTabInfos()
                 .stream()
                 .filter(detailTabInfo::containsValue)
-                .forEach(tabInfo -> {
-                    jsonArray.put(DetailTabKey.toJsonObject(detailTabInfo.inverse().get(tabInfo)));
-                });
+                .forEach(tabInfo -> jsonArray.put(DetailTabKey.toJsonObject(detailTabInfo.inverse().get(tabInfo))));
 
         jsonObject.put("openDetailTabs", jsonArray);
         idePluginPersistentState.saveState(IdePluginPersistentState.Key.OPEN_TABS, jsonObject);

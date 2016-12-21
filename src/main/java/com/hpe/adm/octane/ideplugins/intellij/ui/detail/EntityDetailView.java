@@ -39,6 +39,19 @@ public class EntityDetailView implements View {
         component.setViewportView(entityDetailsPanel);
     }
 
+    public void setErrorMessage(String error) {
+        JPanel errorPanel = new JPanel(new BorderLayout(0,0));
+
+        JLabel errorLabel = new JLabel();
+        errorLabel.setForeground(Color.RED);
+        errorLabel.setText("<html>"+error+"</html>");
+        errorPanel.add(errorLabel);
+        errorLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        errorLabel.setVerticalAlignment(SwingConstants.CENTER);
+
+        component.setViewportView(errorPanel);
+    }
+
     public void setRefreshEntityButton(AnAction refreshAction) {
         entityDetailsPanel.drawRefreshButton(refreshAction);
     }
