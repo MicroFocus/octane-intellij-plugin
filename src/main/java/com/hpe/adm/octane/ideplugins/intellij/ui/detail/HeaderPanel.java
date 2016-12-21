@@ -1,14 +1,14 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
-import com.intellij.openapi.actionSystem.ActionManager;
-import com.intellij.openapi.actionSystem.ActionToolbar;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.actionSystem.ex.ComboBoxAction;
+import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBScrollPane;
 import org.jdesktop.swingx.JXHyperlink;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -26,9 +26,17 @@ public class HeaderPanel extends JPanel {
 
 
     public HeaderPanel() {
+        UIManager.put("ComboBox.background", JBColor.background());
+        UIManager.put("ComboBox.foreground", JBColor.foreground());
+        UIManager.put("ComboBox.selectionBackground", JBColor.background());
+        UIManager.put("ComboBox.selectionForeground", JBColor.foreground());
+
+        setToolTipText("");
+        setBorder(null);
         setLayout(new BorderLayout(0, 0));
 
         JXPanel nameAndIconPanel = new JXPanel();
+        nameAndIconPanel.setBorder(null);
         FlowLayout flowLayout = (FlowLayout) nameAndIconPanel.getLayout();
         flowLayout.setHgap(0);
         add(nameAndIconPanel, BorderLayout.WEST);
@@ -46,6 +54,7 @@ public class HeaderPanel extends JPanel {
         nameAndIconPanel.add(entityLinkToBrowser);
 
         JXPanel phasePanel = new JXPanel();
+        phasePanel.setBorder(null);
         FlowLayout flowLayout_1 = (FlowLayout) phasePanel.getLayout();
         flowLayout_1.setHgap(0);
         add(phasePanel, BorderLayout.EAST);
@@ -61,12 +70,6 @@ public class HeaderPanel extends JPanel {
         phaseDetails.setFont(new Font("Tahoma", Font.ITALIC, 11));
         phaseDetails.setText("phase");
         phasePanel.add(phaseDetails);
-
-        JXLabel nextPhaseLink = new JXLabel();
-        nextPhaseLink.setFont(new Font("Tahoma", Font.BOLD, 11));
-        nextPhaseLink.setText("|  Move to next phase");
-        nextPhaseLink.setVisible(false);
-        phasePanel.add(nextPhaseLink);
 
         refreshButtonPanel = new JBScrollPane();
         refreshButtonPanel.setBorder(null);
@@ -94,20 +97,48 @@ public class HeaderPanel extends JPanel {
         this.refreshButtonPanel.setVisible(true);
     }
 
-    public void createRefreshButton(AnAction anAction) {
+    public void createRefreshButton(AnAction refreshAction) {
         buttonActionGroup = new DefaultActionGroup();
-        buttonActionGroup.add(anAction);
+        buttonActionGroup.addSeparator();
+        buttonActionGroup.add(new PhaseComboBox());
+        buttonActionGroup.add(new SaveAction());
+        buttonActionGroup.addSeparator();
+        buttonActionGroup.add(refreshAction);
 
-        final ActionToolbar actionToolBar = ActionManager.getInstance().createActionToolbar("refresh", buttonActionGroup, true);
+        final ActionToolbar actionToolBar = ActionManager.getInstance().createActionToolbar("refresh | save", buttonActionGroup, true);
         final JXPanel buttonsPanel = new JXPanel(new BorderLayout());
         buttonsPanel.add(actionToolBar.getComponent(), BorderLayout.CENTER);
 
         refreshButtonPanel.setViewportView(buttonsPanel);
     }
-
     public void addActionToEntityLink(AbstractAction action) {
         entityLinkToBrowser.setAction(action);
 
+    }
+
+    private final class SaveAction extends AnAction {
+        public SaveAction() {
+            super("Save current entity", "this will save the new phase entity", IconLoader.findIcon("/actions/menu-saveall.png"));
+        }
+
+        public void actionPerformed(AnActionEvent e) {
+
+        }
+    }
+
+    private final class PhaseComboBox extends ComboBoxAction {
+        public void update(final AnActionEvent event) {
+            event.getPresentation().setText("In progress ");
+            event.getPresentation().setDescription("Move to");
+        }
+
+        @NotNull
+        @Override
+        protected DefaultActionGroup createPopupActionGroup(JComponent button) {
+            DefaultActionGroup group = new DefaultActionGroup();
+            group.add(new PhaseItemAction("next phase"));
+            return group;
+        }
     }
 
 
