@@ -6,7 +6,7 @@ import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.View;
 import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.LoadingWidget;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.nowork.NoWorkPanel;
-import com.hpe.adm.octane.ideplugins.intellij.ui.util.EntityTypeIdPair;
+import com.hpe.adm.octane.ideplugins.intellij.ui.util.PartialEntity;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
 import com.hpe.adm.octane.ideplugins.intellij.util.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
@@ -41,6 +41,7 @@ import java.io.*;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 
+import static com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil.getUiDataFromModel;
 import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
 
 public class EntityTreeView implements View {
@@ -228,7 +229,8 @@ public class EntityTreeView implements View {
                     if (obj instanceof EntityModel) {
                         EntityModel entityModel = (EntityModel) obj;
                         Entity entityType = Entity.getEntityType(entityModel);
-                        Integer entityId = Integer.valueOf(UiUtil.getUiDataFromModel(entityModel.getValue("id")));
+                        String entityName = UiUtil.getUiDataFromModel(entityModel.getValue("name"));
+                        Integer entityId = Integer.valueOf(getUiDataFromModel(entityModel.getValue("id")));
 
                         JPopupMenu popup = new JPopupMenu();
 
@@ -270,7 +272,7 @@ public class EntityTreeView implements View {
                         if (entityType == Entity.DEFECT || entityType == Entity.USER_STORY) {
                             popup.addSeparator();
 
-                            EntityTypeIdPair selectedItem = new EntityTypeIdPair(entityId.longValue(), entityType);
+                            PartialEntity selectedItem = new PartialEntity(entityId.longValue(), entityName, entityType);
 
                             boolean isActivated = selectedItem.equals(getActiveItemFromPersistentState());
 
@@ -303,19 +305,19 @@ public class EntityTreeView implements View {
         return ml;
     }
 
-    private EntityTypeIdPair getActiveItemFromPersistentState(){
+    private PartialEntity getActiveItemFromPersistentState(){
         JSONObject jsonObject = persistentState.loadState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM);
         if(jsonObject == null){
             return null;
         } else {
-            return EntityTypeIdPair.fromJsonObject(jsonObject);
+            return PartialEntity.fromJsonObject(jsonObject);
         }
     }
 
-    private void setActiveItemFromPersistentState(EntityTypeIdPair entityTypeIdPair){
+    private void setActiveItemFromPersistentState(PartialEntity entityTypeIdPair){
         persistentState.saveState(
                 IdePluginPersistentState.Key.ACTIVE_WORK_ITEM,
-                EntityTypeIdPair.toJsonObject(entityTypeIdPair));
+                PartialEntity.toJsonObject(entityTypeIdPair));
     }
 
     public void addActionToToolbar(AnAction action) {

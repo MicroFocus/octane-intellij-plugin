@@ -1,6 +1,7 @@
 package com.hpe.adm.octane.ideplugins.intellij.gitcommit;
 
-import com.hpe.adm.nga.sdk.model.EntityModel;
+import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
+import com.hpe.adm.octane.ideplugins.intellij.ui.util.PartialEntity;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.nonentity.CommitMessageService;
 import com.intellij.openapi.project.Project;
@@ -19,17 +20,18 @@ import javax.swing.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Created by dulaut on 11/22/2016.
- */
 public class OctaneCheckinHandler extends CheckinHandler {
 
-    public static EntityModel activatedItem;
     private CommitMessageService commitMessageService;
     private Project project;
     private CheckinProjectPanel panel;
+    private IdePluginPersistentState idePluginPersistentState;
 
-    public OctaneCheckinHandler(CommitMessageService commitMessageService, CheckinProjectPanel panel) {
+    public OctaneCheckinHandler(
+            IdePluginPersistentState idePluginPersistentState,
+            CommitMessageService commitMessageService,
+            CheckinProjectPanel panel) {
+        this.idePluginPersistentState = idePluginPersistentState;
         this.panel = panel;
         this.project = panel.getProject();
         this.commitMessageService = commitMessageService;
@@ -37,17 +39,11 @@ public class OctaneCheckinHandler extends CheckinHandler {
         panel.setCommitMessage("");
     }
 
-    private Entity getActivatedItemType() {
-        Entity type = Entity.getEntityType(activatedItem);
-        if (type == Entity.DEFECT || type == Entity.USER_STORY) {
-            return type;
-        }
-        return null;
-    }
+    private String getMessageForActivatedItem(PartialEntity activatedEntity) {
 
-    private String getMessageForActivatedItem() {
         StringBuilder messageBuilder = new StringBuilder();
-        Entity type = getActivatedItemType();
+        Entity type = activatedEntity.getEntityType();
+
         if (type != null) {
             if (type == Entity.USER_STORY) {
                 messageBuilder.append("story #");
@@ -57,8 +53,9 @@ public class OctaneCheckinHandler extends CheckinHandler {
         } else {
             return null;
         }
-        messageBuilder.append(activatedItem.getValue("id").getValue().toString() + ": ");
-        messageBuilder.append(activatedItem.getValue("name").getValue().toString());
+        messageBuilder.append(activatedEntity.getEntityId() + ": ");
+        messageBuilder.append(activatedEntity.getEntityName());
+
         return messageBuilder.toString();
     }
 
@@ -83,11 +80,19 @@ public class OctaneCheckinHandler extends CheckinHandler {
     }
 
     private void validate(Runnable runnableValid, Runnable runnableInvalid) {
+
+        PartialEntity activatedItem =
+                PartialEntity.fromJsonObject(
+                        idePluginPersistentState.loadState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM));
+
+
         SwingWorker<Boolean, Void> validateMessageWorker = new SwingWorker<Boolean, Void>() {
             @Override
             protected Boolean doInBackground() throws Exception {
-                return commitMessageService.validateCommitMessage(getMessageForActivatedItem(), getActivatedItemType(),
-                        Long.parseLong(activatedItem.getValue("id").getValue().toString()));
+                return commitMessageService.validateCommitMessage(
+                        getMessageForActivatedItem(activatedItem),
+                        activatedItem.getEntityType(),
+                        activatedItem.getEntityId());
             }
 
             @Override
@@ -108,12 +113,12 @@ public class OctaneCheckinHandler extends CheckinHandler {
         validateMessageWorker.execute();
     }
 
-    private void showCommitPatterns() {
+    private void showCommitPatterns(PartialEntity activatedItem) {
         panel.setCommitMessage("");
         SwingWorker<List<String>, Void> fetchPatternsWorker = new SwingWorker<List<String>, Void>() {
             @Override
             protected List<String> doInBackground() throws Exception {
-                return commitMessageService.getCommitPatternsForStoryType(getActivatedItemType());
+                return commitMessageService.getCommitPatternsForStoryType(activatedItem.getEntityType());
             }
 
             @Override
@@ -134,10 +139,14 @@ public class OctaneCheckinHandler extends CheckinHandler {
     @Nullable
     @Override
     public RefreshableOnComponent getBeforeCheckinConfigurationPanel() {
+
+        PartialEntity activatedItem =
+                PartialEntity.fromJsonObject(
+                        idePluginPersistentState.loadState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM));
+
         if (activatedItem != null) {
             validate(
-                    () -> panel.setCommitMessage(getMessageForActivatedItem()),
-                    this::showCommitPatterns);
+                    () -> panel.setCommitMessage(getMessageForActivatedItem(activatedItem)), () -> showCommitPatterns(activatedItem));
         }
 
         return super.getBeforeCheckinConfigurationPanel();

@@ -9,6 +9,7 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.EntityDetailPresenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeTablePresenter;
+import com.hpe.adm.octane.ideplugins.intellij.ui.util.PartialEntity;
 import com.hpe.adm.octane.ideplugins.intellij.util.Constants;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.intellij.openapi.util.IconLoader;
@@ -34,7 +35,7 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
     @Inject
     private Provider<EntityTreeTablePresenter> entityTreeTablePresenterProvider;
 
-    private BiMap<DetailTabKey, TabInfo> detailTabInfo = HashBiMap.create();
+    private BiMap<PartialEntity, TabInfo> detailTabInfo = HashBiMap.create();
 
     @Inject
     private IdePluginPersistentState idePluginPersistentState;
@@ -46,14 +47,14 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
         return presenter;
     }
 
-    public void openDetailTab(DetailTabKey tabKey) {
+    public void openDetailTab(PartialEntity tabKey) {
         openDetailTab(tabKey.getEntityType(), tabKey.getEntityId(), tabKey.getEntityName());
     }
 
     public void openDetailTab(Entity entityType, Long entityId, String entityName) {
         EntityDetailPresenter presenter = entityDetailPresenterProvider.get();
         presenter.setEntity(entityType, entityId);
-        DetailTabKey tabKey = new DetailTabKey(entityId, entityName, entityType);
+        PartialEntity tabKey = new PartialEntity(entityId, entityName, entityType);
 
         ImageIcon tabIcon = new ImageIcon(entityIconFactory.getIconAsImage(entityType));
 
@@ -112,7 +113,7 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
 
             //Need the name for the tab tooltip
             String entityName = model.getValue("name").getValue().toString();
-            DetailTabKey tabKey = new DetailTabKey(entityId, entityName, entityType);
+            PartialEntity tabKey = new PartialEntity(entityId, entityName, entityType);
 
             //double click
             if(SwingUtilities.isLeftMouseButton(mouseEvent) && mouseEvent.getClickCount() == 2){
@@ -136,7 +137,7 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
             if (event.getKeyCode() == KeyEvent.VK_ENTER) {
                 //Need the name for the tab tooltip
                 String entityName = model.getValue("name").getValue().toString();
-                DetailTabKey tabKey = new DetailTabKey(selectedEntityId, entityName, selectedEntityType);
+                PartialEntity tabKey = new PartialEntity(selectedEntityId, entityName, selectedEntityType);
 
                 if(isDetailTabAlreadyOpen(tabKey)){
                     selectDetailTab(tabKey);
@@ -148,11 +149,11 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
         });
     }
 
-    private void selectDetailTab(DetailTabKey tabKey){
+    private void selectDetailTab(PartialEntity tabKey){
         tabbedPaneView.selectTabWithTabInfo(detailTabInfo.get(tabKey), false);
     }
 
-    private boolean isDetailTabAlreadyOpen(DetailTabKey tabKey){
+    private boolean isDetailTabAlreadyOpen(PartialEntity tabKey){
         return detailTabInfo.containsKey(tabKey) && tabbedPaneView.hasTabWithTabInfo(detailTabInfo.get(tabKey));
     }
 
@@ -163,7 +164,7 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
         JSONArray jsonArray = jsonObject.getJSONArray("openDetailTabs");
         for(int i = 0; i<jsonArray.length(); i++){
             JSONObject obj = jsonArray.getJSONObject(i);
-            openDetailTab(DetailTabKey.fromJsonObject(obj));
+            openDetailTab(PartialEntity.fromJsonObject(obj));
         }
     }
 
@@ -174,25 +175,25 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
         tabbedPaneView.getTabInfos()
                 .stream()
                 .filter(detailTabInfo::containsValue)
-                .forEach(tabInfo -> jsonArray.put(DetailTabKey.toJsonObject(detailTabInfo.inverse().get(tabInfo))));
+                .forEach(tabInfo -> jsonArray.put(PartialEntity.toJsonObject(detailTabInfo.inverse().get(tabInfo))));
 
         jsonObject.put("openDetailTabs", jsonArray);
         idePluginPersistentState.saveState(IdePluginPersistentState.Key.OPEN_TABS, jsonObject);
     }
 
-    private void saveSelectedTabToToPersistentState(DetailTabKey selectedTab){
+    private void saveSelectedTabToToPersistentState(PartialEntity selectedTab){
         //My work is null (not a detail tab) good enough for now
         if(selectedTab==null){
             idePluginPersistentState.clearState(IdePluginPersistentState.Key.SELECTED_TAB);
         } else {
-            idePluginPersistentState.saveState(IdePluginPersistentState.Key.SELECTED_TAB, DetailTabKey.toJsonObject(selectedTab));
+            idePluginPersistentState.saveState(IdePluginPersistentState.Key.SELECTED_TAB, PartialEntity.toJsonObject(selectedTab));
         }
     }
 
     private void selectSelectedTabToFromPersistentState(){
         JSONObject jsonObject =  idePluginPersistentState.loadState(IdePluginPersistentState.Key.SELECTED_TAB);
         if(jsonObject == null) return;
-        DetailTabKey selectedTabKey = DetailTabKey.fromJsonObject(jsonObject);
+        PartialEntity selectedTabKey = PartialEntity.fromJsonObject(jsonObject);
         if(detailTabInfo.containsKey(selectedTabKey)){
             selectDetailTab(selectedTabKey);
         }
