@@ -102,6 +102,7 @@ public class EntityIconFactory {
         } else {
             //Overlay the run image on top of the original entity icon component
             JComponent component = getIconAsComponent(entity);
+            component.setBounds(0,0,iconWidth,iconHeight);
 
             //Overlay an image on top of the component
             JPanel runImagePanel = new JPanel() {
@@ -119,6 +120,7 @@ public class EntityIconFactory {
             runImagePanel.setOpaque(false);
 
             JPanel panel = new JPanel(null);
+            panel.setBorder(null);
             panel.setOpaque(false);
             panel.add(runImagePanel);
             panel.add(component);
@@ -126,7 +128,6 @@ public class EntityIconFactory {
             panel.setPreferredSize(new Dimension(iconWidth, iconHeight));
             panel.setMinimumSize(new Dimension(iconWidth, iconHeight));
             panel.setMaximumSize(new Dimension(iconWidth, iconHeight));
-            panel.setBorder(BorderFactory.createLineBorder(Color.black));
             return panel;
         }
     }

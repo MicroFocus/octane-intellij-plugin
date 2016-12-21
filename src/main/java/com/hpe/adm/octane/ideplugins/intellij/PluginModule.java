@@ -13,6 +13,7 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.main.MainPresenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.main.MainView;
 import com.hpe.adm.octane.ideplugins.intellij.ui.tabbedpane.TabbedPanePresenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.tabbedpane.TabbedPaneView;
+import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeCellRenderer;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeTablePresenter;
 import com.hpe.adm.octane.ideplugins.intellij.util.NotificationUtil;
 import com.hpe.adm.octane.ideplugins.services.EntityService;
@@ -74,6 +75,8 @@ public class PluginModule extends AbstractModule {
         bind(UserService.class);
 
         //UI
+        bind(EntityTreeCellRenderer.class);
+
         bind(MainView.class);
         bind(MainPresenter.class);
 

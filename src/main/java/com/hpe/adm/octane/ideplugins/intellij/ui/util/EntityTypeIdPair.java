@@ -40,6 +40,10 @@ public class EntityTypeIdPair {
     }
 
     public static EntityTypeIdPair fromJsonObject(JSONObject jsonObject){
+        if(jsonObject == null){
+            return null;
+        }
+
         Long entityId = jsonObject.getLong("id");
         Entity entityType = Entity.valueOf(jsonObject.getString("entityType"));
         return new EntityTypeIdPair(entityId, entityType);

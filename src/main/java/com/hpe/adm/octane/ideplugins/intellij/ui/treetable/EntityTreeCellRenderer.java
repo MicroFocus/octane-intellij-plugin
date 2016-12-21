@@ -1,6 +1,9 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.treetable;
 
+import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.model.EntityModel;
+import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
+import com.hpe.adm.octane.ideplugins.intellij.ui.util.EntityTypeIdPair;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.intellij.ui.JBColor;
@@ -14,11 +17,14 @@ import java.util.*;
 
 import static com.hpe.adm.octane.ideplugins.intellij.ui.detail.DetailsViewDefaultFields.*;
 
-class EntityTreeCellRenderer implements TreeCellRenderer {
+public class EntityTreeCellRenderer implements TreeCellRenderer {
 
     private static final Map<Entity, HashSet<String>> entityFields = new HashMap<>();
     private static final String[] commonFields = new String[]{"id", "name", "phase"};
     private static final String[] progressFields = new String[]{FIELD_INVESTED_HOURS, FIELD_REMAINING_HOURS, FIELD_ESTIMATED_HOURS};
+
+    @Inject
+    private IdePluginPersistentState idePluginPersistentState;
 
     static {
         //US
@@ -99,6 +105,7 @@ class EntityTreeCellRenderer implements TreeCellRenderer {
 
             EntityModel entityModel = (EntityModel) value;
             Entity entityType = Entity.getEntityType(entityModel);
+            Long entityId = Long.valueOf(UiUtil.getUiDataFromModel(entityModel.getValue("id")));
 
             EntityModelRow rowPanel;
 
@@ -108,11 +115,19 @@ class EntityTreeCellRenderer implements TreeCellRenderer {
                 rowPanel = new EntityModelRow();
             }
             rowPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, JBColor.border()));
-            rowPanel.setIcon(Entity.getEntityType(entityModel));
 
-            rowPanel.setEntityName(
-                    UiUtil.getUiDataFromModel(entityModel.getValue("id")),
-                    UiUtil.getUiDataFromModel(entityModel.getValue("name")));
+            //Check if the rendered item is the active item or not
+            EntityTypeIdPair entityTypeIdPair =
+                    EntityTypeIdPair.fromJsonObject(
+                            idePluginPersistentState.loadState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM));
+
+            if(new EntityTypeIdPair(entityId, entityType).equals(entityTypeIdPair)){
+                rowPanel.setIcon(Entity.getEntityType(entityModel), true);
+            } else {
+                rowPanel.setIcon(Entity.getEntityType(entityModel), false);
+            }
+
+            rowPanel.setEntityName(entityId + "", UiUtil.getUiDataFromModel(entityModel.getValue("name")));
 
             String phase = "Phase: " + UiUtil.getUiDataFromModel(entityModel.getValue("phase"));
             rowPanel.addDetailsTop(phase);

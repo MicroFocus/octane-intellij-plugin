@@ -69,13 +69,14 @@ public class EntityTreeView implements View {
     @Inject
     private IdePluginPersistentState persistentState;
 
-    public EntityTreeView() {
+    @Inject
+    public EntityTreeView(EntityTreeCellRenderer entityTreeCellRenderer) {
 
         scrollPane = new JBScrollPane();
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
         scrollPane.setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_NEVER);
 
-        tree = initTree();
+        tree = initTree(entityTreeCellRenderer);
 
         //Add it to the root panel
         rootPanel = new JPanel(new BorderLayout(0, 0));
@@ -87,13 +88,13 @@ public class EntityTreeView implements View {
         rootPanel.add(createToolbar(), BorderLayout.EAST);
     }
 
-    private FillingTree initTree(){
+    private FillingTree initTree(EntityTreeCellRenderer entityTreeCellRenderer){
         FillingTree tree = new FillingTree();
         //Init with an empty model
         tree.setModel(new EntityTreeModel());
 
         tree.setRootVisible(false);
-        tree.setCellRenderer(new EntityTreeCellRenderer());
+        tree.setCellRenderer(entityTreeCellRenderer);
 
         tree.addMouseListener(createTreeContextMenu());
         tree.setRowHeight(50);
