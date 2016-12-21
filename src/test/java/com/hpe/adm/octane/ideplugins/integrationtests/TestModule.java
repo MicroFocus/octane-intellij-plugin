@@ -1,12 +1,16 @@
 package com.hpe.adm.octane.ideplugins.integrationtests;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Singleton;
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
+import com.google.inject.*;
+import com.hpe.adm.nga.sdk.Octane;
+import com.hpe.adm.nga.sdk.authorisation.UserAuthorisation;
 import com.hpe.adm.octane.ideplugins.integrationtests.util.ConfigurationUtil;
 import com.hpe.adm.octane.ideplugins.services.TestService;
 import com.hpe.adm.octane.ideplugins.services.connection.BasicConnectionSettingProvider;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
+import com.hpe.adm.octane.ideplugins.services.connection.OctaneProvider;
 
 
 /**
@@ -14,6 +18,15 @@ import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvi
  */
 class TestModule extends AbstractModule {
 
+    protected final Supplier<Injector> injectorSupplier;
+
+    public TestModule() {
+        injectorSupplier = Suppliers.memoize(() -> Guice.createInjector(this));
+    }
+
+    public <T> T getInstance(Class<T> type) {
+        return injectorSupplier.get().getInstance(type);
+    }
 
     @Override
     protected void configure() {
@@ -33,6 +46,30 @@ class TestModule extends AbstractModule {
             return new BasicConnectionSettingProvider(connectionSettings);
         }).in(Singleton.class);
 
+    }
+
+    private ConnectionSettings previousConnectionSettings = new ConnectionSettings();
+    private Octane octane;
+
+    /**
+     * @return authenticated instance of Octane, with current connection settings
+     */
+    @Provides
+    OctaneProvider getOctane(){
+        return () -> {
+            ConnectionSettings currentConnectionSettings = getInstance(ConnectionSettingsProvider.class).getConnectionSettings();
+            if (!currentConnectionSettings.equals(previousConnectionSettings) || octane == null) {
+                octane = new Octane
+                        .Builder(new UserAuthorisation(currentConnectionSettings.getUserName(), currentConnectionSettings.getPassword()))
+                        .Server(currentConnectionSettings.getBaseUrl())
+                        .sharedSpace(currentConnectionSettings.getSharedSpaceId())
+                        .workSpace(currentConnectionSettings.getWorkspaceId())
+                        .build();
+
+                previousConnectionSettings = currentConnectionSettings;
+            }
+            return octane;
+        };
     }
 
 }
