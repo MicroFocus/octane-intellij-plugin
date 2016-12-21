@@ -1,6 +1,7 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.entityicon;
 
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
+import com.intellij.util.ImageLoader;
 import org.jdesktop.swingx.JXLabel;
 
 import javax.swing.*;
@@ -13,14 +14,17 @@ public class EntityIconFactory {
 
     //Detail for unmapped entity type
     private final IconDetail unmapedEntityIconDetail = new IconDetail(new Color(0,0,0,0), "", true);
+
     //map to color and short text
     private final Map<Entity, IconDetail> iconDetailMap = new HashMap<>();
     private final Map<Entity, JComponent> iconComponentMap = new HashMap<>();
-    private final Map<Entity, Image> iconImageMap = new HashMap<>();
+
     private int iconHeight = 30;
     private int iconWidth = 30;
     private Color fontColor = new Color(255,255,255);
     private int fontSize = 15;
+
+    private static final Image runImage = ImageLoader.loadFromResource("/general/run.png");
    
     public EntityIconFactory(){	
     	init();
@@ -49,7 +53,6 @@ public class EntityIconFactory {
         iconDetailMap.put(Entity.GHERKIN_TEST, new IconDetail(new Color(120,196,192), "GT"));
         
         iconDetailMap.keySet().forEach(entity -> iconComponentMap.put(entity, createIconAsComponent(entity)));
-        iconComponentMap.keySet().forEach(entity -> iconImageMap.put(entity, createIconAsImage(entity)));
     }
     
     private JComponent createIconAsComponent(Entity entity){
@@ -70,12 +73,12 @@ public class EntityIconFactory {
         label.setFont(boldFont);
         label.setHorizontalAlignment(SwingConstants.CENTER);
         label.setVerticalAlignment(SwingConstants.CENTER);
-
+        label.setBounds(0,0,iconWidth,iconHeight);
         return label;
     }
 
-    private Image createIconAsImage(Entity entity){
-        JComponent lblIcon = getIconAsComponent(entity);
+    private Image createIconAsImage(Entity entity, boolean isActive){
+        JComponent lblIcon = getIconAsComponent(entity, isActive);
         lblIcon.setBounds(0,0,iconWidth,iconHeight);
         JFrame frame = new JFrame();
         frame.getContentPane().setLayout(null);
@@ -92,8 +95,48 @@ public class EntityIconFactory {
     public JComponent getIconAsComponent(Entity entity){
       	return iconComponentMap.get(entity);
     }
+
+    public JComponent getIconAsComponent(Entity entity, boolean isActive){
+        if(!isActive){
+            return getIconAsComponent(entity);
+        } else {
+            //Overlay the run image on top of the original entity icon component
+            JComponent component = getIconAsComponent(entity);
+
+            //Overlay an image on top of the component
+            JPanel runImagePanel = new JPanel() {
+                @Override
+                public void paintComponent(Graphics g) {
+                    super.paintComponent(g);
+                    g.drawImage(runImage, 0, 0, getWidth(), getHeight(), this);
+                }
+            };
+            runImagePanel.setBounds(
+                    iconWidth-iconWidth/2,
+                    iconHeight-iconHeight/2,
+                    iconWidth-(iconWidth-iconWidth/2) - 1,
+                    iconHeight-(iconHeight-iconHeight/2) - 1);
+            runImagePanel.setOpaque(false);
+
+            JPanel panel = new JPanel(null);
+            panel.setOpaque(false);
+            panel.add(runImagePanel);
+            panel.add(component);
+
+            panel.setPreferredSize(new Dimension(iconWidth, iconHeight));
+            panel.setMinimumSize(new Dimension(iconWidth, iconHeight));
+            panel.setMaximumSize(new Dimension(iconWidth, iconHeight));
+            panel.setBorder(BorderFactory.createLineBorder(Color.black));
+            return panel;
+        }
+    }
+
+    public Image getIconAsImage(Entity entity, boolean isActive){
+        return createIconAsImage(entity, isActive);
+    }
+
     public Image getIconAsImage(Entity entity){
-        return iconImageMap.get(entity);
+        return createIconAsImage(entity, false);
     }
 
 }
