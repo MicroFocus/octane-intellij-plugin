@@ -18,6 +18,7 @@ public enum Entity {
     GHERKIN_TEST(Entity.TEST, "gherkin_test"),
 
     TASK("tasks", "task"),
+    PHASE("phases", "phases"),
 
     WORKSPACE_USER("workspace_users", "workspace_user");
 

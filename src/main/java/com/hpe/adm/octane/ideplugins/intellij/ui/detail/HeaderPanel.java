@@ -1,14 +1,16 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
-import com.intellij.openapi.actionSystem.*;
-import com.intellij.openapi.actionSystem.ex.ComboBoxAction;
-import com.intellij.openapi.util.IconLoader;
+import com.hpe.adm.octane.ideplugins.intellij.ui.detail.actions.PhaseComboBox;
+import com.hpe.adm.octane.ideplugins.intellij.ui.detail.actions.SaveAction;
+import com.intellij.openapi.actionSystem.ActionManager;
+import com.intellij.openapi.actionSystem.ActionToolbar;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBScrollPane;
 import org.jdesktop.swingx.JXHyperlink;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
-import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -93,10 +95,6 @@ public class HeaderPanel extends JPanel {
         this.nameDetails.setIcon(entityIcon);
     }
 
-    public void setRefreshButton() {
-        this.refreshButtonPanel.setVisible(true);
-    }
-
     public void createRefreshButton(AnAction refreshAction) {
         buttonActionGroup = new DefaultActionGroup();
         buttonActionGroup.addSeparator();
@@ -116,30 +114,9 @@ public class HeaderPanel extends JPanel {
 
     }
 
-    private final class SaveAction extends AnAction {
-        public SaveAction() {
-            super("Save current entity", "this will save the new phase entity", IconLoader.findIcon("/actions/menu-saveall.png"));
-        }
 
-        public void actionPerformed(AnActionEvent e) {
 
-        }
-    }
 
-    private final class PhaseComboBox extends ComboBoxAction {
-        public void update(final AnActionEvent event) {
-            event.getPresentation().setText("In progress ");
-            event.getPresentation().setDescription("Move to");
-        }
-
-        @NotNull
-        @Override
-        protected DefaultActionGroup createPopupActionGroup(JComponent button) {
-            DefaultActionGroup group = new DefaultActionGroup();
-            group.add(new PhaseItemAction("next phase"));
-            return group;
-        }
-    }
 
 
 }
