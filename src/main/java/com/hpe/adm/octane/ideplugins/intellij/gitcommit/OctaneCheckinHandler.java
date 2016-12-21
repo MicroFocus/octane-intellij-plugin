@@ -1,13 +1,8 @@
 package com.hpe.adm.octane.ideplugins.intellij.gitcommit;
 
-import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.nonentity.CommitMessageService;
-import com.hpe.adm.octane.ideplugins.services.nonentity.DownloadScriptService;
-import com.intellij.ide.DataManager;
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.actionSystem.DataKeys;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.ui.popup.Balloon;
@@ -21,7 +16,6 @@ import com.intellij.ui.awt.RelativePoint;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,13 +25,17 @@ import java.util.stream.Collectors;
 public class OctaneCheckinHandler extends CheckinHandler {
 
     public static EntityModel activatedItem;
-
-    @Inject
     private CommitMessageService commitMessageService;
-
+    private Project project;
     private CheckinProjectPanel panel;
 
-    private Project project;
+    public OctaneCheckinHandler(CommitMessageService commitMessageService, CheckinProjectPanel panel) {
+        this.panel = panel;
+        this.project = panel.getProject();
+        this.commitMessageService = commitMessageService;
+
+        panel.setCommitMessage("");
+    }
 
     private Entity getActivatedItemType() {
         Entity type = Entity.getEntityType(activatedItem);
@@ -131,15 +129,6 @@ public class OctaneCheckinHandler extends CheckinHandler {
         };
 
         fetchPatternsWorker.execute();
-    }
-
-    public OctaneCheckinHandler(CheckinProjectPanel panel) {
-        this.panel = panel;
-
-        DataContext dataContext = DataManager.getInstance().getDataContext();
-        project = DataKeys.PROJECT.getData(dataContext);
-
-        panel.setCommitMessage("");
     }
 
     @Nullable

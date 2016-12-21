@@ -97,4 +97,14 @@ public class ConnectionSettings {
                 connectionSettings.getPassword());
     }
 
+    @Override
+    public String toString() {
+        return "ConnectionSettings{" +
+                "baseUrl='" + baseUrl + '\'' +
+                ", sharedSpaceId=" + sharedSpaceId +
+                ", workspaceId=" + workspaceId +
+                ", userName='" + userName + '\'' +
+                ", password='" + password + '\'' +
+                '}';
+    }
 }

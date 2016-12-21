@@ -1,26 +1,29 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.tabbedpane;
 
+import com.google.inject.Inject;
 import com.hpe.adm.octane.ideplugins.intellij.ui.View;
 import com.intellij.icons.AllIcons;
-import com.intellij.ide.DataManager;
 import com.intellij.ide.ui.UISettings;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.tabs.TabInfo;
+import com.intellij.ui.tabs.TabsListener;
 import com.intellij.ui.tabs.TabsUtil;
 import com.intellij.ui.tabs.UiDecorator;
 import com.intellij.ui.tabs.impl.JBEditorTabs;
 import com.intellij.ui.tabs.impl.TabLabel;
 import com.intellij.util.BitUtil;
 import com.intellij.util.ui.TimedDeadzone;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.List;
 
 public class TabbedPaneView implements View {
 
@@ -29,13 +32,15 @@ public class TabbedPaneView implements View {
     private final JPanel rootPanel;
     private JBEditorTabs editorTabs;
 
-    public TabbedPaneView(){
+    @Inject
+    public TabbedPaneView(Project project){
         rootPanel = new JPanel();
         rootPanel.setLayout(new BorderLayout(0, 0));
 
         //Init tabbed pane
-        DataContext dataContext = DataManager.getInstance().getDataContext();
-        Project project = DataKeys.PROJECT.getData(dataContext);
+        //DataContext dataContext = DataManager.getInstance().getDataContext();
+        //Project project = DataKeys.PROJECT.getData(dataContext);
+
         editorTabs = new JBEditorTabs(project, ActionManager.getInstance(), IdeFocusManager.getGlobalInstance(), project);
 
         //Edit presentation
@@ -126,14 +131,16 @@ public class TabbedPaneView implements View {
 
         tabInfo.setText(title);
 
-        //tabInfo.
-
         if(isClosable) {
             addCloseActionToTab(tabInfo);
         }
 
         editorTabs.addTab(tabInfo);
         return tabInfo;
+    }
+
+    public List<TabInfo> getTabInfos(){
+        return editorTabs.getTabs();
     }
 
     private void addCloseActionToTab(TabInfo tabInfo){
@@ -174,6 +181,10 @@ public class TabbedPaneView implements View {
 
     public void selectTabWithTabInfo(TabInfo tabInfo, boolean requestFocus){
         editorTabs.select(tabInfo, requestFocus);
+    }
+
+    public void addTabsListener(@NotNull TabsListener listener) {
+        editorTabs.addListener(listener);
     }
 
     private class CloseTab extends AnAction implements DumbAware {

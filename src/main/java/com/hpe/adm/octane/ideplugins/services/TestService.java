@@ -13,7 +13,11 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.UnknownHostException;
 
-public class TestService extends ServiceBase{
+/**
+ * Does not rely on the Octane from the DI,
+ * instead is used to validate connections settings before modifying them
+ */
+public class TestService {
 
     public Octane getOctane(ConnectionSettings connectionSettings){
         return new Octane

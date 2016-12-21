@@ -1,8 +1,6 @@
 package com.hpe.adm.octane.ideplugins.services.util;
 
-import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
-import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
 import com.hpe.adm.octane.ideplugins.services.exception.ServiceRuntimeException;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
@@ -128,11 +126,6 @@ public class UrlParser {
         }
 
         return uri;
-    }
-
-    public static URI createEntityWebURI(Entity entityType, Integer id) {
-        ConnectionSettingsProvider connectionSettingsProvider = PluginModule.getInstance(ConnectionSettingsProvider.class);
-        return createEntityWebURI(connectionSettingsProvider.getConnectionSettings(), entityType, id);
     }
 
 }

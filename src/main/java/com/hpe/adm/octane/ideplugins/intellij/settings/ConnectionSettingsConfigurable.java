@@ -10,6 +10,7 @@ import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
 import com.hpe.adm.octane.ideplugins.services.util.UrlParser;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
+import com.intellij.openapi.project.Project;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -24,9 +25,9 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
     private static final String NAME = "Octane";
 
     //@Inject is not supported here, this class is instantiated by intellij
-    private ConnectionSettingsProvider connectionSettingsProvider = PluginModule.getInstance(ConnectionSettingsProvider.class);
+    private ConnectionSettingsProvider connectionSettingsProvider;
+    private TestService testService;
     private ConnectionSettingsComponent connectionSettingsView = new ConnectionSettingsComponent();
-    private TestService testService = PluginModule.getInstance(TestService.class);
 
     @NotNull
     @Override
@@ -50,6 +51,11 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
     @Override
     public String getHelpTopic() {
         return "settings.octane";
+    }
+
+    public ConnectionSettingsConfigurable(@NotNull final Project currentProject){
+        connectionSettingsProvider = PluginModule.getInstance(currentProject, ConnectionSettingsProvider.class);
+        testService = PluginModule.getInstance(currentProject, TestService.class);
     }
 
     @Nullable

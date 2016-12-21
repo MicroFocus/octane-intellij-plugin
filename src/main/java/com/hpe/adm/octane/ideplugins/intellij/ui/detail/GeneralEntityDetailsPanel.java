@@ -3,6 +3,7 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
+import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.util.UrlParser;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -31,9 +32,10 @@ public class GeneralEntityDetailsPanel extends JPanel {
     private JXTextArea descriptionDetails;
     private boolean hasAttachment = false;
     private HeaderPanel headerPanel;
+    private ConnectionSettings connectionSettings;
 
-
-    public GeneralEntityDetailsPanel(EntityModel entityModel) {
+    public GeneralEntityDetailsPanel(EntityModel entityModel, ConnectionSettings connectionSettings) {
+        this.connectionSettings = connectionSettings;
         setBorder(null);
         setBounds(100, 100, 900, 350);
         GridBagLayout gridBagLayout = new GridBagLayout();
@@ -159,7 +161,10 @@ public class GeneralEntityDetailsPanel extends JPanel {
 
         headerPanel.setPhaseDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_PHASE)));
         this.descriptionDetails.setText(getDescriptionForEntityModel(entityModel));
-        headerPanel.addActionToEntityLink(new GoToBrowser(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_NAME)), entityModel));
+        headerPanel.addActionToEntityLink(new GoToBrowser(
+                getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_NAME)),
+                entityModel,
+                connectionSettings));
     }
 
     public void drawRefreshButton(AnAction refreshAction) {
@@ -286,17 +291,19 @@ public class GeneralEntityDetailsPanel extends JPanel {
     private static class GoToBrowser extends AbstractAction {
         private EntityModel entityModel;
         private Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+        private ConnectionSettings connectionSettings;
 
-        public GoToBrowser(String entityName, EntityModel entityModel) {
+        public GoToBrowser(String entityName, EntityModel entityModel, ConnectionSettings connectionSettings) {
             this.entityModel = entityModel;
             super.putValue(Action.NAME, entityName);
             super.putValue(Action.SHORT_DESCRIPTION, "Sample Action Description");
+            this.connectionSettings = connectionSettings;
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
             URI uri =
-                    UrlParser.createEntityWebURI(Entity.getEntityType(entityModel), Integer.valueOf(UiUtil.getUiDataFromModel(entityModel.getValue("id"))));
+                    UrlParser.createEntityWebURI(connectionSettings, Entity.getEntityType(entityModel), Integer.valueOf(UiUtil.getUiDataFromModel(entityModel.getValue("id"))));
             try {
                 desktop.browse(uri);
             } catch (IOException e1) {

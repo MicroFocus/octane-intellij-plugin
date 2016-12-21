@@ -1,12 +1,14 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui;
 
-import com.google.inject.Inject;
 import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.ui.components.WelcomeViewComponent;
 import com.hpe.adm.octane.ideplugins.intellij.ui.main.MainPresenter;
 import com.hpe.adm.octane.ideplugins.services.TestService;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
+import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
+import com.hpe.adm.octane.ideplugins.services.exception.ServiceRuntimeException;
 import com.hpe.adm.octane.ideplugins.services.nonentity.SharedSpaceLevelRequestService;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowFactory;
@@ -18,31 +20,57 @@ import org.jetbrains.annotations.NotNull;
  */
 public class EntryPoint implements ToolWindowFactory {
 
-    @Inject
-    SharedSpaceLevelRequestService sharedSpaceLevelRequestService;
-    private ToolWindow toolWindow;
-    @Inject
-    private TestService testService;
-    @Inject
-    private ConnectionSettingsProvider connectionSettingsProvider;
+    private static final Logger log = Logger.getInstance(EntryPoint.class);
 
+    /**
+     * This method can be called by multiple IntelliJ's running at the same time,
+     * it's important that the state of any one tool window that contains the IDE plugin
+     * does not affect the state of other potentially open tool windows
+     * @param project
+     * @param toolWindow
+     */
     @Override
     public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
-        this.toolWindow = toolWindow;
 
-        PluginModule.getInjectorSupplier().injectMembers(this);
+        // The DI module returns instances based on your current project
+        // Be careful with all static members of beans, you might end up affecting the plugin open for another project
+        // when dealing with 2 IntelliJ windows with two different projects running at the same time
+        PluginModule pluginModule = new PluginModule(project);
+
+        // Requited top level components, need to be injected by the above DI module,
+        // all members of below classes will have support for field injection and constructor injection
+        final ConnectionSettingsProvider connectionSettingsProvider = pluginModule.getInstance(ConnectionSettingsProvider.class);
 
         Runnable mainToolWindowContentControl = () -> {
             try{
+                TestService testService = pluginModule.getInstance(TestService.class);
+
+                //In case the connection is valid
                 testService.testConnection(connectionSettingsProvider.getConnectionSettings());
-                //In case the connection is valid show a generalView at the start
-                MainPresenter mainPresenter = PluginModule.getInstance(MainPresenter.class);
+
+                // Make sure you only instantiate other services (including the ones in the Presenter hierarchy,
+                // after you tested the connection settings with the test service
+
+                //Add the workspace name to the ToolWindow content tab name
+                SharedSpaceLevelRequestService sharedSpaceLevelRequestService = pluginModule.getInstance(SharedSpaceLevelRequestService.class);
                 String workspaceDisplayName = " [" + sharedSpaceLevelRequestService.getCurrentWorkspaceName() + "]";
-                setContent(mainPresenter.getView(), workspaceDisplayName);
+
+                //Create the presenter hierarchy, DI will inject view instances
+                MainPresenter mainPresenter = pluginModule.getInstance(MainPresenter.class);
+                setContent(toolWindow, mainPresenter.getView(), workspaceDisplayName);
 
             } catch (Exception ex){
+                //TODO: atoth custom logger
+                if(ex instanceof ServiceException || ex instanceof ServiceRuntimeException){
+                    //No connection settings configured, but not an error
+                    log.info(ex);
+                } else {
+                    //No connection settings configured, but not an error
+                    log.error(ex);
+                }
+
                 //Otherwise show the welcome view
-                setContent(new WelcomeViewComponent(), "");
+                setContent(toolWindow, new WelcomeViewComponent(project), "");
             }
         };
 
@@ -51,7 +79,7 @@ public class EntryPoint implements ToolWindowFactory {
         connectionSettingsProvider.addChangeHandler(mainToolWindowContentControl);
     }
 
-    private void setContent(HasComponent hasComponent, String workspaceName) {
+    private void setContent(ToolWindow toolWindow, HasComponent hasComponent, String workspaceName) {
         ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
         toolWindow.getContentManager().removeAllContents(true);
         toolWindow.getContentManager().addContent(contentFactory.createContent(hasComponent.getComponent(), workspaceName, false));
