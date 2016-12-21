@@ -2,10 +2,11 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.treetable;
 
 import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.model.EntityModel;
-import com.hpe.adm.octane.ideplugins.intellij.gitcommit.OctaneCheckinHandler;
+import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.View;
 import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.LoadingWidget;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.nowork.NoWorkPanel;
+import com.hpe.adm.octane.ideplugins.intellij.ui.util.EntityTypeIdPair;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
 import com.hpe.adm.octane.ideplugins.intellij.util.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
@@ -29,6 +30,7 @@ import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.util.ui.ConfirmationDialog;
 import org.jetbrains.annotations.Nullable;
+import org.json.JSONObject;
 
 import javax.swing.*;
 import javax.swing.tree.TreePath;
@@ -54,20 +56,27 @@ public class EntityTreeView implements View {
     private JPanel rootPanel;
     private FillingTree tree;
     private JBScrollPane scrollPane;
+
     @Inject
     private DownloadScriptService scriptService;
+
     @Inject
     private ConnectionSettingsProvider connectionSettingsProvider;
+
     private DefaultActionGroup toolBarActionGroup = new DefaultActionGroup();
     private LoadingWidget loadingWidget = new LoadingWidget();
 
-    public EntityTreeView() {
+    @Inject
+    private IdePluginPersistentState persistentState;
+
+    @Inject
+    public EntityTreeView(EntityTreeCellRenderer entityTreeCellRenderer) {
 
         scrollPane = new JBScrollPane();
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
         scrollPane.setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_NEVER);
 
-        tree = initTree();
+        tree = initTree(entityTreeCellRenderer);
 
         //Add it to the root panel
         rootPanel = new JPanel(new BorderLayout(0, 0));
@@ -79,13 +88,13 @@ public class EntityTreeView implements View {
         rootPanel.add(createToolbar(), BorderLayout.EAST);
     }
 
-    private FillingTree initTree(){
+    private FillingTree initTree(EntityTreeCellRenderer entityTreeCellRenderer){
         FillingTree tree = new FillingTree();
         //Init with an empty model
         tree.setModel(new EntityTreeModel());
 
         tree.setRootVisible(false);
-        tree.setCellRenderer(new EntityTreeCellRenderer());
+        tree.setCellRenderer(entityTreeCellRenderer);
 
         tree.addMouseListener(createTreeContextMenu());
         tree.setRowHeight(50);
@@ -208,6 +217,7 @@ public class EntityTreeView implements View {
 
 
     private MouseListener createTreeContextMenu() {
+        //TODO: atoth: this is very messy, make context menu more modular, in presenter with actions
         MouseListener ml = new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
                 TreePath path = tree.getPathForLocation(e.getX(), e.getY());
@@ -218,6 +228,7 @@ public class EntityTreeView implements View {
                     if (obj instanceof EntityModel) {
                         EntityModel entityModel = (EntityModel) obj;
                         Entity entityType = Entity.getEntityType(entityModel);
+                        Integer entityId = Integer.valueOf(UiUtil.getUiDataFromModel(entityModel.getValue("id")));
 
                         JPopupMenu popup = new JPopupMenu();
 
@@ -232,7 +243,7 @@ public class EntityTreeView implements View {
                                                 UrlParser.createEntityWebURI(
                                                         connectionSettingsProvider.getConnectionSettings(),
                                                         entityType,
-                                                        Integer.valueOf(UiUtil.getUiDataFromModel(entityModel.getValue("id"))));
+                                                        entityId);
 
                                         desktop.browse(uri);
                                     } catch (Exception ex) {
@@ -258,8 +269,12 @@ public class EntityTreeView implements View {
 
                         if (entityType == Entity.DEFECT || entityType == Entity.USER_STORY) {
                             popup.addSeparator();
-                            boolean isActivated = OctaneCheckinHandler.activatedItem == entityModel;
-                            JMenuItem activateItem = null;
+
+                            EntityTypeIdPair selectedItem = new EntityTypeIdPair(entityId.longValue(), entityType);
+
+                            boolean isActivated = selectedItem.equals(getActiveItemFromPersistentState());
+
+                            JMenuItem activateItem;
                             if (isActivated) {
                                 activateItem = new JMenuItem("Stop work", IconLoader.findIcon(Constants.IMG_STOP_TIMER));
                             } else {
@@ -271,9 +286,9 @@ public class EntityTreeView implements View {
                                 public void mousePressed(MouseEvent e) {
                                     super.mousePressed(e);
                                     if (isActivated) {
-                                        OctaneCheckinHandler.activatedItem = null;
+                                        persistentState.clearState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM);
                                     } else {
-                                        OctaneCheckinHandler.activatedItem = entityModel;
+                                        setActiveItemFromPersistentState(selectedItem);
                                     }
                                 }
                             });
@@ -286,6 +301,21 @@ public class EntityTreeView implements View {
             }
         };
         return ml;
+    }
+
+    private EntityTypeIdPair getActiveItemFromPersistentState(){
+        JSONObject jsonObject = persistentState.loadState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM);
+        if(jsonObject == null){
+            return null;
+        } else {
+            return EntityTypeIdPair.fromJsonObject(jsonObject);
+        }
+    }
+
+    private void setActiveItemFromPersistentState(EntityTypeIdPair entityTypeIdPair){
+        persistentState.saveState(
+                IdePluginPersistentState.Key.ACTIVE_WORK_ITEM,
+                EntityTypeIdPair.toJsonObject(entityTypeIdPair));
     }
 
     public void addActionToToolbar(AnAction action) {

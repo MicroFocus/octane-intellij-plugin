@@ -108,9 +108,9 @@ class EntityModelRow extends JPanel{
         setOpaque(true);
     }
 
-	public void setIcon(Entity entityType){
+	public void setIcon(Entity entityType, boolean isActive){
 		panelIcon.removeAll();
-		panelIcon.add(ENTITY_ICON_FACTORY.getIconAsComponent(entityType), BorderLayout.CENTER);
+		panelIcon.add(ENTITY_ICON_FACTORY.getIconAsComponent(entityType, isActive), BorderLayout.CENTER);
 	}
 	
 	public void setEntityName(String id, String name){
