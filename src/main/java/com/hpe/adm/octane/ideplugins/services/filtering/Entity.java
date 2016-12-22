@@ -19,6 +19,7 @@ public enum Entity {
 
     TASK("tasks", "task"),
     PHASE("phases", "phases"),
+    TRANSITION("transitions", "transition"),
 
     WORKSPACE_USER("workspace_users", "workspace_user");
 
