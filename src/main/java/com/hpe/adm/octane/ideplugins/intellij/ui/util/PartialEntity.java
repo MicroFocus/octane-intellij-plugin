@@ -1,14 +1,13 @@
-package com.hpe.adm.octane.ideplugins.intellij.ui.tabbedpane;
+package com.hpe.adm.octane.ideplugins.intellij.ui.util;
 
-import com.hpe.adm.octane.ideplugins.intellij.ui.util.EntityTypeIdPair;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import org.json.JSONObject;
 
-class DetailTabKey extends EntityTypeIdPair {
+public class PartialEntity extends EntityTypeIdPair {
 
     String entityName;
 
-    public DetailTabKey(Long entityId, String entityName, Entity entityType){
+    public PartialEntity(Long entityId, String entityName, Entity entityType){
         super(entityId, entityType);
         this.entityName = entityName;
     }
@@ -21,21 +20,23 @@ class DetailTabKey extends EntityTypeIdPair {
         this.entityName = entityName;
     }
 
-    public static JSONObject toJsonObject(DetailTabKey detailTabKey){
-        JSONObject jsonObject = EntityTypeIdPair.toJsonObject(detailTabKey);
-        jsonObject.put("entityName", detailTabKey.getEntityName());
+    public static JSONObject toJsonObject(PartialEntity partialEntity){
+        JSONObject jsonObject = EntityTypeIdPair.toJsonObject(partialEntity);
+        jsonObject.put("entityName", partialEntity.getEntityName());
         return jsonObject;
     }
 
-    public static DetailTabKey fromJsonObject(JSONObject jsonObject){
+    public static PartialEntity fromJsonObject(JSONObject jsonObject){
+        if (jsonObject == null)
+            return null;
         EntityTypeIdPair entityTypeIdPair = EntityTypeIdPair.fromJsonObject(jsonObject);
         String entityName = jsonObject.getString("entityName");
 
-        DetailTabKey detailTabKey = new DetailTabKey(
+        PartialEntity partialEntity = new PartialEntity(
                 entityTypeIdPair.getEntityId(),
                 entityName,
                 entityTypeIdPair.getEntityType());
 
-        return detailTabKey;
+        return partialEntity;
     }
 }

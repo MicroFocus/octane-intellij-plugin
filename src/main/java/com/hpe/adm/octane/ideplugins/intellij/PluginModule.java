@@ -44,6 +44,10 @@ public class PluginModule extends AbstractModule {
         injectorMap.put(project, injectorSupplier);
     }
 
+    public static boolean hasProject(Project project) {
+        return injectorMap.containsKey(project);
+    }
+
     public <T> T getInstance(Class<T> type) {
         return injectorSupplier.get().getInstance(type);
     }
