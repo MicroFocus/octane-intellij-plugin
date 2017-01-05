@@ -24,6 +24,12 @@ public class WelcomeViewComponent implements HasComponent {
         settingsLink.addActionListener(event -> ShowSettingsUtil.getInstance().showSettingsDialog(project, ConnectionSettingsConfigurable.class));
     }
 
+    public WelcomeViewComponent(Project project, String welcomeMessage, String settingsLinkMessage){
+        welcomeScreenMessage.setText(welcomeMessage);
+        settingsLink.setText(settingsLinkMessage);
+        settingsLink.addActionListener(event -> ShowSettingsUtil.getInstance().showSettingsDialog(project, ConnectionSettingsConfigurable.class));
+    }
+
     @Override
     public JComponent getComponent() {
         return rootPanel;

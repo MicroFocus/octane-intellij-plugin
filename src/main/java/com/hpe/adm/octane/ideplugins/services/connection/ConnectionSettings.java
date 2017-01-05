@@ -94,6 +94,22 @@ public class ConnectionSettings {
         return true;
     }
 
+    /**
+     * Check if all field values are null of empty
+     * @return
+     */
+    public boolean isEmpty(){
+        return isStringEmpty(baseUrl) &&
+                sharedSpaceId==null &&
+                workspaceId==null &&
+                isStringEmpty(userName) &&
+                isStringEmpty(password);
+    }
+
+    private boolean isStringEmpty(String str){
+        return str == null || str.trim().length() == 0;
+    }
+
     @Override
     public int hashCode() {
         int result = baseUrl != null ? baseUrl.hashCode() : 0;
