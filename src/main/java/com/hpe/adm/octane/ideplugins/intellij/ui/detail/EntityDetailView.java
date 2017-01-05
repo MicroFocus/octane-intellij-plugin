@@ -44,7 +44,7 @@ public class EntityDetailView implements View {
 
         JLabel errorLabel = new JLabel();
         errorLabel.setForeground(Color.RED);
-        errorLabel.setText("<html>"+error+"</html>");
+        errorLabel.setText("<html><center>"+error+"</center></html>");
         errorPanel.add(errorLabel);
         errorLabel.setHorizontalAlignment(SwingConstants.CENTER);
         errorLabel.setVerticalAlignment(SwingConstants.CENTER);
