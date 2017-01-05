@@ -35,7 +35,7 @@ public class EntryPoint implements ToolWindowFactory {
         // The DI module returns instances based on your current project
         // Be careful with all static members of beans, you might end up affecting the plugin open for another project
         // when dealing with 2 IntelliJ windows with two different projects running at the same time
-        PluginModule pluginModule = new PluginModule(project);
+        PluginModule pluginModule = PluginModule.getPluginModuleForProject(project);
 
         // Requited top level components, need to be injected by the above DI module,
         // all members of below classes will have support for field injection and constructor injection
