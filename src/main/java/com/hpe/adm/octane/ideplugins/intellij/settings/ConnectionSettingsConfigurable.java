@@ -27,6 +27,8 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
     //@Inject is not supported here, this class is instantiated by intellij
     private ConnectionSettingsProvider connectionSettingsProvider;
     private TestService testService;
+    private IdePluginPersistentState idePluginPersistentState;
+
     private ConnectionSettingsComponent connectionSettingsView = new ConnectionSettingsComponent();
 
     @NotNull
@@ -56,6 +58,7 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
     public ConnectionSettingsConfigurable(@NotNull final Project currentProject){
         connectionSettingsProvider = PluginModule.getInstance(currentProject, ConnectionSettingsProvider.class);
         testService = PluginModule.getInstance(currentProject, TestService.class);
+        idePluginPersistentState = PluginModule.getInstance(currentProject, IdePluginPersistentState.class);
     }
 
     @Nullable
@@ -112,6 +115,14 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
         ConnectionSettings newConnectionSettings = testConnection();
         //apply if valid
         if(newConnectionSettings != null){
+
+            //If anything other than the password was changed, wipe open tabs and active tab item
+            if(!newConnectionSettings.equalsExceptPassword(connectionSettingsProvider.getConnectionSettings())){
+                idePluginPersistentState.clearState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM);
+                idePluginPersistentState.clearState(IdePluginPersistentState.Key.SELECTED_TAB);
+                idePluginPersistentState.clearState(IdePluginPersistentState.Key.OPEN_TABS);
+            }
+
             connectionSettingsProvider.setConnectionSettings(newConnectionSettings);
             //remove the hash and remove extra stuff if successful
             connectionSettingsView.setServerUrl(UrlParser.createUrlFromConnectionSettings(newConnectionSettings));
