@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
 import com.hpe.adm.octane.ideplugins.intellij.util.Constants;
+import com.hpe.adm.octane.ideplugins.intellij.ui.ToolbarActiveItem;
 import com.hpe.adm.octane.ideplugins.services.EntityService;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -39,6 +40,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView>{
                     SwingUtilities.invokeLater(() -> {
                         entityTreeTableView.setTreeModel(new EntityTreeModel(myWork));
                         entityTreeTableView.expandAllNodes();
+                        ToolbarActiveItem.getInstance().updateOnRefresh(myWork);
                     });
                     return null;
                 } catch (Exception ex){
