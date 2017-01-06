@@ -29,6 +29,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.util.ui.ConfirmationDialog;
+import org.jdesktop.swingx.JXLabel;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
 
@@ -371,6 +372,16 @@ public class EntityTreeView implements View {
             rootPanel.revalidate();
             rootPanel.repaint();
         });
+    }
+
+    public void setErrorMessage(String errorMessage){
+        JPanel errorPanel = new JPanel(new BorderLayout(0,0));
+        JXLabel errorLabel = new JXLabel("<html><center>"+errorMessage+"</center></html>");
+        errorLabel.setVerticalAlignment(SwingConstants.CENTER);
+        errorLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        errorPanel.add(errorLabel, BorderLayout.CENTER);
+        errorLabel.setForeground(Color.RED);
+        scrollPane.setViewportView(errorPanel);
     }
 
     public EntityTreeModel getTreeModel() {
