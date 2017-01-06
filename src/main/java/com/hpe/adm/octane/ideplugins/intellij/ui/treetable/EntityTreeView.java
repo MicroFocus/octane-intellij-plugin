@@ -159,7 +159,7 @@ public class EntityTreeView implements View {
     }
 
     private File createTestScriptFile(String path, String fileName, String script) {
-        File f = new File(path + "/" + fileName);
+        File f = new File(path + "/" + fileName.replaceAll("[\\\\/:?*\"<>|]", ""));
         try {
             f.createNewFile();
             if (script != null) {
