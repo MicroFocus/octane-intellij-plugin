@@ -1,6 +1,7 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
-import com.hpe.adm.octane.ideplugins.intellij.ui.detail.actions.PhaseComboBox;
+import com.hpe.adm.nga.sdk.model.EntityModel;
+import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.PhaseComboBox;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.actions.SaveAction;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionToolbar;
@@ -15,6 +16,7 @@ import org.jdesktop.swingx.JXPanel;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.util.Collection;
 
 import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
 import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER;
@@ -25,6 +27,7 @@ public class HeaderPanel extends JPanel {
     private JBScrollPane refreshButtonPanel;
     private DefaultActionGroup buttonActionGroup;
     private JXHyperlink entityLinkToBrowser;
+    private PhaseComboBox comboBox;
 
 
     public HeaderPanel() {
@@ -73,6 +76,12 @@ public class HeaderPanel extends JPanel {
         phaseDetails.setText("phase");
         phasePanel.add(phaseDetails);
 
+
+        comboBox = new PhaseComboBox();
+        comboBox.setEditable(true);
+        comboBox.setPreferredSize(new Dimension(110, 20));
+        phasePanel.add(comboBox);
+
         refreshButtonPanel = new JBScrollPane();
         refreshButtonPanel.setBorder(null);
         refreshButtonPanel.setVerticalScrollBarPolicy(VERTICAL_SCROLLBAR_NEVER);
@@ -98,7 +107,7 @@ public class HeaderPanel extends JPanel {
     public void createRefreshButton(AnAction refreshAction) {
         buttonActionGroup = new DefaultActionGroup();
         buttonActionGroup.addSeparator();
-        buttonActionGroup.add(new PhaseComboBox());
+//        buttonActionGroup.add(new PhaseComboBoxAction());
         buttonActionGroup.add(new SaveAction());
         buttonActionGroup.addSeparator();
         buttonActionGroup.add(refreshAction);
@@ -112,6 +121,10 @@ public class HeaderPanel extends JPanel {
     public void addActionToEntityLink(AbstractAction action) {
         entityLinkToBrowser.setAction(action);
 
+    }
+
+    public void setPossiblePhasesForEntity(Collection<EntityModel> phasesList) {
+        comboBox.addItems(phasesList);
     }
 
 

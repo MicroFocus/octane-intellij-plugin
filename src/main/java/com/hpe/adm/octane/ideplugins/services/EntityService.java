@@ -6,12 +6,18 @@ import com.hpe.adm.nga.sdk.EntityListService;
 import com.hpe.adm.nga.sdk.Query;
 import com.hpe.adm.nga.sdk.exception.OctaneException;
 import com.hpe.adm.nga.sdk.model.EntityModel;
+import com.hpe.adm.nga.sdk.model.FieldModel;
+import com.hpe.adm.nga.sdk.model.ReferenceFieldModel;
+import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
 import com.hpe.adm.octane.ideplugins.services.connection.OctaneProvider;
 import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.util.SdkUtil;
 
 import java.util.*;
+
+import static com.hpe.adm.nga.sdk.utils.CommonUtils.getIdFromEntityModel;
+import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.DEFECT;
 
 
 public class EntityService {
@@ -38,7 +44,7 @@ public class EntityService {
 
         myWorkFilter.put(Entity.GHERKIN_TEST, createPhaseQuery(Entity.TEST,"new", "indesign"));
         myWorkFilter.put(Entity.MANUAL_TEST, createPhaseQuery(Entity.TEST,"new", "indesign"));
-        myWorkFilter.put(Entity.DEFECT, createPhaseQuery(Entity.DEFECT, "new", "inprogress", "intesting"));
+        myWorkFilter.put(DEFECT, createPhaseQuery(DEFECT, "new", "inprogress", "intesting"));
         myWorkFilter.put(Entity.USER_STORY, createPhaseQuery(Entity.USER_STORY, "new", "inprogress", "intesting"));
         myWorkFilter.put(Entity.TASK, createPhaseQuery(Entity.TASK, "new", "inprogress"));
 
@@ -135,4 +141,48 @@ public class EntityService {
 
         return result;
     }
+
+    /**
+     * Get next possible phases for an entity
+     *
+     * @param entityType
+     * @param currentPhaseId
+     * @return
+     */
+    public Collection<EntityModel> findPossibleTransitionFromCurrentPhase(Entity entityType, Long currentPhaseId) {
+        Set<String> fields = new HashSet<>();
+        fields.add("source_phase");
+        fields.add("target_phase");
+        fields.add("is_primary");
+        fields.add("entity");
+
+
+        ArrayList<EntityModel> possibleTransitions = new ArrayList<>();
+        Collection<EntityModel>
+                transitions = findEntities(Entity.TRANSITION,
+                new Query.QueryBuilder("entity", Query::equalTo, entityType.getSubtypeName()), fields);
+
+        for (EntityModel transition : transitions) {
+            Long tempPhase = Long.valueOf(UiUtil.getUiDataFromModel(transition.getValue("source_phase"), "id"));
+            if (currentPhaseId.equals(tempPhase)) {
+                possibleTransitions.add(transition);
+            }
+        }
+        return possibleTransitions;
+    }
+
+    public void updateEntityPhase(EntityModel entityModel, ReferenceFieldModel nextPhase) {
+        int entityId = getIdFromEntityModel(entityModel);
+        Entity entityType = Entity.getEntityType(entityModel);
+        EntityList entityList = octaneProvider.getOctane().entityList(entityType.getApiEntityName());
+
+        ReferenceFieldModel updatePhaseModel = new ReferenceFieldModel("phase", nextPhase.getValue());
+
+        Set<FieldModel> fields = new HashSet<>();
+        fields.add(updatePhaseModel);
+        EntityModel updatedEntity = new EntityModel(fields);
+
+        entityList.at(entityId).update().entity(updatedEntity).execute();
+    }
+
 }

@@ -23,6 +23,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.net.URI;
+import java.util.Collection;
 
 import static com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil.getUiDataFromModel;
 import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.*;
@@ -286,6 +287,10 @@ public class GeneralEntityDetailsPanel extends JPanel {
         userStoryDetailsPanel.setReleaseDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_RELEASE)));
         userStoryDetailsPanel.setCreationTimeDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_CREATION_TIME)));
         return userStoryDetailsPanel;
+    }
+
+    public void setPossiblePhasesForEntity(Collection<EntityModel> phasesList) {
+        headerPanel.setPossiblePhasesForEntity(phasesList);
     }
 
     private static class GoToBrowser extends AbstractAction {

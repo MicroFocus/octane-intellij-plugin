@@ -2,19 +2,31 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.detail.actions;
 
 import com.intellij.execution.RunManagerEx;
 import com.intellij.ide.DataManager;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.ex.ComboBoxAction;
+import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public final class PhaseComboBox extends ComboBoxAction {
+public final class PhaseComboBoxAction extends ComboBoxAction {
     public void update(final AnActionEvent event) {
-        event.getPresentation().setText("In progress ");
+        Presentation presentation = event.getPresentation();
+        Project project = event.getData(CommonDataKeys.PROJECT);
+
+        try {
+            if (project == null || project.isDisposed() || !project.isInitialized()) {
+                presentation.setText("");
+                presentation.setIcon(null);
+                presentation.setEnabled(false);
+            } else {
+//                String name = settings.getName();
+                presentation.setEnabled(true);
+            }
+        } catch (IndexNotReadyException e1) {
+            presentation.setEnabled(false);
+        }
     }
 
     @NotNull
@@ -27,7 +39,6 @@ public final class PhaseComboBox extends ComboBoxAction {
             final RunManagerEx runManager = RunManagerEx.getInstanceEx(project);
 
         }
-
 
         return phaseGroup;
     }

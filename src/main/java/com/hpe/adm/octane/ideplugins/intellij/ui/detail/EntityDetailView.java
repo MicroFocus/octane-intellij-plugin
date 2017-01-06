@@ -10,6 +10,7 @@ import com.intellij.ui.components.JBScrollPane;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Collection;
 
 import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
 import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS;
@@ -58,6 +59,10 @@ public class EntityDetailView implements View {
 
     public void doRefresh() {
         component.setViewportView(new JBScrollPane(new LoadingWidget()));
+    }
+
+    public void setPossiblePhasesForEntity(Collection<EntityModel> phasesList) {
+        entityDetailsPanel.setPossiblePhasesForEntity(phasesList);
     }
 
 }

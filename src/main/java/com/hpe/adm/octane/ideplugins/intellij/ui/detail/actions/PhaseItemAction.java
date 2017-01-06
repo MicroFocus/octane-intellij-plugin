@@ -19,17 +19,19 @@ public class PhaseItemAction extends AnAction {
         this.myProject = project;
         this.phaseName = configuration.getName();
 
+        if (phaseName == null || phaseName.length() == 0) {
+            phaseName = " ";
+        }
+
         if (phaseName.length() > SUMMARY_LENGHT) {
             phaseName = phaseName.substring(0, SUMMARY_LENGHT) + "...";
         }
-        getTemplatePresentation().setText(phaseName);
         final Presentation presentation = getTemplatePresentation();
         presentation.setText(phaseName, false);
         updateIcon(presentation);
     }
 
     private void updateIcon(final Presentation presentation) {
-//        setConfigurationIcon(presentation, myConfiguration, myProject);
     }
 
     @Override
