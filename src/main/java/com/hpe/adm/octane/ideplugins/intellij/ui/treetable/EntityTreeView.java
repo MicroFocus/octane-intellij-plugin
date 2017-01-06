@@ -10,6 +10,7 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.util.PartialEntity;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
 import com.hpe.adm.octane.ideplugins.intellij.util.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
+import com.hpe.adm.octane.ideplugins.intellij.ui.ToolbarActiveItem;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.nonentity.DownloadScriptService;
@@ -274,8 +275,9 @@ public class EntityTreeView implements View {
                             popup.addSeparator();
 
                             PartialEntity selectedItem = new PartialEntity(entityId.longValue(), entityName, entityType);
+                            PartialEntity currentActiveItem = getActiveItemFromPersistentState();
 
-                            boolean isActivated = selectedItem.equals(getActiveItemFromPersistentState());
+                            boolean isActivated = selectedItem.equals(currentActiveItem);
 
                             JMenuItem activateItem;
                             if (isActivated) {
@@ -289,9 +291,11 @@ public class EntityTreeView implements View {
                                 public void mousePressed(MouseEvent e) {
                                     super.mousePressed(e);
                                     if (isActivated) {
+                                        ToolbarActiveItem.getInstance().hideActiveItem();
                                         persistentState.clearState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM);
                                     } else {
                                         setActiveItemFromPersistentState(selectedItem);
+                                        ToolbarActiveItem.getInstance().changeItem();
                                     }
                                 }
                             });

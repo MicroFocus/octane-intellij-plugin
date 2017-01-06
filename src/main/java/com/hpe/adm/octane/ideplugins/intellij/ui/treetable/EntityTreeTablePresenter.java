@@ -48,6 +48,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView>{
 
                 entityTreeTableView.setTreeModel(new EntityTreeModel(myWork));
                 entityTreeTableView.expandAllNodes();
+                ToolbarActiveItem.getInstance().updateOnRefresh(myWork);
             }
 
             public void onError(@NotNull Exception ex) {
