@@ -12,9 +12,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Collection;
 
-/**
- * Created by dulaut on 1/5/2017.
- */
 public class ToolbarActiveItem {
 
     private static EntityIconFactory entityIconFactory = new EntityIconFactory(20, 20, 10, Color.WHITE);

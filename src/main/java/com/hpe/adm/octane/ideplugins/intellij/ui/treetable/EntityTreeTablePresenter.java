@@ -1,17 +1,21 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.treetable;
 
 import com.google.inject.Inject;
+import com.hpe.adm.nga.sdk.exception.OctaneException;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
-import com.hpe.adm.octane.ideplugins.intellij.util.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.ToolbarActiveItem;
+import com.hpe.adm.octane.ideplugins.intellij.util.Constants;
 import com.hpe.adm.octane.ideplugins.services.EntityService;
+import com.hpe.adm.octane.ideplugins.services.util.SdkUtil;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.util.IconLoader;
+import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
 import java.util.Collection;
 
 public class EntityTreeTablePresenter implements Presenter<EntityTreeView>{
@@ -30,31 +34,38 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView>{
         // entityTreeModel.setEntities(myWork);
         // entityTreeTableView.setTreeModel(entityTreeModel);
 
-        //Async get
-        SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
-            @Override
-            protected Void doInBackground() throws Exception {
-                try {
-                    entityTreeTableView.setLoading(true);
-                    Collection<EntityModel> myWork = entityService.getMyWork(EntityTreeCellRenderer.getEntityFieldMap());
-                    SwingUtilities.invokeLater(() -> {
-                        entityTreeTableView.setTreeModel(new EntityTreeModel(myWork));
-                        entityTreeTableView.expandAllNodes();
-                        ToolbarActiveItem.getInstance().updateOnRefresh(myWork);
-                    });
-                    return null;
-                } catch (Exception ex){
-                    System.out.println(ex);
-                    throw ex;
-                }
+        Task.Backgroundable backgroundTask = new Task.Backgroundable(null, "Loading \"My work\"", false) {
+
+            private Collection<EntityModel> myWork;
+
+            public void run(@NotNull ProgressIndicator indicator) {
+                entityTreeTableView.setLoading(true);
+                myWork = entityService.getMyWork(EntityTreeCellRenderer.getEntityFieldMap());
+
             }
-            @Override
-            protected void done(){
+
+            public void onSuccess() {
                 entityTreeTableView.setLoading(false);
+
+                entityTreeTableView.setTreeModel(new EntityTreeModel(myWork));
+                entityTreeTableView.expandAllNodes();
+                ToolbarActiveItem.getInstance().updateOnRefresh(myWork);
+            }
+
+            public void onError(@NotNull Exception ex) {
+                entityTreeTableView.setLoading(false);
+
+                String message;
+                if(ex instanceof OctaneException){
+                    message = SdkUtil.getMessageFromOctaneException((OctaneException) ex);
+                } else {
+                    message = ex.getMessage();
+                }
+                entityTreeTableView.setErrorMessage("Failed to load \"My work\" <br>" + message);
             }
         };
-        worker.execute();
 
+        backgroundTask.queue();
     }
 
     private final class RefreshAction extends AnAction {
