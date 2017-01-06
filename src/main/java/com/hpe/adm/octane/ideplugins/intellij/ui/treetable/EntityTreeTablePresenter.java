@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.exception.OctaneException;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
+import com.hpe.adm.octane.ideplugins.intellij.ui.ToolbarActiveItem;
 import com.hpe.adm.octane.ideplugins.intellij.util.Constants;
 import com.hpe.adm.octane.ideplugins.services.EntityService;
 import com.hpe.adm.octane.ideplugins.services.util.SdkUtil;
@@ -48,6 +49,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView>{
 
                 entityTreeTableView.setTreeModel(new EntityTreeModel(myWork));
                 entityTreeTableView.expandAllNodes();
+                ToolbarActiveItem.getInstance().updateOnRefresh(myWork);
             }
 
             public void onError(@NotNull Exception ex) {
