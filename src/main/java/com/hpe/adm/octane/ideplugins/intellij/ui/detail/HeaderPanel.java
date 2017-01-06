@@ -2,7 +2,6 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.PhaseComboBox;
-import com.hpe.adm.octane.ideplugins.intellij.ui.detail.actions.SaveAction;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -28,6 +27,8 @@ public class HeaderPanel extends JPanel {
     private DefaultActionGroup buttonActionGroup;
     private JXHyperlink entityLinkToBrowser;
     private PhaseComboBox comboBox;
+    private JXLabel moveToLabel;
+    private AnAction saveSelectedPhaseAction;
 
 
     public HeaderPanel() {
@@ -72,14 +73,20 @@ public class HeaderPanel extends JPanel {
 
         phaseDetails = new JXLabel();
         phaseDetails.setBorder(new EmptyBorder(0, 0, 0, 10));
-        phaseDetails.setFont(new Font("Tahoma", Font.ITALIC, 11));
+        phaseDetails.setFont(new Font("Tahoma", Font.PLAIN, 13));
         phaseDetails.setText("phase");
         phasePanel.add(phaseDetails);
+
+        moveToLabel = new JXLabel();
+        moveToLabel.setBorder(new EmptyBorder(0, 0, 0, 5));
+        moveToLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
+        moveToLabel.setText("Move to");
+        phasePanel.add(moveToLabel);
 
 
         comboBox = new PhaseComboBox();
         comboBox.setEditable(true);
-        comboBox.setPreferredSize(new Dimension(110, 20));
+        comboBox.setPreferredSize(new Dimension(110, 25));
         phasePanel.add(comboBox);
 
         refreshButtonPanel = new JBScrollPane();
@@ -88,7 +95,7 @@ public class HeaderPanel extends JPanel {
         refreshButtonPanel.setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_NEVER);
         refreshButtonPanel.setMinimumSize(new Dimension(0, 0));
         phasePanel.add(refreshButtonPanel);
-
+        createActionToolBar();
 
     }
 
@@ -104,32 +111,45 @@ public class HeaderPanel extends JPanel {
         this.nameDetails.setIcon(entityIcon);
     }
 
-    public void createRefreshButton(AnAction refreshAction) {
-        buttonActionGroup = new DefaultActionGroup();
-        buttonActionGroup.addSeparator();
-//        buttonActionGroup.add(new PhaseComboBoxAction());
-        buttonActionGroup.add(new SaveAction());
+    public void setRefreshButton(AnAction refreshAction) {
         buttonActionGroup.addSeparator();
         buttonActionGroup.add(refreshAction);
+    }
 
+    public void createActionToolBar() {
+        buttonActionGroup = new DefaultActionGroup();
         final ActionToolbar actionToolBar = ActionManager.getInstance().createActionToolbar("refresh | save", buttonActionGroup, true);
         final JXPanel buttonsPanel = new JXPanel(new BorderLayout());
         buttonsPanel.add(actionToolBar.getComponent(), BorderLayout.CENTER);
-
         refreshButtonPanel.setViewportView(buttonsPanel);
     }
+
     public void addActionToEntityLink(AbstractAction action) {
         entityLinkToBrowser.setAction(action);
-
     }
 
     public void setPossiblePhasesForEntity(Collection<EntityModel> phasesList) {
         comboBox.addItems(phasesList);
+        if (phasesList.size() == 1) {
+            comboBox.setEnabled(false);
+        } else {
+            comboBox.setEnabled(true);
+        }
     }
 
+    public EntityModel getSelectedTransition() {
+        EntityModel selectedTransition = (EntityModel) comboBox.getSelectedItem();
+        return selectedTransition;
+    }
 
+    public void setSaveSelectedPhaseButton(AnAction saveSelectedPhaseAction) {
+        buttonActionGroup.addSeparator();
+        buttonActionGroup.add(saveSelectedPhaseAction);
+        this.saveSelectedPhaseAction =saveSelectedPhaseAction;
 
-
-
+    }
+    public void removeSaveSelectedPhaseButton(){
+        buttonActionGroup.remove(this.saveSelectedPhaseAction);
+    }
 
 }

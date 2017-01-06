@@ -168,8 +168,17 @@ public class GeneralEntityDetailsPanel extends JPanel {
                 connectionSettings));
     }
 
-    public void drawRefreshButton(AnAction refreshAction) {
-        headerPanel.createRefreshButton(refreshAction);
+    public void setRefreshButton(AnAction refreshButton) {
+        headerPanel.setRefreshButton(refreshButton);
+    }
+    public void setSaveSelectedPhaseButton(AnAction saveSelectedPhaseAction){
+        headerPanel.setSaveSelectedPhaseButton(saveSelectedPhaseAction);
+    }
+    public void removeSaveSelectedPhaseButton(){
+        headerPanel.removeSaveSelectedPhaseButton();
+    }
+    public  EntityModel getSelectedTransition(){
+        return headerPanel.getSelectedTransition();
     }
 
     private String getDescriptionForEntityModel(EntityModel entityModel) {

@@ -94,9 +94,11 @@ public class PhaseComboBox extends JComboBox {
         public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
                                                       boolean cellHasFocus) {
             EntityModel phaseItem = (EntityModel) value;
+            if (null == value) {
+                phaseItem = new EntityModel("target_phase", "No transition");
+            }
 
             labelItem.setText(UiUtil.getUiDataFromModel(phaseItem.getValue("target_phase"), "name"));
-//            labelItem.setIcon(new ImageIcon(countryItem[1]));
 
             if (isSelected) {
                 labelItem.setBackground(JBColor.background());
@@ -105,6 +107,7 @@ public class PhaseComboBox extends JComboBox {
                 labelItem.setForeground(JBColor.foreground());
                 labelItem.setBackground(JBColor.background());
             }
+
 
             return this;
         }
