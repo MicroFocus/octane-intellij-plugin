@@ -75,16 +75,4 @@ public class EntityServiceITCase extends IntegrationTestBase {
 
     }
 
-    @Test
-    public void testSavePhase() {
-        int entityId = 1072;
-        EntityList defectsList = getOctane().entityList(DEFECT.getApiEntityName());
-        EntityModel testDefect = defectsList.at(entityId).get().addFields("id", "phase").execute();
-        Long currentPhaseId = Long.valueOf(UiUtil.getUiDataFromModel(testDefect.getValue("phase"), "id"));
-        Collection<EntityModel> possibleTransitions = entityService.findPossibleTransitionFromCurrentPhase(DEFECT, currentPhaseId);
-        entityService.updateEntityPhase(testDefect, possibleTransitions.iterator().next().getValue("target_phase"));
-
-    }
-
-
 }
