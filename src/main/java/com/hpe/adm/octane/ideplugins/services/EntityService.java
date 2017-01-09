@@ -158,9 +158,15 @@ public class EntityService {
 
 
         ArrayList<EntityModel> possibleTransitions = new ArrayList<>();
+        String entityName;
+        if(entityType.isSubtype()){
+            entityName = entityType.getSubtypeName();
+        }else{
+            entityName = entityType.getTypeName();
+        }
         Collection<EntityModel>
                 transitions = findEntities(Entity.TRANSITION,
-                new Query.QueryBuilder("entity", Query::equalTo, entityType.getSubtypeName()), fields);
+                new Query.QueryBuilder("entity", Query::equalTo, entityName), fields);
 
         for (EntityModel transition : transitions) {
             Long tempPhase = Long.valueOf(UiUtil.getUiDataFromModel(transition.getValue("source_phase"), "id"));
