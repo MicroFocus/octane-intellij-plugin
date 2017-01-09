@@ -9,7 +9,6 @@ import com.hpe.adm.octane.ideplugins.intellij.util.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
 import com.hpe.adm.octane.ideplugins.services.EntityService;
 import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
-import com.hpe.adm.octane.ideplugins.services.exception.ServiceRuntimeException;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -53,17 +52,21 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                         return entityService.findEntity(entityType, entityId);
                     } catch (ServiceException ex) {
                         entityDetailView.setErrorMessage(ex.getMessage());
-                        throw new ServiceRuntimeException(ex.getMessage());
+                        return null;
                     }
                 },
                 (entityModel) -> {
+                    if(entityModel != null) {
+                        entityDetailView.setEntityModel(entityModel);
+                        entityDetailView.setRefreshEntityButton(new EntityRefreshAction());
+                    }
                     entityDetailView.setEntityModel(entityModel);
                     entityDetailView.setSaveSelectedPhaseButton(new SaveSelectedPhaseAction());
                     entityDetailView.setRefreshEntityButton(new EntityRefreshAction());
                     setPossibleTransitions(entityModel);
                 },
                 null,
-                "Failed to fetch entity: " + entityType.name() + ": " + entityId,
+                null,
                 "Loading entity " + entityType.name() + ": " + entityId);
     }
 

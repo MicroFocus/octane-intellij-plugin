@@ -28,7 +28,7 @@ public class RestUtil {
                                            final Project project,
                                            final String errorMessage) {
 
-        runInBackground(supplier,consumer,project, LOADING_MESSAGE);
+        runInBackground(supplier, consumer, project, errorMessage, LOADING_MESSAGE);
     }
 
     /**

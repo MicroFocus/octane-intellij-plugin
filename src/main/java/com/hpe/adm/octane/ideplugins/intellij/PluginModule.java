@@ -38,21 +38,50 @@ public class PluginModule extends AbstractModule {
     private Project project;
     private static final Map<Project, Supplier<Injector>> injectorMap = new HashMap<>();
 
-    public PluginModule(Project project) {
+    private PluginModule(Project project) {
         this.project = project;
         injectorSupplier = Suppliers.memoize(() -> Guice.createInjector(this));
         injectorMap.put(project, injectorSupplier);
+    }
+
+    /**
+     * Create an instance from an already existing PluginModule
+     * @param project
+     * @param injectorSupplier
+     */
+    private PluginModule(Project project, Supplier<Injector> injectorSupplier) {
+        this.project = project;
+        this.injectorSupplier = injectorSupplier;
     }
 
     public static boolean hasProject(Project project) {
         return injectorMap.containsKey(project);
     }
 
+    public static PluginModule getPluginModuleForProject(Project project){
+        if(hasProject(project)){
+            return new PluginModule(project, injectorMap.get(project));
+        }
+        return new PluginModule(project);
+    }
+
     public <T> T getInstance(Class<T> type) {
         return injectorSupplier.get().getInstance(type);
     }
 
+    /**
+     * CAREFUL: if there's a possibility that the module with the project does not exist yet,
+     * this must be run on dispatch thread
+     * @param project
+     * @param type
+     * @param <T>
+     * @return
+     */
     public static <T> T getInstance(Project project, Class<T> type) {
+        if(!injectorMap.containsKey(project)){
+            //Constructor changes static field event tho instance is not used anywhere
+            new PluginModule(project);
+        }
         return injectorMap.get(project).get().getInstance(type);
     }
 

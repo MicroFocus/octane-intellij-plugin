@@ -10,6 +10,7 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.util.PartialEntity;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
 import com.hpe.adm.octane.ideplugins.intellij.util.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
+import com.hpe.adm.octane.ideplugins.intellij.ui.ToolbarActiveItem;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.nonentity.DownloadScriptService;
@@ -29,6 +30,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.util.ui.ConfirmationDialog;
+import org.jdesktop.swingx.JXLabel;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
 
@@ -158,7 +160,7 @@ public class EntityTreeView implements View {
     }
 
     private File createTestScriptFile(String path, String fileName, String script) {
-        File f = new File(path + "/" + fileName);
+        File f = new File(path + "/" + fileName.replaceAll("[\\\\/:?*\"<>|]", ""));
         try {
             f.createNewFile();
             if (script != null) {
@@ -273,8 +275,9 @@ public class EntityTreeView implements View {
                             popup.addSeparator();
 
                             PartialEntity selectedItem = new PartialEntity(entityId.longValue(), entityName, entityType);
+                            PartialEntity currentActiveItem = getActiveItemFromPersistentState();
 
-                            boolean isActivated = selectedItem.equals(getActiveItemFromPersistentState());
+                            boolean isActivated = selectedItem.equals(currentActiveItem);
 
                             JMenuItem activateItem;
                             if (isActivated) {
@@ -288,9 +291,11 @@ public class EntityTreeView implements View {
                                 public void mousePressed(MouseEvent e) {
                                     super.mousePressed(e);
                                     if (isActivated) {
+                                        ToolbarActiveItem.getInstance().hideActiveItem();
                                         persistentState.clearState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM);
                                     } else {
                                         setActiveItemFromPersistentState(selectedItem);
+                                        ToolbarActiveItem.getInstance().changeItem();
                                     }
                                 }
                             });
@@ -371,6 +376,16 @@ public class EntityTreeView implements View {
             rootPanel.revalidate();
             rootPanel.repaint();
         });
+    }
+
+    public void setErrorMessage(String errorMessage){
+        JPanel errorPanel = new JPanel(new BorderLayout(0,0));
+        JXLabel errorLabel = new JXLabel("<html><center>"+errorMessage+"</center></html>");
+        errorLabel.setVerticalAlignment(SwingConstants.CENTER);
+        errorLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        errorPanel.add(errorLabel, BorderLayout.CENTER);
+        errorLabel.setForeground(Color.RED);
+        scrollPane.setViewportView(errorPanel);
     }
 
     public EntityTreeModel getTreeModel() {

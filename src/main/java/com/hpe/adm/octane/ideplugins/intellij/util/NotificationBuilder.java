@@ -59,7 +59,7 @@ public final class NotificationBuilder {
         return this;
     }
 
-    protected Notification get() {
+    public Notification get() {
         Notification notification = new Notification(NOTIFICATION_GROUP, title, message, type, listener.orNull());
         if (!showBalloon) {
             notification.expire();

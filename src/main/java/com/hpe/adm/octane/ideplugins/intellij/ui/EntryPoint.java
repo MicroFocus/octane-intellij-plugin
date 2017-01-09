@@ -1,13 +1,16 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui;
 
 import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
+import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.components.WelcomeViewComponent;
 import com.hpe.adm.octane.ideplugins.intellij.ui.main.MainPresenter;
 import com.hpe.adm.octane.ideplugins.services.TestService;
+import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
-import com.hpe.adm.octane.ideplugins.services.exception.ServiceRuntimeException;
 import com.hpe.adm.octane.ideplugins.services.nonentity.SharedSpaceLevelRequestService;
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationType;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
@@ -35,7 +38,7 @@ public class EntryPoint implements ToolWindowFactory {
         // The DI module returns instances based on your current project
         // Be careful with all static members of beans, you might end up affecting the plugin open for another project
         // when dealing with 2 IntelliJ windows with two different projects running at the same time
-        PluginModule pluginModule = new PluginModule(project);
+        PluginModule pluginModule = PluginModule.getPluginModuleForProject(project);
 
         // Requited top level components, need to be injected by the above DI module,
         // all members of below classes will have support for field injection and constructor injection
@@ -43,10 +46,15 @@ public class EntryPoint implements ToolWindowFactory {
 
         Runnable mainToolWindowContentControl = () -> {
             try{
-                TestService testService = pluginModule.getInstance(TestService.class);
 
-                //In case the connection is valid
-                testService.testConnection(connectionSettingsProvider.getConnectionSettings());
+                ConnectionSettings connectionSettings = connectionSettingsProvider.getConnectionSettings();
+
+                if(connectionSettings == null || connectionSettings.isEmpty()){
+                    throw new ServiceException("No connection settings configured");
+                }
+
+                TestService testService = pluginModule.getInstance(TestService.class);
+                testService.testConnection(connectionSettings);
 
                 // Make sure you only instantiate other services (including the ones in the Presenter hierarchy,
                 // after you tested the connection settings with the test service
@@ -59,24 +67,47 @@ public class EntryPoint implements ToolWindowFactory {
                 MainPresenter mainPresenter = pluginModule.getInstance(MainPresenter.class);
                 setContent(toolWindow, mainPresenter.getView(), workspaceDisplayName);
 
+                IdePluginPersistentState state = pluginModule.getInstance(IdePluginPersistentState.class);
+                ToolbarActiveItem.getInstance().setPersistentState(state);
+
             } catch (Exception ex){
-                //TODO: atoth custom logger
-                if(ex instanceof ServiceException || ex instanceof ServiceRuntimeException){
-                    //No connection settings configured, but not an error
-                    log.info(ex);
+
+                WelcomeViewComponent welcomeViewComponent;
+
+                // If there were previously configured connection settings
+                // show a slightly different message in the welcome view
+                if(!connectionSettingsProvider.getConnectionSettings().isEmpty()){
+                    welcomeViewComponent = new WelcomeViewComponent(
+                            project,
+                            "Your previously saved connection settings do not seem to work",
+                            "Please go to settings and test your connection to Octane");
+
+                    //also show a notification with the exception
+                    showWarningBalloon(project,
+                            "Failed to connect to Octane",
+                            "Your previously saved connection settings do not seem to work <br> Error: " + ex.getMessage());
                 } else {
-                    //No connection settings configured, but not an error
-                    log.error(ex);
+                    //In this case (probably), the plugin was never configured on this project before
+                    welcomeViewComponent = new WelcomeViewComponent(project);
                 }
 
-                //Otherwise show the welcome view
-                setContent(toolWindow, new WelcomeViewComponent(project), "");
+                log.info("Showing welcome view, cause: " + ex);
+
+                //Show the welcome view
+                setContent(toolWindow, welcomeViewComponent, "");
             }
         };
 
         //Run at the start of the application
         mainToolWindowContentControl.run();
         connectionSettingsProvider.addChangeHandler(mainToolWindowContentControl);
+    }
+
+    private void showWarningBalloon(Project project, String title, String htmlText){
+        Notification notification =
+                new Notification("Octane IntelliJ Plugin", title, htmlText, NotificationType.WARNING, null);
+
+        notification.notify(project);
     }
 
     private void setContent(ToolWindow toolWindow, HasComponent hasComponent, String workspaceName) {

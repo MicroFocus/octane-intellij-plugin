@@ -8,6 +8,8 @@ import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
 import com.hpe.adm.octane.ideplugins.services.util.UrlParser;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
@@ -27,6 +29,8 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
     //@Inject is not supported here, this class is instantiated by intellij
     private ConnectionSettingsProvider connectionSettingsProvider;
     private TestService testService;
+    private IdePluginPersistentState idePluginPersistentState;
+
     private ConnectionSettingsComponent connectionSettingsView = new ConnectionSettingsComponent();
 
     @NotNull
@@ -54,8 +58,15 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
     }
 
     public ConnectionSettingsConfigurable(@NotNull final Project currentProject){
-        connectionSettingsProvider = PluginModule.getInstance(currentProject, ConnectionSettingsProvider.class);
-        testService = PluginModule.getInstance(currentProject, TestService.class);
+        ApplicationManager.getApplication().invokeAndWait(()->
+                ApplicationManager.getApplication().runReadAction(() -> {
+                    PluginModule module = PluginModule.getPluginModuleForProject(currentProject);
+                    connectionSettingsProvider = module.getInstance(ConnectionSettingsProvider.class);
+                    testService = module.getInstance(TestService.class);
+                    idePluginPersistentState = module.getInstance(IdePluginPersistentState.class);
+                }),
+                ModalityState.current()
+        );
     }
 
     @Nullable
@@ -112,6 +123,14 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
         ConnectionSettings newConnectionSettings = testConnection();
         //apply if valid
         if(newConnectionSettings != null){
+
+            //If anything other than the password was changed, wipe open tabs and active tab item
+            if(!newConnectionSettings.equalsExceptPassword(connectionSettingsProvider.getConnectionSettings())){
+                idePluginPersistentState.clearState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM);
+                idePluginPersistentState.clearState(IdePluginPersistentState.Key.SELECTED_TAB);
+                idePluginPersistentState.clearState(IdePluginPersistentState.Key.OPEN_TABS);
+            }
+
             connectionSettingsProvider.setConnectionSettings(newConnectionSettings);
             //remove the hash and remove extra stuff if successful
             connectionSettingsView.setServerUrl(UrlParser.createUrlFromConnectionSettings(newConnectionSettings));
