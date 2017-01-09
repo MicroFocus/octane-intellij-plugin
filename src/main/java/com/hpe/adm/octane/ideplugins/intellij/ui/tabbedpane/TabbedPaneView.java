@@ -41,7 +41,7 @@ public class TabbedPaneView implements View {
         //DataContext dataContext = DataManager.getInstance().getDataContext();
         //Project project = DataKeys.PROJECT.getData(dataContext);
 
-        editorTabs = new JBEditorTabs(project, ActionManager.getInstance(), IdeFocusManager.getGlobalInstance(), project);
+        editorTabs = new CustomJBRunnerTabs(project, ActionManager.getInstance(), IdeFocusManager.getGlobalInstance(), project);
 
         //Edit presentation
         editorTabs
