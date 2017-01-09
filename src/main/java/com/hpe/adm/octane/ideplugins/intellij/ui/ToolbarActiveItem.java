@@ -40,9 +40,9 @@ public class ToolbarActiveItem {
                 getAction(IdeActions.GROUP_MAIN_TOOLBAR);
     }
 
-    public void updateOnRefresh(Collection<EntityModel> myWork) {
+    public void update(Collection<EntityModel> myWork) {
         PartialEntity activeItem = getActiveItemFromPersistentState();
-        if (activeItem != null) {
+        if (activeItem != null && myWork != null) {
             boolean idFoundInMyWork = myWork.stream().anyMatch(
                     (entityModel) -> activeItem.getEntityId() == Long.parseLong(entityModel.getValue("id").getValue().toString()));
             if (idFoundInMyWork) {
