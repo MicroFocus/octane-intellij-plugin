@@ -9,6 +9,7 @@ import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.SearchTextField;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.ui.tabs.TabsListener;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -61,7 +62,9 @@ class CustomJBRunnerTabs extends JBRunnerTabs {
         currentSearchTextField.addKeyboardListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                if(e.getKeyCode() == KeyEvent.VK_ENTER && searchRequestHandler != null){
+                if(e.getKeyCode() == KeyEvent.VK_ENTER &&
+                        searchRequestHandler != null &&
+                        StringUtils.isNotBlank(currentSearchTextField.getText())){
                     currentSearchTextField.addCurrentTextToHistory();
                     searchRequestHandler.searchedQuery(currentSearchTextField.getText());
                 }
