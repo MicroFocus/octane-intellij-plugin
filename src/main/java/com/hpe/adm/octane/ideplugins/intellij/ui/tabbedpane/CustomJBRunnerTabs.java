@@ -15,11 +15,16 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.HashMap;
 import java.util.Map;
 
 class CustomJBRunnerTabs extends JBRunnerTabs {
 
+    /**
+     * Horrible workaround
+     */
     Map<TabInfo, SearchTextField> searchFields = new HashMap<>();
     private String lastSearchText = "";
 
@@ -29,8 +34,11 @@ class CustomJBRunnerTabs extends JBRunnerTabs {
         addListener(new TabsListener.Adapter() {
             @Override
             public void beforeSelectionChanged(TabInfo oldSelection, TabInfo newSelection) {
-                //sync
-                searchFields.get(newSelection).setText(lastSearchText);
+                //sync text and history
+                if(searchFields.containsKey(oldSelection) && searchFields.containsKey(newSelection)){
+                    searchFields.get(newSelection).setText(lastSearchText);
+                    searchFields.get(newSelection).setHistory(searchFields.get(oldSelection).getHistory());
+                }
             }
 
             @Override
@@ -42,14 +50,25 @@ class CustomJBRunnerTabs extends JBRunnerTabs {
     }
 
     private SearchTextField createTextField(){
-        SearchTextField searchTextField = new SearchTextField();
-        searchTextField.addDocumentListener(new DocumentAdapter() {
+        SearchTextField currentSearchTextField = new SearchTextField();
+        currentSearchTextField.addDocumentListener(new DocumentAdapter() {
             @Override
             protected void textChanged(DocumentEvent e) {
-                lastSearchText = searchTextField.getText();
+                lastSearchText = currentSearchTextField.getText();
             }
         });
-        return searchTextField;
+
+        currentSearchTextField.addKeyboardListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if(e.getKeyCode() == KeyEvent.VK_ENTER && searchRequestHandler != null){
+                    currentSearchTextField.addCurrentTextToHistory();
+                    searchRequestHandler.searchedQuery(currentSearchTextField.getText());
+                }
+            }
+        });
+
+        return currentSearchTextField;
     }
 
     @NotNull
@@ -64,5 +83,14 @@ class CustomJBRunnerTabs extends JBRunnerTabs {
         return super.addTab(info);
     }
 
+    public interface SearchRequestHandler {
+        void searchedQuery(String query);
+    }
+
+    private SearchRequestHandler searchRequestHandler;
+
+    public void setSearchRequestHandler(SearchRequestHandler searchRequestHandler){
+        this.searchRequestHandler = searchRequestHandler;
+    }
 
 }

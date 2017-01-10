@@ -12,6 +12,7 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeTablePresen
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.PartialEntity;
 import com.hpe.adm.octane.ideplugins.intellij.util.Constants;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.ui.tabs.TabsListener;
@@ -45,6 +46,29 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
         Icon myWorkIcon = IconLoader.findIcon(Constants.IMG_MYWORK);
         tabbedPaneView.addTab(Constants.TAB_MY_WORK_TITLE, null, myWorkIcon, presenter.getView().getComponent(), false);
         return presenter;
+    }
+
+    private TabInfo searchTab;
+
+    public void openSearchTab(String searchQuery) {
+
+        JPanel dummyView = new JPanel(new BorderLayout(0,0));
+        JLabel searchLbl = new JLabel(searchQuery);
+        searchLbl.setVerticalAlignment(SwingConstants.CENTER);
+        searchLbl.setHorizontalAlignment(SwingConstants.CENTER);
+        dummyView.add(searchLbl);
+
+        //Only open one search tab
+        if(searchTab==null) {
+            searchTab = tabbedPaneView.addTab("\"" + searchQuery + "\"",
+                    null, AllIcons.Actions.Search, dummyView, true);
+        } else {
+            //Replace old search tab
+            TabInfo newSearchTab = tabbedPaneView.addTab(
+                    "\"" + searchQuery + "\"", null, AllIcons.Actions.Search, dummyView, true);
+            tabbedPaneView.removeTab(searchTab).doWhenDone(() ->tabbedPaneView.selectTabWithTabInfo(newSearchTab, true));
+            searchTab = newSearchTab;
+        }
     }
 
     public void openDetailTab(PartialEntity tabKey) {
@@ -88,21 +112,23 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
 
     private void initHandlers(EntityTreeTablePresenter presenter){
 
+        tabbedPaneView.setSearchRequestHandler(query -> {
+            openSearchTab(query);
+        });
+
         //TODO atoth: should only save once at the end
-        tabbedPaneView.addTabsListener(new TabsListener() {
+        tabbedPaneView.addTabsListener(new TabsListener.Adapter() {
             @Override
             public void selectionChanged(TabInfo oldSelection, TabInfo newSelection) {
                 saveSelectedTabToToPersistentState(detailTabInfo.inverse().get(newSelection));
             }
-
-            @Override
-            public void beforeSelectionChanged(TabInfo oldSelection, TabInfo newSelection) {}
-
             @Override
             public void tabRemoved(TabInfo tabToRemove) {
+                if(tabToRemove == searchTab){
+                    searchTab = null;
+                }
                 saveDetailTabsToPersistentState();
             }
-
             @Override
             public void tabsMoved() {
                 saveDetailTabsToPersistentState();
