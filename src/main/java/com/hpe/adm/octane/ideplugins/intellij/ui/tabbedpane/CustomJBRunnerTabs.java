@@ -18,7 +18,7 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CustomJBRunnerTabs extends JBRunnerTabs {
+class CustomJBRunnerTabs extends JBRunnerTabs {
 
     Map<TabInfo, SearchTextField> searchFields = new HashMap<>();
     private String lastSearchText = "";
