@@ -21,6 +21,8 @@ public enum Entity {
     PHASE("phases", "phases"),
     TRANSITION("transitions", "transition"),
 
+    COMMENT("comments", "comment"),
+
     WORKSPACE_USER("workspace_users", "workspace_user");
 
 

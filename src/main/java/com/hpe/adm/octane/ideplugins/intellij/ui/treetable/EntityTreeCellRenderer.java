@@ -69,6 +69,12 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
         entityFields.get(Entity.MANUAL_TEST).add(FIELD_TEST_TYPE);
         entityFields.get(Entity.MANUAL_TEST).add(FIELD_AUTHOR);
         entityFields.get(Entity.MANUAL_TEST).add("steps_num");
+
+        //COMMENTS
+        entityFields.put(Entity.COMMENT, new HashSet<>());
+        entityFields.get(Entity.COMMENT).add("text");
+        entityFields.get(Entity.COMMENT).add("author");
+        entityFields.get(Entity.COMMENT).add("owner_work_item");
     }
 
     /**

@@ -35,6 +35,7 @@ public class EntityService {
 
     /**
      * Can specify which fields to fetch for which entity
+     *
      * @param fieldListMap if there is no entry for an entity type all fields are fetched
      * @return
      */
@@ -42,8 +43,8 @@ public class EntityService {
 
         Map<Entity, Query.QueryBuilder> myWorkFilter = new HashMap<>();
 
-        myWorkFilter.put(Entity.GHERKIN_TEST, createPhaseQuery(Entity.TEST,"new", "indesign"));
-        myWorkFilter.put(Entity.MANUAL_TEST, createPhaseQuery(Entity.TEST,"new", "indesign"));
+        myWorkFilter.put(Entity.GHERKIN_TEST, createPhaseQuery(Entity.TEST, "new", "indesign"));
+        myWorkFilter.put(Entity.MANUAL_TEST, createPhaseQuery(Entity.TEST, "new", "indesign"));
         myWorkFilter.put(DEFECT, createPhaseQuery(DEFECT, "new", "inprogress", "intesting"));
         myWorkFilter.put(Entity.USER_STORY, createPhaseQuery(Entity.USER_STORY, "new", "inprogress", "intesting"));
         myWorkFilter.put(Entity.TASK, createPhaseQuery(Entity.TASK, "new", "inprogress"));
@@ -59,6 +60,12 @@ public class EntityService {
                     result.addAll(findEntities(entityType, query, fieldListMap.get(entityType)));
                 }
         );
+
+        Query.QueryBuilder mentionedUserQuery = new Query.QueryBuilder("mention_user", Query::equalTo,
+                new Query.QueryBuilder("id", Query::equalTo, userService.getCurrentUserId()));
+
+        Collection<EntityModel> comments = findEntities(Entity.COMMENT, mentionedUserQuery, fieldListMap.get(Entity.COMMENT));
+        result.addAll(comments);
 
         return result;
     }
@@ -88,7 +95,7 @@ public class EntityService {
         return new Query.QueryBuilder("phase", Query::equalTo, phaseQueryBuilder);
     }
 
-    public Collection<EntityModel> findEntities(Entity entity){
+    public Collection<EntityModel> findEntities(Entity entity) {
         return findEntities(entity, null, null);
     }
 
@@ -113,7 +120,7 @@ public class EntityService {
         if (queryBuilder != null) {
             getRequest = getRequest.query(queryBuilder.build());
         }
-        if(fields != null && fields.size() !=0){
+        if (fields != null && fields.size() != 0) {
             getRequest = getRequest.addFields(fields.toArray(new String[]{}));
         }
         getRequest.addOrderBy("id", true);
@@ -133,7 +140,7 @@ public class EntityService {
             result = octaneProvider.getOctane().entityList(entityType.getApiEntityName()).at(entityId.intValue()).get().execute();
         } catch (Exception e) {
             String message = "Failed to get " + entityType.name() + ": " + entityId;
-            if(e instanceof OctaneException){
+            if (e instanceof OctaneException) {
                 message = message + "<br>" + SdkUtil.getMessageFromOctaneException((OctaneException) e);
             }
             throw new ServiceException(message, e);
@@ -159,9 +166,9 @@ public class EntityService {
 
         ArrayList<EntityModel> possibleTransitions = new ArrayList<>();
         String entityName;
-        if(entityType.isSubtype()){
+        if (entityType.isSubtype()) {
             entityName = entityType.getSubtypeName();
-        }else{
+        } else {
             entityName = entityType.getTypeName();
         }
         Collection<EntityModel>
@@ -190,5 +197,4 @@ public class EntityService {
 
         entityList.at(entityId).update().entity(updatedEntity).execute();
     }
-
 }
