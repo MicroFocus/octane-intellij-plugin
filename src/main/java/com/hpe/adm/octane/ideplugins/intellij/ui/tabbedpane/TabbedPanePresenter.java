@@ -12,7 +12,6 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeTablePresen
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.PartialEntity;
 import com.hpe.adm.octane.ideplugins.intellij.util.Constants;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
-import com.intellij.icons.AllIcons;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.ui.tabs.TabsListener;
@@ -49,6 +48,7 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
     }
 
     private TabInfo searchTab;
+    private Icon searchIcon = IconLoader.findIcon("/com/intellij/ide/ui/laf/icons/search.png");
 
     public void openSearchTab(String searchQuery) {
 
@@ -60,13 +60,21 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
 
         //Only open one search tab
         if(searchTab==null) {
-            searchTab = tabbedPaneView.addTab("\"" + searchQuery + "\"",
-                    null, AllIcons.Actions.Search, dummyView, true);
+            searchTab = tabbedPaneView.addTab(
+                    "\"" + searchQuery + "\"",
+                    null,
+                    searchIcon,
+                    dummyView);
+
             tabbedPaneView.selectTabWithTabInfo(searchTab, true);
         } else {
             //Replace old search tab
             TabInfo newSearchTab = tabbedPaneView.addTab(
-                    "\"" + searchQuery + "\"", null, AllIcons.Actions.Search, dummyView, true);
+                    "\"" + searchQuery + "\"",
+                    null,
+                    searchIcon,
+                    dummyView);
+
             tabbedPaneView.selectTabWithTabInfo(newSearchTab, true);
             tabbedPaneView.removeTab(searchTab);
             searchTab = newSearchTab;
