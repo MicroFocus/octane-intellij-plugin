@@ -62,11 +62,13 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
         if(searchTab==null) {
             searchTab = tabbedPaneView.addTab("\"" + searchQuery + "\"",
                     null, AllIcons.Actions.Search, dummyView, true);
+            tabbedPaneView.selectTabWithTabInfo(searchTab, true);
         } else {
             //Replace old search tab
             TabInfo newSearchTab = tabbedPaneView.addTab(
                     "\"" + searchQuery + "\"", null, AllIcons.Actions.Search, dummyView, true);
-            tabbedPaneView.removeTab(searchTab).doWhenDone(() ->tabbedPaneView.selectTabWithTabInfo(newSearchTab, true));
+            tabbedPaneView.selectTabWithTabInfo(newSearchTab, true);
+            tabbedPaneView.removeTab(searchTab);
             searchTab = newSearchTab;
         }
     }
