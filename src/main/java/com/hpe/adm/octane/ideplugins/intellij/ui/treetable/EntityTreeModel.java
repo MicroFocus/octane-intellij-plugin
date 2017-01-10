@@ -25,12 +25,14 @@ class EntityTreeModel extends AbstractTreeModel {
         groupedEntities.put(EntityCategory.BACKLOG, new ArrayList<>());
         groupedEntities.put(EntityCategory.TASK, new ArrayList<>());
         groupedEntities.put(EntityCategory.TEST, new ArrayList<>());
+        groupedEntities.put(EntityCategory.TEST_RUNS, new ArrayList<>());
     }
 
     private void clear(){
         groupedEntities.get(EntityCategory.BACKLOG).clear();
         groupedEntities.get(EntityCategory.TASK).clear();
         groupedEntities.get(EntityCategory.TEST).clear();
+        groupedEntities.get(EntityCategory.TEST_RUNS).clear();
     }
 
     public void setEntities(Collection<EntityModel> entityModels){
@@ -119,7 +121,8 @@ class EntityTreeModel extends AbstractTreeModel {
     public enum EntityCategory {
         BACKLOG("Backlog", Entity.USER_STORY, Entity.DEFECT),
         TASK("Tasks", Entity.TASK),
-        TEST("Tests", Entity.GHERKIN_TEST, Entity.MANUAL_TEST);
+        TEST("Tests", Entity.GHERKIN_TEST, Entity.MANUAL_TEST),
+        TEST_RUNS("Runs", Entity.MANUAL_TEST_RUN , Entity.TEST_SUITE_RUN);
 
         private String name;
         private List<Entity> entityTypes = new ArrayList<>();

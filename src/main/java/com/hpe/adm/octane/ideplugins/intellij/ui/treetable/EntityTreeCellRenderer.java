@@ -69,6 +69,17 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
         entityFields.get(Entity.MANUAL_TEST).add(FIELD_TEST_TYPE);
         entityFields.get(Entity.MANUAL_TEST).add(FIELD_AUTHOR);
         entityFields.get(Entity.MANUAL_TEST).add("steps_num");
+
+        //MANUAL TEST RUNS
+        entityFields.put(Entity.MANUAL_TEST_RUN, new HashSet<>());
+//        Collections.addAll(entityFields.get(Entity.MANUAL_TEST_RUN), commonFields);
+        entityFields.get(Entity.MANUAL_TEST_RUN).add("subtype");
+        entityFields.get(Entity.MANUAL_TEST_RUN).add("name");
+        entityFields.get(Entity.MANUAL_TEST_RUN).add("native_status");
+        entityFields.get(Entity.MANUAL_TEST_RUN).add(FIELD_AUTHOR);
+        entityFields.get(Entity.MANUAL_TEST_RUN).add(FIELD_ENVIROMENT);
+        entityFields.get(Entity.MANUAL_TEST_RUN).add("started");
+        entityFields.get(Entity.MANUAL_TEST_RUN).add("test_name");
     }
 
     /**
@@ -121,16 +132,20 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
                     EntityTypeIdPair.fromJsonObject(
                             idePluginPersistentState.loadState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM));
 
-            if(new EntityTypeIdPair(entityId, entityType).equals(entityTypeIdPair)){
+            if (new EntityTypeIdPair(entityId, entityType).equals(entityTypeIdPair)) {
                 rowPanel.setIcon(Entity.getEntityType(entityModel), true);
             } else {
                 rowPanel.setIcon(Entity.getEntityType(entityModel), false);
             }
 
             rowPanel.setEntityName(entityId + "", UiUtil.getUiDataFromModel(entityModel.getValue("name")));
-
-            String phase = "Phase: " + UiUtil.getUiDataFromModel(entityModel.getValue("phase"));
-            rowPanel.addDetailsTop(phase);
+            if (entityType.equals(Entity.MANUAL_TEST_RUN) || entityType.equals(Entity.TEST_SUITE_RUN)) {
+                String nativeStatus = "Status: " + UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_TEST_RUN_NATIVE_STATUS));
+                rowPanel.addDetailsTop(nativeStatus);
+            }else{
+                String phase = "Phase: " + UiUtil.getUiDataFromModel(entityModel.getValue("phase"));
+                rowPanel.addDetailsTop(phase);
+            }
 
             if (Entity.DEFECT.equals(entityType)) {
                 rowPanel.setEntityDetails(
@@ -172,6 +187,18 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
 
                 rowPanel.addDetailsTop("Author: " + UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_AUTHOR), FIELD_FULL_NAME));
                 rowPanel.addDetailsBottom("Steps: " + UiUtil.getUiDataFromModel(entityModel.getValue("steps_num")));
+            } else if (Entity.MANUAL_TEST_RUN.equals(entityType)) {
+                rowPanel.setEntityDetails(
+                        UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_ENVIROMENT)),
+                        "No environment");
+                rowPanel.addDetailsTop("Author: " + UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_AUTHOR), FIELD_FULL_NAME));
+                rowPanel.addDetailsBottom("Started: " + UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_TEST_RUN_STARTED_DATE)));
+            } else if (Entity.TEST_SUITE_RUN.equals(entityType)) {
+                rowPanel.setEntityDetails(
+                        UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_ENVIROMENT)),
+                        "No environment");
+                rowPanel.addDetailsTop("Author: " + UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_AUTHOR), FIELD_FULL_NAME));
+                rowPanel.addDetailsBottom("Started: " + UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_TEST_RUN_STARTED_DATE)));
             }
 
 

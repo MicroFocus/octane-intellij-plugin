@@ -51,4 +51,11 @@ public class DetailsViewDefaultFields {
     public static final String FIELD_AUTOMATION_STATUS = "automation_status";
     //inner user prop
     public static final String FIELD_FULL_NAME = "full_name";
+
+    //FOR TEST RUNS
+    public static final String FIELD_TEST_NAME = "test_name";
+    public static final String FIELD_TEST_RUN_NATIVE_STATUS = "native_status";
+    public static final String FIELD_TEST_RUN_STARTED_DATE = "started";
+
+
 }

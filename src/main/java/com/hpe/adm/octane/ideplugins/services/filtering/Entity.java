@@ -20,6 +20,9 @@ public enum Entity {
     TASK("tasks", "task"),
     PHASE("phases", "phases"),
     TRANSITION("transitions", "transition"),
+    TEST_RUN("runs", "run"),
+    MANUAL_TEST_RUN(TEST_RUN,"run_manual"),
+    TEST_SUITE_RUN(TEST_RUN,"run_suite"),
 
     WORKSPACE_USER("workspace_users", "workspace_user");
 
