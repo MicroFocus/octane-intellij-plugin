@@ -2,7 +2,9 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.treetable;
 
 import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.model.EntityModel;
+import com.hpe.adm.nga.sdk.model.ReferenceFieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
+import com.hpe.adm.octane.ideplugins.intellij.ui.ToolbarActiveItem;
 import com.hpe.adm.octane.ideplugins.intellij.ui.View;
 import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.LoadingWidget;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.nowork.NoWorkPanel;
@@ -10,7 +12,6 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.util.PartialEntity;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
 import com.hpe.adm.octane.ideplugins.intellij.util.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
-import com.hpe.adm.octane.ideplugins.intellij.ui.ToolbarActiveItem;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.nonentity.DownloadScriptService;
@@ -91,7 +92,7 @@ public class EntityTreeView implements View {
         rootPanel.add(createToolbar(), BorderLayout.EAST);
     }
 
-    private FillingTree initTree(EntityTreeCellRenderer entityTreeCellRenderer){
+    private FillingTree initTree(EntityTreeCellRenderer entityTreeCellRenderer) {
         FillingTree tree = new FillingTree();
         //Init with an empty model
         tree.setModel(new EntityTreeModel());
@@ -129,23 +130,36 @@ public class EntityTreeView implements View {
     public void addEntityMouseHandler(EntityDoubleClickHandler handler) {
         tree.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
-                    int selRow = tree.getRowForLocation(e.getX(), e.getY());
-                    TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
-                    if (selRow != -1) {
-                        Object object = selPath.getLastPathComponent();
-                        if (object instanceof EntityModel) {
-                            try {
-                                EntityModel entityModel = (EntityModel) object;
-                                Entity entityType = Entity.getEntityType(entityModel);
-                                Long entityId = Long.parseLong(entityModel.getValue("id").getValue().toString());
+                int selRow = tree.getRowForLocation(e.getX(), e.getY());
+                TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
+                if (selRow != -1) {
+                    Object object = selPath.getLastPathComponent();
+                    if (object instanceof EntityModel) {
+                        try {
+                            EntityModel entityModel = (EntityModel) object;
+                            Entity entityType = Entity.getEntityType(entityModel);
+
+                            if (entityType != Entity.COMMENT) {
+                                Long entityId = Long.valueOf(entityModel.getValue("id").getValue().toString());
                                 handler.entityDoubleClicked(e, entityType, entityId, entityModel);
-                            } catch (Exception ex) {
-                                //TODO: logger and error bubble
+                            } else {
+                                EntityModel owner = (EntityModel) UiUtil.getContainerItemForCommentModel(entityModel).getValue();
+                                Entity ownerEntityType = Entity.getEntityType(owner);
+                                if (isDetailTabSupported(ownerEntityType)) {
+                                    Long ownerId = Long.valueOf(owner.getValue("id").getValue().toString());
+                                    handler.entityDoubleClicked(e, ownerEntityType, ownerId, owner);
+                                } else if ((SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2) ||
+                                        SwingUtilities.isMiddleMouseButton(e)) {
+                                    openInBrowser(owner);
+                                }
                             }
+                        } catch (Exception ex) {
+                            //TODO: logger and error bubble
                         }
                     }
                 }
-            });
+            }
+        });
     }
 
     private VirtualFile chooseScriptFolder(Project project) {
@@ -218,6 +232,40 @@ public class EntityTreeView implements View {
         }
     }
 
+    private boolean isDetailTabSupported(Entity entityType) {
+        // TODO to be kept up-to-date
+        if (entityType == Entity.USER_STORY || entityType == Entity.DEFECT || entityType == Entity.TASK ||
+                entityType == Entity.GHERKIN_TEST || entityType == Entity.MANUAL_TEST) {
+            return true;
+        }
+        return false;
+    }
+
+    private void openInBrowser(EntityModel entityModel) {
+        Entity entityType = Entity.getEntityType(entityModel);
+        Integer entityId = Integer.valueOf(getUiDataFromModel(entityModel.getValue("id")));
+        Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+        if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+            try {
+                Entity ownerEntityType = null;
+                Integer ownerEntityId = null;
+                if (entityType == Entity.COMMENT) {
+                    ReferenceFieldModel owner = (ReferenceFieldModel) UiUtil.
+                            getContainerItemForCommentModel(entityModel);
+                    ownerEntityType = Entity.getEntityType(owner.getValue());
+                    ownerEntityId = Integer.valueOf(UiUtil.getUiDataFromModel(owner, "id"));
+                }
+                URI uri =
+                        UrlParser.createEntityWebURI(
+                                connectionSettingsProvider.getConnectionSettings(),
+                                entityType == Entity.COMMENT ? ownerEntityType : entityType,
+                                entityType == Entity.COMMENT ? ownerEntityId : entityId);
+                desktop.browse(uri);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
 
     private MouseListener createTreeContextMenu() {
         //TODO: atoth: this is very messy, make context menu more modular, in presenter with actions
@@ -240,20 +288,7 @@ public class EntityTreeView implements View {
                         viewInBrowserItem.addMouseListener(new MouseAdapter() {
                             @Override
                             public void mousePressed(MouseEvent mouseEvent) {
-                                Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-                                if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-                                    try {
-                                        URI uri =
-                                                UrlParser.createEntityWebURI(
-                                                        connectionSettingsProvider.getConnectionSettings(),
-                                                        entityType,
-                                                        entityId);
-
-                                        desktop.browse(uri);
-                                    } catch (Exception ex) {
-                                        ex.printStackTrace();
-                                    }
-                                }
+                                openInBrowser(entityModel);
                             }
                         });
                         popup.add(viewInBrowserItem);
@@ -310,16 +345,16 @@ public class EntityTreeView implements View {
         return ml;
     }
 
-    private PartialEntity getActiveItemFromPersistentState(){
+    private PartialEntity getActiveItemFromPersistentState() {
         JSONObject jsonObject = persistentState.loadState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM);
-        if(jsonObject == null){
+        if (jsonObject == null) {
             return null;
         } else {
             return PartialEntity.fromJsonObject(jsonObject);
         }
     }
 
-    private void setActiveItemFromPersistentState(PartialEntity entityTypeIdPair){
+    private void setActiveItemFromPersistentState(PartialEntity entityTypeIdPair) {
         persistentState.saveState(
                 IdePluginPersistentState.Key.ACTIVE_WORK_ITEM,
                 PartialEntity.toJsonObject(entityTypeIdPair));
@@ -378,9 +413,9 @@ public class EntityTreeView implements View {
         });
     }
 
-    public void setErrorMessage(String errorMessage){
-        JPanel errorPanel = new JPanel(new BorderLayout(0,0));
-        JXLabel errorLabel = new JXLabel("<html><center>"+errorMessage+"</center></html>");
+    public void setErrorMessage(String errorMessage) {
+        JPanel errorPanel = new JPanel(new BorderLayout(0, 0));
+        JXLabel errorLabel = new JXLabel("<html><center>" + errorMessage + "</center></html>");
         errorLabel.setVerticalAlignment(SwingConstants.CENTER);
         errorLabel.setHorizontalAlignment(SwingConstants.CENTER);
         errorPanel.add(errorLabel, BorderLayout.CENTER);

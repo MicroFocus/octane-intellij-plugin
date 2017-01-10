@@ -12,42 +12,44 @@ class EntityTreeModel extends AbstractTreeModel {
     private static final String ROOT = "root";
     private TreeMap<EntityCategory, List<EntityModel>> groupedEntities = new TreeMap<>();
 
-    public EntityTreeModel(){
+    public EntityTreeModel() {
         init();
     }
 
-    public EntityTreeModel(Collection<EntityModel> entityModels){
+    public EntityTreeModel(Collection<EntityModel> entityModels) {
         init();
         setEntities(entityModels);
     }
 
-    private void init(){
+    private void init() {
         groupedEntities.put(EntityCategory.BACKLOG, new ArrayList<>());
         groupedEntities.put(EntityCategory.TASK, new ArrayList<>());
         groupedEntities.put(EntityCategory.TEST, new ArrayList<>());
+        groupedEntities.put(EntityCategory.COMMENTS, new ArrayList<>());
     }
 
-    private void clear(){
+    private void clear() {
         groupedEntities.get(EntityCategory.BACKLOG).clear();
         groupedEntities.get(EntityCategory.TASK).clear();
         groupedEntities.get(EntityCategory.TEST).clear();
+        groupedEntities.get(EntityCategory.COMMENTS).clear();
     }
 
-    public void setEntities(Collection<EntityModel> entityModels){
+    public void setEntities(Collection<EntityModel> entityModels) {
         clear();
 
-        for(EntityModel entityModel : entityModels){
+        for (EntityModel entityModel : entityModels) {
             EntityCategory category = EntityCategory.getCategory(entityModel);
 
-            if(category != null) {
+            if (category != null) {
                 groupedEntities.get(category).add(entityModel);
             }
         }
     }
 
-    public int size(){
+    public int size() {
         int size = 0;
-        for(List<EntityModel> entityModels : groupedEntities.values()){
+        for (List<EntityModel> entityModels : groupedEntities.values()) {
             size += entityModels.size();
         }
         return size;
@@ -61,11 +63,10 @@ class EntityTreeModel extends AbstractTreeModel {
     @Override
     public Object getChild(Object parent, int index) {
 
-        if(parent.equals(getRoot())){
+        if (parent.equals(getRoot())) {
             //TreeMap keeps the keys sorted in the same manner all the time
             return groupedEntities.keySet().toArray(new EntityCategory[]{})[index];
-        }
-        else if(parent instanceof EntityCategory){
+        } else if (parent instanceof EntityCategory) {
             return groupedEntities.get(parent).get(index);
         }
 
@@ -75,10 +76,9 @@ class EntityTreeModel extends AbstractTreeModel {
 
     @Override
     public int getChildCount(Object parent) {
-        if(parent.equals(getRoot())){
+        if (parent.equals(getRoot())) {
             return groupedEntities.keySet().size();
-        }
-        else if(parent instanceof EntityCategory){
+        } else if (parent instanceof EntityCategory) {
             return groupedEntities.get(parent).size();
         }
 
@@ -88,10 +88,9 @@ class EntityTreeModel extends AbstractTreeModel {
 
     @Override
     public boolean isLeaf(Object node) {
-        if(node.equals(getRoot())){
-           return false;
-        }
-        else if(node instanceof EntityCategory){
+        if (node.equals(getRoot())) {
+            return false;
+        } else if (node instanceof EntityCategory) {
             return groupedEntities.get(node) == null || groupedEntities.get(node).size() == 0;
         }
         return true;
@@ -104,11 +103,10 @@ class EntityTreeModel extends AbstractTreeModel {
 
     @Override
     public int getIndexOfChild(Object parent, Object child) {
-        if(parent.equals(getRoot())){
+        if (parent.equals(getRoot())) {
             List<EntityCategory> categories = new ArrayList<>(groupedEntities.keySet());
             return categories.indexOf(child);
-        }
-        else if(parent instanceof EntityCategory){
+        } else if (parent instanceof EntityCategory) {
             return groupedEntities.get(parent).indexOf(child);
         }
 
@@ -119,18 +117,19 @@ class EntityTreeModel extends AbstractTreeModel {
     public enum EntityCategory {
         BACKLOG("Backlog", Entity.USER_STORY, Entity.DEFECT),
         TASK("Tasks", Entity.TASK),
-        TEST("Tests", Entity.GHERKIN_TEST, Entity.MANUAL_TEST);
+        TEST("Tests", Entity.GHERKIN_TEST, Entity.MANUAL_TEST),
+        COMMENTS("Mention in comments", Entity.COMMENT);
 
         private String name;
         private List<Entity> entityTypes = new ArrayList<>();
 
-        EntityCategory(String name, Entity... entityTypes){
+        EntityCategory(String name, Entity... entityTypes) {
             this.name = name;
             this.entityTypes = Arrays.asList(entityTypes);
         }
 
-        public static EntityCategory getCategory(EntityModel entityModel){
-            for(EntityCategory category : EntityCategory.values()) {
+        public static EntityCategory getCategory(EntityModel entityModel) {
+            for (EntityCategory category : EntityCategory.values()) {
                 if (category.getEntityTypes().contains(Entity.getEntityType(entityModel))) {
                     return category;
                 }

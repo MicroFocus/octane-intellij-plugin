@@ -23,6 +23,8 @@ public enum Entity {
 
     COMMENT("comments", "comment"),
 
+    RUN("runs", "run"),
+
     WORKSPACE_USER("workspace_users", "workspace_user");
 
 
@@ -38,24 +40,24 @@ public enum Entity {
     //In case this is a subtype, you need to give the value of the subtype field to filter on
     private String subtypeFieldValue;
 
-    Entity(String apiEntityName, String typeName){
+    Entity(String apiEntityName, String typeName) {
         this.apiEntityName = apiEntityName;
         this.typeName = typeName;
     }
 
-    Entity(Entity subtypeOf, String subtypeName){
+    Entity(Entity subtypeOf, String subtypeName) {
         this.subtypeOf = subtypeOf;
         this.apiEntityName = subtypeOf.getApiEntityName();
         this.subtypeFieldValue = subtypeName;
     }
 
-    public static Entity getEntityType(EntityModel entityModel){
+    public static Entity getEntityType(EntityModel entityModel) {
 
-        if(entityModel.getValue("subtype") != null){
+        if (entityModel.getValue("subtype") != null) {
             String subtype = entityModel.getValue("subtype").getValue().toString();
 
             //try finding the subtype
-            if(subtype != null) {
+            if (subtype != null) {
                 for (Entity entity : Entity.values()) {
                     if (entity.isSubtype() && entity.getSubtypeName().equals(subtype)) {
                         return entity;
@@ -64,11 +66,11 @@ public enum Entity {
             }
         }
 
-        if(entityModel.getValue("type") != null){
+        if (entityModel.getValue("type") != null) {
             String type = entityModel.getValue("type").getValue().toString();
 
             //try finding the subtype
-            if(type != null) {
+            if (type != null) {
                 for (Entity entity : Entity.values()) {
                     if (!entity.isSubtype() && entity.getTypeName().equals(type)) {
                         return entity;
@@ -80,7 +82,7 @@ public enum Entity {
         return null;
     }
 
-    public boolean isSubtype(){
+    public boolean isSubtype() {
         return subtypeOf != null;
     }
 
@@ -93,7 +95,7 @@ public enum Entity {
     }
 
     public String getTypeName() {
-        if(isSubtype()) {
+        if (isSubtype()) {
             return subtypeOf.getTypeName();
         } else {
             return typeName;
@@ -104,8 +106,8 @@ public enum Entity {
         return apiEntityName;
     }
 
-    public Query.QueryBuilder createMatchSubtypeQueryBuilder(){
-        if(isSubtype()){
+    public Query.QueryBuilder createMatchSubtypeQueryBuilder() {
+        if (isSubtype()) {
             return new Query.QueryBuilder("subtype", Comparator.EQ.getFunction(), getSubtypeName());
         }
         throw new RuntimeException("Entity " + apiEntityName + "is not a subtype");

@@ -2,6 +2,7 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.treetable;
 
 import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.model.EntityModel;
+import com.hpe.adm.nga.sdk.model.FieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.EntityTypeIdPair;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
@@ -72,9 +73,12 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
 
         //COMMENTS
         entityFields.put(Entity.COMMENT, new HashSet<>());
+        entityFields.get(Entity.COMMENT).add("id");
         entityFields.get(Entity.COMMENT).add("text");
         entityFields.get(Entity.COMMENT).add("author");
         entityFields.get(Entity.COMMENT).add("owner_work_item");
+        entityFields.get(Entity.COMMENT).add("owner_test");
+        entityFields.get(Entity.COMMENT).add("owner_run");
     }
 
     /**
@@ -133,10 +137,12 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
                 rowPanel.setIcon(Entity.getEntityType(entityModel), false);
             }
 
-            rowPanel.setEntityName(entityId + "", UiUtil.getUiDataFromModel(entityModel.getValue("name")));
+            if (entityType != Entity.COMMENT) {
+                rowPanel.setEntityName(entityId + "", UiUtil.getUiDataFromModel(entityModel.getValue("name")));
 
-            String phase = "Phase: " + UiUtil.getUiDataFromModel(entityModel.getValue("phase"));
-            rowPanel.addDetailsTop(phase);
+                String phase = "Phase: " + UiUtil.getUiDataFromModel(entityModel.getValue("phase"));
+                rowPanel.addDetailsTop(phase);
+            }
 
             if (Entity.DEFECT.equals(entityType)) {
                 rowPanel.setEntityDetails(
@@ -178,8 +184,19 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
 
                 rowPanel.addDetailsTop("Author: " + UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_AUTHOR), FIELD_FULL_NAME));
                 rowPanel.addDetailsBottom("Steps: " + UiUtil.getUiDataFromModel(entityModel.getValue("steps_num")));
-            }
+            } else if (Entity.COMMENT.equals(entityType)) {
+                String text = UiUtil.getUiDataFromModel(entityModel.getValue("text"));
+                text = text.replaceFirst("<p>", "<p>&nbsp;Comment:&nbsp;");
+                String author = UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_AUTHOR), FIELD_FULL_NAME);
+                FieldModel owner = UiUtil.getContainerItemForCommentModel(entityModel);
+                String ownerId = UiUtil.getUiDataFromModel(owner, "id");
+                String ownerName = UiUtil.getUiDataFromModel(owner, "name");
+                String ownerSubtype = UiUtil.getUiDataFromModel(owner, "subtype");
 
+                rowPanel.setEntityName("", "Appears in " + ownerSubtype + ": " + "<b>" + ownerId + "</b>" + " " + ownerName);
+                rowPanel.setEntityDetails(text, "");
+                rowPanel.addDetailsTop("Author: " + author);
+            }
 
             return rowPanel;
         }
