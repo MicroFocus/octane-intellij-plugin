@@ -4,6 +4,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.EntityDetailPresenter;
@@ -11,7 +12,9 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
 import com.hpe.adm.octane.ideplugins.intellij.ui.searchresult.EntitySearchResultPresenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeTablePresenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.PartialEntity;
+import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
 import com.hpe.adm.octane.ideplugins.intellij.util.Constants;
+import com.hpe.adm.octane.ideplugins.services.EntityService;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.tabs.TabInfo;
@@ -39,10 +42,16 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
     @Inject
     private EntitySearchResultPresenter entitySearchResultPresenter;
 
+    @Inject
+    private EntityService entityService;
+
     private BiMap<PartialEntity, TabInfo> detailTabInfo = HashBiMap.create();
 
     @Inject
     private IdePluginPersistentState idePluginPersistentState;
+
+    private TabInfo searchTab;
+    private Icon searchIcon = IconLoader.findIcon("/com/intellij/ide/ui/laf/icons/search.png");
 
     public EntityTreeTablePresenter openMyWorkTab() {
         EntityTreeTablePresenter presenter = entityTreeTablePresenterProvider.get();
@@ -51,11 +60,7 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
         return presenter;
     }
 
-    private TabInfo searchTab;
-    private Icon searchIcon = IconLoader.findIcon("/com/intellij/ide/ui/laf/icons/search.png");
-
     public void openSearchTab(String searchQuery) {
-
         //Only open one search tab
         if(searchTab==null) {
             searchTab = tabbedPaneView.addTab(
@@ -113,9 +118,7 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
 
     private void initHandlers(EntityTreeTablePresenter presenter){
 
-        tabbedPaneView.setSearchRequestHandler(query -> {
-            openSearchTab(query);
-        });
+        tabbedPaneView.setSearchRequestHandler(query -> openSearchTab(query));
 
         //TODO atoth: should only save once at the end
         tabbedPaneView.addTabsListener(new TabsListener.Adapter() {
@@ -136,44 +139,67 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
             }
         });
 
+        //Mouse handler
         presenter.addEntityClickHandler((mouseEvent, entityType, entityId, model) -> {
-
-            //Need the name for the tab tooltip
-            String entityName = model.getValue("name").getValue().toString();
-            PartialEntity tabKey = new PartialEntity(entityId, entityName, entityType);
-
             //double click
             if(SwingUtilities.isLeftMouseButton(mouseEvent) && mouseEvent.getClickCount() == 2){
-                if(isDetailTabAlreadyOpen(tabKey)){
-                    selectDetailTab(tabKey);
-                } else {
-                    openDetailTab(entityType, entityId, entityName);
-                    selectDetailTab(tabKey);
-                }
+                onEntityAction(entityType, entityId, model, true);
             }
 
             //Middle click
             else if(SwingUtilities.isMiddleMouseButton(mouseEvent)){
-                if(!isDetailTabAlreadyOpen(tabKey)){
-                    openDetailTab(entityType, entityId, entityName);
-                }
+                onEntityAction(entityType, entityId, model, false);
             }
         });
 
-        presenter.addEntityKeyHandler((event, selectedEntityType, selectedEntityId, model) -> {
+        //Key handler
+        presenter.addEntityKeyHandler((event, entityType, entityId, model) -> {
             if (event.getKeyCode() == KeyEvent.VK_ENTER) {
-                //Need the name for the tab tooltip
-                String entityName = model.getValue("name").getValue().toString();
-                PartialEntity tabKey = new PartialEntity(selectedEntityId, entityName, selectedEntityType);
-
-                if(isDetailTabAlreadyOpen(tabKey)){
-                    selectDetailTab(tabKey);
-                } else {
-                    openDetailTab(selectedEntityType, selectedEntityId, entityName);
-                    selectDetailTab(tabKey);
-                }
+                onEntityAction(entityType, entityId, model, true);
             }
         });
+    }
+
+    /**
+     * Handle key and mouse events
+     */
+    private void onEntityAction(Entity entityType, Long entityId, EntityModel model, boolean selectNewTab){
+        //Special handling of comments
+        if(Entity.COMMENT.equals(entityType)){
+            //Convert to parent of comment and continue
+            model = (EntityModel) UiUtil.getContainerItemForCommentModel(model).getValue();
+            entityType = Entity.getEntityType(model);
+            entityId = Long.valueOf(model.getValue("id").getValue().toString());
+        }
+
+        if(!isDetailTabSupported(entityType)){
+            entityService.openInBrowser(model);
+            return;
+        }
+
+        //Need the name for the tab tooltip
+        String entityName = model.getValue("name").getValue().toString();
+        PartialEntity tabKey = new PartialEntity(entityId, entityName, entityType);
+
+        if(isDetailTabAlreadyOpen(tabKey)){
+            if(selectNewTab) {
+                selectDetailTab(tabKey);
+            }
+        } else {
+            openDetailTab(entityType, entityId, entityName);
+            if(selectNewTab) {
+                selectDetailTab(tabKey);
+            }
+        }
+    }
+
+    private boolean isDetailTabSupported(Entity entityType) {
+        // TODO to be kept up-to-date
+        if (entityType == Entity.USER_STORY || entityType == Entity.DEFECT || entityType == Entity.TASK ||
+                entityType == Entity.GHERKIN_TEST || entityType == Entity.MANUAL_TEST) {
+            return true;
+        }
+        return false;
     }
 
     private void selectDetailTab(PartialEntity tabKey){
@@ -227,4 +253,3 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
     }
 
 }
-
