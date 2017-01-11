@@ -2,6 +2,8 @@ package com.hpe.adm.octane.ideplugins.services.nonentity;
 
 import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.authorisation.UserAuthorisation;
+import com.hpe.adm.nga.sdk.model.EntityModel;
+import com.hpe.adm.nga.sdk.model.StringFieldModel;
 import com.hpe.adm.nga.sdk.network.HttpClient;
 import com.hpe.adm.nga.sdk.network.HttpRequest;
 import com.hpe.adm.nga.sdk.network.HttpRequestFactory;
@@ -10,23 +12,24 @@ import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import com.hpe.adm.octane.ideplugins.services.exception.ServiceRuntimeException;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
+import org.apache.commons.lang.StringUtils;
+import org.apache.http.client.utils.URIBuilder;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class EntitySearchService {
+
+    private static final String JSON_DATA_NAME = "data";
+    private static final String GLOBAL_TEXT_SEARCH_RESULT_TAG = "global_text_search_result";
 
     @Inject
     protected ConnectionSettingsProvider connectionSettingsProvider;
 
-    public String searchGlobal(String queryString, Entity entity, Set<String> fields) {
+    public Collection<EntityModel> searchGlobal(String queryString, Entity entity, Set<String> fields) {
 
         ConnectionSettings connectionSettings = connectionSettingsProvider.getConnectionSettings();
 
@@ -38,44 +41,79 @@ public class EntitySearchService {
             throw new ServiceRuntimeException("Failed to authenticate with current connection settings");
         }
 
-        StringBuilder urlBuilder = new StringBuilder();
+        URIBuilder uriBuilder = new URIBuilder();
+        uriBuilder.setScheme("http");
+        uriBuilder.setHost(connectionSettings.getBaseUrl().replace("http://", ""));
+        uriBuilder.setPath(
+                "/api"
+                + "/shared_spaces/" + connectionSettings.getSharedSpaceId()
+                + "/workspaces/" + connectionSettings.getWorkspaceId()
+                + "/" + entity.getApiEntityName());
 
-        urlBuilder.append(connectionSettings.getBaseUrl() + "/api");
-        urlBuilder.append("/shared_spaces/" + connectionSettings.getSharedSpaceId());
-        urlBuilder.append("/workspaces/" + connectionSettings.getWorkspaceId());
-        urlBuilder.append("/" + entity.getApiEntityName());
+        uriBuilder.setParameter("text_search", "{\"type\":\"global\",\"text\":\""+queryString+"\"}");
 
-        urlBuilder.append("?text_search={\"type\":\"global\",\"text\":\""+queryString+"\"}");
-
-        if(fields != null && fields.size() != 0) {
-            urlBuilder.append("&fields=" + String.join(",", fields));
+        if(fields!=null) {
+            uriBuilder.setParameter("fields", String.join(",", fields));
         }
-//        if(entity.isSubtype()) {
-//            urlBuilder.append("&query=" + "\"(subtype='" + entity.getSubtypeName() + "')\"");
-//        }
+        uriBuilder.setParameter("query", "\"(subtype='" + entity.getSubtypeName() + "')\"");
 
         try {
-            String url = encodeUrl(urlBuilder.toString());
-            System.out.println(url);
-            HttpRequest request = requestFactory.buildGetRequest(url);
+            HttpRequest request = requestFactory.buildGetRequest( uriBuilder.build().toASCIIString());
             HttpResponse response = request.execute();
-            BufferedReader buffer = new BufferedReader(new InputStreamReader(response.getContent()));
-            String responseString = buffer.lines().collect(Collectors.joining("\n"));
+            String responseString = response.parseAsString();
 
-            return responseString;
+            if(response.isSuccessStatusCode() && StringUtils.isNotBlank(responseString)){
+                return searchResponseToEntityModels(responseString);
+            } else {
+                throw new ServiceRuntimeException("Failed to get search response JSON");
+            }
 
-        } catch (IOException ex) {
+        } catch (Exception ex) {
             throw new ServiceRuntimeException(ex);
         }
     }
 
-    private static String encodeUrl(String urlString){
-        try {
-            URL url = new URL(urlString);
-            URI uri = new URI(url.getProtocol(), url.getUserInfo(), url.getHost(), url.getPort(), url.getPath(), url.getQuery(), url.getRef());
-            return uri.toASCIIString();
-        } catch (MalformedURLException | URISyntaxException e) {
-            return null;
+    /**
+     * Convert it to standard entity model for re-using exiting UI,
+     * only has: id, name, type/subtype, description
+     * @param responseString
+     * @return
+     */
+    private Collection<EntityModel> searchResponseToEntityModels(String responseString){
+
+        Collection<EntityModel> result = new ArrayList<>();
+
+        JSONObject json = new JSONObject(responseString);
+        JSONArray data = json.getJSONArray(JSON_DATA_NAME);
+
+        data.forEach(jsonObj -> {
+            JSONObject jsonObject = (JSONObject) jsonObj;
+
+            //Create an entity model from the json, the json format is fixed
+            String name = getStringOrBlank(jsonObject.getJSONObject(GLOBAL_TEXT_SEARCH_RESULT_TAG), "name" );
+            String description = getStringOrBlank(jsonObject.getJSONObject(GLOBAL_TEXT_SEARCH_RESULT_TAG), "description" );
+            String id = getStringOrBlank(jsonObject, "id" );
+            String type = getStringOrBlank(jsonObject, "type" );
+            String subtype = getStringOrBlank(jsonObject, "subtype" );
+
+            EntityModel entityModel = new EntityModel();
+            entityModel.setValue(new StringFieldModel("name", name));
+            entityModel.setValue(new StringFieldModel("description", description));
+            entityModel.setValue(new StringFieldModel("id", id));
+            entityModel.setValue(new StringFieldModel("type", type));
+            entityModel.setValue(new StringFieldModel("subtype", subtype));
+
+            result.add(entityModel);
+        });
+
+        return result;
+    }
+
+    private static String getStringOrBlank(JSONObject jsonObject, String key){
+        if(jsonObject.has(key) && !jsonObject.isNull(key)){
+            return jsonObject.getString(key);
+        } else {
+            return "";
         }
     }
 

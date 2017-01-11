@@ -5,6 +5,7 @@ import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.integrationtests.IntegrationTestBase;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
+import com.hpe.adm.octane.ideplugins.services.connection.OctaneProvider;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.nonentity.EntitySearchService;
 import org.junit.Assert;
@@ -73,6 +74,9 @@ public class EntityServiceITCase extends IntegrationTestBase{
 
     @Inject
     private EntitySearchService entitySearchService;
+
+    @Inject
+    private OctaneProvider octaneProvider;
 
     @Test
     public void testSearch(){
