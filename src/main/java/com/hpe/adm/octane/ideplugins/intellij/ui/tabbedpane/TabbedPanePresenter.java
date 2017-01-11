@@ -8,6 +8,7 @@ import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.EntityDetailPresenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
+import com.hpe.adm.octane.ideplugins.intellij.ui.searchresult.EntitySearchResultPresenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeTablePresenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.PartialEntity;
 import com.hpe.adm.octane.ideplugins.intellij.util.Constants;
@@ -35,6 +36,9 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
     @Inject
     private Provider<EntityTreeTablePresenter> entityTreeTablePresenterProvider;
 
+    @Inject
+    private EntitySearchResultPresenter entitySearchResultPresenter;
+
     private BiMap<PartialEntity, TabInfo> detailTabInfo = HashBiMap.create();
 
     @Inject
@@ -52,33 +56,20 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
 
     public void openSearchTab(String searchQuery) {
 
-        JPanel dummyView = new JPanel(new BorderLayout(0,0));
-        JLabel searchLbl = new JLabel(searchQuery);
-        searchLbl.setVerticalAlignment(SwingConstants.CENTER);
-        searchLbl.setHorizontalAlignment(SwingConstants.CENTER);
-        dummyView.add(searchLbl);
-
         //Only open one search tab
         if(searchTab==null) {
             searchTab = tabbedPaneView.addTab(
                     "\"" + searchQuery + "\"",
                     null,
                     searchIcon,
-                    dummyView);
+                    entitySearchResultPresenter.getView().getComponent());
 
             tabbedPaneView.selectTabWithTabInfo(searchTab, true);
         } else {
-            //Replace old search tab
-            TabInfo newSearchTab = tabbedPaneView.addTab(
-                    "\"" + searchQuery + "\"",
-                    null,
-                    searchIcon,
-                    dummyView);
-
-            tabbedPaneView.selectTabWithTabInfo(newSearchTab, true);
-            tabbedPaneView.removeTab(searchTab);
-            searchTab = newSearchTab;
+            searchTab.setText("\"" + searchQuery + "\"");
         }
+
+        entitySearchResultPresenter.globalSearch(searchQuery);
     }
 
     public void openDetailTab(PartialEntity tabKey) {

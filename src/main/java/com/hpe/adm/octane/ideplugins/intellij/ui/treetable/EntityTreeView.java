@@ -50,6 +50,30 @@ import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
 
 public class EntityTreeView implements View {
 
+    public static class ExpandNodesAction extends AnAction {
+        EntityTreeView treeView;
+        public ExpandNodesAction(EntityTreeView treeView) {
+            super("Expand all", "Expand all nodes of the tree", AllIcons.Actions.Expandall);
+            this.treeView = treeView;
+        }
+
+        public void actionPerformed(AnActionEvent e) {
+            treeView.expandAllNodes();
+        }
+
+    }
+
+    public static class CollapseNodesAction extends AnAction {
+        EntityTreeView treeView;
+        public CollapseNodesAction(EntityTreeView treeView) {
+            super("Collapse all", "Collapse all nodes of the tree", AllIcons.Actions.Collapseall);
+            this.treeView = treeView;
+        }
+        public void actionPerformed(AnActionEvent e) {
+            treeView.collapseAllNodes();
+        }
+    }
+
     public interface EntityDoubleClickHandler {
         void entityDoubleClicked(MouseEvent mouseEvent, Entity entityType, Long entityId, EntityModel model);
     }

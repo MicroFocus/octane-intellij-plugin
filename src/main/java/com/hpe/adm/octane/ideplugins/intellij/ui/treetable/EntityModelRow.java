@@ -119,9 +119,9 @@ public class EntityModelRow extends JPanel{
 	
 	public void setEntityDetails(String details, String defaultText){
         if(StringUtils.isEmpty(details)){
-            lblEntityRelease.setText(defaultText);
+            lblEntityRelease.setText("<html><body>" + defaultText + "</body><html>");
         } else {
-            lblEntityRelease.setText(details);
+            lblEntityRelease.setText("<html><body>" + details + "</body><html>");
         }
 	}
 	
