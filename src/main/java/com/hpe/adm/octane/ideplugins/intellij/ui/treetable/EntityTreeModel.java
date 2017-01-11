@@ -23,12 +23,10 @@ public class EntityTreeModel extends AbstractTreeModel {
 
         for (EntityModel entityModel : entityModels) {
             EntityCategory category = EntityCategory.getCategory(entityModel);
-
-            if(!groupedEntities.containsKey(category)){
-                groupedEntities.put(category, new ArrayList<>());
-            }
-
             if (category != null) {
+                if(!groupedEntities.containsKey(category)) {
+                    groupedEntities.put(category, new ArrayList<>());
+                }
                 groupedEntities.get(category).add(entityModel);
             }
         }

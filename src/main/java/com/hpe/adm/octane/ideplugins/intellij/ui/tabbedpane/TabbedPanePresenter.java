@@ -28,7 +28,7 @@ import java.awt.event.KeyEvent;
 
 public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
 
-    private static EntityIconFactory entityIconFactory = new EntityIconFactory(20, 20, 10, Color.WHITE);
+    private static EntityIconFactory entityIconFactory = new EntityIconFactory(25, 25, 12, Color.WHITE);
 
     @Inject
     TabbedPaneView tabbedPaneView;
