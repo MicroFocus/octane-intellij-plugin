@@ -1,6 +1,7 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.treetable;
 
 import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import com.hpe.adm.nga.sdk.exception.OctaneException;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
@@ -105,7 +106,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView>{
 
     @Override
     @Inject
-    public void setView(EntityTreeView entityTreeView) {
+    public void setView(@Named("myWorkEntityTreeView") EntityTreeView entityTreeView) {
         this.entityTreeTableView = entityTreeView;
 
         //start presenting

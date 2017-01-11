@@ -80,7 +80,7 @@ public class EntityServiceITCase extends IntegrationTestBase{
 
     @Test
     public void testSearch(){
-        System.out.println(entitySearchService.searchGlobal("us", Entity.DEFECT, null));
+        System.out.println(entitySearchService.searchGlobal("us", Entity.USER_STORY));
     }
 
 

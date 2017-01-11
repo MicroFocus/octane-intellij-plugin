@@ -3,6 +3,7 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.treetable;
 import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
+import com.hpe.adm.octane.ideplugins.intellij.ui.ToolbarActiveItem;
 import com.hpe.adm.octane.ideplugins.intellij.ui.View;
 import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.LoadingWidget;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.nowork.NoWorkPanel;
@@ -10,7 +11,6 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.util.PartialEntity;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
 import com.hpe.adm.octane.ideplugins.intellij.util.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
-import com.hpe.adm.octane.ideplugins.intellij.ui.ToolbarActiveItem;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.nonentity.DownloadScriptService;
@@ -35,6 +35,7 @@ import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
 
 import javax.swing.*;
+import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import java.awt.*;
@@ -73,7 +74,7 @@ public class EntityTreeView implements View {
     private IdePluginPersistentState persistentState;
 
     @Inject
-    public EntityTreeView(EntityTreeCellRenderer entityTreeCellRenderer) {
+    public EntityTreeView(TreeCellRenderer entityTreeCellRenderer) {
 
         scrollPane = new JBScrollPane();
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
@@ -91,7 +92,7 @@ public class EntityTreeView implements View {
         rootPanel.add(createToolbar(), BorderLayout.EAST);
     }
 
-    private FillingTree initTree(EntityTreeCellRenderer entityTreeCellRenderer){
+    private FillingTree initTree(TreeCellRenderer entityTreeCellRenderer){
         FillingTree tree = new FillingTree();
         //Init with an empty model
         tree.setModel(new EntityTreeModel());
@@ -396,10 +397,21 @@ public class EntityTreeView implements View {
         tree.setModel(model);
 
         if (model.size() == 0) {
-            scrollPane.setViewportView(new NoWorkPanel());
+            scrollPane.setViewportView(whenEmptyComponent);
         } else {
             scrollPane.setViewportView(tree);
         }
+    }
+
+    //Default value
+    private JComponent whenEmptyComponent = new NoWorkPanel();
+
+    /**
+     * What to show when the model has nothing in it
+     * @param emptyComponent
+     */
+    public void setComponentWhenEmpty(JComponent emptyComponent){
+        whenEmptyComponent = emptyComponent;
     }
 
 }

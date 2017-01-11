@@ -19,7 +19,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Set;
 
 public class EntitySearchService {
 
@@ -29,7 +28,7 @@ public class EntitySearchService {
     @Inject
     protected ConnectionSettingsProvider connectionSettingsProvider;
 
-    public Collection<EntityModel> searchGlobal(String queryString, Entity entity, Set<String> fields) {
+    public Collection<EntityModel> searchGlobal(String queryString, Entity entity) {
 
         ConnectionSettings connectionSettings = connectionSettingsProvider.getConnectionSettings();
 
@@ -52,10 +51,9 @@ public class EntitySearchService {
 
         uriBuilder.setParameter("text_search", "{\"type\":\"global\",\"text\":\""+queryString+"\"}");
 
-        if(fields!=null) {
-            uriBuilder.setParameter("fields", String.join(",", fields));
+        if(entity.isSubtype()) {
+            uriBuilder.setParameter("query", "\"(subtype='" + entity.getSubtypeName() + "')\"");
         }
-        uriBuilder.setParameter("query", "\"(subtype='" + entity.getSubtypeName() + "')\"");
 
         try {
             HttpRequest request = requestFactory.buildGetRequest( uriBuilder.build().toASCIIString());

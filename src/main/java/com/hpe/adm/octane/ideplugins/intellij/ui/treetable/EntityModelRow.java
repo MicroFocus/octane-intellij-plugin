@@ -10,7 +10,7 @@ import org.jdesktop.swingx.JXLabel;
 import javax.swing.*;
 import java.awt.*;
 
-class EntityModelRow extends JPanel{
+public class EntityModelRow extends JPanel{
 
 	private static final long serialVersionUID = 1L;
 
