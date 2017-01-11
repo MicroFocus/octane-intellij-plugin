@@ -44,6 +44,19 @@ public class UiUtil {
         return result;
     }
 
+    public static FieldModel getNonNullValue(EntityModel entityModel, String... keys) {
+        for (String key : keys) {
+            FieldModel childModel = getValueOfChild(entityModel, key);
+            if (childModel != null && childModel.getValue() != null)
+                return childModel;
+        }
+        return null;
+    }
+
+    public static FieldModel getContainerItemForCommentModel(EntityModel commentModel) {
+        return getNonNullValue(commentModel, "owner_work_item", "owner_test", "owner_run");
+    }
+
     private static String getValueOfChildren(List<EntityModel> entityModelList, String child) {
         StringJoiner result = new StringJoiner("; ");
         String tempFieldModelValue = " ";

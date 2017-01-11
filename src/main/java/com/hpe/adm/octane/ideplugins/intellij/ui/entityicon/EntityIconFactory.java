@@ -51,9 +51,10 @@ public class EntityIconFactory {
         iconDetailMap.put(Entity.TASK, new IconDetail(new Color(137,204,174), "T"));
         iconDetailMap.put(Entity.MANUAL_TEST, new IconDetail(new Color(96,121,141), "MT"));
         iconDetailMap.put(Entity.GHERKIN_TEST, new IconDetail(new Color(120,196,192), "GT"));
+        iconDetailMap.put(Entity.COMMENT, new IconDetail(new Color(234, 179, 124), "C"));
         iconDetailMap.put(Entity.MANUAL_TEST_RUN, new IconDetail(new Color(133,169,188), "MR"));
         iconDetailMap.put(Entity.TEST_SUITE_RUN, new IconDetail(new Color(133,169,188), "SR"));
-        
+
         iconDetailMap.keySet().forEach(entity -> iconComponentMap.put(entity, createIconAsComponent(entity)));
     }
     

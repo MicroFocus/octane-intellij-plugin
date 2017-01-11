@@ -68,6 +68,12 @@ public class EntityService {
         result.addAll(findEntities(MANUAL_TEST_RUN, finalQuery, fieldListMap.get(MANUAL_TEST_RUN)));
         result.addAll(findEntities(TEST_SUITE_RUN, finalQuery, fieldListMap.get(TEST_SUITE_RUN)));
 
+        Query.QueryBuilder mentionedUserQuery = new Query.QueryBuilder("mention_user", Query::equalTo,
+                new Query.QueryBuilder("id", Query::equalTo, userService.getCurrentUserId()));
+
+        Collection<EntityModel> comments = findEntities(Entity.COMMENT, mentionedUserQuery, fieldListMap.get(Entity.COMMENT));
+        result.addAll(comments);
+
         return result;
     }
 
@@ -95,7 +101,6 @@ public class EntityService {
 
         return new Query.QueryBuilder("phase", Query::equalTo, phaseQueryBuilder);
     }
-
     /**
      *
      * @param logicalNames
@@ -217,5 +222,4 @@ public class EntityService {
 
         entityList.at(entityId).update().entity(updatedEntity).execute();
     }
-
 }

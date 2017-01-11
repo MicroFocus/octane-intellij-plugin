@@ -49,7 +49,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView>{
 
                 entityTreeTableView.setTreeModel(new EntityTreeModel(myWork));
                 entityTreeTableView.expandAllNodes();
-                ToolbarActiveItem.getInstance().updateOnRefresh(myWork);
+                ToolbarActiveItem.getInstance().update(myWork);
             }
 
             public void onError(@NotNull Exception ex) {

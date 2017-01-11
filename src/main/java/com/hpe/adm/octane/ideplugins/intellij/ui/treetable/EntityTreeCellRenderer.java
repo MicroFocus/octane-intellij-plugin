@@ -2,6 +2,7 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.treetable;
 
 import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.model.EntityModel;
+import com.hpe.adm.nga.sdk.model.FieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.EntityTypeIdPair;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
@@ -22,6 +23,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
     private static final Map<Entity, HashSet<String>> entityFields = new HashMap<>();
     private static final String[] commonFields = new String[]{"id", "name", "phase"};
     private static final String[] progressFields = new String[]{FIELD_INVESTED_HOURS, FIELD_REMAINING_HOURS, FIELD_ESTIMATED_HOURS};
+    private static final Map<String, String> subtypeNames = new HashMap();
 
     @Inject
     private IdePluginPersistentState idePluginPersistentState;
@@ -70,6 +72,26 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
         entityFields.get(Entity.MANUAL_TEST).add(FIELD_AUTHOR);
         entityFields.get(Entity.MANUAL_TEST).add("steps_num");
 
+        //COMMENTS
+        entityFields.put(Entity.COMMENT, new HashSet<>());
+        entityFields.get(Entity.COMMENT).add("id");
+        entityFields.get(Entity.COMMENT).add("text");
+        entityFields.get(Entity.COMMENT).add("author");
+        entityFields.get(Entity.COMMENT).add("owner_work_item");
+        entityFields.get(Entity.COMMENT).add("owner_test");
+        entityFields.get(Entity.COMMENT).add("owner_run");
+
+        subtypeNames.put("story", "User Story");
+        subtypeNames.put("defect", "Defect");
+        subtypeNames.put("quality_story", "Quality Story");
+        subtypeNames.put("epic", "Epic");
+        subtypeNames.put("feature", "Feature");
+        subtypeNames.put("gherkin_test", "Gherkin Test");
+        subtypeNames.put("test_manual", "Manual Test");
+        subtypeNames.put("run_manual", "Manual Run");
+        subtypeNames.put("test_suite", "Test Suite");
+        subtypeNames.put("run_suite", "Run Suite");
+
         //MANUAL TEST RUNS
         entityFields.put(Entity.MANUAL_TEST_RUN, new HashSet<>());
 //        Collections.addAll(entityFields.get(Entity.MANUAL_TEST_RUN), commonFields);
@@ -89,6 +111,11 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
      */
     public static Map<Entity, Set<String>> getEntityFieldMap() {
         return Collections.unmodifiableMap(entityFields);
+    }
+
+    public static String getSubtypeName(String subtype) {
+        String subtypeName = subtypeNames.get(subtype);
+        return subtypeName != null ? subtypeName : subtype;
     }
 
     @Override
@@ -138,6 +165,12 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
                 rowPanel.setIcon(Entity.getEntityType(entityModel), false);
             }
 
+            if (entityType != Entity.COMMENT) {
+                rowPanel.setEntityName(entityId + "", UiUtil.getUiDataFromModel(entityModel.getValue("name")));
+
+                String phase = "Phase: " + UiUtil.getUiDataFromModel(entityModel.getValue("phase"));
+                rowPanel.addDetailsTop(phase);
+            }
             rowPanel.setEntityName(entityId + "", UiUtil.getUiDataFromModel(entityModel.getValue("name")));
             if (entityType.equals(Entity.MANUAL_TEST_RUN) || entityType.equals(Entity.TEST_SUITE_RUN)) {
                 String nativeStatus = "Status: " + UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_TEST_RUN_NATIVE_STATUS));
@@ -187,6 +220,17 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
 
                 rowPanel.addDetailsTop("Author: " + UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_AUTHOR), FIELD_FULL_NAME));
                 rowPanel.addDetailsBottom("Steps: " + UiUtil.getUiDataFromModel(entityModel.getValue("steps_num")));
+            } else if (Entity.COMMENT.equals(entityType)) {
+                String text = UiUtil.getUiDataFromModel(entityModel.getValue("text"));
+                text = text.replaceFirst("<p>", "<p>&nbsp;Comment:&nbsp;");
+                String author = UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_AUTHOR), FIELD_FULL_NAME);
+                FieldModel owner = UiUtil.getContainerItemForCommentModel(entityModel);
+                String ownerId = UiUtil.getUiDataFromModel(owner, "id");
+                String ownerName = UiUtil.getUiDataFromModel(owner, "name");
+                String ownerSubtype = UiUtil.getUiDataFromModel(owner, "subtype");
+                rowPanel.setEntityName("", "Appears in " + getSubtypeName(ownerSubtype) + ": " + "<b>" + ownerId + "</b>" + " " + ownerName);
+                rowPanel.setEntityDetails(text, "");
+                rowPanel.addDetailsTop("Author: " + author);
             } else if (Entity.MANUAL_TEST_RUN.equals(entityType)) {
                 rowPanel.setEntityDetails(
                         UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_ENVIROMENT)),
