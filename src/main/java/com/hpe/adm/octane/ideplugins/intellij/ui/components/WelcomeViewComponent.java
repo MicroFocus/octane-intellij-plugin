@@ -13,14 +13,16 @@ import javax.swing.*;
  */
 public class WelcomeViewComponent implements HasComponent {
 
+    private static final String OCTANE_SETTINGS_TEXT = "To start, go to Settings in the ribbon above and connect to ALM Octane";
+    private static final String WELCOME_TEXT = "Welcome to ALM Octane plugin";
     private JPanel rootPanel;
 
     private JLabel welcomeScreenMessage;
     private JXHyperlink settingsLink;
 
     public WelcomeViewComponent(Project project){
-        welcomeScreenMessage.setText("Welcome to ALM Octane plugin");
-        settingsLink.setText("Before you start please go to settings and connect to Octane");
+        welcomeScreenMessage.setText(WELCOME_TEXT);
+        settingsLink.setText(OCTANE_SETTINGS_TEXT);
         settingsLink.addActionListener(event -> ShowSettingsUtil.getInstance().showSettingsDialog(project, ConnectionSettingsConfigurable.class));
     }
 

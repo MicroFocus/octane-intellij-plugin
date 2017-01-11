@@ -1,19 +1,22 @@
 package com.hpe.adm.octane.ideplugins.services;
 
 import com.google.inject.Inject;
+import com.hpe.adm.nga.sdk.EntityList;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.integrationtests.IntegrationTestBase;
+import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
-import com.hpe.adm.octane.ideplugins.services.connection.OctaneProvider;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
-import com.hpe.adm.octane.ideplugins.services.nonentity.EntitySearchService;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Collection;
 
-public class EntityServiceITCase extends IntegrationTestBase{
+import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.DEFECT;
+import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.USER_STORY;
+
+public class EntityServiceITCase extends IntegrationTestBase {
 
     @Inject
     private EntityService entityService;
@@ -30,59 +33,46 @@ public class EntityServiceITCase extends IntegrationTestBase{
         Collection<EntityModel> entities;
         entities = entityService.findEntities(Entity.MANUAL_TEST);
 
-        if(entities.size()>0){
+        if (entities.size() > 0) {
             EntityModel firstEntity = entities.iterator().next();
             Assert.assertEquals(Entity.getEntityType(firstEntity), Entity.MANUAL_TEST);
         }
 
-        entities = entityService.findEntities(Entity.DEFECT);
-        if(entities.size()>0){
+        entities = entityService.findEntities(DEFECT);
+        if (entities.size() > 0) {
             EntityModel firstEntity = entities.iterator().next();
-            Assert.assertEquals(Entity.getEntityType(firstEntity), Entity.DEFECT);
+            Assert.assertEquals(Entity.getEntityType(firstEntity), DEFECT);
         }
 
-        entities = entityService.findEntities(Entity.USER_STORY);
-        if(entities.size()>0){
+        entities = entityService.findEntities(USER_STORY);
+        if (entities.size() > 0) {
             EntityModel firstEntity = entities.iterator().next();
-            Assert.assertEquals(Entity.getEntityType(firstEntity), Entity.USER_STORY);
+            Assert.assertEquals(Entity.getEntityType(firstEntity), USER_STORY);
         }
     }
 
     @Test
-    public void testGetMyWork(){
+    public void testGetMyWork() {
         Collection<EntityModel> entityModels = entityService.getMyWork();
         System.out.println(entityModels.size());
     }
 
     @Test
-    public void testConnection(){
+    public void testConnection() {
         ConnectionSettings connectionSettings = connectionSettingsProvider.getConnectionSettings();
 
-        try{
+        try {
             testService.getOctane(connectionSettings);
-        } catch (Exception e){
+        } catch (Exception e) {
             Assert.fail(e.toString());
         }
 
-        try{
+        try {
             testService.getOctane(connectionSettings);
-        } catch (Exception e){
+        } catch (Exception e) {
             Assert.fail(e.toString());
         }
 
     }
-
-    @Inject
-    private EntitySearchService entitySearchService;
-
-    @Inject
-    private OctaneProvider octaneProvider;
-
-    @Test
-    public void testSearch(){
-        System.out.println(entitySearchService.searchGlobal("us", Entity.USER_STORY));
-    }
-
-
 
 }

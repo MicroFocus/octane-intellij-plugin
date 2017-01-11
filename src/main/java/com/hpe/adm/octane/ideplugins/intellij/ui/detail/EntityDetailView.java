@@ -10,12 +10,14 @@ import com.intellij.ui.components.JBScrollPane;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Collection;
 
 import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
 import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS;
 
 public class EntityDetailView implements View {
 
+    private EntityModel entityModel;
     private JBScrollPane component = new JBScrollPane(new LoadingWidget());
     private GeneralEntityDetailsPanel entityDetailsPanel;
 
@@ -35,6 +37,7 @@ public class EntityDetailView implements View {
     }
 
     public void setEntityModel(EntityModel entityModel) {
+        this.entityModel =entityModel;
         entityDetailsPanel = new GeneralEntityDetailsPanel(entityModel, connectionSettingsProvider.getConnectionSettings());
         component.setViewportView(entityDetailsPanel);
     }
@@ -53,11 +56,28 @@ public class EntityDetailView implements View {
     }
 
     public void setRefreshEntityButton(AnAction refreshAction) {
-        entityDetailsPanel.drawRefreshButton(refreshAction);
+        entityDetailsPanel.setRefreshButton(refreshAction);
+    }
+    public void setSaveSelectedPhaseButton(AnAction saveSelectedPhaseAction){
+        entityDetailsPanel.setSaveSelectedPhaseButton(saveSelectedPhaseAction);
+    }
+    public void removeSaveSelectedPhaseButton(){
+        entityDetailsPanel.removeSaveSelectedPhaseButton();
     }
 
     public void doRefresh() {
         component.setViewportView(new JBScrollPane(new LoadingWidget()));
     }
+
+    public void setPossiblePhasesForEntity(Collection<EntityModel> phasesList) {
+        entityDetailsPanel.setPossiblePhasesForEntity(phasesList);
+    }
+    public EntityModel getSelectedTransition(){
+        return entityDetailsPanel.getSelectedTransition();
+    }
+    public EntityModel getEntityModel() {
+        return this.entityModel;
+    }
+
 
 }

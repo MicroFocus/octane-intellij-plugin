@@ -11,6 +11,8 @@ import org.json.JSONObject;
 import javax.swing.*;
 import java.awt.*;
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ToolbarActiveItem {
 
@@ -40,12 +42,15 @@ public class ToolbarActiveItem {
                 getAction(IdeActions.GROUP_MAIN_TOOLBAR);
     }
 
-    public void updateOnRefresh(Collection<EntityModel> myWork) {
+    public void update(Collection<EntityModel> myWork) {
         PartialEntity activeItem = getActiveItemFromPersistentState();
-        if (activeItem != null) {
-            boolean idFoundInMyWork = myWork.stream().anyMatch(
-                    (entityModel) -> activeItem.getEntityId() == Long.parseLong(entityModel.getValue("id").getValue().toString()));
-            if (idFoundInMyWork) {
+        if (activeItem != null && myWork != null) {
+            List<EntityModel> matchedItems = myWork.stream()
+                    .filter(entityModel -> activeItem.getEntityId() == Long.parseLong(entityModel.getValue("id").getValue().toString()))
+                    .collect(Collectors.toList());
+            if (!matchedItems.isEmpty()) {
+                activeItem.setEntityName(matchedItems.get(0).getValue("name").getValue().toString());
+                persistentState.saveState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM, PartialEntity.toJsonObject(activeItem));
                 changeItem();
             } else {
                 persistentState.clearState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM);

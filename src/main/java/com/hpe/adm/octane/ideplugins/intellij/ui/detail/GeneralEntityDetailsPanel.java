@@ -23,6 +23,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.net.URI;
+import java.util.Collection;
 
 import static com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil.getUiDataFromModel;
 import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.*;
@@ -167,8 +168,17 @@ public class GeneralEntityDetailsPanel extends JPanel {
                 connectionSettings));
     }
 
-    public void drawRefreshButton(AnAction refreshAction) {
-        headerPanel.createRefreshButton(refreshAction);
+    public void setRefreshButton(AnAction refreshButton) {
+        headerPanel.setRefreshButton(refreshButton);
+    }
+    public void setSaveSelectedPhaseButton(AnAction saveSelectedPhaseAction){
+        headerPanel.setSaveSelectedPhaseButton(saveSelectedPhaseAction);
+    }
+    public void removeSaveSelectedPhaseButton(){
+        headerPanel.removeSaveSelectedPhaseButton();
+    }
+    public  EntityModel getSelectedTransition(){
+        return headerPanel.getSelectedTransition();
     }
 
     private String getDescriptionForEntityModel(EntityModel entityModel) {
@@ -286,6 +296,10 @@ public class GeneralEntityDetailsPanel extends JPanel {
         userStoryDetailsPanel.setReleaseDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_RELEASE)));
         userStoryDetailsPanel.setCreationTimeDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_CREATION_TIME)));
         return userStoryDetailsPanel;
+    }
+
+    public void setPossiblePhasesForEntity(Collection<EntityModel> phasesList) {
+        headerPanel.setPossiblePhasesForEntity(phasesList);
     }
 
     private static class GoToBrowser extends AbstractAction {

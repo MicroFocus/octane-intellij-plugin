@@ -44,6 +44,8 @@ public class EntryPoint implements ToolWindowFactory {
         // all members of below classes will have support for field injection and constructor injection
         final ConnectionSettingsProvider connectionSettingsProvider = pluginModule.getInstance(ConnectionSettingsProvider.class);
 
+        ToolbarActiveItem.getInstance().setPersistentState(pluginModule.getInstance(IdePluginPersistentState.class));
+
         Runnable mainToolWindowContentControl = () -> {
             try{
 
@@ -66,11 +68,9 @@ public class EntryPoint implements ToolWindowFactory {
                 //Create the presenter hierarchy, DI will inject view instances
                 MainPresenter mainPresenter = pluginModule.getInstance(MainPresenter.class);
                 setContent(toolWindow, mainPresenter.getView(), workspaceDisplayName);
-
-                IdePluginPersistentState state = pluginModule.getInstance(IdePluginPersistentState.class);
-                ToolbarActiveItem.getInstance().setPersistentState(state);
-
             } catch (Exception ex){
+
+                ToolbarActiveItem.getInstance().update(null);
 
                 WelcomeViewComponent welcomeViewComponent;
 
