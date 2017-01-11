@@ -86,7 +86,7 @@ public class HeaderPanel extends JPanel {
 
         comboBox = new PhaseComboBox();
         comboBox.setEditable(true);
-        comboBox.setPreferredSize(new Dimension(110, 25));
+//        comboBox.setPreferredSize(new Dimension(110, 25));
         phasePanel.add(comboBox);
 
         refreshButtonPanel = new JBScrollPane();
