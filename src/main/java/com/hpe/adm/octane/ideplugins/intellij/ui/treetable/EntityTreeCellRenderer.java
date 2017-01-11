@@ -94,7 +94,6 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
 
         //MANUAL TEST RUNS
         entityFields.put(Entity.MANUAL_TEST_RUN, new HashSet<>());
-//        Collections.addAll(entityFields.get(Entity.MANUAL_TEST_RUN), commonFields);
         entityFields.get(Entity.MANUAL_TEST_RUN).add("subtype");
         entityFields.get(Entity.MANUAL_TEST_RUN).add("name");
         entityFields.get(Entity.MANUAL_TEST_RUN).add("native_status");
@@ -166,19 +165,16 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
             }
 
             if (entityType != Entity.COMMENT) {
+                if (entityType.equals(Entity.MANUAL_TEST_RUN) || entityType.equals(Entity.TEST_SUITE_RUN)) {
+                    String nativeStatus = "Status: " + UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_TEST_RUN_NATIVE_STATUS));
+                    rowPanel.addDetailsTop(nativeStatus);
+                }else{
+                    String phase = "Phase: " + UiUtil.getUiDataFromModel(entityModel.getValue("phase"));
+                    rowPanel.addDetailsTop(phase);
+                }
                 rowPanel.setEntityName(entityId + "", UiUtil.getUiDataFromModel(entityModel.getValue("name")));
+            }
 
-                String phase = "Phase: " + UiUtil.getUiDataFromModel(entityModel.getValue("phase"));
-                rowPanel.addDetailsTop(phase);
-            }
-            rowPanel.setEntityName(entityId + "", UiUtil.getUiDataFromModel(entityModel.getValue("name")));
-            if (entityType.equals(Entity.MANUAL_TEST_RUN) || entityType.equals(Entity.TEST_SUITE_RUN)) {
-                String nativeStatus = "Status: " + UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_TEST_RUN_NATIVE_STATUS));
-                rowPanel.addDetailsTop(nativeStatus);
-            }else{
-                String phase = "Phase: " + UiUtil.getUiDataFromModel(entityModel.getValue("phase"));
-                rowPanel.addDetailsTop(phase);
-            }
 
             if (Entity.DEFECT.equals(entityType)) {
                 rowPanel.setEntityDetails(
