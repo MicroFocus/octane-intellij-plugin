@@ -23,6 +23,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
     private static final Map<Entity, HashSet<String>> entityFields = new HashMap<>();
     private static final String[] commonFields = new String[]{"id", "name", "phase"};
     private static final String[] progressFields = new String[]{FIELD_INVESTED_HOURS, FIELD_REMAINING_HOURS, FIELD_ESTIMATED_HOURS};
+    private static final Map<String, String> subtypeNames = new HashMap();
 
     @Inject
     private IdePluginPersistentState idePluginPersistentState;
@@ -79,6 +80,17 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
         entityFields.get(Entity.COMMENT).add("owner_work_item");
         entityFields.get(Entity.COMMENT).add("owner_test");
         entityFields.get(Entity.COMMENT).add("owner_run");
+
+        subtypeNames.put("story", "User Story");
+        subtypeNames.put("defect", "Defect");
+        subtypeNames.put("quality_story", "Quality Story");
+        subtypeNames.put("epic", "Epic");
+        subtypeNames.put("feature", "Feature");
+        subtypeNames.put("gherkin_test", "Gherkin Test");
+        subtypeNames.put("test_manual", "Manual Test");
+        subtypeNames.put("run_manual", "Manual Run");
+        subtypeNames.put("test_suite", "Test Suite");
+        subtypeNames.put("run_suite", "Run Suite");
     }
 
     /**
@@ -88,6 +100,11 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
      */
     public static Map<Entity, Set<String>> getEntityFieldMap() {
         return Collections.unmodifiableMap(entityFields);
+    }
+
+    public static String getSubtypeName(String subtype) {
+        String subtypeName = subtypeNames.get(subtype);
+        return subtypeName != null ? subtypeName : subtype;
     }
 
     @Override
@@ -193,7 +210,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
                 String ownerName = UiUtil.getUiDataFromModel(owner, "name");
                 String ownerSubtype = UiUtil.getUiDataFromModel(owner, "subtype");
 
-                rowPanel.setEntityName("", "Appears in " + ownerSubtype + ": " + "<b>" + ownerId + "</b>" + " " + ownerName);
+                rowPanel.setEntityName("", "Appears in " + getSubtypeName(ownerSubtype) + ": " + "<b>" + ownerId + "</b>" + " " + ownerName);
                 rowPanel.setEntityDetails(text, "");
                 rowPanel.addDetailsTop("Author: " + author);
             }
