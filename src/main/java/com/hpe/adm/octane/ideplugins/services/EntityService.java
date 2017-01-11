@@ -17,7 +17,7 @@ import com.hpe.adm.octane.ideplugins.services.util.SdkUtil;
 import java.util.*;
 
 import static com.hpe.adm.nga.sdk.utils.CommonUtils.getIdFromEntityModel;
-import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.DEFECT;
+import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.*;
 
 
 public class EntityService {
@@ -43,11 +43,11 @@ public class EntityService {
 
         Map<Entity, Query.QueryBuilder> myWorkFilter = new HashMap<>();
 
-        myWorkFilter.put(Entity.GHERKIN_TEST, createPhaseQuery(Entity.TEST, "new", "indesign"));
-        myWorkFilter.put(Entity.MANUAL_TEST, createPhaseQuery(Entity.TEST, "new", "indesign"));
+        myWorkFilter.put(GHERKIN_TEST, createPhaseQuery(TEST, "new", "indesign"));
+        myWorkFilter.put(MANUAL_TEST, createPhaseQuery(TEST, "new", "indesign"));
         myWorkFilter.put(DEFECT, createPhaseQuery(DEFECT, "new", "inprogress", "intesting"));
-        myWorkFilter.put(Entity.USER_STORY, createPhaseQuery(Entity.USER_STORY, "new", "inprogress", "intesting"));
-        myWorkFilter.put(Entity.TASK, createPhaseQuery(Entity.TASK, "new", "inprogress"));
+        myWorkFilter.put(USER_STORY, createPhaseQuery(USER_STORY, "new", "inprogress", "intesting"));
+        myWorkFilter.put(TASK, createPhaseQuery(TASK, "new", "inprogress"));
 
         Query.QueryBuilder currentUserQuery = new Query.QueryBuilder("owner", Query::equalTo,
                 new Query.QueryBuilder("id", Query::equalTo, userService.getCurrentUserId()));
@@ -60,6 +60,13 @@ public class EntityService {
                     result.addAll(findEntities(entityType, query, fieldListMap.get(entityType)));
                 }
         );
+        Query.QueryBuilder parentIsNull = new Query.QueryBuilder("parent_suite", Query::equalTo, null);
+        Query.QueryBuilder runByQuery = new Query.QueryBuilder("run_by", Query::equalTo,
+                new Query.QueryBuilder("id", Query::equalTo, userService.getCurrentUserId()));
+        Query.QueryBuilder nativeStatusQuery = createNativeStatusQuery("list_node.run_native_status.blocked", "list_node.run_native_status.not_completed");
+        Query.QueryBuilder finalQuery = nativeStatusQuery.and(runByQuery).and(parentIsNull);
+        result.addAll(findEntities(MANUAL_TEST_RUN, finalQuery, fieldListMap.get(MANUAL_TEST_RUN)));
+        result.addAll(findEntities(TEST_SUITE_RUN, finalQuery, fieldListMap.get(TEST_SUITE_RUN)));
 
         Query.QueryBuilder mentionedUserQuery = new Query.QueryBuilder("mention_user", Query::equalTo,
                 new Query.QueryBuilder("id", Query::equalTo, userService.getCurrentUserId()));
@@ -93,6 +100,24 @@ public class EntityService {
         }
 
         return new Query.QueryBuilder("phase", Query::equalTo, phaseQueryBuilder);
+    }
+    /**
+     *
+     * @param logicalNames
+     * @return
+     */
+    public Query.QueryBuilder createNativeStatusQuery(String... logicalNames) {
+        Query.QueryBuilder nativeStatusQueryBuilder = null;
+        for (String logicalName : logicalNames) {
+            Query.QueryBuilder currentNativeStatusQueryBuilder =
+                    new Query.QueryBuilder("logical_name", Query::equalTo, logicalName);
+            if (nativeStatusQueryBuilder == null) {
+                nativeStatusQueryBuilder = currentNativeStatusQueryBuilder;
+            } else {
+                nativeStatusQueryBuilder = nativeStatusQueryBuilder.or(currentNativeStatusQueryBuilder);
+            }
+        }
+        return new Query.QueryBuilder("native_status", Query::equalTo, nativeStatusQueryBuilder);
     }
 
     public Collection<EntityModel> findEntities(Entity entity) {

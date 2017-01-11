@@ -91,6 +91,16 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
         subtypeNames.put("run_manual", "Manual Run");
         subtypeNames.put("test_suite", "Test Suite");
         subtypeNames.put("run_suite", "Run Suite");
+
+        //MANUAL TEST RUNS
+        entityFields.put(Entity.MANUAL_TEST_RUN, new HashSet<>());
+        entityFields.get(Entity.MANUAL_TEST_RUN).add("subtype");
+        entityFields.get(Entity.MANUAL_TEST_RUN).add("name");
+        entityFields.get(Entity.MANUAL_TEST_RUN).add("native_status");
+        entityFields.get(Entity.MANUAL_TEST_RUN).add(FIELD_AUTHOR);
+        entityFields.get(Entity.MANUAL_TEST_RUN).add(FIELD_ENVIROMENT);
+        entityFields.get(Entity.MANUAL_TEST_RUN).add("started");
+        entityFields.get(Entity.MANUAL_TEST_RUN).add("test_name");
     }
 
     /**
@@ -148,18 +158,23 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
                     EntityTypeIdPair.fromJsonObject(
                             idePluginPersistentState.loadState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM));
 
-            if(new EntityTypeIdPair(entityId, entityType).equals(entityTypeIdPair)){
+            if (new EntityTypeIdPair(entityId, entityType).equals(entityTypeIdPair)) {
                 rowPanel.setIcon(Entity.getEntityType(entityModel), true);
             } else {
                 rowPanel.setIcon(Entity.getEntityType(entityModel), false);
             }
 
             if (entityType != Entity.COMMENT) {
+                if (entityType.equals(Entity.MANUAL_TEST_RUN) || entityType.equals(Entity.TEST_SUITE_RUN)) {
+                    String nativeStatus = "Status: " + UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_TEST_RUN_NATIVE_STATUS));
+                    rowPanel.addDetailsTop(nativeStatus);
+                }else{
+                    String phase = "Phase: " + UiUtil.getUiDataFromModel(entityModel.getValue("phase"));
+                    rowPanel.addDetailsTop(phase);
+                }
                 rowPanel.setEntityName(entityId + "", UiUtil.getUiDataFromModel(entityModel.getValue("name")));
-
-                String phase = "Phase: " + UiUtil.getUiDataFromModel(entityModel.getValue("phase"));
-                rowPanel.addDetailsTop(phase);
             }
+
 
             if (Entity.DEFECT.equals(entityType)) {
                 rowPanel.setEntityDetails(
@@ -209,11 +224,23 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
                 String ownerId = UiUtil.getUiDataFromModel(owner, "id");
                 String ownerName = UiUtil.getUiDataFromModel(owner, "name");
                 String ownerSubtype = UiUtil.getUiDataFromModel(owner, "subtype");
-
                 rowPanel.setEntityName("", "Appears in " + getSubtypeName(ownerSubtype) + ": " + "<b>" + ownerId + "</b>" + " " + ownerName);
                 rowPanel.setEntityDetails(text, "");
                 rowPanel.addDetailsTop("Author: " + author);
+            } else if (Entity.MANUAL_TEST_RUN.equals(entityType)) {
+                rowPanel.setEntityDetails(
+                        UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_ENVIROMENT)),
+                        "No environment");
+                rowPanel.addDetailsTop("Author: " + UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_AUTHOR), FIELD_FULL_NAME));
+                rowPanel.addDetailsBottom("Started: " + UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_TEST_RUN_STARTED_DATE)));
+            } else if (Entity.TEST_SUITE_RUN.equals(entityType)) {
+                rowPanel.setEntityDetails(
+                        UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_ENVIROMENT)),
+                        "No environment");
+                rowPanel.addDetailsTop("Author: " + UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_AUTHOR), FIELD_FULL_NAME));
+                rowPanel.addDetailsBottom("Started: " + UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_TEST_RUN_STARTED_DATE)));
             }
+
 
             return rowPanel;
         }

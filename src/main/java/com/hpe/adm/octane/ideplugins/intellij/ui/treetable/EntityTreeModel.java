@@ -25,6 +25,7 @@ class EntityTreeModel extends AbstractTreeModel {
         groupedEntities.put(EntityCategory.BACKLOG, new ArrayList<>());
         groupedEntities.put(EntityCategory.TASK, new ArrayList<>());
         groupedEntities.put(EntityCategory.TEST, new ArrayList<>());
+        groupedEntities.put(EntityCategory.TEST_RUNS, new ArrayList<>());
         groupedEntities.put(EntityCategory.COMMENTS, new ArrayList<>());
     }
 
@@ -32,6 +33,7 @@ class EntityTreeModel extends AbstractTreeModel {
         groupedEntities.get(EntityCategory.BACKLOG).clear();
         groupedEntities.get(EntityCategory.TASK).clear();
         groupedEntities.get(EntityCategory.TEST).clear();
+        groupedEntities.get(EntityCategory.TEST_RUNS).clear();
         groupedEntities.get(EntityCategory.COMMENTS).clear();
     }
 
@@ -118,7 +120,8 @@ class EntityTreeModel extends AbstractTreeModel {
         BACKLOG("Backlog", Entity.USER_STORY, Entity.DEFECT),
         TASK("Tasks", Entity.TASK),
         TEST("Tests", Entity.GHERKIN_TEST, Entity.MANUAL_TEST),
-        COMMENTS("Mention in comments", Entity.COMMENT);
+        COMMENTS("Mention in comments", Entity.COMMENT),
+        TEST_RUNS("Runs", Entity.MANUAL_TEST_RUN , Entity.TEST_SUITE_RUN);
 
         private String name;
         private List<Entity> entityTypes = new ArrayList<>();
