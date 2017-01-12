@@ -49,6 +49,8 @@ public class EntitySearchService {
                 + "/workspaces/" + connectionSettings.getWorkspaceId()
                 + "/" + entity.getApiEntityName());
 
+        uriBuilder.setParameter("order_by","id");
+
         uriBuilder.setParameter("text_search", "{\"type\":\"global\",\"text\":\""+queryString+"\"}");
 
         if(entity.isSubtype()) {

@@ -49,6 +49,7 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
                 searchResults = entitySearchService.searchGlobal(query, Entity.WORK_ITEM);
                 searchResults.addAll(entitySearchService.searchGlobal(query, Entity.DEFECT));
                 searchResults.addAll(entitySearchService.searchGlobal(query, Entity.TASK));
+                searchResults.addAll(entitySearchService.searchGlobal(query, Entity.TEST));
             }
 
             public void onSuccess() {

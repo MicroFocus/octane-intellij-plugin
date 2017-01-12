@@ -2,6 +2,7 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.tabbedpane;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.hpe.adm.nga.sdk.model.EntityModel;
@@ -16,6 +17,9 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
 import com.hpe.adm.octane.ideplugins.intellij.util.Constants;
 import com.hpe.adm.octane.ideplugins.services.EntityService;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationType;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.ui.tabs.TabsListener;
@@ -29,6 +33,20 @@ import java.awt.event.KeyEvent;
 import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.*;
 
 public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
+
+    // TODO to be kept up-to-date
+    public static ImmutableSet<Entity> supportedDetailTabs;
+    static {
+        supportedDetailTabs = ImmutableSet.copyOf(new Entity[]{
+                USER_STORY,
+                DEFECT,
+                TASK,
+                GHERKIN_TEST,
+                MANUAL_TEST,
+                MANUAL_TEST_RUN,
+                TEST_SUITE_RUN
+        });
+    }
 
     private static EntityIconFactory entityIconFactory = new EntityIconFactory(25, 25, 12, Color.WHITE);
 
@@ -46,6 +64,9 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
 
     @Inject
     private EntityService entityService;
+
+    @Inject
+    private Project project;
 
     private BiMap<PartialEntity, TabInfo> detailTabInfo = HashBiMap.create();
 
@@ -110,16 +131,57 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
     public void setView(TabbedPaneView tabbedPaneView) {
         this.tabbedPaneView = tabbedPaneView;
 
-        //open test entity tree view
-        EntityTreeTablePresenter presenter = openMyWorkTab();
-        initHandlers(presenter);
+        //Init tabbed pane view handlers
+        initHandlers();
 
+        //open test entity tree view
+        EntityTreeTablePresenter entityTreeTablePresenter = openMyWorkTab();
+
+        //Init EntityTreeTablePresenter handlers
+        entityTreeTablePresenter.addEntityClickHandler((mouseEvent, entityType, entityId, model) -> {
+            //double click
+            if(SwingUtilities.isLeftMouseButton(mouseEvent) && mouseEvent.getClickCount() == 2){
+                onEntityAction(entityType, entityId, model, true);
+            }
+
+            //Middle click
+            else if(SwingUtilities.isMiddleMouseButton(mouseEvent)){
+                onEntityAction(entityType, entityId, model, false);
+            }
+        });
+        //Key handler
+        entityTreeTablePresenter.addEntityKeyHandler((event, entityType, entityId, model) -> {
+            if (event.getKeyCode() == KeyEvent.VK_ENTER) {
+                onEntityAction(entityType, entityId, model, true);
+            }
+        });
+
+        //Init EntitySearchResultPresenter handlers
+        entitySearchResultPresenter.getView().addEntityMouseHandler((mouseEvent, entityType, entityId, model) -> {
+            //double click
+            if(SwingUtilities.isLeftMouseButton(mouseEvent) && mouseEvent.getClickCount() == 2){
+                onEntityAction(entityType, entityId, model, true);
+            }
+
+            //Middle click
+            else if(SwingUtilities.isMiddleMouseButton(mouseEvent)){
+                onEntityAction(entityType, entityId, model, false);
+            }
+        });
+
+        //Key handler
+        entitySearchResultPresenter.getView().addEntityKeyHandler((keyEvent, entityType, entityId, model) -> {
+            if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER) {
+                onEntityAction(entityType, entityId, model, true);
+            }
+        });
+
+        //Persistence
         loadDetailTabsFromPersistentState();
         selectSelectedTabToFromPersistentState();
     }
 
-    private void initHandlers(EntityTreeTablePresenter presenter){
-
+    private void initHandlers(){
         tabbedPaneView.setSearchRequestHandler(query -> openSearchTab(query));
 
         //TODO atoth: should only save once at the end
@@ -140,26 +202,6 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
                 saveDetailTabsToPersistentState();
             }
         });
-
-        //Mouse handler
-        presenter.addEntityClickHandler((mouseEvent, entityType, entityId, model) -> {
-            //double click
-            if(SwingUtilities.isLeftMouseButton(mouseEvent) && mouseEvent.getClickCount() == 2){
-                onEntityAction(entityType, entityId, model, true);
-            }
-
-            //Middle click
-            else if(SwingUtilities.isMiddleMouseButton(mouseEvent)){
-                onEntityAction(entityType, entityId, model, false);
-            }
-        });
-
-        //Key handler
-        presenter.addEntityKeyHandler((event, entityType, entityId, model) -> {
-            if (event.getKeyCode() == KeyEvent.VK_ENTER) {
-                onEntityAction(entityType, entityId, model, true);
-            }
-        });
     }
 
     /**
@@ -175,6 +217,16 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
         }
 
         if(!isDetailTabSupported(entityType)){
+            //Show warning message
+            Notification notification =
+                    new Notification(
+                            "Octane IntelliJ Plugin",
+                            "Detail tab not supported",
+                            "Opening " + entityType.name().toLowerCase() + " " + entityId + "  in browser...",
+                            NotificationType.WARNING, null);
+
+            notification.notify(project);
+
             entityService.openInBrowser(model);
             return;
         }
@@ -196,12 +248,7 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
     }
 
     private boolean isDetailTabSupported(Entity entityType) {
-        // TODO to be kept up-to-date
-        if (entityType == USER_STORY || entityType == DEFECT || entityType == TASK ||
-                entityType == GHERKIN_TEST || entityType == MANUAL_TEST|| entityType == MANUAL_TEST_RUN|| entityType == TEST_SUITE_RUN) {
-            return true;
-        }
-        return false;
+        return supportedDetailTabs.contains(entityType);
     }
 
     private void selectDetailTab(PartialEntity tabKey){
