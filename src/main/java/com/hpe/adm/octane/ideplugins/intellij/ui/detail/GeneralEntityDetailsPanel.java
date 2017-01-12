@@ -215,8 +215,50 @@ public class GeneralEntityDetailsPanel extends JPanel {
                 ret = updateUiWithTaskDetails(entityModel);
                 hasAttachment = false;
                 break;
+            case TEST_SUITE_RUN:
+                headerPanel.setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(TEST_SUITE_RUN)));
+                ret = updateUiWithTestSuiteRunDetails(entityModel);
+                hasAttachment = false;
+                break;
+            case MANUAL_TEST_RUN:
+                headerPanel.setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(MANUAL_TEST_RUN)));
+                ret = updateUiWithManualTestRunDetails(entityModel);
+                hasAttachment = false;
+                break;
         }
         return ret;
+    }
+    private JXPanel updateUiWithTestSuiteRunDetails(EntityModel entityModel) {
+        SuiteTestRunDetailsPanel suiteTestRunDetailsPanel = new SuiteTestRunDetailsPanel();
+        suiteTestRunDetailsPanel.setSuiteTestNameDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEST_RUN_NAME)));
+        suiteTestRunDetailsPanel.setDefaultRunByDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEST_RUN_RUN_BY)));
+        suiteTestRunDetailsPanel.setStartedTimeDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEST_RUN_STARTED_TIME)));
+        suiteTestRunDetailsPanel.setContentDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEST_RUN_CONTENT)));
+        suiteTestRunDetailsPanel.setReleaseDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_RELEASE)));
+
+        suiteTestRunDetailsPanel.setNativeStatusDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEST_RUN_NATIVE_STATUS)));
+        suiteTestRunDetailsPanel.setAuthorDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_AUTHOR)));
+        suiteTestRunDetailsPanel.setDraftRunDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEST_RUN_DRAFT_RUN)));
+        suiteTestRunDetailsPanel.setLastModifiedDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_LAST_MODIFIED)));
+        suiteTestRunDetailsPanel.setEnvironmentDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_ENVIROMENT)));
+        return suiteTestRunDetailsPanel;
+    }
+    private JXPanel updateUiWithManualTestRunDetails(EntityModel entityModel) {
+        ManualTestRunDetailsPanel manualTestRunDetailsPanel = new ManualTestRunDetailsPanel();
+        manualTestRunDetailsPanel.setTestNameDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEST_RUN_NAME)));
+        manualTestRunDetailsPanel.setRunByDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEST_RUN_RUN_BY)));
+        manualTestRunDetailsPanel.setStartedTimeDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEST_RUN_STARTED_TIME)));
+        manualTestRunDetailsPanel.setContentDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEST_RUN_CONTENT)));
+        manualTestRunDetailsPanel.setReleaseDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_RELEASE)));
+        manualTestRunDetailsPanel.setEnvironmentDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_ENVIROMENT)));
+
+        manualTestRunDetailsPanel.setNativeStatusDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEST_RUN_NATIVE_STATUS)));
+        manualTestRunDetailsPanel.setAuthorDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_AUTHOR)));
+        manualTestRunDetailsPanel.setDurationDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEST_RUN_DURATION)));
+        manualTestRunDetailsPanel.setDraftRunDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEST_RUN_DRAFT_RUN)));
+        manualTestRunDetailsPanel.setVersionFromReleaseDescription(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEST_RUN_VERSION)));
+        manualTestRunDetailsPanel.setLastModifiedDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_LAST_MODIFIED)));
+        return manualTestRunDetailsPanel;
     }
 
     private JXPanel updateUiWithTestsDetails(EntityModel entityModel, boolean isGherkin) {

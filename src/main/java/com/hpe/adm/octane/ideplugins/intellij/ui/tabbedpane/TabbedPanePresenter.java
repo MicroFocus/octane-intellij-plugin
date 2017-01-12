@@ -26,6 +26,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 
+import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.*;
+
 public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
 
     private static EntityIconFactory entityIconFactory = new EntityIconFactory(25, 25, 12, Color.WHITE);
@@ -195,8 +197,8 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
 
     private boolean isDetailTabSupported(Entity entityType) {
         // TODO to be kept up-to-date
-        if (entityType == Entity.USER_STORY || entityType == Entity.DEFECT || entityType == Entity.TASK ||
-                entityType == Entity.GHERKIN_TEST || entityType == Entity.MANUAL_TEST) {
+        if (entityType == USER_STORY || entityType == DEFECT || entityType == TASK ||
+                entityType == GHERKIN_TEST || entityType == MANUAL_TEST|| entityType == MANUAL_TEST_RUN|| entityType == TEST_SUITE_RUN) {
             return true;
         }
         return false;

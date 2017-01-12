@@ -17,6 +17,9 @@ import com.intellij.openapi.util.IconLoader;
 import java.util.Collection;
 import java.util.HashSet;
 
+import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.MANUAL_TEST_RUN;
+import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.TEST_SUITE_RUN;
+
 public class EntityDetailPresenter implements Presenter<EntityDetailView> {
 
     private EntityDetailView entityDetailView;
@@ -53,15 +56,17 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                     }
                 },
                 (entityModel) -> {
-                    if(entityModel != null) {
+                    if (entityModel != null) {
                         entityDetailView.setEntityModel(entityModel);
                         entityDetailView.setEntityModel(entityModel);
                         entityDetailView.setSaveSelectedPhaseButton(new SaveSelectedPhaseAction());
                         entityDetailView.setRefreshEntityButton(new EntityRefreshAction());
-                        setPossibleTransitions(entityModel);
+                        if (entityType != MANUAL_TEST_RUN && entityType != TEST_SUITE_RUN) {
+                            setPossibleTransitions(entityModel);
+                        }
 
                         //Title goes to browser
-                        entityDetailView.setEntityNameClickHandler(()-> entityService.openInBrowser(entityModel));
+                        entityDetailView.setEntityNameClickHandler(() -> entityService.openInBrowser(entityModel));
                     }
                 },
                 null,
@@ -76,40 +81,43 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
         RestUtil.runInBackground(() -> {
             Long currentPhaseId = Long.valueOf(UiUtil.getUiDataFromModel(entityModel.getValue("phase"), "id"));
             return entityService.findPossibleTransitionFromCurrentPhase(Entity.getEntityType(entityModel), currentPhaseId);
-        },(possibleTransitions) -> {
-            if(possibleTransitions.isEmpty()){
-                possibleTransitions.add(new EntityModel("target_phase","No transition"));
+        }, (possibleTransitions) -> {
+            if (possibleTransitions.isEmpty()) {
+                possibleTransitions.add(new EntityModel("target_phase", "No transition"));
                 entityDetailView.setPossiblePhasesForEntity(possibleTransitions);
                 entityDetailView.removeSaveSelectedPhaseButton();
-            }else{
+            } else {
                 entityDetailView.setPossiblePhasesForEntity(possibleTransitions);
             }
-        },null,"Failed to get possible transitions","fetching possible transitions");
+        }, null, "Failed to get possible transitions", "fetching possible transitions");
     }
 
     private final class EntityRefreshAction extends AnAction {
         public EntityRefreshAction() {
             super("Refresh current entity", "this will refresh the current entity", IconLoader.findIcon(Constants.IMG_REFRESH_ICON));
         }
+
         public void actionPerformed(AnActionEvent e) {
             entityDetailView.doRefresh();
             setEntity(entityType, entityId);
         }
     }
+
     private final class SaveSelectedPhaseAction extends AnAction {
         public SaveSelectedPhaseAction() {
             super("Save selected phase", "this will save the new phase entity", IconLoader.findIcon("/actions/menu-saveall.png"));
         }
+
         public void actionPerformed(AnActionEvent e) {
             RestUtil.runInBackground(() -> {
                 EntityModel selectedTransition = entityDetailView.getSelectedTransition();
-                ReferenceFieldModel nextPhase =  selectedTransition.getValue("target_phase");
+                ReferenceFieldModel nextPhase = selectedTransition.getValue("target_phase");
                 return nextPhase;
-            },(nextPhase)->{
-                entityService.updateEntityPhase(entityDetailView.getEntityModel(),nextPhase);
+            }, (nextPhase) -> {
+                entityService.updateEntityPhase(entityDetailView.getEntityModel(), nextPhase);
                 entityDetailView.doRefresh();
                 setEntity(entityType, entityId);
-            },null,"Failed to move to next phase","Moving to next phase");
+            }, null, "Failed to move to next phase", "Moving to next phase");
 
         }
     }

@@ -54,8 +54,15 @@ public class DetailsViewDefaultFields {
 
     //FOR TEST RUNS
     public static final String FIELD_TEST_NAME = "test_name";
+    public static final String FIELD_TEST_RUN_NAME = "name";
     public static final String FIELD_TEST_RUN_NATIVE_STATUS = "native_status";
     public static final String FIELD_TEST_RUN_STARTED_DATE = "started";
+    public static final String FIELD_TEST_RUN_CONTENT = "steps_num";
+    public static final String FIELD_TEST_RUN_RUN_BY = "run_by";
+    public static final String FIELD_TEST_RUN_STARTED_TIME = "started";
+    public static final String FIELD_TEST_RUN_DRAFT_RUN = "draft_run";
+    public static final String FIELD_TEST_RUN_DURATION = "duration";
+    public static final String FIELD_TEST_RUN_VERSION = "test_version";
 
 
 }

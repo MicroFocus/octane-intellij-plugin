@@ -11,284 +11,327 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 
 public class SuiteTestRunDetailsPanel extends JXPanel {
-    private static final long serialVersionUID = -7172388625845199450L;
-    private JXLabel ownerDetails;
-    private JXLabel storyDetails;
-    private JXLabel authorDetails;
-    private JXLabel remainingHoursDetails;
-    private JXLabel creationTimeDetails;
-    private JXLabel lastModifiedDetails;
-    private JXLabel taskTypeDetails;
-    private JXLabel estimatedHoursDetails;
-    private JXLabel investedHoursDetails;
+	private static final long serialVersionUID = -7172388625845199450L;
+	private JXLabel startedTimeDetails;
+	private JXLabel suiteTestNameDetails;
+	private JXLabel defaultRunByDetails;
+	private JXLabel authorDetails;
+	private JXLabel contentDetails;
+	private JXLabel releaseDetails;
+	private JXLabel nativeStatusDetails;
+	private JXLabel draftRunDetails;
+	private JXLabel lastModifiedDetails;
+	private JXLabel environmentDetails;
 
+	public SuiteTestRunDetailsPanel() {
+		setBorder(null);
+		setLayout(new BorderLayout(0, 0));
 
-    public SuiteTestRunDetailsPanel() {
-        setBorder(null);
-        setLayout(new BorderLayout(0, 0));
+		JXPanel detailsPanelMain = new JXPanel();
+		detailsPanelMain.setBorder(null);
+		add(detailsPanelMain, BorderLayout.CENTER);
+		detailsPanelMain.setLayout(new BorderLayout(0, 0));
+		detailsPanelMain.setMinimumSize(new Dimension(0, 0));
 
-        JXPanel detailsPanelMain = new JXPanel();
-        detailsPanelMain.setBorder(null);
-        add(detailsPanelMain, BorderLayout.CENTER);
-        detailsPanelMain.setLayout(new BorderLayout(0, 0));
-        detailsPanelMain.setMinimumSize(new Dimension(0, 0));
+		JXPanel detailsPanelLeft = new JXPanel();
+		detailsPanelLeft.setBorder(null);
+		detailsPanelMain.add(detailsPanelLeft, BorderLayout.WEST);
+		GridBagLayout gbl_detailsPanelLeft = new GridBagLayout();
+		gbl_detailsPanelLeft.columnWidths = new int[] { 0, 0 };
+		gbl_detailsPanelLeft.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 0 };
+		gbl_detailsPanelLeft.columnWeights = new double[] { 0.0, 1.0 };
+		gbl_detailsPanelLeft.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
+		detailsPanelLeft.setLayout(gbl_detailsPanelLeft);
 
-        JXPanel detailsPanelLeft = new JXPanel();
-        detailsPanelLeft.setBorder(null);
-        detailsPanelMain.add(detailsPanelLeft, BorderLayout.WEST);
-        GridBagLayout gbl_detailsPanelLeft = new GridBagLayout();
-        gbl_detailsPanelLeft.columnWidths = new int[]{0, 0};
-        gbl_detailsPanelLeft.rowHeights = new int[]{0, 0, 0, 0, 0, 0};
-        gbl_detailsPanelLeft.columnWeights = new double[]{0.0, 1.0};
-        gbl_detailsPanelLeft.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
-        detailsPanelLeft.setLayout(gbl_detailsPanelLeft);
+		JXLabel suiteNameLabel = new JXLabel();
+		suiteNameLabel.setText("Suite Name");
+		suiteNameLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
+		suiteNameLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
+		GridBagConstraints gbc_suiteNameLabel = new GridBagConstraints();
+		gbc_suiteNameLabel.anchor = GridBagConstraints.WEST;
+		gbc_suiteNameLabel.insets = new Insets(0, 0, 5, 5);
+		gbc_suiteNameLabel.gridx = 0;
+		gbc_suiteNameLabel.gridy = 0;
+		detailsPanelLeft.add(suiteNameLabel, gbc_suiteNameLabel);
 
-        JXLabel storyLabel = new JXLabel();
-        storyLabel.setText("Story");
-        storyLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
-        storyLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
-        GridBagConstraints gbc_storyLabel = new GridBagConstraints();
-        gbc_storyLabel.anchor = GridBagConstraints.WEST;
-        gbc_storyLabel.insets = new Insets(0, 0, 5, 5);
-        gbc_storyLabel.gridx = 0;
-        gbc_storyLabel.gridy = 0;
-        detailsPanelLeft.add(storyLabel, gbc_storyLabel);
+		suiteTestNameDetails = new JXLabel();
+		suiteTestNameDetails.setText("                                          ");
+		suiteTestNameDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
+		GridBagConstraints gbc_suiteTestNameDetails = new GridBagConstraints();
+		gbc_suiteTestNameDetails.anchor = GridBagConstraints.SOUTH;
+		gbc_suiteTestNameDetails.fill = GridBagConstraints.HORIZONTAL;
+		gbc_suiteTestNameDetails.insets = new Insets(0, 0, 5, 0);
+		gbc_suiteTestNameDetails.gridx = 1;
+		gbc_suiteTestNameDetails.gridy = 0;
+		detailsPanelLeft.add(suiteTestNameDetails, gbc_suiteTestNameDetails);
 
-        storyDetails = new JXLabel();
-        storyDetails.setText("                                          ");
-        storyDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
-        GridBagConstraints gbc_storyDetails = new GridBagConstraints();
-        gbc_storyDetails.anchor = GridBagConstraints.SOUTH;
-        gbc_storyDetails.fill = GridBagConstraints.HORIZONTAL;
-        gbc_storyDetails.insets = new Insets(0, 0, 5, 0);
-        gbc_storyDetails.gridx = 1;
-        gbc_storyDetails.gridy = 0;
-        detailsPanelLeft.add(storyDetails, gbc_storyDetails);
+		JXLabel defaultRunByLabel = new JXLabel();
+		defaultRunByLabel.setText("Default run by");
+		defaultRunByLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
+		defaultRunByLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
+		GridBagConstraints gbc_defaultRunByLabel = new GridBagConstraints();
+		gbc_defaultRunByLabel.anchor = GridBagConstraints.WEST;
+		gbc_defaultRunByLabel.insets = new Insets(0, 0, 5, 5);
+		gbc_defaultRunByLabel.gridx = 0;
+		gbc_defaultRunByLabel.gridy = 1;
+		detailsPanelLeft.add(defaultRunByLabel, gbc_defaultRunByLabel);
 
-        JXLabel authorLabel = new JXLabel();
-        authorLabel.setText("Author");
-        authorLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
-        authorLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
-        GridBagConstraints gbc_authorLabel = new GridBagConstraints();
-        gbc_authorLabel.anchor = GridBagConstraints.WEST;
-        gbc_authorLabel.insets = new Insets(0, 0, 5, 5);
-        gbc_authorLabel.gridx = 0;
-        gbc_authorLabel.gridy = 1;
-        detailsPanelLeft.add(authorLabel, gbc_authorLabel);
+		defaultRunByDetails = new JXLabel();
+		defaultRunByDetails.setText(" ");
+		defaultRunByDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
+		GridBagConstraints gbc_defaultRunByDetails = new GridBagConstraints();
+		gbc_defaultRunByDetails.anchor = GridBagConstraints.SOUTH;
+		gbc_defaultRunByDetails.fill = GridBagConstraints.HORIZONTAL;
+		gbc_defaultRunByDetails.insets = new Insets(0, 0, 5, 0);
+		gbc_defaultRunByDetails.gridx = 1;
+		gbc_defaultRunByDetails.gridy = 1;
+		detailsPanelLeft.add(defaultRunByDetails, gbc_defaultRunByDetails);
 
-        authorDetails = new JXLabel();
-        authorDetails.setText(" ");
-        authorDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
-        GridBagConstraints gbc_authorDetails = new GridBagConstraints();
-        gbc_authorDetails.anchor = GridBagConstraints.SOUTH;
-        gbc_authorDetails.fill = GridBagConstraints.HORIZONTAL;
-        gbc_authorDetails.insets = new Insets(0, 0, 5, 0);
-        gbc_authorDetails.gridx = 1;
-        gbc_authorDetails.gridy = 1;
-        detailsPanelLeft.add(authorDetails, gbc_authorDetails);
+		JXLabel startedDateLabel = new JXLabel();
+		GridBagConstraints gbc_startedDateLabel = new GridBagConstraints();
+		gbc_startedDateLabel.anchor = GridBagConstraints.WEST;
+		gbc_startedDateLabel.insets = new Insets(0, 0, 5, 5);
+		gbc_startedDateLabel.gridx = 0;
+		gbc_startedDateLabel.gridy = 2;
+		detailsPanelLeft.add(startedDateLabel, gbc_startedDateLabel);
+		startedDateLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
+		startedDateLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
+		startedDateLabel.setText("Started");
 
-        JXLabel ownerLabel = new JXLabel();
-        GridBagConstraints gbc_ownerLabel = new GridBagConstraints();
-        gbc_ownerLabel.anchor = GridBagConstraints.WEST;
-        gbc_ownerLabel.insets = new Insets(0, 0, 5, 5);
-        gbc_ownerLabel.gridx = 0;
-        gbc_ownerLabel.gridy = 2;
-        detailsPanelLeft.add(ownerLabel, gbc_ownerLabel);
-        ownerLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
-        ownerLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
-        ownerLabel.setText("Owner");
+		startedTimeDetails = new JXLabel();
+		GridBagConstraints gbc_startedTimeDetails = new GridBagConstraints();
+		gbc_startedTimeDetails.anchor = GridBagConstraints.SOUTH;
+		gbc_startedTimeDetails.fill = GridBagConstraints.HORIZONTAL;
+		gbc_startedTimeDetails.insets = new Insets(0, 0, 5, 0);
+		gbc_startedTimeDetails.gridx = 1;
+		gbc_startedTimeDetails.gridy = 2;
+		detailsPanelLeft.add(startedTimeDetails, gbc_startedTimeDetails);
+		startedTimeDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
+		startedTimeDetails.setText(" ");
 
-        ownerDetails = new JXLabel();
-        GridBagConstraints gbc_ownerDetails = new GridBagConstraints();
-        gbc_ownerDetails.anchor = GridBagConstraints.SOUTH;
-        gbc_ownerDetails.fill = GridBagConstraints.HORIZONTAL;
-        gbc_ownerDetails.insets = new Insets(0, 0, 5, 0);
-        gbc_ownerDetails.gridx = 1;
-        gbc_ownerDetails.gridy = 2;
-        detailsPanelLeft.add(ownerDetails, gbc_ownerDetails);
-        ownerDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
-        ownerDetails.setText(" ");
+		JXLabel contentLabel = new JXLabel();
+		contentLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
+		contentLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
+		contentLabel.setText("Content");
+		GridBagConstraints gbc_contentLabel = new GridBagConstraints();
+		gbc_contentLabel.anchor = GridBagConstraints.WEST;
+		gbc_contentLabel.insets = new Insets(0, 0, 5, 5);
+		gbc_contentLabel.gridx = 0;
+		gbc_contentLabel.gridy = 3;
+		detailsPanelLeft.add(contentLabel, gbc_contentLabel);
 
-        JXLabel creationTimeLabel = new JXLabel();
-        creationTimeLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
-        creationTimeLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
-        creationTimeLabel.setText("Creation time");
-        GridBagConstraints gbc_creationTimeLabel = new GridBagConstraints();
-        gbc_creationTimeLabel.anchor = GridBagConstraints.WEST;
-        gbc_creationTimeLabel.insets = new Insets(0, 0, 5, 5);
-        gbc_creationTimeLabel.gridx = 0;
-        gbc_creationTimeLabel.gridy = 3;
-        detailsPanelLeft.add(creationTimeLabel, gbc_creationTimeLabel);
+		contentDetails = new JXLabel();
+		contentDetails.setText(" ");
+		contentDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
+		GridBagConstraints gbc_contentDetails = new GridBagConstraints();
+		gbc_contentDetails.anchor = GridBagConstraints.SOUTH;
+		gbc_contentDetails.fill = GridBagConstraints.HORIZONTAL;
+		gbc_contentDetails.insets = new Insets(0, 0, 5, 0);
+		gbc_contentDetails.gridx = 1;
+		gbc_contentDetails.gridy = 3;
+		detailsPanelLeft.add(contentDetails, gbc_contentDetails);
 
-        creationTimeDetails = new JXLabel();
-        creationTimeDetails.setText(" ");
-        creationTimeDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
-        GridBagConstraints gbc_creationTimeDetails = new GridBagConstraints();
-        gbc_creationTimeDetails.anchor = GridBagConstraints.SOUTH;
-        gbc_creationTimeDetails.fill = GridBagConstraints.HORIZONTAL;
-        gbc_creationTimeDetails.insets = new Insets(0, 0, 5, 0);
-        gbc_creationTimeDetails.gridx = 1;
-        gbc_creationTimeDetails.gridy = 3;
-        detailsPanelLeft.add(creationTimeDetails, gbc_creationTimeDetails);
+		JXLabel releaseLabel = new JXLabel();
+		releaseLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
+		releaseLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
+		releaseLabel.setText("Release");
+		GridBagConstraints gbc_releaseLabel = new GridBagConstraints();
+		gbc_releaseLabel.anchor = GridBagConstraints.WEST;
+		gbc_releaseLabel.insets = new Insets(0, 0, 5, 5);
+		gbc_releaseLabel.gridx = 0;
+		gbc_releaseLabel.gridy = 4;
+		detailsPanelLeft.add(releaseLabel, gbc_releaseLabel);
 
-        JXLabel lastModifiedLabel = new JXLabel();
-        lastModifiedLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
-        lastModifiedLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
-        lastModifiedLabel.setText("Last modified");
-        GridBagConstraints gbc_lastModifiedLabel = new GridBagConstraints();
-        gbc_lastModifiedLabel.anchor = GridBagConstraints.WEST;
-        gbc_lastModifiedLabel.insets = new Insets(0, 0, 0, 5);
-        gbc_lastModifiedLabel.gridx = 0;
-        gbc_lastModifiedLabel.gridy = 4;
-        detailsPanelLeft.add(lastModifiedLabel, gbc_lastModifiedLabel);
+		releaseDetails = new JXLabel();
+		releaseDetails.setText(" ");
+		releaseDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
+		GridBagConstraints gbc_releaseDetails = new GridBagConstraints();
+		gbc_releaseDetails.insets = new Insets(0, 0, 5, 0);
+		gbc_releaseDetails.anchor = GridBagConstraints.SOUTH;
+		gbc_releaseDetails.fill = GridBagConstraints.HORIZONTAL;
+		gbc_releaseDetails.gridx = 1;
+		gbc_releaseDetails.gridy = 4;
+		detailsPanelLeft.add(releaseDetails, gbc_releaseDetails);
 
-        lastModifiedDetails = new JXLabel();
-        lastModifiedDetails.setText(" ");
-        lastModifiedDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
-        GridBagConstraints gbc_lastModifiedDetails = new GridBagConstraints();
-        gbc_lastModifiedDetails.anchor = GridBagConstraints.SOUTH;
-        gbc_lastModifiedDetails.fill = GridBagConstraints.HORIZONTAL;
-        gbc_lastModifiedDetails.gridx = 1;
-        gbc_lastModifiedDetails.gridy = 4;
-        detailsPanelLeft.add(lastModifiedDetails, gbc_lastModifiedDetails);
+		JXPanel detailsPanelRight = new JXPanel();
+		detailsPanelRight.setBorder(null);
+		detailsPanelMain.add(detailsPanelRight, BorderLayout.CENTER);
+		GridBagLayout gbl_detailsPanelRight = new GridBagLayout();
+		gbl_detailsPanelRight.columnWidths = new int[] { 0, 0, 0 };
+		gbl_detailsPanelRight.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 0 };
+		gbl_detailsPanelRight.columnWeights = new double[] { 0.0, 1.0, Double.MIN_VALUE };
+		gbl_detailsPanelRight.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
+		detailsPanelRight.setLayout(gbl_detailsPanelRight);
 
-        JXPanel detailsPanelRight = new JXPanel();
-        detailsPanelRight.setBorder(null);
-        detailsPanelMain.add(detailsPanelRight, BorderLayout.CENTER);
-        GridBagLayout gbl_detailsPanelRight = new GridBagLayout();
-        gbl_detailsPanelRight.columnWidths = new int[]{0, 0, 0};
-        gbl_detailsPanelRight.rowHeights = new int[]{0, 0, 0, 0, 0};
-        gbl_detailsPanelRight.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
-        gbl_detailsPanelRight.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
-        detailsPanelRight.setLayout(gbl_detailsPanelRight);
+		JXLabel nativeStatusLabel = new JXLabel();
+		nativeStatusLabel.setBorder(new EmptyBorder(0, 30, 0, 10));
+		nativeStatusLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
+		nativeStatusLabel.setText("Native status");
+		GridBagConstraints gbc_nativeStatusLabel = new GridBagConstraints();
+		gbc_nativeStatusLabel.anchor = GridBagConstraints.WEST;
+		gbc_nativeStatusLabel.insets = new Insets(0, 0, 5, 5);
+		gbc_nativeStatusLabel.gridx = 0;
+		gbc_nativeStatusLabel.gridy = 0;
+		detailsPanelRight.add(nativeStatusLabel, gbc_nativeStatusLabel);
 
-        JXLabel taskTypeLabel = new JXLabel();
-        taskTypeLabel.setBorder(new EmptyBorder(0, 30, 0, 10));
-        taskTypeLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
-        taskTypeLabel.setText("Type");
-        GridBagConstraints gbc_taskTypeLabel = new GridBagConstraints();
-        gbc_taskTypeLabel.anchor = GridBagConstraints.WEST;
-        gbc_taskTypeLabel.insets = new Insets(0, 0, 5, 5);
-        gbc_taskTypeLabel.gridx = 0;
-        gbc_taskTypeLabel.gridy = 0;
-        detailsPanelRight.add(taskTypeLabel, gbc_taskTypeLabel);
+		nativeStatusDetails = new JXLabel();
+		nativeStatusDetails.setText(" ");
+		nativeStatusDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
+		GridBagConstraints gbc_nativeStatusDetails = new GridBagConstraints();
+		gbc_nativeStatusDetails.anchor = GridBagConstraints.SOUTH;
+		gbc_nativeStatusDetails.fill = GridBagConstraints.HORIZONTAL;
+		gbc_nativeStatusDetails.insets = new Insets(0, 0, 5, 0);
+		gbc_nativeStatusDetails.gridx = 1;
+		gbc_nativeStatusDetails.gridy = 0;
+		detailsPanelRight.add(nativeStatusDetails, gbc_nativeStatusDetails);
 
-        taskTypeDetails = new JXLabel();
-        taskTypeDetails.setText(" ");
-        taskTypeDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
-        GridBagConstraints gbc_taskTypeDetails = new GridBagConstraints();
-        gbc_taskTypeDetails.anchor = GridBagConstraints.SOUTH;
-        gbc_taskTypeDetails.fill = GridBagConstraints.HORIZONTAL;
-        gbc_taskTypeDetails.insets = new Insets(0, 0, 5, 0);
-        gbc_taskTypeDetails.gridx = 1;
-        gbc_taskTypeDetails.gridy = 0;
-        detailsPanelRight.add(taskTypeDetails, gbc_taskTypeDetails);
+		JXLabel authorLabel = new JXLabel();
+		GridBagConstraints gbc_authorLabel = new GridBagConstraints();
+		gbc_authorLabel.anchor = GridBagConstraints.WEST;
+		gbc_authorLabel.insets = new Insets(0, 0, 5, 5);
+		gbc_authorLabel.gridx = 0;
+		gbc_authorLabel.gridy = 1;
+		detailsPanelRight.add(authorLabel, gbc_authorLabel);
+		authorLabel.setText("Author");
+		authorLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
+		authorLabel.setBorder(new EmptyBorder(0, 30, 0, 10));
 
-        JXLabel remainingHoursLabel = new JXLabel();
-        GridBagConstraints gbc_remainingHoursLabel = new GridBagConstraints();
-        gbc_remainingHoursLabel.anchor = GridBagConstraints.WEST;
-        gbc_remainingHoursLabel.insets = new Insets(0, 0, 5, 5);
-        gbc_remainingHoursLabel.gridx = 0;
-        gbc_remainingHoursLabel.gridy = 1;
-        detailsPanelRight.add(remainingHoursLabel, gbc_remainingHoursLabel);
-        remainingHoursLabel.setText("Remaining hours");
-        remainingHoursLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
-        remainingHoursLabel.setBorder(new EmptyBorder(0, 30, 0, 10));
+		authorDetails = new JXLabel();
+		GridBagConstraints gbc_authorDetails = new GridBagConstraints();
+		gbc_authorDetails.anchor = GridBagConstraints.SOUTH;
+		gbc_authorDetails.fill = GridBagConstraints.HORIZONTAL;
+		gbc_authorDetails.insets = new Insets(0, 0, 5, 0);
+		gbc_authorDetails.gridx = 1;
+		gbc_authorDetails.gridy = 1;
+		detailsPanelRight.add(authorDetails, gbc_authorDetails);
+		authorDetails.setText(" ");
+		authorDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
 
-        remainingHoursDetails = new JXLabel();
-        GridBagConstraints gbc_remainingHoursDetails = new GridBagConstraints();
-        gbc_remainingHoursDetails.anchor = GridBagConstraints.SOUTH;
-        gbc_remainingHoursDetails.fill = GridBagConstraints.HORIZONTAL;
-        gbc_remainingHoursDetails.insets = new Insets(0, 0, 5, 0);
-        gbc_remainingHoursDetails.gridx = 1;
-        gbc_remainingHoursDetails.gridy = 1;
-        detailsPanelRight.add(remainingHoursDetails, gbc_remainingHoursDetails);
-        remainingHoursDetails.setText(" ");
-        remainingHoursDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
+		JXLabel lastModifiedLabel = new JXLabel();
+		lastModifiedLabel.setText("Last modified");
+		lastModifiedLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
+		lastModifiedLabel.setBorder(new EmptyBorder(0, 30, 0, 10));
+		GridBagConstraints gbc_lastModifiedLabel = new GridBagConstraints();
+		gbc_lastModifiedLabel.anchor = GridBagConstraints.WEST;
+		gbc_lastModifiedLabel.insets = new Insets(0, 0, 5, 5);
+		gbc_lastModifiedLabel.gridx = 0;
+		gbc_lastModifiedLabel.gridy = 2;
+		detailsPanelRight.add(lastModifiedLabel, gbc_lastModifiedLabel);
 
-        JXLabel estimatedHoursLabel = new JXLabel();
-        estimatedHoursLabel.setBorder(new EmptyBorder(0, 30, 0, 10));
-        estimatedHoursLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
-        estimatedHoursLabel.setText("Estimated hours");
-        GridBagConstraints gbc_estimatedHoursLabel = new GridBagConstraints();
-        gbc_estimatedHoursLabel.anchor = GridBagConstraints.WEST;
-        gbc_estimatedHoursLabel.insets = new Insets(0, 0, 5, 5);
-        gbc_estimatedHoursLabel.gridx = 0;
-        gbc_estimatedHoursLabel.gridy = 2;
-        detailsPanelRight.add(estimatedHoursLabel, gbc_estimatedHoursLabel);
+		lastModifiedDetails = new JXLabel();
+		lastModifiedDetails.setText(" ");
+		lastModifiedDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
+		GridBagConstraints gbc_lastModifiedDetails = new GridBagConstraints();
+		gbc_lastModifiedDetails.insets = new Insets(0, 0, 5, 0);
+		gbc_lastModifiedDetails.fill = GridBagConstraints.HORIZONTAL;
+		gbc_lastModifiedDetails.gridx = 1;
+		gbc_lastModifiedDetails.gridy = 2;
+		detailsPanelRight.add(lastModifiedDetails, gbc_lastModifiedDetails);
 
-        estimatedHoursDetails = new JXLabel();
-        estimatedHoursDetails.setText(" ");
-        estimatedHoursDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
-        GridBagConstraints gbc_estimatedHoursDetails = new GridBagConstraints();
-        gbc_estimatedHoursDetails.anchor = GridBagConstraints.SOUTH;
-        gbc_estimatedHoursDetails.fill = GridBagConstraints.HORIZONTAL;
-        gbc_estimatedHoursDetails.insets = new Insets(0, 0, 5, 0);
-        gbc_estimatedHoursDetails.gridx = 1;
-        gbc_estimatedHoursDetails.gridy = 2;
-        detailsPanelRight.add(estimatedHoursDetails, gbc_estimatedHoursDetails);
+		JXLabel draftRunLabel = new JXLabel();
+		draftRunLabel.setBorder(new EmptyBorder(0, 30, 0, 10));
+		draftRunLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
+		draftRunLabel.setText("Draft run");
+		GridBagConstraints gbc_draftRunLabel = new GridBagConstraints();
+		gbc_draftRunLabel.anchor = GridBagConstraints.WEST;
+		gbc_draftRunLabel.insets = new Insets(0, 0, 5, 5);
+		gbc_draftRunLabel.gridx = 0;
+		gbc_draftRunLabel.gridy = 3;
+		detailsPanelRight.add(draftRunLabel, gbc_draftRunLabel);
 
-        JXLabel investedHoursLabel = new JXLabel();
-        investedHoursLabel.setBorder(new EmptyBorder(0, 30, 0, 10));
-        investedHoursLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
-        investedHoursLabel.setText("Invested hours");
-        GridBagConstraints gbc_investedHoursLabel = new GridBagConstraints();
-        gbc_investedHoursLabel.anchor = GridBagConstraints.WEST;
-        gbc_investedHoursLabel.insets = new Insets(0, 0, 0, 5);
-        gbc_investedHoursLabel.gridx = 0;
-        gbc_investedHoursLabel.gridy = 3;
-        detailsPanelRight.add(investedHoursLabel, gbc_investedHoursLabel);
+		draftRunDetails = new JXLabel();
+		draftRunDetails.setText(" ");
+		draftRunDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
+		GridBagConstraints gbc_draftRunDetails = new GridBagConstraints();
+		gbc_draftRunDetails.insets = new Insets(0, 0, 5, 0);
+		gbc_draftRunDetails.anchor = GridBagConstraints.SOUTH;
+		gbc_draftRunDetails.fill = GridBagConstraints.HORIZONTAL;
+		gbc_draftRunDetails.gridx = 1;
+		gbc_draftRunDetails.gridy = 3;
+		detailsPanelRight.add(draftRunDetails, gbc_draftRunDetails);
 
-        investedHoursDetails = new JXLabel();
-        investedHoursDetails.setText(" ");
-        investedHoursDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
-        GridBagConstraints gbc_investedHoursDetails = new GridBagConstraints();
-        gbc_investedHoursDetails.anchor = GridBagConstraints.SOUTH;
-        gbc_investedHoursDetails.fill = GridBagConstraints.HORIZONTAL;
-        gbc_investedHoursDetails.gridx = 1;
-        gbc_investedHoursDetails.gridy = 3;
-        detailsPanelRight.add(investedHoursDetails, gbc_investedHoursDetails);
+		JXLabel environmentLabel = new JXLabel();
+		GridBagConstraints gbc_environmentLabel = new GridBagConstraints();
+		gbc_environmentLabel.insets = new Insets(0, 0, 5, 5);
+		gbc_environmentLabel.gridx = 0;
+		gbc_environmentLabel.gridy = 4;
+		detailsPanelRight.add(environmentLabel, gbc_environmentLabel);
+		environmentLabel.setText("Environment");
+		environmentLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
+		environmentLabel.setBorder(new EmptyBorder(0, 30, 0, 10));
 
-        addComponentListener(new ComponentAdapter() {
-            public void componentResized(ComponentEvent e) {
-                int halfWidth = detailsPanelMain.getWidth() / 2;
-                int height = detailsPanelMain.getHeight();
+		environmentDetails = new JXLabel();
+		GridBagConstraints gbc_environmentDetails = new GridBagConstraints();
+		gbc_environmentDetails.fill = GridBagConstraints.HORIZONTAL;
+		gbc_environmentDetails.insets = new Insets(0, 0, 5, 0);
+		gbc_environmentDetails.gridx = 1;
+		gbc_environmentDetails.gridy = 4;
+		detailsPanelRight.add(environmentDetails, gbc_environmentDetails);
+		environmentDetails.setText(" ");
+		environmentDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
 
-                if(halfWidth!=0 && height!=0) {
-                    detailsPanelLeft.setPreferredSize(new Dimension((int) halfWidth, detailsPanelMain.getHeight()));
-                    detailsPanelRight.setPreferredSize(new Dimension((int) halfWidth, detailsPanelMain.getHeight()));
-                    detailsPanelMain.updateUI();
-                    detailsPanelMain.repaint();
-                }
-            }
-        });
-    }
+		addComponentListener(new ComponentAdapter() {
+			public void componentResized(ComponentEvent e) {
+				int halfWidth = detailsPanelMain.getWidth() / 2;
+				int height = detailsPanelMain.getHeight();
 
-    public void setOwnerDetails(String ownerDetails) {
-        this.ownerDetails.setText(ownerDetails);
-    }
-    public void setStoryDetails(String featureDetails) {
-        this.storyDetails.setText(featureDetails);
-    }
-    public void setAuthorDetails(String severityDetails) {
-        this.authorDetails.setText(severityDetails);
-    }
-    public void setRemainingHoursDetails(String remainingHoursDetails) {
-        this.remainingHoursDetails.setText(remainingHoursDetails);
-    }
-    public void setCreationTimeDetails(String creationTypeDetails) {
-        this.creationTimeDetails.setText(creationTypeDetails);
-    }
-    public void setLastModifiedDetails(String lastModifiedDetails) {
-        this.lastModifiedDetails.setText(lastModifiedDetails);
-    }
-    public void setTaskTypeDetails(String taskTypeDetails) {
-        this.taskTypeDetails.setText(taskTypeDetails);
-    }
-    public void setEstimatedHoursDetails(String estimatedHoursDetails) {
-        this.estimatedHoursDetails.setText(estimatedHoursDetails);
-    }
-    public void setInvestedHoursDetails(String investedHoursDetails) {
-        this.investedHoursDetails.setText(investedHoursDetails);
-    }
+				if (halfWidth != 0 && height != 0) {
+					detailsPanelLeft.setPreferredSize(new Dimension((int) halfWidth, detailsPanelMain.getHeight()));
+					detailsPanelRight.setPreferredSize(new Dimension((int) halfWidth, detailsPanelMain.getHeight()));
+					detailsPanelMain.updateUI();
+					detailsPanelMain.repaint();
+				}
+			}
+		});
+	}
+
+	public void setStartedTimeDetails(String startedTimeDetails) {
+		this.startedTimeDetails.setText(startedTimeDetails);
+	}
+
+	public void setSuiteTestNameDetails(String nameDetails) {
+		this.suiteTestNameDetails.setText(nameDetails);
+	}
+
+	public void setDefaultRunByDetails(String defaultRunByDetails) {
+		this.defaultRunByDetails.setText(defaultRunByDetails);
+	}
+
+	public void setAuthorDetails(String authorDetails) {
+		this.authorDetails.setText(authorDetails);
+	}
+
+	public void setContentDetails(String contentDetails) {
+		this.contentDetails.setText(contentDetails);
+	}
+
+	public void setReleaseDetails(String releaseDetails) {
+		this.releaseDetails.setText(releaseDetails);
+	}
+
+	public void setNativeStatusDetails(String nativeStatusDetails) {
+		this.nativeStatusDetails.setText(nativeStatusDetails);
+	}
+
+	public void setDraftRunDetails(String draftRunDetails) {
+		this.draftRunDetails.setText(draftRunDetails);
+	}
+
+	public JXLabel getLastModifiedDetails() {
+		return lastModifiedDetails;
+	}
+
+	public void setLastModifiedDetails(String lastModifiedDetails) {
+		this.lastModifiedDetails.setText(lastModifiedDetails);
+	}
+
+	public JXLabel getEnvironmentDetails() {
+		return environmentDetails;
+	}
+
+	public void setEnvironmentDetails(String environmentDetails) {
+		this.environmentDetails.setText(environmentDetails);
+	}
+	
+
 }
