@@ -17,6 +17,9 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
 import com.hpe.adm.octane.ideplugins.intellij.util.Constants;
 import com.hpe.adm.octane.ideplugins.services.EntityService;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationType;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.ui.tabs.TabsListener;
@@ -57,6 +60,9 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
 
     @Inject
     private EntityService entityService;
+
+    @Inject
+    private Project project;
 
     private BiMap<PartialEntity, TabInfo> detailTabInfo = HashBiMap.create();
 
@@ -207,6 +213,16 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
         }
 
         if(!isDetailTabSupported(entityType)){
+            //Show warning message
+            Notification notification =
+                    new Notification(
+                            "Octane IntelliJ Plugin",
+                            "Detail tab not supported",
+                            "Opening " + entityType.name().toLowerCase() + " " + entityId + "  in browser...",
+                            NotificationType.WARNING, null);
+
+            notification.notify(project);
+
             entityService.openInBrowser(model);
             return;
         }
