@@ -49,12 +49,21 @@ public class EntitySearchService {
                 + "/workspaces/" + connectionSettings.getWorkspaceId()
                 + "/" + entity.getApiEntityName());
 
-        uriBuilder.setParameter("order_by","id");
+
 
         uriBuilder.setParameter("text_search", "{\"type\":\"global\",\"text\":\""+queryString+"\"}");
 
+        uriBuilder.setParameter("order_by","id");
+
         if(entity.isSubtype()) {
-            uriBuilder.setParameter("query", "\"(subtype='" + entity.getSubtypeName() + "')\"");
+            String queryStr = "\"(";
+            for(Entity subtype : Entity.getSubtypes(entity)){
+                queryStr += "subtype='"+subtype.getSubtypeName()+"'||";
+            }
+            queryStr = queryStr.substring(0, queryStr.length() - 2);
+            queryStr += ")\"";
+
+            uriBuilder.setParameter("query", queryStr);
         }
 
         try {

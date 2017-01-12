@@ -3,6 +3,7 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.treetable;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.intellij.util.ui.tree.AbstractTreeModel;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.tree.TreePath;
 import java.util.*;
@@ -10,8 +11,10 @@ import java.util.*;
 public class EntityTreeModel extends AbstractTreeModel {
 
     private static final String ROOT = "root";
-    private TreeMap<EntityCategory, List<EntityModel>> groupedEntities = new TreeMap<>();
+    private Map<EntityCategory, List<EntityModel>> groupedEntities = new LinkedHashMap<>();
 
+    //Describes the top level
+    private List<EntityCategory> entityCategories = getDefaultEntityCategories();
 
     public EntityTreeModel() {}
 
@@ -19,10 +22,15 @@ public class EntityTreeModel extends AbstractTreeModel {
         setEntities(entityModels);
     }
 
+    public EntityTreeModel(List<EntityCategory> entityCategories, Collection<EntityModel> entityModels) {
+        this.entityCategories = entityCategories;
+        setEntities(entityModels);
+    }
+
     public void setEntities(Collection<EntityModel> entityModels) {
 
         for (EntityModel entityModel : entityModels) {
-            EntityCategory category = EntityCategory.getCategory(entityModel);
+            EntityCategory category = EntityCategory.getCategory(entityModel, entityCategories);
             if (category != null) {
                 if(!groupedEntities.containsKey(category)) {
                     groupedEntities.put(category, new ArrayList<>());
@@ -30,6 +38,16 @@ public class EntityTreeModel extends AbstractTreeModel {
                 groupedEntities.get(category).add(entityModel);
             }
         }
+    }
+
+    public static List<EntityCategory> getDefaultEntityCategories(){
+        List<EntityCategory> entityCategories = new ArrayList<>();
+        entityCategories.add(new EntityCategory("Backlog", Entity.USER_STORY, Entity.DEFECT, Entity.EPIC, Entity.FEATURE));
+        entityCategories.add(new EntityCategory("Tasks", Entity.TASK));
+        entityCategories.add(new EntityCategory("Tests", Entity.GHERKIN_TEST, Entity.MANUAL_TEST));
+        entityCategories.add(new EntityCategory("Mention in comments", Entity.COMMENT));
+        entityCategories.add(new EntityCategory("Runs", Entity.MANUAL_TEST_RUN , Entity.TEST_SUITE_RUN));
+        return entityCategories;
     }
 
     public int size() {
@@ -98,24 +116,19 @@ public class EntityTreeModel extends AbstractTreeModel {
         return 0;
     }
 
-    public enum EntityCategory {
-        BACKLOG("Backlog", Entity.USER_STORY, Entity.DEFECT, Entity.EPIC, Entity.FEATURE),
-        TASK("Tasks", Entity.TASK),
-        TEST("Tests", Entity.GHERKIN_TEST, Entity.MANUAL_TEST),
-        COMMENTS("Mention in comments", Entity.COMMENT),
-        TEST_RUNS("Runs", Entity.MANUAL_TEST_RUN , Entity.TEST_SUITE_RUN);
+    public static class EntityCategory implements Comparable<EntityCategory>{
 
-        private String name;
+        private String name = "";
         private List<Entity> entityTypes = new ArrayList<>();
 
-        EntityCategory(String name, Entity... entityTypes) {
+        public EntityCategory(String name, Entity... entityTypes) {
             this.name = name;
             this.entityTypes = Arrays.asList(entityTypes);
         }
 
-        public static EntityCategory getCategory(EntityModel entityModel) {
-            for (EntityCategory category : EntityCategory.values()) {
-                if (category.getEntityTypes().contains(Entity.getEntityType(entityModel))) {
+        public static EntityCategory getCategory(EntityModel entity, List<EntityCategory> entityCategories) {
+            for (EntityCategory category : entityCategories) {
+                if (category.getEntityTypes().contains(Entity.getEntityType(entity))) {
                     return category;
                 }
             }
@@ -129,6 +142,18 @@ public class EntityTreeModel extends AbstractTreeModel {
         public String getName() {
             return name;
         }
+
+        @Override
+        public int compareTo(@NotNull EntityCategory o) {
+            return o.getName().compareTo(getName());
+        }
     }
 
+    public List<EntityCategory> getEntityCategories() {
+        return entityCategories;
+    }
+
+    public void setEntityCategories(List<EntityCategory> entityCategories) {
+        this.entityCategories = entityCategories;
+    }
 }
