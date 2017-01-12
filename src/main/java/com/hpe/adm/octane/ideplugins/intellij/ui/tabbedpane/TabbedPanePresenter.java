@@ -2,6 +2,7 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.tabbedpane;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.hpe.adm.nga.sdk.model.EntityModel;
@@ -27,6 +28,18 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 
 public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
+
+    // TODO to be kept up-to-date
+    public static ImmutableSet<Entity> supportedDetailTabs;
+    static {
+        supportedDetailTabs = ImmutableSet.copyOf(new Entity[]{
+                Entity.USER_STORY,
+                Entity.DEFECT,
+                Entity.TASK,
+                Entity.GHERKIN_TEST,
+                Entity.MANUAL_TEST
+        });
+    }
 
     private static EntityIconFactory entityIconFactory = new EntityIconFactory(25, 25, 12, Color.WHITE);
 
@@ -215,12 +228,7 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
     }
 
     private boolean isDetailTabSupported(Entity entityType) {
-        // TODO to be kept up-to-date
-        if (entityType == Entity.USER_STORY || entityType == Entity.DEFECT || entityType == Entity.TASK ||
-                entityType == Entity.GHERKIN_TEST || entityType == Entity.MANUAL_TEST) {
-            return true;
-        }
-        return false;
+        return supportedDetailTabs.contains(entityType);
     }
 
     private void selectDetailTab(PartialEntity tabKey){
