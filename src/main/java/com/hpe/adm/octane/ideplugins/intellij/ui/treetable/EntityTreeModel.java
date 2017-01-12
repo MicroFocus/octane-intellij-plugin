@@ -99,7 +99,7 @@ public class EntityTreeModel extends AbstractTreeModel {
     }
 
     public enum EntityCategory {
-        BACKLOG("Backlog", Entity.USER_STORY, Entity.DEFECT),
+        BACKLOG("Backlog", Entity.USER_STORY, Entity.DEFECT, Entity.EPIC, Entity.FEATURE),
         TASK("Tasks", Entity.TASK),
         TEST("Tests", Entity.GHERKIN_TEST, Entity.MANUAL_TEST),
         COMMENTS("Mention in comments", Entity.COMMENT),

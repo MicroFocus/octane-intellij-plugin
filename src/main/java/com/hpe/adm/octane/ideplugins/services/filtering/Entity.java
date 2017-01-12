@@ -12,6 +12,8 @@ public enum Entity {
     USER_STORY(Entity.WORK_ITEM, "story"),
     DEFECT(Entity.WORK_ITEM, "defect"),
     WORK_ITEM_ROOT(Entity.WORK_ITEM, "work_item_root"),
+    EPIC(Entity.WORK_ITEM, "epic"),
+    FEATURE(Entity.WORK_ITEM, "feature"),
 
     TEST("tests", "test"),
     MANUAL_TEST(Entity.TEST, "test_manual"),
