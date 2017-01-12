@@ -3,6 +3,10 @@ package com.hpe.adm.octane.ideplugins.services.filtering;
 import com.hpe.adm.nga.sdk.Query;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Constants for sdk query builder use
  */
@@ -85,6 +89,20 @@ public enum Entity {
         }
 
         return null;
+    }
+
+    public static Set<Entity> getSubtypes(Entity entity){
+        if(entity.isSubtype()){
+            return Collections.emptySet();
+        } else {
+            Set<Entity> result = new HashSet<>();
+            for(Entity subType : Entity.values()){
+                if(entity.equals(subType.getSubtypeOf())){
+                    result.add(subType);
+                }
+            }
+            return result;
+        }
     }
 
     public boolean isSubtype() {

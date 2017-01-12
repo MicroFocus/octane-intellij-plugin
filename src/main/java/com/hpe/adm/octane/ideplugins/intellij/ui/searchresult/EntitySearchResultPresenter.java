@@ -18,7 +18,9 @@ import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.util.IconLoader;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
 
@@ -47,14 +49,14 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
 
                 //TODO: add supported entities when stories are completed
                 searchResults = entitySearchService.searchGlobal(query, Entity.WORK_ITEM);
-                searchResults.addAll(entitySearchService.searchGlobal(query, Entity.DEFECT));
+                //searchResults.addAll(entitySearchService.searchGlobal(query, Entity.DEFECT));
                 searchResults.addAll(entitySearchService.searchGlobal(query, Entity.TASK));
                 searchResults.addAll(entitySearchService.searchGlobal(query, Entity.TEST));
             }
 
             public void onSuccess() {
                 entityTreeView.setLoading(false);
-                entityTreeView.setTreeModel(new EntityTreeModel(searchResults));
+                entityTreeView.setTreeModel(createEmptyEntityTreeModel(searchResults));
                 entityTreeView.expandAllNodes();
             }
 
@@ -93,5 +95,15 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
         this.entityTreeView.addSeparatorToToolbar();
 
         entityTreeView.setComponentWhenEmpty(new NoSearchResultsPanel());
+    }
+
+    private EntityTreeModel createEmptyEntityTreeModel(Collection<EntityModel> entityModels){
+        List<EntityTreeModel.EntityCategory> entityCategories = new ArrayList<>();
+        entityCategories.add(new EntityTreeModel.EntityCategory("Backlog", Entity.USER_STORY, Entity.EPIC, Entity.FEATURE));
+        entityCategories.add(new EntityTreeModel.EntityCategory("Defects", Entity.DEFECT));
+        entityCategories.add(new EntityTreeModel.EntityCategory("Tasks", Entity.TASK));
+        entityCategories.add(new EntityTreeModel.EntityCategory("Tests", Entity.GHERKIN_TEST, Entity.MANUAL_TEST));
+        EntityTreeModel model = new EntityTreeModel(entityCategories, entityModels);
+        return model;
     }
 }
