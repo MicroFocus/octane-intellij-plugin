@@ -95,6 +95,7 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
             tabbedPaneView.selectTabWithTabInfo(searchTab, true);
         } else {
             searchTab.setText("\"" + searchQuery + "\"");
+            tabbedPaneView.selectTabWithTabInfo(searchTab, true);
         }
 
         entitySearchResultPresenter.globalSearch(searchQuery);
