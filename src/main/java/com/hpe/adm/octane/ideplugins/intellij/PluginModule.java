@@ -2,7 +2,11 @@ package com.hpe.adm.octane.ideplugins.intellij;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-import com.google.inject.*;
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Provides;
+import com.google.inject.name.Named;
 import com.hpe.adm.nga.sdk.Octane;
 import com.hpe.adm.nga.sdk.authorisation.UserAuthorisation;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePersistentConnectionSettingsProvider;
@@ -11,10 +15,12 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.detail.EntityDetailPresenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.EntityDetailView;
 import com.hpe.adm.octane.ideplugins.intellij.ui.main.MainPresenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.main.MainView;
+import com.hpe.adm.octane.ideplugins.intellij.ui.searchresult.SearchResultEntityTreeCellRenderer;
 import com.hpe.adm.octane.ideplugins.intellij.ui.tabbedpane.TabbedPanePresenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.tabbedpane.TabbedPaneView;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeCellRenderer;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeTablePresenter;
+import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeView;
 import com.hpe.adm.octane.ideplugins.intellij.util.NotificationUtil;
 import com.hpe.adm.octane.ideplugins.services.EntityService;
 import com.hpe.adm.octane.ideplugins.services.TestService;
@@ -123,9 +129,24 @@ public class PluginModule extends AbstractModule {
 
     }
 
-
     private ConnectionSettings previousConnectionSettings = new ConnectionSettings();
     private Octane octane;
+
+    @Provides
+    @Named("searchEntityTreeView")
+    public EntityTreeView getSearchEntityTreeView() {
+        EntityTreeView entityTreeView = new EntityTreeView(new SearchResultEntityTreeCellRenderer());
+        injectorSupplier.get().injectMembers(entityTreeView);
+        return entityTreeView;
+    }
+
+    @Provides
+    @Named("myWorkEntityTreeView")
+    public EntityTreeView getMyWorkEntityTreeView() {
+        EntityTreeView entityTreeView = new EntityTreeView(getInstance(EntityTreeCellRenderer.class));
+        injectorSupplier.get().injectMembers(entityTreeView);
+        return entityTreeView;
+    }
 
     @Provides
     Project getProject(){

@@ -2,7 +2,6 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.treetable;
 
 import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.model.EntityModel;
-import com.hpe.adm.nga.sdk.model.ReferenceFieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.ToolbarActiveItem;
 import com.hpe.adm.octane.ideplugins.intellij.ui.View;
@@ -12,10 +11,10 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.util.PartialEntity;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
 import com.hpe.adm.octane.ideplugins.intellij.util.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
+import com.hpe.adm.octane.ideplugins.services.EntityService;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.nonentity.DownloadScriptService;
-import com.hpe.adm.octane.ideplugins.services.util.UrlParser;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.DataManager;
 import com.intellij.ide.actions.OpenProjectFileChooserDescriptor;
@@ -36,18 +35,42 @@ import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
 
 import javax.swing.*;
+import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
-import java.net.URI;
 import java.nio.charset.StandardCharsets;
 
 import static com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil.getUiDataFromModel;
 import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
 
 public class EntityTreeView implements View {
+
+    public static class ExpandNodesAction extends AnAction {
+        EntityTreeView treeView;
+        public ExpandNodesAction(EntityTreeView treeView) {
+            super("Expand all", "Expand all nodes of the tree", AllIcons.Actions.Expandall);
+            this.treeView = treeView;
+        }
+
+        public void actionPerformed(AnActionEvent e) {
+            treeView.expandAllNodes();
+        }
+
+    }
+
+    public static class CollapseNodesAction extends AnAction {
+        EntityTreeView treeView;
+        public CollapseNodesAction(EntityTreeView treeView) {
+            super("Collapse all", "Collapse all nodes of the tree", AllIcons.Actions.Collapseall);
+            this.treeView = treeView;
+        }
+        public void actionPerformed(AnActionEvent e) {
+            treeView.collapseAllNodes();
+        }
+    }
 
     public interface EntityDoubleClickHandler {
         void entityDoubleClicked(MouseEvent mouseEvent, Entity entityType, Long entityId, EntityModel model);
@@ -74,7 +97,10 @@ public class EntityTreeView implements View {
     private IdePluginPersistentState persistentState;
 
     @Inject
-    public EntityTreeView(EntityTreeCellRenderer entityTreeCellRenderer) {
+    private EntityService entityService;
+
+    @Inject
+    public EntityTreeView(TreeCellRenderer entityTreeCellRenderer) {
 
         scrollPane = new JBScrollPane();
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
@@ -92,7 +118,7 @@ public class EntityTreeView implements View {
         rootPanel.add(createToolbar(), BorderLayout.EAST);
     }
 
-    private FillingTree initTree(EntityTreeCellRenderer entityTreeCellRenderer) {
+    private FillingTree initTree(TreeCellRenderer entityTreeCellRenderer){
         FillingTree tree = new FillingTree();
         //Init with an empty model
         tree.setModel(new EntityTreeModel());
@@ -130,36 +156,23 @@ public class EntityTreeView implements View {
     public void addEntityMouseHandler(EntityDoubleClickHandler handler) {
         tree.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
-                int selRow = tree.getRowForLocation(e.getX(), e.getY());
-                TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
-                if (selRow != -1) {
-                    Object object = selPath.getLastPathComponent();
-                    if (object instanceof EntityModel) {
-                        try {
-                            EntityModel entityModel = (EntityModel) object;
-                            Entity entityType = Entity.getEntityType(entityModel);
-
-                            if (entityType != Entity.COMMENT) {
-                                Long entityId = Long.valueOf(entityModel.getValue("id").getValue().toString());
+                    int selRow = tree.getRowForLocation(e.getX(), e.getY());
+                    TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
+                    if (selRow != -1) {
+                        Object object = selPath.getLastPathComponent();
+                        if (object instanceof EntityModel) {
+                            try {
+                                EntityModel entityModel = (EntityModel) object;
+                                Entity entityType = Entity.getEntityType(entityModel);
+                                Long entityId = Long.parseLong(entityModel.getValue("id").getValue().toString());
                                 handler.entityDoubleClicked(e, entityType, entityId, entityModel);
-                            } else {
-                                EntityModel owner = (EntityModel) UiUtil.getContainerItemForCommentModel(entityModel).getValue();
-                                Entity ownerEntityType = Entity.getEntityType(owner);
-                                if (isDetailTabSupported(ownerEntityType)) {
-                                    Long ownerId = Long.valueOf(owner.getValue("id").getValue().toString());
-                                    handler.entityDoubleClicked(e, ownerEntityType, ownerId, owner);
-                                } else if ((SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2) ||
-                                        SwingUtilities.isMiddleMouseButton(e)) {
-                                    openInBrowser(owner);
-                                }
+                            } catch (Exception ex) {
+                                //TODO: logger and error bubble
                             }
-                        } catch (Exception ex) {
-                            //TODO: logger and error bubble
                         }
                     }
                 }
-            }
-        });
+            });
     }
 
     private VirtualFile chooseScriptFolder(Project project) {
@@ -232,41 +245,6 @@ public class EntityTreeView implements View {
         }
     }
 
-    private boolean isDetailTabSupported(Entity entityType) {
-        // TODO to be kept up-to-date
-        if (entityType == Entity.USER_STORY || entityType == Entity.DEFECT || entityType == Entity.TASK ||
-                entityType == Entity.GHERKIN_TEST || entityType == Entity.MANUAL_TEST) {
-            return true;
-        }
-        return false;
-    }
-
-    private void openInBrowser(EntityModel entityModel) {
-        Entity entityType = Entity.getEntityType(entityModel);
-        Integer entityId = Integer.valueOf(getUiDataFromModel(entityModel.getValue("id")));
-        Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-        if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-            try {
-                Entity ownerEntityType = null;
-                Integer ownerEntityId = null;
-                if (entityType == Entity.COMMENT) {
-                    ReferenceFieldModel owner = (ReferenceFieldModel) UiUtil.
-                            getContainerItemForCommentModel(entityModel);
-                    ownerEntityType = Entity.getEntityType(owner.getValue());
-                    ownerEntityId = Integer.valueOf(UiUtil.getUiDataFromModel(owner, "id"));
-                }
-                URI uri =
-                        UrlParser.createEntityWebURI(
-                                connectionSettingsProvider.getConnectionSettings(),
-                                entityType == Entity.COMMENT ? ownerEntityType : entityType,
-                                entityType == Entity.COMMENT ? ownerEntityId : entityId);
-                desktop.browse(uri);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        }
-    }
-
     private MouseListener createTreeContextMenu() {
         //TODO: atoth: this is very messy, make context menu more modular, in presenter with actions
         MouseListener ml = new MouseAdapter() {
@@ -288,7 +266,7 @@ public class EntityTreeView implements View {
                         viewInBrowserItem.addMouseListener(new MouseAdapter() {
                             @Override
                             public void mousePressed(MouseEvent mouseEvent) {
-                                openInBrowser(entityModel);
+                                entityService.openInBrowser(entityModel);
                             }
                         });
                         popup.add(viewInBrowserItem);
@@ -431,10 +409,21 @@ public class EntityTreeView implements View {
         tree.setModel(model);
 
         if (model.size() == 0) {
-            scrollPane.setViewportView(new NoWorkPanel());
+            scrollPane.setViewportView(whenEmptyComponent);
         } else {
             scrollPane.setViewportView(tree);
         }
+    }
+
+    //Default value
+    private JComponent whenEmptyComponent = new NoWorkPanel();
+
+    /**
+     * What to show when the model has nothing in it
+     * @param emptyComponent
+     */
+    public void setComponentWhenEmpty(JComponent emptyComponent){
+        whenEmptyComponent = emptyComponent;
     }
 
 }

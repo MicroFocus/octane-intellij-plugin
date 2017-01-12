@@ -10,7 +10,7 @@ import org.jdesktop.swingx.JXLabel;
 import javax.swing.*;
 import java.awt.*;
 
-class EntityModelRow extends JPanel{
+public class EntityModelRow extends JPanel{
 
 	private static final long serialVersionUID = 1L;
 
@@ -119,9 +119,9 @@ class EntityModelRow extends JPanel{
 	
 	public void setEntityDetails(String details, String defaultText){
         if(StringUtils.isEmpty(details)){
-            lblEntityRelease.setText(defaultText);
+            lblEntityRelease.setText("<html><body>" + defaultText + "</body><html>");
         } else {
-            lblEntityRelease.setText(details);
+            lblEntityRelease.setText("<html><body>" + details + "</body><html>");
         }
 	}
 	

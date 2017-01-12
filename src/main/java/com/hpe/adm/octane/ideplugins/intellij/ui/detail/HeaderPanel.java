@@ -15,6 +15,8 @@ import org.jdesktop.swingx.JXPanel;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.Collection;
 
 import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
@@ -52,11 +54,21 @@ public class HeaderPanel extends JPanel {
         nameAndIconPanel.add(nameDetails);
 
         entityLinkToBrowser = new JXHyperlink();
-        entityLinkToBrowser.setClickedColor(new Color(102, 205, 170));
         entityLinkToBrowser.setBorder(new EmptyBorder(0, 5, 0, 0));
         entityLinkToBrowser.setUnclickedColor(JBColor.foreground());
+        entityLinkToBrowser.setClickedColor(JBColor.foreground());
         entityLinkToBrowser.setText("Name");
         entityLinkToBrowser.setBorderPainted(false);
+        entityLinkToBrowser.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                entityLinkToBrowser.setForeground(Color.blue);
+            }
+            @Override
+            public void mouseExited(MouseEvent e) {
+                entityLinkToBrowser.setForeground(JBColor.foreground());
+            }
+        });
         nameAndIconPanel.add(entityLinkToBrowser);
 
         JXPanel phasePanel = new JXPanel();
@@ -124,8 +136,13 @@ public class HeaderPanel extends JPanel {
         refreshButtonPanel.setViewportView(buttonsPanel);
     }
 
-    public void addActionToEntityLink(AbstractAction action) {
-        entityLinkToBrowser.setAction(action);
+    public void setActionToEntityLink(Runnable runnable) {
+        entityLinkToBrowser.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                runnable.run();
+            }
+        });
     }
 
     public void setPossiblePhasesForEntity(Collection<EntityModel> phasesList) {

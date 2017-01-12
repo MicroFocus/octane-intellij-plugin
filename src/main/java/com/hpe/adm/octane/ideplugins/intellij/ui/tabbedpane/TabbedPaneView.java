@@ -7,6 +7,7 @@ import com.intellij.ide.ui.UISettings;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.ActionCallback;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.ui.tabs.TabsListener;
@@ -30,7 +31,7 @@ public class TabbedPaneView implements View {
     private static final String TABBED_PANE_PLACE = "OctaneTabbedPane";
 
     private final JPanel rootPanel;
-    private JBEditorTabs editorTabs;
+    private CustomJBRunnerTabs editorTabs;
 
     @Inject
     public TabbedPaneView(Project project){
@@ -41,7 +42,7 @@ public class TabbedPaneView implements View {
         //DataContext dataContext = DataManager.getInstance().getDataContext();
         //Project project = DataKeys.PROJECT.getData(dataContext);
 
-        editorTabs = new JBEditorTabs(project, ActionManager.getInstance(), IdeFocusManager.getGlobalInstance(), project);
+        editorTabs = new CustomJBRunnerTabs(project, ActionManager.getInstance(), IdeFocusManager.getGlobalInstance(), project);
 
         //Edit presentation
         editorTabs
@@ -139,6 +140,15 @@ public class TabbedPaneView implements View {
         return tabInfo;
     }
 
+    @NotNull
+    public ActionCallback removeTab(TabInfo info) {
+        return editorTabs.removeTab(info);
+    }
+
+    public int getIndexOf(TabInfo tabInfo) {
+        return editorTabs.getIndexOf(tabInfo);
+    }
+
     public List<TabInfo> getTabInfos(){
         return editorTabs.getTabs();
     }
@@ -181,6 +191,10 @@ public class TabbedPaneView implements View {
 
     public void selectTabWithTabInfo(TabInfo tabInfo, boolean requestFocus){
         editorTabs.select(tabInfo, requestFocus);
+    }
+
+    public void setSearchRequestHandler(CustomJBRunnerTabs.SearchRequestHandler searchRequestHandler) {
+        editorTabs.setSearchRequestHandler(searchRequestHandler);
     }
 
     public void addTabsListener(@NotNull TabsListener listener) {

@@ -7,54 +7,36 @@ import com.intellij.util.ui.tree.AbstractTreeModel;
 import javax.swing.tree.TreePath;
 import java.util.*;
 
-class EntityTreeModel extends AbstractTreeModel {
+public class EntityTreeModel extends AbstractTreeModel {
 
     private static final String ROOT = "root";
     private TreeMap<EntityCategory, List<EntityModel>> groupedEntities = new TreeMap<>();
 
-    public EntityTreeModel() {
-        init();
-    }
+
+    public EntityTreeModel() {}
 
     public EntityTreeModel(Collection<EntityModel> entityModels) {
-        init();
         setEntities(entityModels);
     }
 
-    private void init() {
-        groupedEntities.put(EntityCategory.BACKLOG, new ArrayList<>());
-        groupedEntities.put(EntityCategory.TASK, new ArrayList<>());
-        groupedEntities.put(EntityCategory.TEST, new ArrayList<>());
-        groupedEntities.put(EntityCategory.TEST_RUNS, new ArrayList<>());
-        groupedEntities.put(EntityCategory.COMMENTS, new ArrayList<>());
-    }
-
-    private void clear() {
-        groupedEntities.get(EntityCategory.BACKLOG).clear();
-        groupedEntities.get(EntityCategory.TASK).clear();
-        groupedEntities.get(EntityCategory.TEST).clear();
-        groupedEntities.get(EntityCategory.TEST_RUNS).clear();
-        groupedEntities.get(EntityCategory.COMMENTS).clear();
-    }
-
     public void setEntities(Collection<EntityModel> entityModels) {
-        clear();
 
         for (EntityModel entityModel : entityModels) {
             EntityCategory category = EntityCategory.getCategory(entityModel);
-
             if (category != null) {
+                if(!groupedEntities.containsKey(category)) {
+                    groupedEntities.put(category, new ArrayList<>());
+                }
                 groupedEntities.get(category).add(entityModel);
             }
         }
     }
 
     public int size() {
-        int size = 0;
-        for (List<EntityModel> entityModels : groupedEntities.values()) {
-            size += entityModels.size();
-        }
-        return size;
+        return groupedEntities.values()
+                .stream()
+                .mapToInt(list -> list.size())
+                .sum();
     }
 
     @Override

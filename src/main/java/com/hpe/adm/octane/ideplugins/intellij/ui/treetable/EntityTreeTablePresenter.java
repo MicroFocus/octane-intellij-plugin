@@ -1,6 +1,7 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.treetable;
 
 import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import com.hpe.adm.nga.sdk.exception.OctaneException;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
@@ -8,7 +9,6 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.ToolbarActiveItem;
 import com.hpe.adm.octane.ideplugins.intellij.util.Constants;
 import com.hpe.adm.octane.ideplugins.services.EntityService;
 import com.hpe.adm.octane.ideplugins.services.util.SdkUtil;
-import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -32,7 +32,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView>{
 
         // Collection<EntityModel> myWork = entityService.getMyWork();
         // entityTreeModel.setEntities(myWork);
-        // entityTreeTableView.setTreeModel(entityTreeModel);
+        // entityTreeView.setTreeModel(entityTreeModel);
 
         Task.Backgroundable backgroundTask = new Task.Backgroundable(null, "Loading \"My work\"", false) {
 
@@ -68,51 +68,26 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView>{
         backgroundTask.queue();
     }
 
-    private final class RefreshAction extends AnAction {
-        public RefreshAction() {
-            super("Refresh", "Refresh view", IconLoader.findIcon(Constants.IMG_REFRESH_ICON));
-        }
-
-        public void actionPerformed(AnActionEvent e) {
-            refresh();
-        }
-    }
-
-    private final class ExpandNodesAction extends AnAction {
-        public ExpandNodesAction() {
-            super("Expand all", "Expand all nodes of the tree", AllIcons.Actions.Expandall);
-        }
-
-        public void actionPerformed(AnActionEvent e) {
-            getView().expandAllNodes();
-        }
-
-    }
-
-    private final class CollapseNodesAction extends AnAction {
-        public CollapseNodesAction() {
-            super("Collapse all", "Collapse all nodes of the tree", AllIcons.Actions.Collapseall);
-        }
-        public void actionPerformed(AnActionEvent e) {
-            getView().collapseAllNodes();
-        }
-    }
-
-
     public EntityTreeView getView(){
         return entityTreeTableView;
     }
 
     @Override
     @Inject
-    public void setView(EntityTreeView entityTreeView) {
+    public void setView(@Named("myWorkEntityTreeView") EntityTreeView entityTreeView) {
         this.entityTreeTableView = entityTreeView;
 
         //start presenting
-        entityTreeTableView.addActionToToolbar(new RefreshAction());
+        entityTreeTableView.addActionToToolbar(new AnAction("Refresh", "Refresh view", IconLoader.findIcon(Constants.IMG_REFRESH_ICON)) {
+            @Override
+            public void actionPerformed(AnActionEvent e) {
+                refresh();
+            }
+        });
+
         entityTreeTableView.addSeparatorToToolbar();
-        entityTreeTableView.addActionToToolbar(new ExpandNodesAction());
-        entityTreeTableView.addActionToToolbar(new CollapseNodesAction());
+        entityTreeTableView.addActionToToolbar(new EntityTreeView.ExpandNodesAction(entityTreeTableView));
+        entityTreeTableView.addActionToToolbar(new EntityTreeView.CollapseNodesAction(entityTreeTableView));
         entityTreeTableView.addSeparatorToToolbar();
         refresh();
     }

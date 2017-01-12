@@ -38,7 +38,7 @@ public class EntityDetailView implements View {
 
     public void setEntityModel(EntityModel entityModel) {
         this.entityModel =entityModel;
-        entityDetailsPanel = new GeneralEntityDetailsPanel(entityModel, connectionSettingsProvider.getConnectionSettings());
+        entityDetailsPanel = new GeneralEntityDetailsPanel(entityModel);
         component.setViewportView(entityDetailsPanel);
     }
 
@@ -79,5 +79,7 @@ public class EntityDetailView implements View {
         return this.entityModel;
     }
 
-
+    public void setEntityNameClickHandler(Runnable runnable) {
+        entityDetailsPanel.setEntityNameClickHandler(runnable);
+    }
 }

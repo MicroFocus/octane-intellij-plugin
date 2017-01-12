@@ -9,14 +9,19 @@ import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.nga.sdk.model.FieldModel;
 import com.hpe.adm.nga.sdk.model.ReferenceFieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
+import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import com.hpe.adm.octane.ideplugins.services.connection.OctaneProvider;
 import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.util.SdkUtil;
+import com.hpe.adm.octane.ideplugins.services.util.UrlParser;
 
+import java.awt.*;
+import java.net.URI;
 import java.util.*;
 
 import static com.hpe.adm.nga.sdk.utils.CommonUtils.getIdFromEntityModel;
+import static com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil.getUiDataFromModel;
 import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.*;
 
 
@@ -27,6 +32,9 @@ public class EntityService {
 
     @Inject
     private OctaneProvider octaneProvider;
+
+    @Inject
+    private ConnectionSettingsProvider connectionSettingsProvider;
 
 
     public Collection<EntityModel> getMyWork() {
@@ -222,4 +230,31 @@ public class EntityService {
 
         entityList.at(entityId).update().entity(updatedEntity).execute();
     }
+
+    public void openInBrowser(EntityModel entityModel) {
+        Entity entityType = Entity.getEntityType(entityModel);
+        Integer entityId = Integer.valueOf(getUiDataFromModel(entityModel.getValue("id")));
+        Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+        if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+            try {
+                Entity ownerEntityType = null;
+                Integer ownerEntityId = null;
+                if (entityType == Entity.COMMENT) {
+                    ReferenceFieldModel owner = (ReferenceFieldModel) UiUtil.
+                            getContainerItemForCommentModel(entityModel);
+                    ownerEntityType = Entity.getEntityType(owner.getValue());
+                    ownerEntityId = Integer.valueOf(UiUtil.getUiDataFromModel(owner, "id"));
+                }
+                URI uri =
+                        UrlParser.createEntityWebURI(
+                                connectionSettingsProvider.getConnectionSettings(),
+                                entityType == Entity.COMMENT ? ownerEntityType : entityType,
+                                entityType == Entity.COMMENT ? ownerEntityId : entityId);
+                desktop.browse(uri);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
 }

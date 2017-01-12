@@ -33,10 +33,8 @@ public class GeneralEntityDetailsPanel extends JPanel {
     private JXTextArea descriptionDetails;
     private boolean hasAttachment = false;
     private HeaderPanel headerPanel;
-    private ConnectionSettings connectionSettings;
 
-    public GeneralEntityDetailsPanel(EntityModel entityModel, ConnectionSettings connectionSettings) {
-        this.connectionSettings = connectionSettings;
+    public GeneralEntityDetailsPanel(EntityModel entityModel) {
         setBorder(null);
         setBounds(100, 100, 900, 350);
         GridBagLayout gridBagLayout = new GridBagLayout();
@@ -159,13 +157,12 @@ public class GeneralEntityDetailsPanel extends JPanel {
     }
 
     private void drawGeneralDetailsForEntity(EntityModel entityModel) {
-
         headerPanel.setPhaseDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_PHASE)));
         this.descriptionDetails.setText(getDescriptionForEntityModel(entityModel));
-        headerPanel.addActionToEntityLink(new GoToBrowser(
-                getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_NAME)),
-                entityModel,
-                connectionSettings));
+    }
+
+    public void setEntityNameClickHandler(Runnable runnable){
+        headerPanel.setActionToEntityLink(runnable);
     }
 
     public void setRefreshButton(AnAction refreshButton) {

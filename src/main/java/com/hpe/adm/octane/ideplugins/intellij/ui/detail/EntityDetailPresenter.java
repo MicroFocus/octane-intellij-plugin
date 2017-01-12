@@ -12,10 +12,7 @@ import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.util.IconLoader;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -62,11 +59,16 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                         entityDetailView.setSaveSelectedPhaseButton(new SaveSelectedPhaseAction());
                         entityDetailView.setRefreshEntityButton(new EntityRefreshAction());
                         setPossibleTransitions(entityModel);
+
+                        //Title goes to browser
+                        entityDetailView.setEntityNameClickHandler(()-> entityService.openInBrowser(entityModel));
                     }
                 },
                 null,
                 null,
                 "Loading entity " + entityType.name() + ": " + entityId);
+
+
     }
 
     private void setPossibleTransitions(EntityModel entityModel) {
