@@ -25,6 +25,11 @@ public class UserService {
      * @return
      */
     public Long getCurrentUserId(){
+        EntityModel user = getCurrentUser();
+        return Long.parseLong(user.getValue("id").getValue().toString());
+    }
+
+    public EntityModel getCurrentUser(){
 
         Octane octane = octaneProvider.getOctane();
         String currentUser = connectionSettingsProvider.getConnectionSettings().getUserName();
@@ -32,17 +37,15 @@ public class UserService {
         EntityList entityList = octane.entityList(Entity.WORKSPACE_USER.getApiEntityName());
         Collection<EntityModel> entityModels =
                 entityList.get().query(
-                        new Query.QueryBuilder("name", Query::equalTo, currentUser).build()).addFields("id")
+                        new Query.QueryBuilder("name", Query::equalTo, currentUser).build())
                         .execute();
 
         if(entityModels.size()!=1){
             throw new ServiceRuntimeException("Failed to retrieve logged in user id");
         } else {
-            return Long.parseLong(entityModels.iterator().next().getValue("id").getValue().toString());
+            return entityModels.iterator().next();
         }
 
     }
-
-
 
 }
