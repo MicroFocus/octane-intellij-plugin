@@ -45,7 +45,7 @@ public class EntityTreeModel extends AbstractTreeModel {
                     .filter(entityCategory -> groupedEntities.get(entityCategory).size()==0)
                     .collect(Collectors.toList());
 
-        groupedEntities.remove(emptyCategories);
+        emptyCategories.forEach(emptyCategory -> groupedEntities.remove(emptyCategory));
     }
 
     public static List<EntityCategory> getDefaultEntityCategories(){
