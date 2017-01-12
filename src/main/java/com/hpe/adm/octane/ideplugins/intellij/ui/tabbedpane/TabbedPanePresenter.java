@@ -108,16 +108,57 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
     public void setView(TabbedPaneView tabbedPaneView) {
         this.tabbedPaneView = tabbedPaneView;
 
-        //open test entity tree view
-        EntityTreeTablePresenter presenter = openMyWorkTab();
-        initHandlers(presenter);
+        //Init tabbed pane view handlers
+        initHandlers();
 
+        //open test entity tree view
+        EntityTreeTablePresenter entityTreeTablePresenter = openMyWorkTab();
+
+        //Init EntityTreeTablePresenter handlers
+        entityTreeTablePresenter.addEntityClickHandler((mouseEvent, entityType, entityId, model) -> {
+            //double click
+            if(SwingUtilities.isLeftMouseButton(mouseEvent) && mouseEvent.getClickCount() == 2){
+                onEntityAction(entityType, entityId, model, true);
+            }
+
+            //Middle click
+            else if(SwingUtilities.isMiddleMouseButton(mouseEvent)){
+                onEntityAction(entityType, entityId, model, false);
+            }
+        });
+        //Key handler
+        entityTreeTablePresenter.addEntityKeyHandler((event, entityType, entityId, model) -> {
+            if (event.getKeyCode() == KeyEvent.VK_ENTER) {
+                onEntityAction(entityType, entityId, model, true);
+            }
+        });
+
+        //Init EntitySearchResultPresenter handlers
+        entitySearchResultPresenter.getView().addEntityMouseHandler((mouseEvent, entityType, entityId, model) -> {
+            //double click
+            if(SwingUtilities.isLeftMouseButton(mouseEvent) && mouseEvent.getClickCount() == 2){
+                onEntityAction(entityType, entityId, model, true);
+            }
+
+            //Middle click
+            else if(SwingUtilities.isMiddleMouseButton(mouseEvent)){
+                onEntityAction(entityType, entityId, model, false);
+            }
+        });
+
+        //Key handler
+        entitySearchResultPresenter.getView().addEntityKeyHandler((keyEvent, entityType, entityId, model) -> {
+            if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER) {
+                onEntityAction(entityType, entityId, model, true);
+            }
+        });
+
+        //Persistence
         loadDetailTabsFromPersistentState();
         selectSelectedTabToFromPersistentState();
     }
 
-    private void initHandlers(EntityTreeTablePresenter presenter){
-
+    private void initHandlers(){
         tabbedPaneView.setSearchRequestHandler(query -> openSearchTab(query));
 
         //TODO atoth: should only save once at the end
@@ -136,26 +177,6 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
             @Override
             public void tabsMoved() {
                 saveDetailTabsToPersistentState();
-            }
-        });
-
-        //Mouse handler
-        presenter.addEntityClickHandler((mouseEvent, entityType, entityId, model) -> {
-            //double click
-            if(SwingUtilities.isLeftMouseButton(mouseEvent) && mouseEvent.getClickCount() == 2){
-                onEntityAction(entityType, entityId, model, true);
-            }
-
-            //Middle click
-            else if(SwingUtilities.isMiddleMouseButton(mouseEvent)){
-                onEntityAction(entityType, entityId, model, false);
-            }
-        });
-
-        //Key handler
-        presenter.addEntityKeyHandler((event, entityType, entityId, model) -> {
-            if (event.getKeyCode() == KeyEvent.VK_ENTER) {
-                onEntityAction(entityType, entityId, model, true);
             }
         });
     }
