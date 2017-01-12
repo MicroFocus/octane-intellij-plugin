@@ -2,10 +2,7 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
-import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
-import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
-import com.hpe.adm.octane.ideplugins.services.util.UrlParser;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.ui.JBColor;
 import org.apache.commons.lang.CharEncoding;
@@ -20,9 +17,6 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.io.IOException;
-import java.net.URI;
 import java.util.Collection;
 
 import static com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil.getUiDataFromModel;
@@ -174,6 +168,9 @@ public class GeneralEntityDetailsPanel extends JPanel {
     public void removeSaveSelectedPhaseButton(){
         headerPanel.removeSaveSelectedPhaseButton();
     }
+    public void setPhaseInHeader(boolean showPhase){
+        headerPanel.setPhaseInHeader(showPhase);
+    }
     public  EntityModel getSelectedTransition(){
         return headerPanel.getSelectedTransition();
     }
@@ -192,36 +189,43 @@ public class GeneralEntityDetailsPanel extends JPanel {
         switch (Entity.getEntityType(entityModel)) {
             case DEFECT:
                 headerPanel.setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(DEFECT)));
+                headerPanel.setNameDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_NAME)));
                 hasAttachment = false;
                 ret = updateUiWithDefectDetails(entityModel);
                 break;
             case GHERKIN_TEST:
                 headerPanel.setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(GHERKIN_TEST)));
+                headerPanel.setNameDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_NAME)));
                 hasAttachment = false;
                 ret = updateUiWithTestsDetails(entityModel, true);
                 break;
             case MANUAL_TEST:
                 headerPanel.setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(MANUAL_TEST)));
+                headerPanel.setNameDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_NAME)));
                 hasAttachment = false;
                 ret = updateUiWithTestsDetails(entityModel, false);
                 break;
             case USER_STORY:
                 headerPanel.setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(USER_STORY)));
+                headerPanel.setNameDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_NAME)));
                 hasAttachment = false;
                 ret = updateUiWithUserStoryDetails(entityModel);
                 break;
             case TASK:
                 headerPanel.setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(TASK)));
+                headerPanel.setNameDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_NAME)));
                 ret = updateUiWithTaskDetails(entityModel);
                 hasAttachment = false;
                 break;
             case TEST_SUITE_RUN:
                 headerPanel.setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(TEST_SUITE_RUN)));
+                headerPanel.setNameDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEST_RUN_NAME)));
                 ret = updateUiWithTestSuiteRunDetails(entityModel);
                 hasAttachment = false;
                 break;
             case MANUAL_TEST_RUN:
                 headerPanel.setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(MANUAL_TEST_RUN)));
+                headerPanel.setNameDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEST_RUN_NAME)));
                 ret = updateUiWithManualTestRunDetails(entityModel);
                 hasAttachment = false;
                 break;
@@ -341,29 +345,6 @@ public class GeneralEntityDetailsPanel extends JPanel {
         headerPanel.setPossiblePhasesForEntity(phasesList);
     }
 
-    private static class GoToBrowser extends AbstractAction {
-        private EntityModel entityModel;
-        private Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-        private ConnectionSettings connectionSettings;
-
-        public GoToBrowser(String entityName, EntityModel entityModel, ConnectionSettings connectionSettings) {
-            this.entityModel = entityModel;
-            super.putValue(Action.NAME, entityName);
-            super.putValue(Action.SHORT_DESCRIPTION, "Sample Action Description");
-            this.connectionSettings = connectionSettings;
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            URI uri =
-                    UrlParser.createEntityWebURI(connectionSettings, Entity.getEntityType(entityModel), Integer.valueOf(UiUtil.getUiDataFromModel(entityModel.getValue("id"))));
-            try {
-                desktop.browse(uri);
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
-        }
-    }
 }
 
 

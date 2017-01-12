@@ -64,6 +64,9 @@ public class EntityDetailView implements View {
     public void removeSaveSelectedPhaseButton(){
         entityDetailsPanel.removeSaveSelectedPhaseButton();
     }
+    public void setPhaseInHeader(boolean showPhase){
+        entityDetailsPanel.setPhaseInHeader(showPhase);
+    }
 
     public void doRefresh() {
         component.setViewportView(new JBScrollPane(new LoadingWidget()));

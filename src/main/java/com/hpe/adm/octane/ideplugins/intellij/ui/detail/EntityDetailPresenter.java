@@ -63,6 +63,10 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                         entityDetailView.setRefreshEntityButton(new EntityRefreshAction());
                         if (entityType != MANUAL_TEST_RUN && entityType != TEST_SUITE_RUN) {
                             setPossibleTransitions(entityModel);
+                            entityDetailView.setPhaseInHeader(true);
+                        }else{
+                            entityDetailView.removeSaveSelectedPhaseButton();
+                            entityDetailView.setPhaseInHeader(false);
                         }
 
                         //Title goes to browser

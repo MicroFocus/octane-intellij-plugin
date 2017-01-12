@@ -31,6 +31,7 @@ public class HeaderPanel extends JPanel {
     private PhaseComboBox comboBox;
     private JXLabel moveToLabel;
     private AnAction saveSelectedPhaseAction;
+    private JXPanel phasePanel;
 
 
     public HeaderPanel() {
@@ -57,7 +58,6 @@ public class HeaderPanel extends JPanel {
         entityLinkToBrowser.setBorder(new EmptyBorder(0, 5, 0, 0));
         entityLinkToBrowser.setUnclickedColor(JBColor.foreground());
         entityLinkToBrowser.setClickedColor(JBColor.foreground());
-        entityLinkToBrowser.setText("Name");
         entityLinkToBrowser.setBorderPainted(false);
         entityLinkToBrowser.addMouseListener(new MouseAdapter() {
             @Override
@@ -71,11 +71,13 @@ public class HeaderPanel extends JPanel {
         });
         nameAndIconPanel.add(entityLinkToBrowser);
 
-        JXPanel phasePanel = new JXPanel();
+        phasePanel = new JXPanel();
+        phasePanel.setAlignmentX(Component.RIGHT_ALIGNMENT);
         phasePanel.setBorder(null);
-        FlowLayout flowLayout_1 = (FlowLayout) phasePanel.getLayout();
-        flowLayout_1.setHgap(0);
-        add(phasePanel, BorderLayout.EAST);
+        FlowLayout fl_phasePanel = (FlowLayout) phasePanel.getLayout();
+        fl_phasePanel.setAlignment(FlowLayout.RIGHT);
+        fl_phasePanel.setHgap(0);
+        add(phasePanel, BorderLayout.CENTER);
 
         JXLabel currentPhaseLabel = new JXLabel();
         currentPhaseLabel.setBorder(new EmptyBorder(0, 0, 0, 5));
@@ -98,7 +100,7 @@ public class HeaderPanel extends JPanel {
 
         comboBox = new PhaseComboBox();
         comboBox.setEditable(true);
-        comboBox.setPreferredSize(new Dimension(110, 30));
+        comboBox.setPreferredSize(new Dimension(150, 30));
         phasePanel.add(comboBox);
 
         refreshButtonPanel = new JBScrollPane();
@@ -106,7 +108,7 @@ public class HeaderPanel extends JPanel {
         refreshButtonPanel.setVerticalScrollBarPolicy(VERTICAL_SCROLLBAR_NEVER);
         refreshButtonPanel.setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_NEVER);
         refreshButtonPanel.setMinimumSize(new Dimension(0, 0));
-        phasePanel.add(refreshButtonPanel);
+        add(refreshButtonPanel,BorderLayout.EAST);
         createActionToolBar();
 
     }
@@ -124,6 +126,11 @@ public class HeaderPanel extends JPanel {
     }
 
     public void setRefreshButton(AnAction refreshAction) {
+        buttonActionGroup.addSeparator();
+        buttonActionGroup.add(refreshAction);
+    }
+    public void setRunTestButon(AnAction refreshAction) {
+        //TODO: @osavencu: see if this can be added
         buttonActionGroup.addSeparator();
         buttonActionGroup.add(refreshAction);
     }
@@ -167,6 +174,10 @@ public class HeaderPanel extends JPanel {
     }
     public void removeSaveSelectedPhaseButton(){
         buttonActionGroup.remove(this.saveSelectedPhaseAction);
+    }
+
+    public void setPhaseInHeader(boolean showPhase){
+        phasePanel.setVisible(showPhase);
     }
 
 }
