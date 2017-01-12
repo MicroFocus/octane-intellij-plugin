@@ -3,10 +3,10 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.treetable;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.intellij.util.ui.tree.AbstractTreeModel;
-import org.jetbrains.annotations.NotNull;
 
 import javax.swing.tree.TreePath;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class EntityTreeModel extends AbstractTreeModel {
 
@@ -28,16 +28,24 @@ public class EntityTreeModel extends AbstractTreeModel {
     }
 
     public void setEntities(Collection<EntityModel> entityModels) {
+        //init to preserve category order
+        entityCategories.forEach(entityCategory -> groupedEntities.put(entityCategory, new ArrayList<>()));
 
         for (EntityModel entityModel : entityModels) {
             EntityCategory category = EntityCategory.getCategory(entityModel, entityCategories);
             if (category != null) {
-                if(!groupedEntities.containsKey(category)) {
-                    groupedEntities.put(category, new ArrayList<>());
-                }
                 groupedEntities.get(category).add(entityModel);
             }
         }
+
+        //Remove empty categories
+        List<EntityCategory> emptyCategories =
+                    entityCategories
+                    .stream()
+                    .filter(entityCategory -> groupedEntities.get(entityCategory).size()==0)
+                    .collect(Collectors.toList());
+
+        groupedEntities.remove(emptyCategories);
     }
 
     public static List<EntityCategory> getDefaultEntityCategories(){
@@ -116,7 +124,7 @@ public class EntityTreeModel extends AbstractTreeModel {
         return 0;
     }
 
-    public static class EntityCategory implements Comparable<EntityCategory>{
+    public static class EntityCategory {
 
         private String name = "";
         private List<Entity> entityTypes = new ArrayList<>();
@@ -141,11 +149,6 @@ public class EntityTreeModel extends AbstractTreeModel {
 
         public String getName() {
             return name;
-        }
-
-        @Override
-        public int compareTo(@NotNull EntityCategory o) {
-            return o.getName().compareTo(getName());
         }
     }
 
