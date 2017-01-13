@@ -7,7 +7,7 @@
   <idea-version since-build="162"/>
 
   <extensions defaultExtensionNs="com.intellij">
-    <toolWindow factoryClass="com.hpe.adm.octane.ideplugins.intellij.ui.EntryPoint" anchor="bottom" icon="/images/octane-icon-13x13.png" secondary="true" id="HPE ALM Octane"/>
+    <toolWindow factoryClass="com.hpe.adm.octane.ideplugins.intellij.ui.EntryPoint" anchor="bottom" icon="/images/octane-icon-13x13.png" secondary="true" id="ALM Octane"/>
 
     <projectService serviceInterface="com.hpe.adm.octane.ideplugins.intellij.settings.IdePersistentConnectionSettingsProvider"
                         serviceImplementation="com.hpe.adm.octane.ideplugins.intellij.settings.IdePersistentConnectionSettingsProvider"/>
@@ -16,7 +16,7 @@
                     serviceImplementation="com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState"/>
 
     <projectConfigurable id="com.hpe.adm.octane.ideplugins.intellij.settings.ConnectionSettingsConfigurable"
-                             displayName="HPE ALM Octane Settings"
+                             displayName="ALM Octane Settings"
                              instance="com.hpe.adm.octane.ideplugins.intellij.settings.ConnectionSettingsConfigurable"/>
 
     <checkinHandlerFactory implementation="com.hpe.adm.octane.ideplugins.intellij.gitcommit.OctaneCheckinHandlerFactory" />
