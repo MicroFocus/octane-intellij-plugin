@@ -41,8 +41,19 @@ public class EntitySearchService {
         }
 
         URIBuilder uriBuilder = new URIBuilder();
-        uriBuilder.setScheme("http");
-        uriBuilder.setHost(connectionSettings.getBaseUrl().replace("http://", ""));
+
+        //set the scheme, the protocol must be removed for the uri builder setHost method
+        if(connectionSettings.getBaseUrl().contains("https")){
+            uriBuilder.setScheme("https");
+            uriBuilder.setHost(connectionSettings.getBaseUrl().replace("https://", ""));
+        }
+        else if (connectionSettings.getBaseUrl().contains("http")){
+            uriBuilder.setScheme("http");
+            uriBuilder.setHost(connectionSettings.getBaseUrl().replace("http://", ""));
+        } else {
+            throw new ServiceRuntimeException("Cannot find http/https protocol is connections settings base URL");
+        }
+
         uriBuilder.setPath(
                 "/api"
                 + "/shared_spaces/" + connectionSettings.getSharedSpaceId()
