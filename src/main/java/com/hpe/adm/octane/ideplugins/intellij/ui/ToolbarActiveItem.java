@@ -6,29 +6,28 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.PartialEntity;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.project.Project;
 import org.json.JSONObject;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ToolbarActiveItem {
 
     private static EntityIconFactory entityIconFactory = new EntityIconFactory(20, 20, 10, Color.WHITE);
-
     private static ToolbarActiveItem instance;
+    private static Map<Project, Runnable> activeItemClickHandlers = new HashMap<>();
+    private static ImageIcon defectIcon = new ImageIcon(entityIconFactory.getIconAsImage(Entity.DEFECT));
+    private static ImageIcon userStoryIcon = new ImageIcon(entityIconFactory.getIconAsImage(Entity.USER_STORY));
 
     private AnAction activeItemAction;
-
     private DefaultActionGroup mainToolbarGroup;
-
     private IdePluginPersistentState persistentState;
-
-    private static ImageIcon defectIcon = new ImageIcon(entityIconFactory.getIconAsImage(Entity.DEFECT));
-
-    private static ImageIcon userStoryIcon = new ImageIcon(entityIconFactory.getIconAsImage(Entity.USER_STORY));
 
     public static ToolbarActiveItem getInstance() {
         if (instance == null)
@@ -90,8 +89,15 @@ public class ToolbarActiveItem {
 
         @Override
         public void actionPerformed(AnActionEvent e) {
-
+            Project project = DataKeys.PROJECT.getData(e.getDataContext());
+            if(activeItemClickHandlers.containsKey(project)){
+                activeItemClickHandlers.get(project).run();
+            }
         }
+    }
+
+    public static void setActiveItemClickHandler(Project project, Runnable runnable){
+        activeItemClickHandlers.put(project, runnable);
     }
 
     private static ActiveItemAction buildActionForItem(PartialEntity item) {

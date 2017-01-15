@@ -8,6 +8,7 @@ import com.google.inject.Provider;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
+import com.hpe.adm.octane.ideplugins.intellij.ui.ToolbarActiveItem;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.EntityDetailPresenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
 import com.hpe.adm.octane.ideplugins.intellij.ui.searchresult.EntitySearchResultPresenter;
@@ -174,6 +175,18 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
         entitySearchResultPresenter.getView().addEntityKeyHandler((keyEvent, entityType, entityId, model) -> {
             if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER) {
                 onEntityAction(entityType, entityId, model, true);
+            }
+        });
+
+        //Open and select active item on toolbar action click
+        ToolbarActiveItem.setActiveItemClickHandler(project, ()->{
+            JSONObject jsonObject = idePluginPersistentState.loadState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM);
+            if(jsonObject != null){
+                PartialEntity activeItem = PartialEntity.fromJsonObject(jsonObject);
+                if(!isDetailTabAlreadyOpen(activeItem)){
+                    openDetailTab(activeItem.getEntityType(), activeItem.getEntityId(), activeItem.getEntityName());
+                }
+                selectDetailTab(activeItem);
             }
         });
 
