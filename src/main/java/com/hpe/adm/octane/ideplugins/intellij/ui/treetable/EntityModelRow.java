@@ -10,19 +10,19 @@ import org.jdesktop.swingx.JXLabel;
 import javax.swing.*;
 import java.awt.*;
 
-public class EntityModelRow extends JPanel{
+class EntityModelRow extends JPanel{
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private JPanel panelDetailsTop;
-	private JXLabel lblEntityName;
-	private JPanel panelIcon;
+    private JPanel panelDetailsTop;
+    private JXLabel lblEntityName;
+    private JPanel panelIcon;
 
-	private static final Color transparentColor = new Color(0, 0, 0, 0);
-	private Color fontColor = UIUtil.getLabelFontColor(UIUtil.FontColor.NORMAL);
+    private static final Color transparentColor = new Color(0, 0, 0, 0);
+    private Color fontColor = UIUtil.getLabelFontColor(UIUtil.FontColor.NORMAL);
 
-	private JPanel panelDetailsBottom;
-	private JXLabel lblEntityRelease;
+    private JPanel panelDetailsBottom;
+    private JXLabel lblEntityRelease;
 
     private static final EntityIconFactory ENTITY_ICON_FACTORY = new EntityIconFactory(40,40,17,Color.WHITE);
 
@@ -30,12 +30,12 @@ public class EntityModelRow extends JPanel{
         initUI();
     }
 
-	public EntityModelRow(Color fontColor) {
-		this.fontColor = fontColor;
+    public EntityModelRow(Color fontColor) {
+        this.fontColor = fontColor;
         initUI();
-	}
+    }
 
-	private void initUI(){
+    private void initUI(){
         GridBagLayout gbl_rootPanel = new GridBagLayout();
         gbl_rootPanel.columnWidths = new int[]{0, 150, 0, 0};
         gbl_rootPanel.rowHeights = new int[]{20, 20, 0};
@@ -56,7 +56,7 @@ public class EntityModelRow extends JPanel{
         add(panelIcon, gbc_panelIcon);
         panelIcon.setOpaque(true);
         panelIcon.setBackground(transparentColor);
-        
+
         lblEntityName = createLabel("");
         lblEntityName.setHorizontalAlignment(SwingConstants.LEFT);
         lblEntityName.setForeground(fontColor);
@@ -80,7 +80,7 @@ public class EntityModelRow extends JPanel{
         add(panelDetailsTop, gbc_panelDetailsTop);
         panelDetailsTop.setOpaque(true);
         panelDetailsTop.setBackground(transparentColor);
-        
+
         lblEntityRelease = createLabel("");
         lblEntityRelease.setHorizontalAlignment(SwingConstants.LEFT);
         GridBagConstraints gbc_lblEntityId = new GridBagConstraints();
@@ -90,7 +90,7 @@ public class EntityModelRow extends JPanel{
         gbc_lblEntityId.gridy = 1;
         add(lblEntityRelease, gbc_lblEntityId);
         lblEntityRelease.setForeground(fontColor);
-        
+
         panelDetailsBottom = new JPanel();
         FlowLayout flowLayout = (FlowLayout) panelDetailsBottom.getLayout();
         flowLayout.setVgap(2);
@@ -108,41 +108,41 @@ public class EntityModelRow extends JPanel{
         setOpaque(true);
     }
 
-	public void setIcon(Entity entityType, boolean isActive){
-		panelIcon.removeAll();
-		panelIcon.add(ENTITY_ICON_FACTORY.getIconAsComponent(entityType, isActive), BorderLayout.CENTER);
-	}
-	
-	public void setEntityName(String id, String name){
+    public void setIcon(Entity entityType, boolean isActive){
+        panelIcon.removeAll();
+        panelIcon.add(ENTITY_ICON_FACTORY.getIconAsComponent(entityType, isActive), BorderLayout.CENTER);
+    }
+
+    public void setEntityName(String id, String name){
         lblEntityName.setText("<html><body><b>"+id+"</b>&nbsp;" + name + "</body><html>");
-	}
-	
-	public void setEntityDetails(String details, String defaultText){
+    }
+
+    public void setEntityDetails(String details, String defaultText){
         if(StringUtils.isEmpty(details)){
-            lblEntityRelease.setText("<html><body>" + defaultText + "</body><html>");
+            lblEntityRelease.setText(defaultText);
         } else {
-            lblEntityRelease.setText("<html><body>" + details + "</body><html>");
+            lblEntityRelease.setText(details);
         }
-	}
-	
+    }
+
     public void addDetailsTop(String text){
-       	text = "   " + text.trim();
-       	JXLabel lbl = createLabel(text);
-       	lbl.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, JBColor.border()));
+        text = "   " + text.trim();
+        JXLabel lbl = createLabel(text);
+        lbl.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, JBColor.border()));
         panelDetailsTop.add(lbl);
     }
 
     public void addDetailsBottom(String text){
-       	text = "   " + text.trim();
-       	JXLabel lbl = createLabel(text);
-       	lbl.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, JBColor.border()));
-       	panelDetailsBottom.add(lbl);
+        text = "   " + text.trim();
+        JXLabel lbl = createLabel(text);
+        lbl.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, JBColor.border()));
+        panelDetailsBottom.add(lbl);
     }
 
-	private JXLabel createLabel(String text){
+    private JXLabel createLabel(String text){
         JXLabel lbl = new JXLabel(text);
         lbl.setForeground(fontColor);
         return lbl;
     }
-	
+
 }
