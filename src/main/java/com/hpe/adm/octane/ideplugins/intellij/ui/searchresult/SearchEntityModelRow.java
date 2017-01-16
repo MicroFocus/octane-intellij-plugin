@@ -32,7 +32,7 @@ public class SearchEntityModelRow extends JPanel{
 	private void initUI(){
         GridBagLayout gbl_rootPanel = new GridBagLayout();
         gbl_rootPanel.columnWidths = new int[]{0, 150, 0};
-        gbl_rootPanel.rowHeights = new int[]{20, 20, 0};
+        gbl_rootPanel.rowHeights = new int[]{25, 25, 0};
         gbl_rootPanel.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
         gbl_rootPanel.rowWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
         setLayout(gbl_rootPanel);
@@ -42,9 +42,10 @@ public class SearchEntityModelRow extends JPanel{
         FlowLayout flowLayout_1 = (FlowLayout) panelIcon.getLayout();
         flowLayout_1.setVgap(2);
         GridBagConstraints gbc_panelIcon = new GridBagConstraints();
+        gbc_panelIcon.anchor = GridBagConstraints.SOUTH;
         gbc_panelIcon.gridheight = 2;
         gbc_panelIcon.fill = GridBagConstraints.HORIZONTAL;
-        gbc_panelIcon.insets = new Insets(5, 0, 0, 5);
+        gbc_panelIcon.insets = new Insets(5, 0, 5, 5);
         gbc_panelIcon.gridx = 0;
         gbc_panelIcon.gridy = 0;
         add(panelIcon, gbc_panelIcon);
@@ -56,6 +57,7 @@ public class SearchEntityModelRow extends JPanel{
         lblEntityName.setHorizontalAlignment(SwingConstants.LEFT);
         lblEntityName.setForeground(fontColor);
         GridBagConstraints gbc_lblEntityName = new GridBagConstraints();
+        gbc_lblEntityName.anchor = GridBagConstraints.SOUTH;
         gbc_lblEntityName.fill = GridBagConstraints.HORIZONTAL;
         gbc_lblEntityName.insets = new Insets(5, 0, 5, 0);
         gbc_lblEntityName.gridx = 1;
@@ -66,8 +68,9 @@ public class SearchEntityModelRow extends JPanel{
         lblEntityRelease.setForeground(fontColor);
         lblEntityRelease.setHorizontalAlignment(SwingConstants.LEFT);
         GridBagConstraints gbc_lblEntityId = new GridBagConstraints();
+        gbc_lblEntityId.anchor = GridBagConstraints.NORTH;
         gbc_lblEntityId.fill = GridBagConstraints.HORIZONTAL;
-        gbc_lblEntityId.insets = new Insets(5, 0, 0, 0);
+        gbc_lblEntityId.insets = new Insets(0, 0, 5, 0);
         gbc_lblEntityId.gridx = 1;
         gbc_lblEntityId.gridy = 1;
         add(lblEntityRelease, gbc_lblEntityId);
