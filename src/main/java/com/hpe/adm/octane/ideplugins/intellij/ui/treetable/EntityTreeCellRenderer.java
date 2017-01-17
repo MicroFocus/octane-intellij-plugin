@@ -227,6 +227,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
             } else if (Entity.COMMENT.equals(entityType)) {
                 String text = UiUtil.getUiDataFromModel(entityModel.getValue("text"));
                 text = text.replaceFirst("<p>", "<p>&nbsp;Comment:&nbsp;");
+                text = text.replaceFirst("<a.*?>", "").replaceFirst("</a>", "");
                 String author = UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_AUTHOR), FIELD_FULL_NAME);
                 FieldModel owner = UiUtil.getContainerItemForCommentModel(entityModel);
                 String ownerId = UiUtil.getUiDataFromModel(owner, "id");

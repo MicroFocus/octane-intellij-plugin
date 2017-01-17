@@ -42,6 +42,7 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
     static {
         supportedDetailTabs = ImmutableSet.copyOf(new Entity[]{
                 USER_STORY,
+                QUALITY_STORY,
                 DEFECT,
                 TASK,
                 GHERKIN_TEST,

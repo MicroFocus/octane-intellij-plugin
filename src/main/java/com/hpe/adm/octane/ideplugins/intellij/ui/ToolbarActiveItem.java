@@ -24,6 +24,7 @@ public class ToolbarActiveItem {
     private static Map<Project, Runnable> activeItemClickHandlers = new HashMap<>();
     private static ImageIcon defectIcon = new ImageIcon(entityIconFactory.getIconAsImage(Entity.DEFECT));
     private static ImageIcon userStoryIcon = new ImageIcon(entityIconFactory.getIconAsImage(Entity.USER_STORY));
+    private static ImageIcon qualityStoryIcon = new ImageIcon(entityIconFactory.getIconAsImage(Entity.QUALITY_STORY));
 
     private AnAction activeItemAction;
     private DefaultActionGroup mainToolbarGroup;
@@ -102,8 +103,21 @@ public class ToolbarActiveItem {
 
     private static ActiveItemAction buildActionForItem(PartialEntity item) {
         String text = "#" + item.getEntityId() + ": " + item.getEntityName();
-        ActiveItemAction action = new ActiveItemAction(text, text, item.getEntityType() == Entity.USER_STORY
-                ? userStoryIcon : defectIcon);
+
+        ImageIcon itemIcon = null;
+        switch (item.getEntityType()) {
+            case USER_STORY:
+                itemIcon = userStoryIcon;
+                break;
+            case QUALITY_STORY:
+                itemIcon = qualityStoryIcon;
+                break;
+            case DEFECT:
+                itemIcon = defectIcon;
+                break;
+        }
+
+        ActiveItemAction action = new ActiveItemAction(text, text, itemIcon);
         ActionManager.getInstance().registerAction("ActiveItemAction" + ActiveItemAction.id, action);
         return action;
     }

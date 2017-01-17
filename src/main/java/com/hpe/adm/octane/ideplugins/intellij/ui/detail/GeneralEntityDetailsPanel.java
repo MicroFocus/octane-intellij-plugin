@@ -211,6 +211,12 @@ public class GeneralEntityDetailsPanel extends JPanel {
                 hasAttachment = false;
                 ret = updateUiWithUserStoryDetails(entityModel);
                 break;
+            case QUALITY_STORY:
+                headerPanel.setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(QUALITY_STORY)));
+                headerPanel.setNameDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_NAME)));
+                hasAttachment = false;
+                ret = updateUiWithQualityStoryDetails(entityModel);
+                break;
             case TASK:
                 headerPanel.setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(TASK)));
                 headerPanel.setNameDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_NAME)));
@@ -321,16 +327,13 @@ public class GeneralEntityDetailsPanel extends JPanel {
         return taskDetailsPanel;
     }
 
-    private JXPanel updateUiWithUserStoryDetails(EntityModel entityModel) {
-        UserStoryDetailsPanel userStoryDetailsPanel = new UserStoryDetailsPanel();
+    private void updateUiWithStoryDetails(StoryDetailsPanel userStoryDetailsPanel, EntityModel entityModel) {
         userStoryDetailsPanel.setOwnerDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_OWNER)));
         userStoryDetailsPanel.setFeatureDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_FEATURE)));
         userStoryDetailsPanel.setSprintDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_SPRINT)));
         userStoryDetailsPanel.setStoryPointsDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_STORYPOINTS)));
         userStoryDetailsPanel.setBlockedDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_BLOCKED)));
-        userStoryDetailsPanel.setLastRunsDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_LAST_RUNS)));
         userStoryDetailsPanel.setLastModifiedDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_LAST_MODIFIED)));
-
         userStoryDetailsPanel.setTeamDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEAM)));
         userStoryDetailsPanel.setAuthorDetailsDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_AUTHOR), "full_name"));
         userStoryDetailsPanel.setAppModuleDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_APPMODULE)));
@@ -338,7 +341,21 @@ public class GeneralEntityDetailsPanel extends JPanel {
         userStoryDetailsPanel.setBlockedReasonDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_BLOCKED_REASON)));
         userStoryDetailsPanel.setReleaseDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_RELEASE)));
         userStoryDetailsPanel.setCreationTimeDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_CREATION_TIME)));
+    }
+
+    private JXPanel updateUiWithUserStoryDetails(EntityModel entityModel) {
+        UserStoryDetailsPanel userStoryDetailsPanel = new UserStoryDetailsPanel();
+        updateUiWithStoryDetails(userStoryDetailsPanel, entityModel);
+        userStoryDetailsPanel.setLastRunsDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_LAST_RUNS)));
         return userStoryDetailsPanel;
+    }
+
+    private JXPanel updateUiWithQualityStoryDetails(EntityModel entityModel) {
+        QualityStoryDetailsPanel qualityStoryDetailsPanel = new QualityStoryDetailsPanel();
+        updateUiWithStoryDetails(qualityStoryDetailsPanel, entityModel);
+        qualityStoryDetailsPanel.setQualityStoryTypeDetails(
+                getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_QUALITY_STORY_TYPE)));
+        return qualityStoryDetailsPanel;
     }
 
     public void setPossiblePhasesForEntity(Collection<EntityModel> phasesList) {

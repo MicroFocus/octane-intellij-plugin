@@ -33,8 +33,6 @@ public enum Entity {
 
     COMMENT("comments", "comment"),
 
-    RUN("runs", "run"),
-
     WORKSPACE_USER("workspace_users", "workspace_user");
 
 
