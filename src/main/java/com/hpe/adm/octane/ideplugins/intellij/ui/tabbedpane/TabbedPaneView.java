@@ -185,6 +185,14 @@ public class TabbedPaneView implements View {
         return false;
     }
 
+    public void setSearchHistory(List<String> searchHistory) {
+        editorTabs.setSearchHistory(searchHistory);
+    }
+
+    public List<String> getSearchHistory() {
+        return editorTabs.getSearchHistory();
+    }
+
     public boolean hasTabWithTabInfo(TabInfo tabInfo){
         return editorTabs.getTabs().contains(tabInfo);
     }

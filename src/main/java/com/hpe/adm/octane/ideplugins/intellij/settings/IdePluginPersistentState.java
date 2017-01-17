@@ -29,7 +29,8 @@ public class IdePluginPersistentState implements PersistentStateComponent<Elemen
     public enum Key {
         ACTIVE_WORK_ITEM,
         OPEN_TABS,
-        SELECTED_TAB
+        SELECTED_TAB,
+        SEARCH_HISTORY
     }
 
     public void saveState(Key key, JSONObject value){

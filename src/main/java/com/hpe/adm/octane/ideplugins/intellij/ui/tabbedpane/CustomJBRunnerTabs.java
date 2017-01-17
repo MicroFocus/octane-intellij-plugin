@@ -18,8 +18,10 @@ import javax.swing.event.DocumentEvent;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
 
 class CustomJBRunnerTabs extends JBRunnerTabs {
 
@@ -94,6 +96,17 @@ class CustomJBRunnerTabs extends JBRunnerTabs {
 
     public void setSearchRequestHandler(SearchRequestHandler searchRequestHandler){
         this.searchRequestHandler = searchRequestHandler;
+    }
+
+    public void setSearchHistory(List<String> searchHistory){
+        searchFields.values().forEach(searchTextField -> searchTextField.setHistory(searchHistory));
+    }
+
+    public List<String> getSearchHistory(){
+        if(searchFields.values().size() > 0){
+            return searchFields.values().iterator().next().getHistory();
+        }
+        return Collections.emptyList();
     }
 
 }
