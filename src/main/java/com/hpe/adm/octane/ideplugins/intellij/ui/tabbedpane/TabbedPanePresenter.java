@@ -26,6 +26,8 @@ import org.json.JSONObject;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
 
@@ -88,6 +90,8 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
         }
 
         entitySearchResultPresenter.globalSearch(searchQuery);
+
+        saveSearchHistory();
     }
 
     public void openDetailTab(PartialEntity tabKey) {
@@ -169,6 +173,7 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
         //Persistence
         loadDetailTabsFromPersistentState();
         selectSelectedTabToFromPersistentState();
+        loadSearchHistory();
     }
 
     private void initHandlers(){
@@ -279,6 +284,29 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
         if(detailTabInfo.containsKey(selectedTabKey)){
             selectDetailTab(selectedTabKey);
         }
+    }
+
+    private void saveSearchHistory(){
+        List<String> searchHistory = tabbedPaneView.getSearchHistory();
+        JSONArray jsonArray = new JSONArray();
+        searchHistory.forEach(searchQuery -> jsonArray.put(searchQuery));
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(IdePluginPersistentState.Key.SEARCH_HISTORY.name(), jsonArray);
+
+        idePluginPersistentState.saveState(
+                IdePluginPersistentState.Key.SEARCH_HISTORY,
+                jsonObject);
+    }
+
+    private void loadSearchHistory(){
+        JSONObject jsonObject = idePluginPersistentState.loadState(IdePluginPersistentState.Key.SEARCH_HISTORY);
+        if(jsonObject == null) return;
+        JSONArray jsonArray = jsonObject.getJSONArray(IdePluginPersistentState.Key.SEARCH_HISTORY.name());
+        List<String> searchHistory = new ArrayList<>();
+        for(int i = 0; i<jsonArray.length(); i++){
+            searchHistory.add(jsonArray.getString(i));
+        }
+        tabbedPaneView.setSearchHistory(searchHistory);
     }
 
 }
