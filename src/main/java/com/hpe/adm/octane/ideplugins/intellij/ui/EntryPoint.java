@@ -1,7 +1,6 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui;
 
 import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
-import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.components.WelcomeViewComponent;
 import com.hpe.adm.octane.ideplugins.intellij.ui.main.MainPresenter;
 import com.hpe.adm.octane.ideplugins.services.TestService;
@@ -44,8 +43,6 @@ public class EntryPoint implements ToolWindowFactory {
         // all members of below classes will have support for field injection and constructor injection
         final ConnectionSettingsProvider connectionSettingsProvider = pluginModule.getInstance(ConnectionSettingsProvider.class);
 
-        ToolbarActiveItem.getInstance().setPersistentState(pluginModule.getInstance(IdePluginPersistentState.class));
-
         Runnable mainToolWindowContentControl = () -> {
             try{
 
@@ -70,7 +67,7 @@ public class EntryPoint implements ToolWindowFactory {
                 setContent(toolWindow, mainPresenter.getView(), workspaceDisplayName);
             } catch (Exception ex){
 
-                ToolbarActiveItem.getInstance().update(null);
+                pluginModule.getInstance(ToolbarActiveItem.class).update(null);
 
                 WelcomeViewComponent welcomeViewComponent;
 

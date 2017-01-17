@@ -59,6 +59,9 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView>{
     @Inject
     private DownloadScriptService scriptService;
 
+    @Inject
+    private ToolbarActiveItem toolbarActiveItem;
+
     public EntityTreeTablePresenter(){
     }
 
@@ -83,7 +86,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView>{
 
                 entityTreeTableView.setTreeModel(new EntityTreeModel(myWork));
                 entityTreeTableView.expandAllNodes();
-                ToolbarActiveItem.getInstance().update(myWork);
+                toolbarActiveItem.update(myWork);
             }
 
             public void onError(@NotNull Exception ex) {
@@ -179,11 +182,11 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView>{
                     public void mousePressed(MouseEvent e) {
                         super.mousePressed(e);
                         if (isActivated) {
-                            ToolbarActiveItem.getInstance().hideActiveItem();
+                            toolbarActiveItem.hideActiveItem();
                             persistentState.clearState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM);
                         } else {
                             setActiveItemFromPersistentState(selectedItem);
-                            ToolbarActiveItem.getInstance().changeItem();
+                            toolbarActiveItem.changeItem();
                         }
                     }
                 });

@@ -11,6 +11,7 @@ import com.hpe.adm.nga.sdk.Octane;
 import com.hpe.adm.nga.sdk.authorisation.UserAuthorisation;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePersistentConnectionSettingsProvider;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
+import com.hpe.adm.octane.ideplugins.intellij.ui.ToolbarActiveItem;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.EntityDetailPresenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.EntityDetailView;
 import com.hpe.adm.octane.ideplugins.intellij.ui.main.MainPresenter;
@@ -93,6 +94,8 @@ public class PluginModule extends AbstractModule {
 
     @Override
     protected void configure() {
+
+        bind(ToolbarActiveItem.class);
 
         bind(Application.class).toInstance(ApplicationManager.getApplication());
         bind(NotificationUtil.class);
