@@ -1,5 +1,6 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -20,6 +21,7 @@ public class CommentsDetailsPanel extends JXPanel {
 	private JXPanel commentListPanel;
 
 	public CommentsDetailsPanel() {
+//		setMinimumSize(new Dimension(300, 50));
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0};
 		gridBagLayout.rowHeights = new int[]{0, 0, 0};

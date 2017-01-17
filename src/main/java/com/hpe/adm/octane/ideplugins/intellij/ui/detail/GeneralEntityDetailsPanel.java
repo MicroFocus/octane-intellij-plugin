@@ -20,6 +20,8 @@ import javax.swing.border.MatteBorder;
 import javax.swing.border.TitledBorder;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Collection;
 
 import static com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil.getUiDataFromModel;
@@ -56,7 +58,7 @@ public class GeneralEntityDetailsPanel extends JPanel {
 		gbl_rootPanel.columnWidths = new int[] { 0, 0 };
 		gbl_rootPanel.rowHeights = new int[] { 0, 0, 0, 0, 0 };
 		gbl_rootPanel.columnWeights = new double[] { 1.0, Double.MIN_VALUE };
-		gbl_rootPanel.rowWeights = new double[] { 0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE };
+		gbl_rootPanel.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
 		rootPanel.setLayout(gbl_rootPanel);
 
 		headerPanel = new HeaderPanel();
@@ -109,16 +111,16 @@ public class GeneralEntityDetailsPanel extends JPanel {
 		gbc_descriptionDetails.gridy = 1;
 		descriptionPanel.add(descriptionDetails, gbc_descriptionDetails);
 		
-		JXButton btnComments_1 = new JXButton();
-		GridBagConstraints gbc_btnComments_1 = new GridBagConstraints();
-		gbc_btnComments_1.gridx = 1;
-		gbc_btnComments_1.gridy = 0;
-		descriptionPanel.add(btnComments_1, gbc_btnComments_1);
+		//ENTITY DETAILS AND COMMENTS
+		JXButton toogleComments = new JXButton();
+		GridBagConstraints gbc_toogleComments = new GridBagConstraints();
+		gbc_toogleComments.gridx = 1;
+		gbc_toogleComments.gridy = 0;
+		descriptionPanel.add(toogleComments, gbc_toogleComments);
 
 		entityDetailsPanel = drawSpecificDetailsForEntity(entityModel);
 		entityDetailsPanel.setBorder(null);
 		GridBagConstraints gbc_entityDetailsPanel = new GridBagConstraints();
-		// gbc_entityDetailsPanel.insets = new Insets(0, 0, 5, 0);
 		gbc_entityDetailsPanel.fill = GridBagConstraints.BOTH;
 		gbc_entityDetailsPanel.gridx = 0;
 		gbc_entityDetailsPanel.gridy = 0;
@@ -134,7 +136,7 @@ public class GeneralEntityDetailsPanel extends JPanel {
 		gbl_entityDetailsAndCommentsPanel.columnWidths = new int[] { 0, 0, 0 };
 		gbl_entityDetailsAndCommentsPanel.rowHeights = new int[] { 0, 0 };
 		gbl_entityDetailsAndCommentsPanel.columnWeights = new double[] { 1.0, 0.0, Double.MIN_VALUE };
-		gbl_entityDetailsAndCommentsPanel.rowWeights = new double[] { 1.0, Double.MIN_VALUE };
+		gbl_entityDetailsAndCommentsPanel.rowWeights = new double[] { 0.0, Double.MIN_VALUE };
 		entityDetailsAndCommentsPanel.setLayout(gbl_entityDetailsAndCommentsPanel);
 		entityDetailsAndCommentsPanel.add(entityDetailsPanel, gbc_entityDetailsPanel);
 
@@ -148,20 +150,20 @@ public class GeneralEntityDetailsPanel extends JPanel {
 		for(int i=0;i<6;i++){
 			commentsList.addNewComment("andras toth"+i, "today", "bla bla abla bal bal");
 		}
-		commetsDetails.add("Center", commentsList);
-
-		JXPanel commentsPanel = new JXPanel();
+		commetsDetails.getContentPane().add(commentsList);
+		commetsDetails.setMinimumSize(new Dimension((int) (rootPanel.getSize().getWidth()/4), (int) rootPanel.getSize().getHeight()));
+		commetsDetails.setSize(new Dimension((int) (rootPanel.getSize().getWidth()/4), (int) rootPanel.getSize().getHeight()));
+		
 		GridBagConstraints gbc_commentsPanel = new GridBagConstraints();
 		gbc_commentsPanel.fill = GridBagConstraints.BOTH;
 		gbc_commentsPanel.gridx = 1;
 		gbc_commentsPanel.gridy = 0;
-		entityDetailsAndCommentsPanel.add(commentsPanel, gbc_commentsPanel);
-		commentsPanel.setLayout(new BorderLayout(0, 0));
-		commentsPanel.add(commetsDetails, BorderLayout.CENTER);
-		btnComments_1.setAction(commetsDetails.getActionMap().get(JXCollapsiblePane.TOGGLE_ACTION));
-		btnComments_1.setText("Comments");
+		entityDetailsAndCommentsPanel.add(commetsDetails, gbc_commentsPanel);
 		
-		//FOOTER
+		toogleComments.setAction(commetsDetails.getActionMap().get(JXCollapsiblePane.TOGGLE_ACTION));
+		toogleComments.setText("Comments");
+		
+		//ATACHEMENTS PANEL
 		JXPanel atachementsPanel = new JXPanel();
 		atachementsPanel.setBorder(new MatteBorder(1, 0, 0, 0, JBColor.border()));
 		GridBagConstraints gbc_atachementsPanel = new GridBagConstraints();
@@ -476,6 +478,9 @@ public class GeneralEntityDetailsPanel extends JPanel {
 
 	public void setPossiblePhasesForEntity(Collection<EntityModel> phasesList) {
 		headerPanel.setPossiblePhasesForEntity(phasesList);
+	}
+	public void addNewComment(){
+		
 	}
 
 }
