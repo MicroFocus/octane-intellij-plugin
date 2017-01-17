@@ -47,6 +47,7 @@ public class EntityIconFactory {
     
     private void init(){
         iconDetailMap.put(Entity.USER_STORY, new IconDetail(new Color(218, 199, 120), "US"));
+        iconDetailMap.put(Entity.QUALITY_STORY, new IconDetail(new Color(95, 112, 118), "QS"));
         iconDetailMap.put(Entity.DEFECT, new IconDetail(new Color(190,102,92), "D"));
         iconDetailMap.put(Entity.EPIC, new IconDetail(new Color(202, 170, 209), "E"));
         iconDetailMap.put(Entity.FEATURE, new IconDetail(new Color(226,132,90), "F"));

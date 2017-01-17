@@ -38,6 +38,14 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
         entityFields.get(Entity.USER_STORY).add(FIELD_STORYPOINTS);
         Collections.addAll(entityFields.get(Entity.USER_STORY), progressFields);
 
+        entityFields.put(Entity.QUALITY_STORY, new HashSet<>());
+        Collections.addAll(entityFields.get(Entity.QUALITY_STORY), commonFields);
+        entityFields.get(Entity.QUALITY_STORY).add("subtype");
+        entityFields.get(Entity.QUALITY_STORY).add(FIELD_RELEASE);
+        entityFields.get(Entity.QUALITY_STORY).add(FIELD_AUTHOR);
+        entityFields.get(Entity.QUALITY_STORY).add(FIELD_STORYPOINTS);
+        Collections.addAll(entityFields.get(Entity.QUALITY_STORY), progressFields);
+
         //TASK
         entityFields.put(Entity.TASK, new HashSet<>());
         Collections.addAll(entityFields.get(Entity.TASK), commonFields);
@@ -185,7 +193,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
                 rowPanel.addDetailsTop("Detected by: " + UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_DETECTEDBY)));
                 rowPanel.addDetailsBottom("Severity: " + UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_SEVERITY)));
                 addProgress(rowPanel, entityModel);
-            } else if (Entity.USER_STORY.equals(entityType)) {
+            } else if (Entity.USER_STORY.equals(entityType) || Entity.QUALITY_STORY.equals(entityType)) {
                 rowPanel.setEntityDetails(
                         UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_RELEASE)),
                         "No release");

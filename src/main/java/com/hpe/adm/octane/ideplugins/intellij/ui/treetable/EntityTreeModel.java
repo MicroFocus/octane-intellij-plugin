@@ -50,7 +50,8 @@ public class EntityTreeModel extends AbstractTreeModel {
 
     public static List<EntityCategory> getDefaultEntityCategories(){
         List<EntityCategory> entityCategories = new ArrayList<>();
-        entityCategories.add(new EntityCategory("Backlog", Entity.USER_STORY, Entity.DEFECT, Entity.EPIC, Entity.FEATURE));
+        entityCategories.add(new EntityCategory("Backlog", Entity.USER_STORY, Entity.DEFECT, Entity.QUALITY_STORY,
+                Entity.EPIC, Entity.FEATURE));
         entityCategories.add(new EntityCategory("Tasks", Entity.TASK));
         entityCategories.add(new EntityCategory("Tests", Entity.GHERKIN_TEST, Entity.MANUAL_TEST));
         entityCategories.add(new EntityCategory("Mention in comments", Entity.COMMENT));
