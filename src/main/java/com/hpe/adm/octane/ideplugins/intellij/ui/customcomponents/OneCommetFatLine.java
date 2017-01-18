@@ -3,24 +3,30 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents;
 import javax.swing.JPanel;
 import java.awt.GridBagLayout;
 import org.jdesktop.swingx.JXLabel;
+import org.jdesktop.swingx.JXTextArea;
+
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import org.jdesktop.swingx.JXTextField;
+
+import com.intellij.ui.JBColor;
+
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 import java.awt.Color;
+import java.awt.Font;
 
 public class OneCommetFatLine extends JPanel {
 	private JXLabel userNameLabel;
 	private JXLabel postDateLabel;
-	private JXTextField textField;
+	private JXTextArea textField;
 
 	public OneCommetFatLine() {
 		this("", "", "");
 	}
 
 	public OneCommetFatLine(String userName, String commetPostDate, String comment) {
-		setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+		setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[] { 0, 0, 0 };
 		gridBagLayout.rowHeights = new int[] { 0, 0, 0 };
@@ -46,10 +52,16 @@ public class OneCommetFatLine extends JPanel {
 		gbc_postDateLabel.gridy = 0;
 		add(postDateLabel, gbc_postDateLabel);
 
-		textField = new JXTextField();
+		textField = new JXTextArea();
+		textField.setBackground(JBColor.background());
 		textField.setText(comment);
-		textField.setBorder(null);
+		textField.setLineWrap(true);
 		textField.setEditable(false);
+		textField.setOpaque(false);
+		textField.setEditable(false);
+		textField.setBorder(null);
+		textField.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		
 		GridBagConstraints gbc_textField = new GridBagConstraints();
 		gbc_textField.gridwidth = 2;
 		gbc_textField.insets = new Insets(0, 0, 0, 5);

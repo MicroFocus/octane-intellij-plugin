@@ -7,6 +7,7 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
 import com.hpe.adm.octane.ideplugins.intellij.util.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
+import com.hpe.adm.octane.ideplugins.services.CommentService;
 import com.hpe.adm.octane.ideplugins.services.EntityService;
 import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
@@ -25,6 +26,8 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
     private EntityDetailView entityDetailView;
     @Inject
     private EntityService entityService;
+    @Inject
+    private CommentService commentService;
     private Entity entityType;
     private Long entityId;
 
@@ -68,7 +71,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                             entityDetailView.removeSaveSelectedPhaseButton();
                             entityDetailView.setPhaseInHeader(false);
                         }
-
+                        setComments(entityModel);
                         //Title goes to browser
                         entityDetailView.setEntityNameClickHandler(() -> entityService.openInBrowser(entityModel));
                     }
@@ -94,6 +97,14 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                 entityDetailView.setPossiblePhasesForEntity(possibleTransitions);
             }
         }, null, "Failed to get possible transitions", "fetching possible transitions");
+    }
+    private void setComments(EntityModel entityModel){
+        Collection<EntityModel> result = new HashSet<>();
+        RestUtil.runInBackground(() -> {
+        return commentService.getComments(entityModel);
+        },(comments)->{
+            entityDetailView.setComments(comments);
+        },null, "Failed to get possible comments", "fetching comments");
     }
 
     private final class EntityRefreshAction extends AnAction {

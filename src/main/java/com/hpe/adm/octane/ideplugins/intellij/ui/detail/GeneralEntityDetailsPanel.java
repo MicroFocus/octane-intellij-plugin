@@ -20,13 +20,12 @@ import javax.swing.border.MatteBorder;
 import javax.swing.border.TitledBorder;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Collection;
+import java.util.Date;
 
 import static com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil.getUiDataFromModel;
 import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.*;
-import org.jdesktop.swingx.JXTaskPane;
+
 import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.JXCollapsiblePane;
 
@@ -35,6 +34,7 @@ public class GeneralEntityDetailsPanel extends JPanel {
 	private JXTextArea descriptionDetails;
 	private boolean hasAttachment = false;
 	private HeaderPanel headerPanel;
+	private CommentsConversationPanel commentsList;
 
 	public GeneralEntityDetailsPanel(EntityModel entityModel) {
 		setBorder(null);
@@ -99,19 +99,19 @@ public class GeneralEntityDetailsPanel extends JPanel {
 		descriptionDetails.setLineWrap(true);
 		descriptionDetails.setEditable(false);
 		descriptionDetails.setOpaque(false);
-		descriptionDetails.setLineWrap(true);
 		descriptionDetails.setEditable(false);
-		descriptionDetails.setBorder(null);
+		descriptionDetails.setBorder(new EmptyBorder(0, 0, 0, 5));
 		descriptionDetails.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		descriptionDetails.setBackground(new Color(0, 0, 0, 0));
+		descriptionDetails.setBackground(JBColor.background());
+
 		GridBagConstraints gbc_descriptionDetails = new GridBagConstraints();
 		gbc_descriptionDetails.insets = new Insets(0, 0, 5, 0);
 		gbc_descriptionDetails.fill = GridBagConstraints.BOTH;
 		gbc_descriptionDetails.gridx = 0;
 		gbc_descriptionDetails.gridy = 1;
 		descriptionPanel.add(descriptionDetails, gbc_descriptionDetails);
-		
-		//ENTITY DETAILS AND COMMENTS
+
+		// ENTITY DETAILS AND COMMENTS
 		JXButton toogleComments = new JXButton();
 		GridBagConstraints gbc_toogleComments = new GridBagConstraints();
 		gbc_toogleComments.gridx = 1;
@@ -119,7 +119,7 @@ public class GeneralEntityDetailsPanel extends JPanel {
 		descriptionPanel.add(toogleComments, gbc_toogleComments);
 
 		entityDetailsPanel = drawSpecificDetailsForEntity(entityModel);
-		entityDetailsPanel.setBorder(null);
+		entityDetailsPanel.setBorder(new EmptyBorder(0,0,0,10));
 		GridBagConstraints gbc_entityDetailsPanel = new GridBagConstraints();
 		gbc_entityDetailsPanel.fill = GridBagConstraints.BOTH;
 		gbc_entityDetailsPanel.gridx = 0;
@@ -144,68 +144,28 @@ public class GeneralEntityDetailsPanel extends JPanel {
 		commetsDetails.setCollapsed(true);
 		commetsDetails.setLayout(new BorderLayout());
 
-		CommentsDetailsPanel commentsList = new CommentsDetailsPanel();
-		commentsList.setMinimumSize(new Dimension((int) (this.getSize().getHeight()/4), (int) this.getSize().getHeight()));
+		commentsList = new CommentsConversationPanel();
+		commentsList.setPreferredSize(new Dimension(400,200));
+		commentsList.setMaximumSize(new Dimension(400,200));
 		commentsList.setBorder(new TitledBorder("Comments"));
-		for(int i=0;i<6;i++){
-			commentsList.addNewComment("andras toth"+i, "today", "bla bla abla bal bal");
-		}
+
 		commetsDetails.getContentPane().add(commentsList);
-		commetsDetails.setMinimumSize(new Dimension((int) (rootPanel.getSize().getWidth()/4), (int) rootPanel.getSize().getHeight()));
-		commetsDetails.setSize(new Dimension((int) (rootPanel.getSize().getWidth()/4), (int) rootPanel.getSize().getHeight()));
-		
+
 		GridBagConstraints gbc_commentsPanel = new GridBagConstraints();
 		gbc_commentsPanel.fill = GridBagConstraints.BOTH;
 		gbc_commentsPanel.gridx = 1;
 		gbc_commentsPanel.gridy = 0;
 		entityDetailsAndCommentsPanel.add(commetsDetails, gbc_commentsPanel);
-		
+
 		toogleComments.setAction(commetsDetails.getActionMap().get(JXCollapsiblePane.TOGGLE_ACTION));
 		toogleComments.setText("Comments");
-		
-		//ATACHEMENTS PANEL
-		JXPanel atachementsPanel = new JXPanel();
-		atachementsPanel.setBorder(new MatteBorder(1, 0, 0, 0, JBColor.border()));
-		GridBagConstraints gbc_atachementsPanel = new GridBagConstraints();
-		gbc_atachementsPanel.fill = GridBagConstraints.BOTH;
-		gbc_atachementsPanel.gridx = 0;
-		gbc_atachementsPanel.gridy = 3;
-		rootPanel.add(atachementsPanel, gbc_atachementsPanel);
-		GridBagLayout gbl_atachementsPanel = new GridBagLayout();
-		gbl_atachementsPanel.columnWidths = new int[] { 0, 0, 0 };
-		gbl_atachementsPanel.rowHeights = new int[] { 0, 0 };
-		gbl_atachementsPanel.columnWeights = new double[] { 0.0, 1.0, Double.MIN_VALUE };
-		gbl_atachementsPanel.rowWeights = new double[] { 0.0, Double.MIN_VALUE };
-		atachementsPanel.setLayout(gbl_atachementsPanel);
-
-		JXLabel lblAttachments = new JXLabel();
-		lblAttachments.setText("Attachments");
-		lblAttachments.setFont(new Font("Tahoma", Font.BOLD, 11));
-		lblAttachments.setBorder(new EmptyBorder(5, 0, 0, 10));
-		GridBagConstraints gbc_lblAttachments = new GridBagConstraints();
-		gbc_lblAttachments.anchor = GridBagConstraints.WEST;
-		gbc_lblAttachments.insets = new Insets(0, 0, 0, 5);
-		gbc_lblAttachments.gridx = 0;
-		gbc_lblAttachments.gridy = 0;
-		atachementsPanel.add(lblAttachments, gbc_lblAttachments);
-
-		JXLabel listOfAttachments = new JXLabel();
-		listOfAttachments.setText("No attachments");
-		listOfAttachments.setLineWrap(true);
-		listOfAttachments.setBorder(new EmptyBorder(5, 0, 0, 0));
-		GridBagConstraints gbc_listOfAttachments = new GridBagConstraints();
-		gbc_listOfAttachments.fill = GridBagConstraints.HORIZONTAL;
-		gbc_listOfAttachments.gridx = 1;
-		gbc_listOfAttachments.gridy = 0;
-		atachementsPanel.add(listOfAttachments, gbc_listOfAttachments);
 
 		drawGeneralDetailsForEntity(entityModel);
-		atachementsPanel.setVisible(hasAttachment);
 	}
 
 	private void drawGeneralDetailsForEntity(EntityModel entityModel) {
 		headerPanel.setPhaseDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_PHASE)));
-		this.descriptionDetails.setText(getDescriptionForEntityModel(entityModel));
+		this.descriptionDetails.setText(parseHtml(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_DESCRIPTION))));
 	}
 
 	public void setEntityNameClickHandler(Runnable runnable) {
@@ -232,9 +192,8 @@ public class GeneralEntityDetailsPanel extends JPanel {
 		return headerPanel.getSelectedTransition();
 	}
 
-	private String getDescriptionForEntityModel(EntityModel entityModel) {
-		Document descriptionDoc = Jsoup
-				.parse(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_DESCRIPTION)));
+	private String parseHtml(String html) {
+		Document descriptionDoc = Jsoup.parse(html);
 		descriptionDoc.outputSettings().escapeMode(Entities.EscapeMode.base);
 		descriptionDoc.outputSettings().charset(CharEncoding.US_ASCII);
 		descriptionDoc.outputSettings().prettyPrint(false);
@@ -479,8 +438,17 @@ public class GeneralEntityDetailsPanel extends JPanel {
 	public void setPossiblePhasesForEntity(Collection<EntityModel> phasesList) {
 		headerPanel.setPossiblePhasesForEntity(phasesList);
 	}
-	public void addNewComment(){
-		
+
+	public void addNewComment() {
+
 	}
 
+	public void setComments(Collection<EntityModel> comments) {
+		for(EntityModel comment:comments){
+			String commentsPostTime = getUiDataFromModel(comment.getValue(DetailsViewDefaultFields.FIELD_CREATION_TIME));
+			String userName = getUiDataFromModel(comment.getValue(DetailsViewDefaultFields.FIELD_AUTHOR),"full_name");
+			String commentLine = parseHtml(getUiDataFromModel(comment.getValue(DetailsViewDefaultFields.FIELD_COMMENT_TEXT)));
+			commentsList.addExistingComment(commentsPostTime,userName,commentLine);
+		}
+	}
 }

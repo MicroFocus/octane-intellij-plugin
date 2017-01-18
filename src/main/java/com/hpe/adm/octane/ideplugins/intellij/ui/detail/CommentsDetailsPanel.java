@@ -16,12 +16,15 @@ import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.JXTextArea;
 
 import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.OneCommetFatLine;
+import javax.swing.JScrollPane;
+import org.jdesktop.swingx.JXLabel;
+import java.awt.BorderLayout;
 
 public class CommentsDetailsPanel extends JXPanel {
 	private JXPanel commentListPanel;
+	private GridBagConstraints gbc_oneColumn;
 
 	public CommentsDetailsPanel() {
-//		setMinimumSize(new Dimension(300, 50));
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0};
 		gridBagLayout.rowHeights = new int[]{0, 0, 0};
@@ -29,17 +32,25 @@ public class CommentsDetailsPanel extends JXPanel {
 		gridBagLayout.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
 		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBorder(null);
+		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
+		gbc_scrollPane.fill = GridBagConstraints.BOTH;
+		gbc_scrollPane.gridx = 0;
+		gbc_scrollPane.gridy = 1;
+		add(scrollPane, gbc_scrollPane);
+		
 		commentListPanel = new JXPanel();
-		GridBagConstraints gbc_commentListPanel = new GridBagConstraints();
-		gbc_commentListPanel.insets = new Insets(0, 0, 5, 0);
-		gbc_commentListPanel.fill = GridBagConstraints.BOTH;
-		gbc_commentListPanel.gridx = 0;
-		gbc_commentListPanel.gridy = 1;
-		commentListPanel.setLayout(new BoxLayout(commentListPanel, BoxLayout.Y_AXIS)); 
-		add(commentListPanel, gbc_commentListPanel);
+		scrollPane.setViewportView(commentListPanel);
+		commentListPanel.setLayout(new BorderLayout(0, 0));
+		
+		gbc_oneColumn = new GridBagConstraints();
+		gbc_oneColumn.gridx = 0;
+		gbc_oneColumn.gridy = 0;
 		
 		JXPanel addCommentsPanel = new JXPanel();
 		GridBagConstraints gbc_addCommentsPanel = new GridBagConstraints();
+		gbc_addCommentsPanel.insets = new Insets(0, 0, 5, 0);
 		gbc_addCommentsPanel.fill = GridBagConstraints.BOTH;
 		gbc_addCommentsPanel.gridx = 0;
 		gbc_addCommentsPanel.gridy = 0;
@@ -52,15 +63,6 @@ public class CommentsDetailsPanel extends JXPanel {
 		addCommentsPanel.setLayout(gbl_addCommentsPanel);
 		
 		JXTextArea txtrAddComment = new JXTextArea();
-		txtrAddComment.addFocusListener(new FocusListener() {
-		    public void focusGained(FocusEvent e) {
-		    	txtrAddComment.setText("");
-		    }
-
-		    public void focusLost(FocusEvent e) {
-		        txtrAddComment.setText("Add comment");
-		    }
-		});
 		
 		GridBagConstraints gbc_txtrAddComment = new GridBagConstraints();
 		gbc_txtrAddComment.insets = new Insets(0, 0, 0, 5);
@@ -85,6 +87,7 @@ public class CommentsDetailsPanel extends JXPanel {
 	}
 	public void addNewComment(String userName, String commetPostDate, String comment){
 		commentListPanel.add(new OneCommetFatLine(userName,commetPostDate,comment));
+//		commentListPanel.add(new OneCommetFatLine(userName,commetPostDate,comment), gbc_oneColumn,0);
 	}
 
 }
