@@ -6,6 +6,7 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.PartialEntity;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.wm.ToolWindowManager;
 import org.json.JSONObject;
 
 import javax.swing.*;
@@ -63,6 +64,7 @@ public class ToolbarActiveItem {
             if(activeItemClickHandlers.containsKey(project)){
                 activeItemClickHandlers.get(project).run();
             }
+            ToolWindowManager.getInstance(project).getToolWindow("ALM Octane").show(() -> {});
         }
     }
 
