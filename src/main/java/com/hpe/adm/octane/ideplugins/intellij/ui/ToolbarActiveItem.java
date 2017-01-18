@@ -101,8 +101,15 @@ public class ToolbarActiveItem {
         activeItemClickHandlers.put(project, runnable);
     }
 
+    private static String limitLength(String text, int maximumLenght) {
+        if (text.length() > maximumLenght) {
+            return text.substring(0, maximumLenght) + "...";
+        }
+        return  text;
+    }
+
     private static ActiveItemAction buildActionForItem(PartialEntity item) {
-        String text = "#" + item.getEntityId() + ": " + item.getEntityName();
+        String text = limitLength("#" + item.getEntityId() + ": " + item.getEntityName(), 30);
 
         ImageIcon itemIcon = null;
         switch (item.getEntityType()) {
@@ -117,7 +124,7 @@ public class ToolbarActiveItem {
                 break;
         }
 
-        ActiveItemAction action = new ActiveItemAction(text, text, itemIcon);
+        ActiveItemAction action = new ActiveItemAction(text, item.getEntityName(), itemIcon);
         ActionManager.getInstance().registerAction("ActiveItemAction" + ActiveItemAction.id, action);
         return action;
     }
