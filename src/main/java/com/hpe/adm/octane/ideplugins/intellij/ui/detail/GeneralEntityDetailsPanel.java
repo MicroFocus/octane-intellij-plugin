@@ -434,10 +434,6 @@ public class GeneralEntityDetailsPanel extends JPanel {
         return qualityStoryDetailsPanel;
     }
 
-    public void setPossiblePhasesForEntity(Collection<EntityModel> phasesList) {
-        headerPanel.setPossiblePhasesForEntity(phasesList);
-    }
-
 	public void addNewComment() {
 
 	}
