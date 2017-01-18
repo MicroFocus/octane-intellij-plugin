@@ -18,8 +18,7 @@ import com.intellij.openapi.util.IconLoader;
 import java.util.Collection;
 import java.util.HashSet;
 
-import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.MANUAL_TEST_RUN;
-import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.TEST_SUITE_RUN;
+import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.*;
 
 public class EntityDetailPresenter implements Presenter<EntityDetailView> {
 
@@ -71,7 +70,11 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                             entityDetailView.removeSaveSelectedPhaseButton();
                             entityDetailView.setPhaseInHeader(false);
                         }
-                        setComments(entityModel);
+                        if(entityType.getSubtypeOf()==WORK_ITEM ||entityType.getSubtypeOf()==TEST) {
+                            setComments(entityModel);
+                        }else{
+                            //remove comments button
+                        }
                         //Title goes to browser
                         entityDetailView.setEntityNameClickHandler(() -> entityService.openInBrowser(entityModel));
                     }

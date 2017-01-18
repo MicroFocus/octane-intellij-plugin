@@ -35,6 +35,7 @@ public class GeneralEntityDetailsPanel extends JPanel {
 	private boolean hasAttachment = false;
 	private HeaderPanel headerPanel;
 	private CommentsConversationPanel commentsList;
+	private JXButton toogleComments;
 
 	public GeneralEntityDetailsPanel(EntityModel entityModel) {
 		setBorder(null);
@@ -112,7 +113,7 @@ public class GeneralEntityDetailsPanel extends JPanel {
 		descriptionPanel.add(descriptionDetails, gbc_descriptionDetails);
 
 		// ENTITY DETAILS AND COMMENTS
-		JXButton toogleComments = new JXButton();
+		toogleComments = new JXButton();
 		GridBagConstraints gbc_toogleComments = new GridBagConstraints();
 		gbc_toogleComments.gridx = 1;
 		gbc_toogleComments.gridy = 0;
