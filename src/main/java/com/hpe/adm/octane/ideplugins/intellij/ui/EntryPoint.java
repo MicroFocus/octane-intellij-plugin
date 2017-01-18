@@ -66,9 +66,6 @@ public class EntryPoint implements ToolWindowFactory {
                 MainPresenter mainPresenter = pluginModule.getInstance(MainPresenter.class);
                 setContent(toolWindow, mainPresenter.getView(), workspaceDisplayName);
             } catch (Exception ex){
-
-                pluginModule.getInstance(ToolbarActiveItem.class).update(null);
-
                 WelcomeViewComponent welcomeViewComponent;
 
                 // If there were previously configured connection settings
