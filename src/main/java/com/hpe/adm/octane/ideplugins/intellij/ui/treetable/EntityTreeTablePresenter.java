@@ -6,7 +6,6 @@ import com.hpe.adm.nga.sdk.exception.OctaneException;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
-import com.hpe.adm.octane.ideplugins.intellij.ui.ToolbarActiveItem;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.PartialEntity;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
 import com.hpe.adm.octane.ideplugins.intellij.util.Constants;
@@ -43,6 +42,8 @@ import java.awt.event.MouseEvent;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil.getUiDataFromModel;
 
@@ -83,7 +84,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView>{
 
                 entityTreeTableView.setTreeModel(new EntityTreeModel(myWork));
                 entityTreeTableView.expandAllNodes();
-                ToolbarActiveItem.getInstance().update(myWork);
+                updateActiveItem(myWork);
             }
 
             public void onError(@NotNull Exception ex) {
@@ -100,6 +101,26 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView>{
         };
 
         backgroundTask.queue();
+    }
+
+    /**
+     * Clear active item if it's not in my work
+     */
+    private void updateActiveItem(Collection<EntityModel> myWork){
+        PartialEntity activeItem = getActiveItemFromPersistentState();
+        if (activeItem != null && myWork != null) {
+            List<EntityModel> matchedItems = myWork.stream()
+                    .filter(entityModel -> activeItem.getEntityId() == Long.parseLong(entityModel.getValue("id").getValue().toString()))
+                    .collect(Collectors.toList());
+            if (!matchedItems.isEmpty()) {
+                activeItem.setEntityName(matchedItems.get(0).getValue("name").getValue().toString());
+                persistentState.saveState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM, PartialEntity.toJsonObject(activeItem));
+            } else {
+                persistentState.clearState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM);
+            }
+        } else {
+            persistentState.clearState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM);
+        }
     }
 
     public EntityTreeView getView(){
@@ -179,11 +200,9 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView>{
                     public void mousePressed(MouseEvent e) {
                         super.mousePressed(e);
                         if (isActivated) {
-                            ToolbarActiveItem.getInstance().hideActiveItem();
                             persistentState.clearState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM);
                         } else {
                             setActiveItemFromPersistentState(selectedItem);
-                            ToolbarActiveItem.getInstance().changeItem();
                         }
                     }
                 });
