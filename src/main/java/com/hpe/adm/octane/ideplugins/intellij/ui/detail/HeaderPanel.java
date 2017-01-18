@@ -51,7 +51,6 @@ public class HeaderPanel extends JPanel {
         add(nameAndIconPanel, BorderLayout.WEST);
 
         nameDetails = new JXLabel();
-        nameDetails.setIcon(new ImageIcon(HeaderPanel.class.getResource("/images/defectIcon.png")));
         nameAndIconPanel.add(nameDetails);
 
         entityLinkToBrowser = new JXHyperlink();
