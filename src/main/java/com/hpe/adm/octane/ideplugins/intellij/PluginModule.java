@@ -49,6 +49,9 @@ public class PluginModule extends AbstractModule {
         this.project = project;
         injectorSupplier = Suppliers.memoize(() -> Guice.createInjector(this));
         injectorMap.put(project, injectorSupplier);
+
+        //TODO: this class needs a reason to exist
+        getInstance(ToolbarActiveItem.class);
     }
 
     /**
@@ -95,8 +98,6 @@ public class PluginModule extends AbstractModule {
     @Override
     protected void configure() {
 
-        bind(ToolbarActiveItem.class);
-
         bind(Application.class).toInstance(ApplicationManager.getApplication());
         bind(NotificationUtil.class);
 
@@ -129,7 +130,6 @@ public class PluginModule extends AbstractModule {
         bind(EntityDetailPresenter.class);
 
         bind(EntityTreeTablePresenter.class);
-
     }
 
     private ConnectionSettings previousConnectionSettings = new ConnectionSettings();
