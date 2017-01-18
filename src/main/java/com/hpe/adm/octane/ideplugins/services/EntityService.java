@@ -56,6 +56,7 @@ public class EntityService {
         myWorkFilter.put(DEFECT, createPhaseQuery(DEFECT, "new", "inprogress", "intesting"));
         myWorkFilter.put(USER_STORY, createPhaseQuery(USER_STORY, "new", "inprogress", "intesting"));
         myWorkFilter.put(TASK, createPhaseQuery(TASK, "new", "inprogress"));
+        myWorkFilter.put(QUALITY_STORY, createPhaseQuery(QUALITY_STORY, "new", "inprogress"));
 
         Query.QueryBuilder currentUserQuery = new Query.QueryBuilder("owner", Query::equalTo,
                 new Query.QueryBuilder("id", Query::equalTo, userService.getCurrentUserId()));

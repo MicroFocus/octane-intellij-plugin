@@ -8,6 +8,7 @@ import com.google.inject.Provider;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
+import com.hpe.adm.octane.ideplugins.intellij.ui.ToolbarActiveItem;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.EntityDetailPresenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
 import com.hpe.adm.octane.ideplugins.intellij.ui.searchresult.EntitySearchResultPresenter;
@@ -29,6 +30,8 @@ import org.json.JSONObject;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.*;
 
@@ -39,6 +42,7 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
     static {
         supportedDetailTabs = ImmutableSet.copyOf(new Entity[]{
                 USER_STORY,
+                QUALITY_STORY,
                 DEFECT,
                 TASK,
                 GHERKIN_TEST,
@@ -99,6 +103,8 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
         }
 
         entitySearchResultPresenter.globalSearch(searchQuery);
+
+        saveSearchHistory();
     }
 
     public void openDetailTab(PartialEntity tabKey) {
@@ -177,9 +183,22 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
             }
         });
 
+        //Open and select active item on toolbar action click
+        ToolbarActiveItem.setActiveItemClickHandler(project, ()->{
+            JSONObject jsonObject = idePluginPersistentState.loadState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM);
+            if(jsonObject != null){
+                PartialEntity activeItem = PartialEntity.fromJsonObject(jsonObject);
+                if(!isDetailTabAlreadyOpen(activeItem)){
+                    openDetailTab(activeItem.getEntityType(), activeItem.getEntityId(), activeItem.getEntityName());
+                }
+                selectDetailTab(activeItem);
+            }
+        });
+
         //Persistence
         loadDetailTabsFromPersistentState();
         selectSelectedTabToFromPersistentState();
+        loadSearchHistory();
     }
 
     private void initHandlers(){
@@ -300,6 +319,29 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
         if(detailTabInfo.containsKey(selectedTabKey)){
             selectDetailTab(selectedTabKey);
         }
+    }
+
+    private void saveSearchHistory(){
+        List<String> searchHistory = tabbedPaneView.getSearchHistory();
+        JSONArray jsonArray = new JSONArray();
+        searchHistory.forEach(searchQuery -> jsonArray.put(searchQuery));
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(IdePluginPersistentState.Key.SEARCH_HISTORY.name(), jsonArray);
+
+        idePluginPersistentState.saveState(
+                IdePluginPersistentState.Key.SEARCH_HISTORY,
+                jsonObject);
+    }
+
+    private void loadSearchHistory(){
+        JSONObject jsonObject = idePluginPersistentState.loadState(IdePluginPersistentState.Key.SEARCH_HISTORY);
+        if(jsonObject == null) return;
+        JSONArray jsonArray = jsonObject.getJSONArray(IdePluginPersistentState.Key.SEARCH_HISTORY.name());
+        List<String> searchHistory = new ArrayList<>();
+        for(int i = 0; i<jsonArray.length(); i++){
+            searchHistory.add(jsonArray.getString(i));
+        }
+        tabbedPaneView.setSearchHistory(searchHistory);
     }
 
 }

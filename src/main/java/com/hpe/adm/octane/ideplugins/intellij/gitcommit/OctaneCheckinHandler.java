@@ -45,10 +45,16 @@ public class OctaneCheckinHandler extends CheckinHandler {
         Entity type = activatedEntity.getEntityType();
 
         if (type != null) {
-            if (type == Entity.USER_STORY) {
-                messageBuilder.append("story #");
-            } else if (type == Entity.DEFECT) {
-                messageBuilder.append("defect #");
+            switch (type) {
+                case USER_STORY:
+                    messageBuilder.append("story #");
+                    break;
+                case QUALITY_STORY:
+                    messageBuilder.append("quality story #");
+                    break;
+                case DEFECT:
+                    messageBuilder.append("defect #");
+                    break;
             }
         } else {
             return null;

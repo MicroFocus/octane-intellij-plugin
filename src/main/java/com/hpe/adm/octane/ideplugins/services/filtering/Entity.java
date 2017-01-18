@@ -14,6 +14,7 @@ public enum Entity {
 
     WORK_ITEM("work_items", "work_item"),
     USER_STORY(Entity.WORK_ITEM, "story"),
+    QUALITY_STORY(Entity.WORK_ITEM, "quality_story"),
     DEFECT(Entity.WORK_ITEM, "defect"),
     WORK_ITEM_ROOT(Entity.WORK_ITEM, "work_item_root"),
     EPIC(Entity.WORK_ITEM, "epic"),
@@ -31,8 +32,6 @@ public enum Entity {
     TEST_SUITE_RUN(TEST_RUN,"run_suite"),
 
     COMMENT("comments", "comment"),
-
-    RUN("runs", "run"),
 
     WORKSPACE_USER("workspace_users", "workspace_user");
 

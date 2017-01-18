@@ -1,68 +1,94 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui;
 
-import com.hpe.adm.nga.sdk.model.EntityModel;
+import com.google.inject.Inject;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.PartialEntity;
-import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.wm.ToolWindow;
+import com.intellij.openapi.wm.ToolWindowManager;
 import org.json.JSONObject;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ToolbarActiveItem {
 
     private static EntityIconFactory entityIconFactory = new EntityIconFactory(20, 20, 10, Color.WHITE);
-
-    private static ToolbarActiveItem instance;
-
-    private AnAction activeItemAction;
-
-    private DefaultActionGroup mainToolbarGroup;
+    private static Map<Project, Runnable> activeItemClickHandlers = new HashMap<>();
+    private ActiveItemAction activeItemAction;
 
     private IdePluginPersistentState persistentState;
+    private Project project;
 
-    private static ImageIcon defectIcon = new ImageIcon(entityIconFactory.getIconAsImage(Entity.DEFECT));
+    private class ActiveItemAction extends AnAction {
 
-    private static ImageIcon userStoryIcon = new ImageIcon(entityIconFactory.getIconAsImage(Entity.USER_STORY));
+        PartialEntity partialEntity;
 
-    public static ToolbarActiveItem getInstance() {
-        if (instance == null)
-            instance = new ToolbarActiveItem();
-        return instance;
-    }
+        public ActiveItemAction(PartialEntity partialEntity) {
+            this.partialEntity = partialEntity;
+        }
 
-    private ToolbarActiveItem() {
+        public void setPartialEntity(PartialEntity partialEntity) {
+            this.partialEntity = partialEntity;
+        }
 
-        mainToolbarGroup = (DefaultActionGroup) ActionManager.getInstance().
-                getAction(IdeActions.GROUP_MAIN_TOOLBAR);
-    }
+        @Override
+        public boolean displayTextInToolbar() {
+            return true;
+        }
 
-    public void update(Collection<EntityModel> myWork) {
-        PartialEntity activeItem = getActiveItemFromPersistentState();
-        if (activeItem != null && myWork != null) {
-            List<EntityModel> matchedItems = myWork.stream()
-                    .filter(entityModel -> activeItem.getEntityId() == Long.parseLong(entityModel.getValue("id").getValue().toString()))
-                    .collect(Collectors.toList());
-            if (!matchedItems.isEmpty()) {
-                activeItem.setEntityName(matchedItems.get(0).getValue("name").getValue().toString());
-                persistentState.saveState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM, PartialEntity.toJsonObject(activeItem));
-                changeItem();
+        @Override
+        public void update(AnActionEvent e) {
+            Project eventProject = e.getDataContext().getData(CommonDataKeys.PROJECT);
+            //Compare update actions source to the DI project
+            if(eventProject!=null && !eventProject.equals(ToolbarActiveItem.this.project)){
+                e.getPresentation().setVisible(false);
             } else {
-                persistentState.clearState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM);
-                hideActiveItem();
+                if(partialEntity!=null) {
+                    e.getPresentation().setVisible(true);
+                    e.getPresentation().setText("#" + partialEntity.getEntityId());
+                    e.getPresentation().setDescription(partialEntity.getEntityName());
+                    e.getPresentation().setIcon(new ImageIcon(entityIconFactory.getIconAsImage(partialEntity.getEntityType())));
+                } else {
+                    e.getPresentation().setVisible(false);
+                }
             }
-        } else {
-            hideActiveItem();
+        }
+
+        @Override
+        public void actionPerformed(AnActionEvent e) {
+            Project project = DataKeys.PROJECT.getData(e.getDataContext());
+            if(activeItemClickHandlers.containsKey(project)){
+                activeItemClickHandlers.get(project).run();
+            }
+            ToolWindow octaneToolWindow = ToolWindowManager.getInstance(project).getToolWindow("ALM Octane");
+            if (!octaneToolWindow.isActive()) {
+                ToolWindowManager.getInstance(project).getToolWindow("ALM Octane").show(() -> {
+                });
+            }
         }
     }
 
-    public void setPersistentState(IdePluginPersistentState persistentState) {
+    @Inject
+    public ToolbarActiveItem(IdePluginPersistentState persistentState, Project project){
         this.persistentState = persistentState;
+        this.project = project;
+
+        activeItemAction = new ActiveItemAction(getActiveItemFromPersistentState());
+
+        persistentState.addStateChangedHandler((key, value) -> {
+            if(key == IdePluginPersistentState.Key.ACTIVE_WORK_ITEM){
+                activeItemAction.setPartialEntity(getActiveItemFromPersistentState());
+            }
+        });
+
+        DefaultActionGroup defaultActionGroup = (DefaultActionGroup) ActionManager.getInstance().getAction(
+                "ToolbarRunGroup");
+        defaultActionGroup.add(activeItemAction, Constraints.FIRST);
     }
 
     private PartialEntity getActiveItemFromPersistentState() {
@@ -74,51 +100,7 @@ public class ToolbarActiveItem {
         }
     }
 
-    private static class ActiveItemAction extends AnAction {
-
-        static int id;
-
-        public ActiveItemAction(String text, String description, Icon icon) {
-            super(text, description, icon);
-            id++;
-        }
-
-        @Override
-        public boolean displayTextInToolbar() {
-            return true;
-        }
-
-        @Override
-        public void actionPerformed(AnActionEvent e) {
-
-        }
-    }
-
-    private static ActiveItemAction buildActionForItem(PartialEntity item) {
-        String text = "#" + item.getEntityId() + ": " + item.getEntityName();
-        ActiveItemAction action = new ActiveItemAction(text, text, item.getEntityType() == Entity.USER_STORY
-                ? userStoryIcon : defectIcon);
-        ActionManager.getInstance().registerAction("ActiveItemAction" + ActiveItemAction.id, action);
-        return action;
-    }
-
-    public void changeItem() {
-        PartialEntity newActiveItem = getActiveItemFromPersistentState();
-        if (newActiveItem != null) {
-            AnAction newAction = buildActionForItem(newActiveItem);
-            if (activeItemAction == null) {
-                mainToolbarGroup.addAction(newAction, Constraints.LAST);
-            } else {
-                mainToolbarGroup.replaceAction(activeItemAction, newAction);
-            }
-            activeItemAction = newAction;
-        }
-    }
-
-    public void hideActiveItem() {
-        if (activeItemAction != null) {
-            mainToolbarGroup.remove(activeItemAction);
-            activeItemAction = null;
-        }
+    public static void setActiveItemClickHandler(Project project, Runnable runnable){
+        activeItemClickHandlers.put(project, runnable);
     }
 }

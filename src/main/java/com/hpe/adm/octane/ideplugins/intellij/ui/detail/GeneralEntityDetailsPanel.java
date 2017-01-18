@@ -201,70 +201,68 @@ public class GeneralEntityDetailsPanel extends JPanel {
 		return (null == descriptionDoc.text()) ? " " : descriptionDoc.text();
 	}
 
-	private JXPanel drawSpecificDetailsForEntity(EntityModel entityModel) {
-		JXPanel ret = null;
-		EntityIconFactory entityIconFactory = new EntityIconFactory(26, 26, 12);
-		switch (Entity.getEntityType(entityModel)) {
-		case DEFECT:
-			headerPanel.setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(DEFECT)));
-			headerPanel.setNameDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_NAME)));
-			hasAttachment = false;
-			ret = updateUiWithDefectDetails(entityModel);
-			break;
-		case GHERKIN_TEST:
-			headerPanel.setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(GHERKIN_TEST)));
-			headerPanel.setNameDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_NAME)));
-			hasAttachment = false;
-			ret = updateUiWithTestsDetails(entityModel, true);
-			break;
-		case MANUAL_TEST:
-			headerPanel.setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(MANUAL_TEST)));
-			headerPanel.setNameDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_NAME)));
-			hasAttachment = false;
-			ret = updateUiWithTestsDetails(entityModel, false);
-			break;
-		case USER_STORY:
-			headerPanel.setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(USER_STORY)));
-			headerPanel.setNameDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_NAME)));
-			hasAttachment = false;
-			ret = updateUiWithUserStoryDetails(entityModel);
-			break;
-		case TASK:
-			headerPanel.setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(TASK)));
-			headerPanel.setNameDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_NAME)));
-			ret = updateUiWithTaskDetails(entityModel);
-			hasAttachment = false;
-			break;
-		case TEST_SUITE_RUN:
-			headerPanel.setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(TEST_SUITE_RUN)));
-			headerPanel.setNameDetails(
-					getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEST_RUN_NAME)));
-			ret = updateUiWithTestSuiteRunDetails(entityModel);
-			hasAttachment = false;
-			break;
-		case MANUAL_TEST_RUN:
-			headerPanel.setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(MANUAL_TEST_RUN)));
-			headerPanel.setNameDetails(
-					getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEST_RUN_NAME)));
-			ret = updateUiWithManualTestRunDetails(entityModel);
-			hasAttachment = false;
-			break;
-		}
-		return ret;
-	}
-
-	private JXPanel updateUiWithTestSuiteRunDetails(EntityModel entityModel) {
-		SuiteTestRunDetailsPanel suiteTestRunDetailsPanel = new SuiteTestRunDetailsPanel();
-		suiteTestRunDetailsPanel.setSuiteTestNameDetails(
-				getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEST_RUN_NAME)));
-		suiteTestRunDetailsPanel.setDefaultRunByDetails(
-				getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEST_RUN_RUN_BY)));
-		suiteTestRunDetailsPanel.setStartedTimeDetails(
-				getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEST_RUN_STARTED_TIME)));
-		suiteTestRunDetailsPanel.setContentDetails(
-				getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEST_RUN_CONTENT)));
-		suiteTestRunDetailsPanel
-				.setReleaseDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_RELEASE)));
+    private JXPanel drawSpecificDetailsForEntity(EntityModel entityModel) {
+        JXPanel ret = null;
+        EntityIconFactory entityIconFactory = new EntityIconFactory(26, 26, 12);
+        switch (Entity.getEntityType(entityModel)) {
+            case DEFECT:
+                headerPanel.setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(DEFECT)));
+                headerPanel.setNameDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_NAME)));
+                hasAttachment = false;
+                ret = updateUiWithDefectDetails(entityModel);
+                break;
+            case GHERKIN_TEST:
+                headerPanel.setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(GHERKIN_TEST)));
+                headerPanel.setNameDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_NAME)));
+                hasAttachment = false;
+                ret = updateUiWithTestsDetails(entityModel, true);
+                break;
+            case MANUAL_TEST:
+                headerPanel.setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(MANUAL_TEST)));
+                headerPanel.setNameDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_NAME)));
+                hasAttachment = false;
+                ret = updateUiWithTestsDetails(entityModel, false);
+                break;
+            case USER_STORY:
+                headerPanel.setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(USER_STORY)));
+                headerPanel.setNameDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_NAME)));
+                hasAttachment = false;
+                ret = updateUiWithUserStoryDetails(entityModel);
+                break;
+            case QUALITY_STORY:
+                headerPanel.setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(QUALITY_STORY)));
+                headerPanel.setNameDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_NAME)));
+                hasAttachment = false;
+                ret = updateUiWithQualityStoryDetails(entityModel);
+                break;
+            case TASK:
+                headerPanel.setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(TASK)));
+                headerPanel.setNameDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_NAME)));
+                ret = updateUiWithTaskDetails(entityModel);
+                hasAttachment = false;
+                break;
+            case TEST_SUITE_RUN:
+                headerPanel.setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(TEST_SUITE_RUN)));
+                headerPanel.setNameDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEST_RUN_NAME)));
+                ret = updateUiWithTestSuiteRunDetails(entityModel);
+                hasAttachment = false;
+                break;
+            case MANUAL_TEST_RUN:
+                headerPanel.setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(MANUAL_TEST_RUN)));
+                headerPanel.setNameDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEST_RUN_NAME)));
+                ret = updateUiWithManualTestRunDetails(entityModel);
+                hasAttachment = false;
+                break;
+        }
+        return ret;
+    }
+    private JXPanel updateUiWithTestSuiteRunDetails(EntityModel entityModel) {
+        SuiteTestRunDetailsPanel suiteTestRunDetailsPanel = new SuiteTestRunDetailsPanel();
+        suiteTestRunDetailsPanel.setSuiteTestNameDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEST_RUN_NAME)));
+        suiteTestRunDetailsPanel.setDefaultRunByDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEST_RUN_RUN_BY)));
+        suiteTestRunDetailsPanel.setStartedTimeDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEST_RUN_STARTED_TIME)));
+        suiteTestRunDetailsPanel.setContentDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEST_RUN_CONTENT)));
+        suiteTestRunDetailsPanel.setReleaseDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_RELEASE)));
 
 		suiteTestRunDetailsPanel.setNativeStatusDetails(
 				getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEST_RUN_NATIVE_STATUS)));
@@ -402,43 +400,43 @@ public class GeneralEntityDetailsPanel extends JPanel {
 		return taskDetailsPanel;
 	}
 
-	private JXPanel updateUiWithUserStoryDetails(EntityModel entityModel) {
-		UserStoryDetailsPanel userStoryDetailsPanel = new UserStoryDetailsPanel();
-		userStoryDetailsPanel
-				.setOwnerDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_OWNER)));
-		userStoryDetailsPanel
-				.setFeatureDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_FEATURE)));
-		userStoryDetailsPanel
-				.setSprintDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_SPRINT)));
-		userStoryDetailsPanel.setStoryPointsDetails(
-				getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_STORYPOINTS)));
-		userStoryDetailsPanel
-				.setBlockedDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_BLOCKED)));
-		userStoryDetailsPanel
-				.setLastRunsDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_LAST_RUNS)));
-		userStoryDetailsPanel.setLastModifiedDetails(
-				getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_LAST_MODIFIED)));
+    private void updateUiWithStoryDetails(StoryDetailsPanel userStoryDetailsPanel, EntityModel entityModel) {
+        userStoryDetailsPanel.setOwnerDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_OWNER)));
+        userStoryDetailsPanel.setFeatureDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_FEATURE)));
+        userStoryDetailsPanel.setSprintDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_SPRINT)));
+        userStoryDetailsPanel.setStoryPointsDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_STORYPOINTS)));
+        userStoryDetailsPanel.setBlockedDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_BLOCKED)));
+        userStoryDetailsPanel.setLastModifiedDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_LAST_MODIFIED)));
+        userStoryDetailsPanel.setTeamDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEAM)));
+        userStoryDetailsPanel.setAuthorDetailsDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_AUTHOR), "full_name"));
+        userStoryDetailsPanel.setAppModuleDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_APPMODULE)));
+        userStoryDetailsPanel.setItemOriginDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_ITEM_ORIGIN)));
+        userStoryDetailsPanel.setBlockedReasonDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_BLOCKED_REASON)));
+        userStoryDetailsPanel.setReleaseDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_RELEASE)));
+        userStoryDetailsPanel.setCreationTimeDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_CREATION_TIME)));
+    }
 
-		userStoryDetailsPanel
-				.setTeamDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEAM)));
-		userStoryDetailsPanel.setAuthorDetailsDetails(
-				getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_AUTHOR), "full_name"));
-		userStoryDetailsPanel.setAppModuleDetails(
-				getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_APPMODULE)));
-		userStoryDetailsPanel.setItemOriginDetails(
-				getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_ITEM_ORIGIN)));
-		userStoryDetailsPanel.setBlockedReasonDetails(
-				getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_BLOCKED_REASON)));
-		userStoryDetailsPanel
-				.setReleaseDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_RELEASE)));
-		userStoryDetailsPanel.setCreationTimeDetails(
-				getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_CREATION_TIME)));
-		return userStoryDetailsPanel;
-	}
+    private JXPanel updateUiWithUserStoryDetails(EntityModel entityModel) {
+        UserStoryDetailsPanel userStoryDetailsPanel = new UserStoryDetailsPanel();
+        updateUiWithStoryDetails(userStoryDetailsPanel, entityModel);
+        userStoryDetailsPanel.setLastRunsDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_LAST_RUNS)));
+        return userStoryDetailsPanel;
+    }
 
 	public void setPossiblePhasesForEntity(Collection<EntityModel> phasesList) {
 		headerPanel.setPossiblePhasesForEntity(phasesList);
 	}
+    private JXPanel updateUiWithQualityStoryDetails(EntityModel entityModel) {
+        QualityStoryDetailsPanel qualityStoryDetailsPanel = new QualityStoryDetailsPanel();
+        updateUiWithStoryDetails(qualityStoryDetailsPanel, entityModel);
+        qualityStoryDetailsPanel.setQualityStoryTypeDetails(
+                getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_QUALITY_STORY_TYPE)));
+        return qualityStoryDetailsPanel;
+    }
+
+    public void setPossiblePhasesForEntity(Collection<EntityModel> phasesList) {
+        headerPanel.setPossiblePhasesForEntity(phasesList);
+    }
 
 	public void addNewComment() {
 

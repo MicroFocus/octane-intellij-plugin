@@ -31,6 +31,7 @@ public class DetailsViewDefaultFields {
     public static final String FIELD_TEST_TYPE = "test_type";
     public static final String FIELD_TESTING_TOOL_TYPE = "testing_tool_type";
     public static final String FIELD_LAST_RUNS = "last_runs";
+    public static final String FIELD_QUALITY_STORY_TYPE = "quality_story_type";
     public static final String FIELD_CREATED = "created";
     public static final String FIELD_ESTIMATED_DURATTION = "estimated_duration";
     public static final String FIELD_REQUIREMENT_COVERAGE = "requirement_coverage";

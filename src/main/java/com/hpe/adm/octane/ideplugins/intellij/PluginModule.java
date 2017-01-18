@@ -11,6 +11,7 @@ import com.hpe.adm.nga.sdk.Octane;
 import com.hpe.adm.nga.sdk.authorisation.UserAuthorisation;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePersistentConnectionSettingsProvider;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
+import com.hpe.adm.octane.ideplugins.intellij.ui.ToolbarActiveItem;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.EntityDetailPresenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.EntityDetailView;
 import com.hpe.adm.octane.ideplugins.intellij.ui.main.MainPresenter;
@@ -48,6 +49,9 @@ public class PluginModule extends AbstractModule {
         this.project = project;
         injectorSupplier = Suppliers.memoize(() -> Guice.createInjector(this));
         injectorMap.put(project, injectorSupplier);
+
+        //TODO: this class needs a reason to exist
+        getInstance(ToolbarActiveItem.class);
     }
 
     /**
@@ -126,7 +130,6 @@ public class PluginModule extends AbstractModule {
         bind(EntityDetailPresenter.class);
 
         bind(EntityTreeTablePresenter.class);
-
     }
 
     private ConnectionSettings previousConnectionSettings = new ConnectionSettings();

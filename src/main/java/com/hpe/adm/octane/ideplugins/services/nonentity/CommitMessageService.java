@@ -26,17 +26,6 @@ import java.util.stream.Collectors;
 public class CommitMessageService extends AuthenticationService {
 
     public boolean validateCommitMessage(String commitMessage, Entity entityType, long entityId) {
-        String type;
-        switch (entityType) {
-            case DEFECT:
-                type = "defect";
-                break;
-            case USER_STORY:
-                type = "story";
-                break;
-            default:
-                return false;
-        }
         if (authenticate()) {
             try {
                 ConnectionSettings connectionSettings = connectionSettingsProvider.getConnectionSettings();
@@ -51,7 +40,8 @@ public class CommitMessageService extends AuthenticationService {
                 BufferedReader buffer = new BufferedReader(new InputStreamReader(response.getContent()));
                 String jsonString = buffer.lines().collect(Collectors.joining("\n"));
 
-                JsonArray matchedIdsArray = new JsonParser().parse(jsonString).getAsJsonObject().get(type).getAsJsonArray();
+                JsonArray matchedIdsArray = new JsonParser().parse(jsonString).getAsJsonObject().get(entityType.getSubtypeName())
+                        .getAsJsonArray();
                 for (JsonElement element : matchedIdsArray) {
                     if (element.getAsLong() == entityId) {
                         return true;
@@ -72,6 +62,9 @@ public class CommitMessageService extends AuthenticationService {
                 break;
             case USER_STORY:
                 type = "User story";
+                break;
+            case QUALITY_STORY:
+                type = "Quality story";
                 break;
             default:
                 return null;
@@ -101,13 +94,5 @@ public class CommitMessageService extends AuthenticationService {
             }
         }
         return null;
-    }
-
-    @Test
-    public void test() {
-//        List<String> patterns = getCommitPatternsForStoryType(Entity.USER_STORY);
-//        System.out.println(patterns);
-        boolean match = validateCommitMessage("story 15 bla bla 23(d)", Entity.DEFECT, 23);
-        Assert.assertTrue(match);
     }
 }

@@ -1,7 +1,6 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.searchresult;
 
 import com.hpe.adm.nga.sdk.model.EntityModel;
-import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityModelRow;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
@@ -44,12 +43,12 @@ public class SearchResultEntityTreeCellRenderer implements TreeCellRenderer {
             EntityModel entityModel = (EntityModel) value;
             Long entityId = Long.valueOf(UiUtil.getUiDataFromModel(entityModel.getValue("id")));
 
-            EntityModelRow rowPanel;
+            SearchEntityModelRow rowPanel;
 
             if (selected && hasFocus) {
-                rowPanel = new EntityModelRow(new Color(255, 255, 255));
+                rowPanel = new SearchEntityModelRow(new Color(255, 255, 255));
             } else {
-                rowPanel = new EntityModelRow();
+                rowPanel = new SearchEntityModelRow();
             }
 
             rowPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, JBColor.border()));
@@ -64,12 +63,12 @@ public class SearchResultEntityTreeCellRenderer implements TreeCellRenderer {
             description = description.replace("</em>", "</b>");
 
             rowPanel.setEntityName(entityId + "", name);
-            rowPanel.setEntityDetails(description, "");
+            rowPanel.setEntityDescription(description);
 
             return rowPanel;
         }
 
-        return new JLabel("N/A");
+        return new JLabel(value.toString());
     }
 
 }
