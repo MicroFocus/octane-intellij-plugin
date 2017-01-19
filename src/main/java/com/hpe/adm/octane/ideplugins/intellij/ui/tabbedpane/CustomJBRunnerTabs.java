@@ -18,9 +18,7 @@ import javax.swing.event.DocumentEvent;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.List;
 
 class CustomJBRunnerTabs extends JBRunnerTabs {
@@ -40,6 +38,7 @@ class CustomJBRunnerTabs extends JBRunnerTabs {
                 //sync text and history
                 if(searchFields.containsKey(oldSelection) && searchFields.containsKey(newSelection)){
                     searchFields.get(newSelection).setText(lastSearchText);
+                    //sync history for newly open tabs
                     searchFields.get(newSelection).setHistory(searchFields.get(oldSelection).getHistory());
                 }
             }
@@ -67,7 +66,12 @@ class CustomJBRunnerTabs extends JBRunnerTabs {
                 if(e.getKeyCode() == KeyEvent.VK_ENTER &&
                         searchRequestHandler != null &&
                         StringUtils.isNotBlank(currentSearchTextField.getText())){
-                    currentSearchTextField.addCurrentTextToHistory();
+
+                    addToSearchHistory(currentSearchTextField.getText());
+
+                    //sync history
+                    searchFields.values().forEach(searchTextField -> searchTextField.setHistory(getSearchHistory()));
+
                     searchRequestHandler.searchedQuery(currentSearchTextField.getText());
                 }
             }
@@ -103,10 +107,17 @@ class CustomJBRunnerTabs extends JBRunnerTabs {
     }
 
     public List<String> getSearchHistory(){
-        if(searchFields.values().size() > 0){
-            return searchFields.values().iterator().next().getHistory();
-        }
-        return Collections.emptyList();
+        return searchHistory;
     }
+
+    private List<String> searchHistory = new ArrayList<>();
+
+    private void addToSearchHistory(String string){
+        searchHistory.add(0, string);
+        if(searchHistory.size() > 5){
+            searchHistory.remove(5);
+        }
+    }
+
 
 }
