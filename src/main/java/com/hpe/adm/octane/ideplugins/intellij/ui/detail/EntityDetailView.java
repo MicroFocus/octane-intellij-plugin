@@ -10,6 +10,7 @@ import com.intellij.ui.components.JBScrollPane;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.util.Collection;
 
 import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
@@ -88,5 +89,15 @@ public class EntityDetailView implements View {
 
     public void setComments(Collection<EntityModel> comments) {
         entityDetailsPanel.setComments(comments);
+    }
+    public void addSendNewCommentAction(ActionListener actionListener) {
+        entityDetailsPanel.addSendNewCommentAction(actionListener);
+    }
+    public void setCommentMessageBoxText(String t) {
+        entityDetailsPanel.setCommentMessageBoxText(t);
+    }
+
+    public String getCommentMessageBoxText() {
+        return entityDetailsPanel.getCommentMessageBoxText();
     }
 }

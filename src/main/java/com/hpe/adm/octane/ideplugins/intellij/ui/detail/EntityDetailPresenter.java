@@ -15,6 +15,8 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.util.IconLoader;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -66,13 +68,14 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                         if (entityType != MANUAL_TEST_RUN && entityType != TEST_SUITE_RUN) {
                             setPossibleTransitions(entityModel);
                             entityDetailView.setPhaseInHeader(true);
-                        }else{
+                        } else {
                             entityDetailView.removeSaveSelectedPhaseButton();
                             entityDetailView.setPhaseInHeader(false);
                         }
-                        if(entityType.getSubtypeOf()==WORK_ITEM ||entityType.getSubtypeOf()==TEST) {
+                        if (entityType.getSubtypeOf() == WORK_ITEM || entityType.getSubtypeOf() == TEST) {
                             setComments(entityModel);
-                        }else{
+                            addSendNewCommentAction(entityModel);
+                        } else {
                             //remove comments button
                         }
                         //Title goes to browser
@@ -101,13 +104,14 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
             }
         }, null, "Failed to get possible transitions", "fetching possible transitions");
     }
-    private void setComments(EntityModel entityModel){
+
+    private void setComments(EntityModel entityModel) {
         Collection<EntityModel> result = new HashSet<>();
         RestUtil.runInBackground(() -> {
-        return commentService.getComments(entityModel);
-        },(comments)->{
+            return commentService.getComments(entityModel);
+        }, (comments) -> {
             entityDetailView.setComments(comments);
-        },null, "Failed to get possible comments", "fetching comments");
+        }, null, "Failed to get possible comments", "fetching comments");
     }
 
     private final class EntityRefreshAction extends AnAction {
@@ -138,6 +142,17 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
             }, null, "Failed to move to next phase", "Moving to next phase");
 
         }
+    }
+
+    public void addSendNewCommentAction(EntityModel entityModel) {
+        entityDetailView.addSendNewCommentAction(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                commentService.postComment(entityModel, entityDetailView.getCommentMessageBoxText());
+                entityDetailView.setCommentMessageBoxText("");
+                setComments(entityModel);
+            }
+        });
     }
 
 }
