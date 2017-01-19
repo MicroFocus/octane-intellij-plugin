@@ -1,12 +1,12 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.tabbedpane;
 
+import com.hpe.adm.octane.ideplugins.intellij.ui.searchresult.CustomSearchTextField;
 import com.intellij.execution.ui.layout.impl.JBRunnerTabs;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.DocumentAdapter;
-import com.intellij.ui.SearchTextField;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.ui.tabs.TabsListener;
 import org.apache.commons.lang.StringUtils;
@@ -23,10 +23,12 @@ import java.util.List;
 
 class CustomJBRunnerTabs extends JBRunnerTabs {
 
+    private static final int HISTORY_SIZE = 5;
+
     /**
      * Horrible workaround
      */
-    Map<TabInfo, SearchTextField> searchFields = new HashMap<>();
+    Map<TabInfo, CustomSearchTextField> searchFields = new HashMap<>();
     private String lastSearchText = "";
 
     public CustomJBRunnerTabs(@Nullable Project project, @NotNull ActionManager actionManager, IdeFocusManager focusManager, @NotNull Disposable parent) {
@@ -51,40 +53,46 @@ class CustomJBRunnerTabs extends JBRunnerTabs {
 
     }
 
-    private SearchTextField createTextField(){
-        SearchTextField currentSearchTextField = new SearchTextField();
-        currentSearchTextField.addDocumentListener(new DocumentAdapter() {
+    private CustomSearchTextField createTextField(){
+        CustomSearchTextField newSearchTextField = new CustomSearchTextField();
+
+        newSearchTextField.setHistorySize(5);
+        newSearchTextField.addDocumentListener(new DocumentAdapter() {
             @Override
             protected void textChanged(DocumentEvent e) {
-                lastSearchText = currentSearchTextField.getText();
+                lastSearchText = newSearchTextField.getText();
             }
         });
 
-        currentSearchTextField.addKeyboardListener(new KeyAdapter() {
+        newSearchTextField.setHistoryItemClickedHandler(()-> search(newSearchTextField));
+
+        newSearchTextField.addKeyboardListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
                 if(e.getKeyCode() == KeyEvent.VK_ENTER &&
                         searchRequestHandler != null &&
-                        StringUtils.isNotBlank(currentSearchTextField.getText())){
+                        StringUtils.isNotBlank(newSearchTextField.getText())){
 
-                    addToSearchHistory(currentSearchTextField.getText());
-
-                    //sync history
-                    searchFields.values().forEach(searchTextField -> searchTextField.setHistory(getSearchHistory()));
-
-                    searchRequestHandler.searchedQuery(currentSearchTextField.getText());
+                    search(newSearchTextField);
                 }
             }
         });
 
-        return currentSearchTextField;
+        return newSearchTextField;
+    }
+
+    private void search(CustomSearchTextField searchTextField){
+        addToSearchHistory(searchTextField.getText());
+        //sync history
+        searchFields.values().forEach(textField -> textField.setHistory(getSearchHistory()));
+        searchRequestHandler.searchedQuery(searchTextField.getText());
     }
 
     @NotNull
     @Override
     public TabInfo addTab(TabInfo info) {
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        SearchTextField searchTextField = createTextField();
+        CustomSearchTextField searchTextField = createTextField();
         searchPanel.add(searchTextField);
         searchFields.put(info, searchTextField);
 
@@ -103,6 +111,7 @@ class CustomJBRunnerTabs extends JBRunnerTabs {
     }
 
     public void setSearchHistory(List<String> searchHistory){
+        this.searchHistory = searchHistory;
         searchFields.values().forEach(searchTextField -> searchTextField.setHistory(searchHistory));
     }
 
@@ -113,9 +122,12 @@ class CustomJBRunnerTabs extends JBRunnerTabs {
     private List<String> searchHistory = new ArrayList<>();
 
     private void addToSearchHistory(String string){
+        if(searchHistory.contains(string)){
+            searchHistory.remove(string);
+        }
         searchHistory.add(0, string);
-        if(searchHistory.size() > 5){
-            searchHistory.remove(5);
+        if(searchHistory.size() > HISTORY_SIZE){
+            searchHistory.remove(HISTORY_SIZE);
         }
     }
 
