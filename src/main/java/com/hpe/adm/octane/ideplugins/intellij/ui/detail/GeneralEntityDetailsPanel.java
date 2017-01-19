@@ -5,26 +5,38 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.ui.JBColor;
-import org.jdesktop.swingx.*;
+import org.apache.commons.lang.CharEncoding;
+import org.jdesktop.swingx.JXLabel;
+import org.jdesktop.swingx.JXPanel;
+import org.jdesktop.swingx.JXTextArea;
 import org.jdesktop.swingx.JXCollapsiblePane.Direction;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Entities;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 import javax.swing.border.TitledBorder;
+
 import java.awt.*;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 
 import static com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil.getUiDataFromModel;
 import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.*;
-import static com.intellij.xml.util.XmlStringUtil.stripHtml;
+
+import org.jdesktop.swingx.JXButton;
+import org.jdesktop.swingx.JXCollapsiblePane;
 
 public class GeneralEntityDetailsPanel extends JPanel {
 	private JXPanel entityDetailsPanel;
 	private JXTextArea descriptionDetails;
 	private boolean hasAttachment = false;
 	private HeaderPanel headerPanel;
-	private CommentsConversationPanel commentsList;
+	private CommentsConversationPanel commentsListPanel;
 	private JXButton toogleComments;
 
 	public GeneralEntityDetailsPanel(EntityModel entityModel) {
@@ -38,7 +50,7 @@ public class GeneralEntityDetailsPanel extends JPanel {
 		this.setLayout(gridBagLayout);
 
 		JPanel rootPanel = new JPanel();
-		rootPanel.setBorder(new EmptyBorder(10, 30, 30, 30));
+		rootPanel.setBorder(new EmptyBorder(10, 10, 30, 10));
 		rootPanel.setMinimumSize(new Dimension(0, 0));
 		GridBagConstraints gbc_rootPanel = new GridBagConstraints();
 		gbc_rootPanel.fill = GridBagConstraints.BOTH;
@@ -135,12 +147,12 @@ public class GeneralEntityDetailsPanel extends JPanel {
 		commetsDetails.setCollapsed(true);
 		commetsDetails.setLayout(new BorderLayout());
 
-		commentsList = new CommentsConversationPanel();
-		commentsList.setPreferredSize(new Dimension(400,200));
-		commentsList.setMaximumSize(new Dimension(400,200));
-		commentsList.setBorder(new TitledBorder("Comments"));
+		commentsListPanel = new CommentsConversationPanel();
+		commentsListPanel.setPreferredSize(new Dimension(400,200));
+		commentsListPanel.setMaximumSize(new Dimension(400,200));
+		commentsListPanel.setBorder(new TitledBorder("Comments"));
 
-		commetsDetails.getContentPane().add(commentsList);
+		commetsDetails.getContentPane().add(commentsListPanel);
 
 		GridBagConstraints gbc_commentsPanel = new GridBagConstraints();
 		gbc_commentsPanel.fill = GridBagConstraints.BOTH;
@@ -156,7 +168,7 @@ public class GeneralEntityDetailsPanel extends JPanel {
 
 	private void drawGeneralDetailsForEntity(EntityModel entityModel) {
 		headerPanel.setPhaseDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_PHASE)));
-		this.descriptionDetails.setText(stripHtml(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_DESCRIPTION))));
+		this.descriptionDetails.setText(parseHtml(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_DESCRIPTION))));
 	}
 
 	public void setEntityNameClickHandler(Runnable runnable) {
@@ -181,6 +193,14 @@ public class GeneralEntityDetailsPanel extends JPanel {
 
 	public EntityModel getSelectedTransition() {
 		return headerPanel.getSelectedTransition();
+	}
+
+	private String parseHtml(String html) {
+		Document descriptionDoc = Jsoup.parse(html);
+		descriptionDoc.outputSettings().escapeMode(Entities.EscapeMode.base);
+		descriptionDoc.outputSettings().charset(CharEncoding.US_ASCII);
+		descriptionDoc.outputSettings().prettyPrint(false);
+		return (null == descriptionDoc.text()) ? " " : descriptionDoc.text();
 	}
 
     private JXPanel drawSpecificDetailsForEntity(EntityModel entityModel) {
@@ -421,11 +441,29 @@ public class GeneralEntityDetailsPanel extends JPanel {
 	}
 
 	public void setComments(Collection<EntityModel> comments) {
-		for(EntityModel comment:comments){
+		commentsListPanel.clearCurrentComments();
+		ArrayList<EntityModel>listOfComments =  new ArrayList<>(comments);
+		Collections.reverse(listOfComments);
+		for(EntityModel comment:listOfComments){
 			String commentsPostTime = getUiDataFromModel(comment.getValue(DetailsViewDefaultFields.FIELD_CREATION_TIME));
 			String userName = getUiDataFromModel(comment.getValue(DetailsViewDefaultFields.FIELD_AUTHOR),"full_name");
-			String commentLine = stripHtml(getUiDataFromModel(comment.getValue(DetailsViewDefaultFields.FIELD_COMMENT_TEXT)));
-			commentsList.addExistingComment(commentsPostTime,userName,commentLine);
+			String commentLine = parseHtml(getUiDataFromModel(comment.getValue(DetailsViewDefaultFields.FIELD_COMMENT_TEXT)));
+			commentsListPanel.addExistingComment(commentsPostTime,userName,commentLine);
 		}
+		commentsListPanel.scrollCommentListToTop();
 	}
+	public void addSendNewCommentAction(ActionListener actionListener) {
+		commentsListPanel.addSendNewCommentAction(actionListener);
+	}
+	public void setCommentMessageBoxText(String t) {
+		commentsListPanel.setCommentMessageBoxText(t);
+	}
+
+	public String getCommentMessageBoxText() {
+		return commentsListPanel.getCommentMessageBoxText();
+	}
+	public void removeToggleOnButtonForComments(){
+		toogleComments.setVisible(false);
+	}
+
 }

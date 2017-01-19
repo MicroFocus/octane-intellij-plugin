@@ -424,23 +424,23 @@ class FillingTree extends JTree {
 
         @Override
         public void paint(Graphics g, JComponent c) {
-//            if (myWideSelection && !UIUtil.isUnderAquaBasedLookAndFeel() && !UIUtil.isUnderDarcula() && !UIUtil.isUnderIntelliJLaF()) {
-//                paintSelectedRows(g, ((JTree)c));
-//            }
-//            if (myWideSelection) {
-//                final int containerWidth = tree.getParent() instanceof JViewport ? tree.getParent().getWidth() : tree.getWidth();
-//                final int xOffset = tree.getParent() instanceof JViewport ? ((JViewport)tree.getParent()).getViewPosition().x : 0;
-//                final Rectangle bounds = g.getClipBounds();
-//
-//                // draw background for the given clip bounds
-//                final Object sourceList = tree.getClientProperty(SOURCE_LIST_CLIENT_PROPERTY);
-//                if (sourceList != null && (Boolean)sourceList) {
-//                    Graphics2D backgroundGraphics = (Graphics2D)g.create();
-//                    backgroundGraphics.setClip(xOffset, bounds.y, containerWidth, bounds.height);
-//                    LIST_BACKGROUND_PAINTER.paintBorder(tree, backgroundGraphics, xOffset, bounds.y, containerWidth, bounds.height);
-//                    backgroundGraphics.dispose();
-//                }
-//            }
+            if (myWideSelection && !UIUtil.isUnderAquaBasedLookAndFeel() && !UIUtil.isUnderDarcula() && !UIUtil.isUnderIntelliJLaF()) {
+                paintSelectedRows(g, ((JTree)c));
+            }
+            if (myWideSelection) {
+                final int containerWidth = tree.getParent() instanceof JViewport ? tree.getParent().getWidth() : tree.getWidth();
+                final int xOffset = tree.getParent() instanceof JViewport ? ((JViewport)tree.getParent()).getViewPosition().x : 0;
+                final Rectangle bounds = g.getClipBounds();
+
+                // draw background for the given clip bounds
+                final Object sourceList = tree.getClientProperty(SOURCE_LIST_CLIENT_PROPERTY);
+                if (sourceList != null && (Boolean)sourceList) {
+                    Graphics2D backgroundGraphics = (Graphics2D)g.create();
+                    backgroundGraphics.setClip(xOffset, bounds.y, containerWidth, bounds.height);
+                    LIST_BACKGROUND_PAINTER.paintBorder(tree, backgroundGraphics, xOffset, bounds.y, containerWidth, bounds.height);
+                    backgroundGraphics.dispose();
+                }
+            }
 
             super.paint(g, c);
         }

@@ -20,6 +20,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.text.BadLocationException;
 
+import com.intellij.ui.ClickListener;
 import com.intellij.ui.JBColor;
 
 public class CommentsConversationPanel extends JPanel {
@@ -27,7 +28,6 @@ public class CommentsConversationPanel extends JPanel {
 	private JTextField messageBox;
 	private JTextArea chatBox;
 	private String username = "dasdas";
-	private String commentPostDate ="today";
 
 	public CommentsConversationPanel() {
 		setLayout(new BorderLayout());
@@ -101,5 +101,22 @@ public class CommentsConversationPanel extends JPanel {
 			}
 			messageBox.requestFocusInWindow();
 		}
+	}
+	public void addSendNewCommentAction(ActionListener actionListener) {
+		sendMessage.addActionListener(actionListener);
+	}
+
+	public void setCommentMessageBoxText(String t) {
+		messageBox.setText(t);
+	}
+
+	public String getCommentMessageBoxText() {
+		return messageBox.getText();
+	}
+	public void clearCurrentComments(){
+		chatBox.setText("");
+	}
+	public void scrollCommentListToTop(){
+		chatBox.setCaretPosition(0);
 	}
 }
