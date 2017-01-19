@@ -1,6 +1,7 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui;
 
 import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
+import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.components.WelcomeViewComponent;
 import com.hpe.adm.octane.ideplugins.intellij.ui.main.MainPresenter;
 import com.hpe.adm.octane.ideplugins.services.TestService;
@@ -45,7 +46,6 @@ public class EntryPoint implements ToolWindowFactory {
 
         Runnable mainToolWindowContentControl = () -> {
             try{
-
                 ConnectionSettings connectionSettings = connectionSettingsProvider.getConnectionSettings();
 
                 if(connectionSettings == null || connectionSettings.isEmpty()){
@@ -66,6 +66,7 @@ public class EntryPoint implements ToolWindowFactory {
                 MainPresenter mainPresenter = pluginModule.getInstance(MainPresenter.class);
                 setContent(toolWindow, mainPresenter.getView(), workspaceDisplayName);
             } catch (Exception ex){
+                pluginModule.getInstance(IdePluginPersistentState.class).clearState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM);
                 WelcomeViewComponent welcomeViewComponent;
 
                 // If there were previously configured connection settings

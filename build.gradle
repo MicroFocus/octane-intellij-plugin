@@ -44,9 +44,10 @@ dependencies {
 }
 
 intellij {
+
     version project.hasProperty("intellijVersion") ? project.getProperty("intellijVersion") : ideaVersion
     plugins = ["maven", "gradle"]
-    pluginName "Octane IntelliJ Plugin"
+    pluginName = project.hasProperty('zipname') ? project.getProperty('zipname') : "Octane IntelliJ Plugin"
     updateSinceUntilBuild false
 
     downloadSources Boolean.valueOf(downloadIdeaSources)
