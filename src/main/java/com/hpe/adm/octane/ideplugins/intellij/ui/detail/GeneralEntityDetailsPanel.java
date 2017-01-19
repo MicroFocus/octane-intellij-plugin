@@ -462,5 +462,8 @@ public class GeneralEntityDetailsPanel extends JPanel {
 	public String getCommentMessageBoxText() {
 		return commentsListPanel.getCommentMessageBoxText();
 	}
+	public void removeToggleOnButtonForComments(){
+		toogleComments.setVisible(false);
+	}
 
 }

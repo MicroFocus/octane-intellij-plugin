@@ -76,7 +76,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                             setComments(entityModel);
                             addSendNewCommentAction(entityModel);
                         } else {
-                            //remove comments button
+                            entityDetailView.removeToggleOnButtonForComments();
                         }
                         //Title goes to browser
                         entityDetailView.setEntityNameClickHandler(() -> entityService.openInBrowser(entityModel));
@@ -145,13 +145,10 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
     }
 
     public void addSendNewCommentAction(EntityModel entityModel) {
-        entityDetailView.addSendNewCommentAction(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                commentService.postComment(entityModel, entityDetailView.getCommentMessageBoxText());
-                entityDetailView.setCommentMessageBoxText("");
-                setComments(entityModel);
-            }
+        entityDetailView.addSendNewCommentAction(e -> {
+            commentService.postComment(entityModel, entityDetailView.getCommentMessageBoxText());
+            entityDetailView.setCommentMessageBoxText("");
+            setComments(entityModel);
         });
     }
 

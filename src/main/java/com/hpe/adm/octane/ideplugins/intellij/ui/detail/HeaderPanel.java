@@ -130,8 +130,7 @@ public class HeaderPanel extends JPanel {
     }
     public void setRunTestButon(AnAction refreshAction) {
         //TODO: @osavencu: see if this can be added
-        buttonActionGroup.addSeparator();
-        buttonActionGroup.add(refreshAction);
+
     }
 
     public void createActionToolBar() {

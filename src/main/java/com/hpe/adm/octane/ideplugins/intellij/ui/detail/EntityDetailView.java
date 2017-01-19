@@ -100,4 +100,7 @@ public class EntityDetailView implements View {
     public String getCommentMessageBoxText() {
         return entityDetailsPanel.getCommentMessageBoxText();
     }
+    public void removeToggleOnButtonForComments(){
+        entityDetailsPanel.removeToggleOnButtonForComments();
+    }
 }
