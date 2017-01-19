@@ -2,6 +2,8 @@ package com.hpe.adm.octane.ideplugins.intellij.util;
 
 public class Constants {
 
+    public static final String OCTANE_DATE_TIME_FORMAT = "dd/MM/yyyy HH:mm:ss";
+
     public static final String IMAGE_FOLDER_PATH = "/images/";
 
     public static final String IMG_VENDOR_LOGO = IMAGE_FOLDER_PATH + "hpe-logo.png";
