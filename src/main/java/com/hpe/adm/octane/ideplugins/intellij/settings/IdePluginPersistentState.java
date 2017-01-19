@@ -39,8 +39,10 @@ public class IdePluginPersistentState implements PersistentStateComponent<Elemen
     }
 
     public void clearState(Key key){
-        stateMap.remove(key);
-        changedHandlers.forEach(changedHandler -> changedHandler.stateChanged(key, null));
+        if(stateMap.containsKey(key)) {
+            stateMap.remove(key);
+            changedHandlers.forEach(changedHandler -> changedHandler.stateChanged(key, null));
+        }
     }
 
     public JSONObject loadState(Key key){
