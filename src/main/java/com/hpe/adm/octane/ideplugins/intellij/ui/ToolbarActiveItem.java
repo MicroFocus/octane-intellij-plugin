@@ -89,6 +89,16 @@ public class ToolbarActiveItem {
         DefaultActionGroup defaultActionGroup = (DefaultActionGroup) ActionManager.getInstance().getAction(
                 "ToolbarRunGroup");
         defaultActionGroup.add(activeItemAction, Constraints.FIRST);
+
+        //Text color fix on LAF change
+        UIManager.addPropertyChangeListener(evt -> {
+            if(evt.getPropertyName().equals("lookAndFeel")) {
+                defaultActionGroup.remove(activeItemAction);
+                activeItemAction = new ActiveItemAction(getActiveItemFromPersistentState());
+                defaultActionGroup.add(activeItemAction, Constraints.FIRST);
+            }
+        });
+
     }
 
     private PartialEntity getActiveItemFromPersistentState() {
