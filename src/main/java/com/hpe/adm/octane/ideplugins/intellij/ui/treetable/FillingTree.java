@@ -47,6 +47,22 @@ class FillingTree extends JTree {
         }
     }
 
+    @Override
+    public TreePath getPathForLocation(int x, int y) {
+        TreePath closestPath = getClosestPathForLocation(x, y);
+        return closestPath;
+        //nasty
+        //if(closestPath != null) {
+        //    Rectangle       pathBounds = getPathBounds(closestPath);
+        //
+        //    if(pathBounds != null &&
+        //            x >= pathBounds.x && x < (pathBounds.x + pathBounds.width) &&
+        //            y >= pathBounds.y && y < (pathBounds.y + pathBounds.height))
+        //        return closestPath;
+        //}
+        //return null;
+    }
+
     /**
      * Will make the cell inside the row the width of the tree, had to @Override setUI
      */
