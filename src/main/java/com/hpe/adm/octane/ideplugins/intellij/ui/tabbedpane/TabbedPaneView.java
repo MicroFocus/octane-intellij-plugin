@@ -76,7 +76,12 @@ public class TabbedPaneView implements View {
         contextMenuActionGroup.addAction(new AnAction() {
             @Override
             public void update(final AnActionEvent e) {
-                e.getPresentation().setText("Close");
+                if(!isClosable(editorTabs.getTargetInfo())){
+                    e.getPresentation().setVisible(false);
+                } else {
+                    e.getPresentation().setVisible(true);
+                    e.getPresentation().setText("Close");
+                }
             }
             @Override
             public void actionPerformed(AnActionEvent e) {
