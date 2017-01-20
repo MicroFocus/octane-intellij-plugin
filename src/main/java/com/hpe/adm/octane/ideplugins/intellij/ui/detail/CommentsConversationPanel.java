@@ -48,6 +48,7 @@ public class CommentsConversationPanel extends JPanel {
 		chatBox = new JTextArea();
 		chatBox.setBackground(JBColor.background());
 		chatBox.setLineWrap(true);
+		chatBox.setWrapStyleWord(true);
 		chatBox.setEditable(false);
 		chatBox.setOpaque(false);
 		chatBox.setBorder(null);
