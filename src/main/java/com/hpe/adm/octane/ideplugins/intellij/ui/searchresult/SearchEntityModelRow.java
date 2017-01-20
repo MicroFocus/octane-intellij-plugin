@@ -89,7 +89,11 @@ public class SearchEntityModelRow extends JPanel{
 	}
 	
 	public void setEntityDescription(String description){
-		lblEntityRelease.setText("<html><body>" + description + "</body><html>");
-	}
+        lblEntityRelease.setText(description);
+    }
+
+    public void setEntityHtmlDescription(String description){
+        lblEntityRelease.setText("<html><body>" + description + "</body><html>");
+    }
 	
 }

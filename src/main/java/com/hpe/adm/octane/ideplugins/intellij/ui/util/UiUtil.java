@@ -4,6 +4,10 @@ import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.nga.sdk.model.FieldModel;
 import com.hpe.adm.nga.sdk.model.MultiReferenceFieldModel;
 import com.hpe.adm.nga.sdk.model.ReferenceFieldModel;
+import org.apache.commons.lang.CharEncoding;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Entities;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -82,6 +86,21 @@ public class UiUtil {
             }
         }
         return result.toString();
+    }
+
+    public static String stripHtml(String html) {
+        Document descriptionDoc = Jsoup.parse(html);
+        descriptionDoc.outputSettings().escapeMode(Entities.EscapeMode.base);
+        descriptionDoc.outputSettings().charset(CharEncoding.US_ASCII);
+        descriptionDoc.outputSettings().prettyPrint(false);
+        return (null == descriptionDoc.text()) ? " " : descriptionDoc.text();
+    }
+
+    public static String ellipsisTrucate(String text, int maximumLength) {
+        if (text.length() > maximumLength) {
+            return text.substring(0, maximumLength) + "...";
+        }
+        return  text;
     }
 
     /**

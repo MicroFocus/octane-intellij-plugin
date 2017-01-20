@@ -24,7 +24,7 @@ public class EntityIconFactory {
     private Color fontColor = new Color(255,255,255);
     private int fontSize = 15;
 
-    private static final Image runImage = ImageLoader.loadFromResource("/general/run.png");
+    private static final Image runImage = ImageLoader.loadFromResource("/general/run@2x.png");
    
     public EntityIconFactory(){	
     	init();

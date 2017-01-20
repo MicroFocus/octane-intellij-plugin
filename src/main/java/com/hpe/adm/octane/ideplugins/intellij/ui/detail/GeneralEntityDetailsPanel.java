@@ -5,20 +5,13 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.ui.JBColor;
-import org.apache.commons.lang.CharEncoding;
-import org.jdesktop.swingx.JXLabel;
-import org.jdesktop.swingx.JXPanel;
-import org.jdesktop.swingx.JXTextArea;
+import org.jdesktop.swingx.*;
 import org.jdesktop.swingx.JXCollapsiblePane.Direction;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Entities;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 import javax.swing.border.TitledBorder;
-
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -26,10 +19,8 @@ import java.util.Collection;
 import java.util.Collections;
 
 import static com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil.getUiDataFromModel;
+import static com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil.stripHtml;
 import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.*;
-
-import org.jdesktop.swingx.JXButton;
-import org.jdesktop.swingx.JXCollapsiblePane;
 
 public class GeneralEntityDetailsPanel extends JPanel {
 	private JXPanel entityDetailsPanel;
@@ -169,7 +160,7 @@ public class GeneralEntityDetailsPanel extends JPanel {
 
 	private void drawGeneralDetailsForEntity(EntityModel entityModel) {
 		headerPanel.setPhaseDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_PHASE)));
-		this.descriptionDetails.setText(parseHtml(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_DESCRIPTION))));
+		this.descriptionDetails.setText(stripHtml(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_DESCRIPTION))));
 	}
 
 	public void setEntityNameClickHandler(Runnable runnable) {
@@ -194,14 +185,6 @@ public class GeneralEntityDetailsPanel extends JPanel {
 
 	public EntityModel getSelectedTransition() {
 		return headerPanel.getSelectedTransition();
-	}
-
-	private String parseHtml(String html) {
-		Document descriptionDoc = Jsoup.parse(html);
-		descriptionDoc.outputSettings().escapeMode(Entities.EscapeMode.base);
-		descriptionDoc.outputSettings().charset(CharEncoding.US_ASCII);
-		descriptionDoc.outputSettings().prettyPrint(false);
-		return (null == descriptionDoc.text()) ? " " : descriptionDoc.text();
 	}
 
     private JXPanel drawSpecificDetailsForEntity(EntityModel entityModel) {
@@ -448,7 +431,7 @@ public class GeneralEntityDetailsPanel extends JPanel {
 		for(EntityModel comment:listOfComments){
 			String commentsPostTime = getUiDataFromModel(comment.getValue(DetailsViewDefaultFields.FIELD_CREATION_TIME));
 			String userName = getUiDataFromModel(comment.getValue(DetailsViewDefaultFields.FIELD_AUTHOR),"full_name");
-			String commentLine = parseHtml(getUiDataFromModel(comment.getValue(DetailsViewDefaultFields.FIELD_COMMENT_TEXT)));
+			String commentLine = stripHtml(getUiDataFromModel(comment.getValue(DetailsViewDefaultFields.FIELD_COMMENT_TEXT)));
 			commentsListPanel.addExistingComment(commentsPostTime,userName,commentLine);
 		}
 		commentsListPanel.scrollCommentListToTop();

@@ -57,13 +57,19 @@ public class SearchResultEntityTreeCellRenderer implements TreeCellRenderer {
             String name = UiUtil.getUiDataFromModel(entityModel.getValue("name"));
             name = name.replace("<em>", "<b>");
             name = name.replace("</em>", "</b>");
+            rowPanel.setEntityName(entityId + "", name);
 
             String description = UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_DESCRIPTION));
-            description = description.replace("<em>", "<b>");
-            description = description.replace("</em>", "</b>");
-
-            rowPanel.setEntityName(entityId + "", name);
-            rowPanel.setEntityDescription(description);
+            //Remove html from description if it's not relevant to the search query
+            if(description.contains("<em>")){
+                description = description.replace("<em>", "<b>");
+                description = description.replace("</em>", "</b>");
+                rowPanel.setEntityHtmlDescription(description);
+            } else {
+                description = UiUtil.stripHtml(description);
+                description = UiUtil.ellipsisTrucate(description, 100); //magic!
+                rowPanel.setEntityDescription(description);
+            }
 
             return rowPanel;
         }
