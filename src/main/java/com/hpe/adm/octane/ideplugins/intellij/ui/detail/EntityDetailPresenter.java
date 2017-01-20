@@ -62,7 +62,6 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                 (entityModel) -> {
                     if (entityModel != null) {
                         entityDetailView.setEntityModel(entityModel);
-                        entityDetailView.setEntityModel(entityModel);
                         entityDetailView.setSaveSelectedPhaseButton(new SaveSelectedPhaseAction());
                         entityDetailView.setRefreshEntityButton(new EntityRefreshAction());
                         if (entityType != MANUAL_TEST_RUN && entityType != TEST_SUITE_RUN) {
