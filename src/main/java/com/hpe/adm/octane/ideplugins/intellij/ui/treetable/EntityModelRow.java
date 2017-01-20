@@ -10,130 +10,160 @@ import org.jdesktop.swingx.JXLabel;
 import javax.swing.*;
 import java.awt.*;
 
-class EntityModelRow extends JPanel{
+public class EntityModelRow extends JPanel {
+	
+    private static final EntityIconFactory entityIconFactory = new EntityIconFactory(40,40,17,Color.WHITE);
 
-    private static final long serialVersionUID = 1L;
-
-    private JPanel panelDetailsTop;
-    private JXLabel lblEntityName;
-    private JPanel panelIcon;
-
-    private static final Color transparentColor = new Color(0, 0, 0, 0);
     private Color fontColor = UIUtil.getLabelFontColor(UIUtil.FontColor.NORMAL);
-
-    private JPanel panelDetailsBottom;
-    private JXLabel lblEntityRelease;
-
-    private static final EntityIconFactory ENTITY_ICON_FACTORY = new EntityIconFactory(40,40,17,Color.WHITE);
-
-    public EntityModelRow() {
-        initUI();
-    }
-
-    public EntityModelRow(Color fontColor) {
-        this.fontColor = fontColor;
-        initUI();
-    }
-
-    private void initUI(){
-        GridBagLayout gbl_rootPanel = new GridBagLayout();
-        gbl_rootPanel.columnWidths = new int[]{0, 150, 0, 0};
-        gbl_rootPanel.rowHeights = new int[]{20, 20, 0};
-        gbl_rootPanel.columnWeights = new double[]{0.0, 1.0, 1.0, Double.MIN_VALUE};
-        gbl_rootPanel.rowWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
-        setLayout(gbl_rootPanel);
-
-        panelIcon = new JPanel();
-
-        FlowLayout flowLayout_1 = (FlowLayout) panelIcon.getLayout();
-        flowLayout_1.setVgap(2);
-        GridBagConstraints gbc_panelIcon = new GridBagConstraints();
-        gbc_panelIcon.gridheight = 2;
-        gbc_panelIcon.fill = GridBagConstraints.HORIZONTAL;
-        gbc_panelIcon.insets = new Insets(5, 0, 0, 0);
-        gbc_panelIcon.gridx = 0;
-        gbc_panelIcon.gridy = 0;
-        add(panelIcon, gbc_panelIcon);
-        panelIcon.setOpaque(true);
-        panelIcon.setBackground(transparentColor);
-
-        lblEntityName = createLabel("");
-        lblEntityName.setHorizontalAlignment(SwingConstants.LEFT);
-        lblEntityName.setForeground(fontColor);
-        GridBagConstraints gbc_lblEntityName = new GridBagConstraints();
-        gbc_lblEntityName.fill = GridBagConstraints.HORIZONTAL;
-        gbc_lblEntityName.insets = new Insets(5, 0, 0, 0);
-        gbc_lblEntityName.gridx = 1;
-        gbc_lblEntityName.gridy = 0;
-        add(lblEntityName, gbc_lblEntityName);
-
-        panelDetailsTop = new JPanel();
-        FlowLayout fl_panelDetailsTop = (FlowLayout) panelDetailsTop.getLayout();
-        fl_panelDetailsTop.setVgap(2);
-        fl_panelDetailsTop.setHgap(10);
-        fl_panelDetailsTop.setAlignment(FlowLayout.TRAILING);
-        GridBagConstraints gbc_panelDetailsTop = new GridBagConstraints();
-        gbc_panelDetailsTop.insets = new Insets(5, 10, 0, 10);
-        gbc_panelDetailsTop.fill = GridBagConstraints.HORIZONTAL;
-        gbc_panelDetailsTop.gridx = 2;
-        gbc_panelDetailsTop.gridy = 0;
-        add(panelDetailsTop, gbc_panelDetailsTop);
-        panelDetailsTop.setOpaque(true);
-        panelDetailsTop.setBackground(transparentColor);
-
-        lblEntityRelease = createLabel("");
-        lblEntityRelease.setHorizontalAlignment(SwingConstants.LEFT);
-        GridBagConstraints gbc_lblEntityId = new GridBagConstraints();
-        gbc_lblEntityId.fill = GridBagConstraints.HORIZONTAL;
-        gbc_lblEntityId.insets = new Insets(5, 0, 5, 0);
-        gbc_lblEntityId.gridx = 1;
-        gbc_lblEntityId.gridy = 1;
-        add(lblEntityRelease, gbc_lblEntityId);
-        lblEntityRelease.setForeground(fontColor);
-
-        panelDetailsBottom = new JPanel();
-        FlowLayout flowLayout = (FlowLayout) panelDetailsBottom.getLayout();
-        flowLayout.setVgap(2);
-        flowLayout.setHgap(10);
-        flowLayout.setAlignment(FlowLayout.TRAILING);
-        GridBagConstraints gbc_panelDetailsBottom = new GridBagConstraints();
-        gbc_panelDetailsBottom.insets = new Insets(0, 10, 5, 10);
-        gbc_panelDetailsBottom.fill = GridBagConstraints.HORIZONTAL;
-        gbc_panelDetailsBottom.gridx = 2;
-        gbc_panelDetailsBottom.gridy = 1;
-        panelDetailsBottom.setOpaque(true);
-        panelDetailsBottom.setBackground(transparentColor);
-        add(panelDetailsBottom, gbc_panelDetailsBottom);
-
-        setOpaque(true);
-    }
-
+	private JPanel panelEntityIcon;
+	private JXLabel lblEntityId;
+	private JXLabel lblTitle;
+	private JXLabel lblSubtitle;
+	private JPanel panelDetailsTop;
+	private JPanel panelDetailsBottom;
+	
+	public EntityModelRow() {
+		 initUi();
+	}
+	
+	public EntityModelRow(Color fontColor) {
+		 this.fontColor = fontColor;
+		 initUi();
+	}
+	
+	private void initUi(){
+		GridBagLayout gridBagLayout = new GridBagLayout();
+		gridBagLayout.columnWidths = new int[]{40, 150, 0, 0};
+		gridBagLayout.rowHeights = new int[]{50, 0};
+		gridBagLayout.columnWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{0.0, Double.MIN_VALUE};
+		setLayout(gridBagLayout);
+		
+		panelEntityIcon = new JPanel();
+		panelEntityIcon.setOpaque(false);
+		panelEntityIcon.setMinimumSize(new Dimension(40, 40));
+		panelEntityIcon.setPreferredSize(new Dimension(40, 40));
+		panelEntityIcon.setMaximumSize(new Dimension(40, 40));
+		GridBagConstraints gbc_panelEntityIcon = new GridBagConstraints();
+		gbc_panelEntityIcon.fill = GridBagConstraints.BOTH;
+		gbc_panelEntityIcon.insets = new Insets(0, 0, 0, 5);
+		gbc_panelEntityIcon.gridx = 0;
+		gbc_panelEntityIcon.gridy = 0;
+		add(panelEntityIcon, gbc_panelEntityIcon);
+		panelEntityIcon.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		
+		JPanel panelEntityTitle = new JPanel();
+		panelEntityTitle.setOpaque(false);
+		GridBagConstraints gbc_panelEntityTitle = new GridBagConstraints();
+		gbc_panelEntityTitle.fill = GridBagConstraints.BOTH;
+		gbc_panelEntityTitle.insets = new Insets(0, 0, 0, 5);
+		gbc_panelEntityTitle.gridx = 1;
+		gbc_panelEntityTitle.gridy = 0;
+		add(panelEntityTitle, gbc_panelEntityTitle);
+		GridBagLayout gbl_panelEntityTitle = new GridBagLayout();
+		gbl_panelEntityTitle.columnWidths = new int[]{0, 0, 0};
+		gbl_panelEntityTitle.rowHeights = new int[]{0, 0, 0};
+		gbl_panelEntityTitle.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
+		gbl_panelEntityTitle.rowWeights = new double[]{1.0, 1.0, Double.MIN_VALUE};
+		panelEntityTitle.setLayout(gbl_panelEntityTitle);
+		
+		lblEntityId = new JXLabel();
+		lblEntityId.setForeground(fontColor);
+		lblEntityId.setText("ID");
+		GridBagConstraints gbc_lblEntityId = new GridBagConstraints();
+		gbc_lblEntityId.insets = new Insets(5, 0, 3, 5);
+		gbc_lblEntityId.gridx = 0;
+		gbc_lblEntityId.gridy = 0;
+		panelEntityTitle.add(lblEntityId, gbc_lblEntityId);
+		
+		lblTitle = new JXLabel();
+		lblTitle.setForeground(fontColor);
+		lblTitle.setText("NAME");
+		GridBagConstraints gbc_lblTitle = new GridBagConstraints();
+		gbc_lblTitle.insets = new Insets(5, 0, 3, 0);
+		gbc_lblTitle.fill = GridBagConstraints.HORIZONTAL;
+		gbc_lblTitle.gridx = 1;
+		gbc_lblTitle.gridy = 0;
+		panelEntityTitle.add(lblTitle, gbc_lblTitle);
+		
+		lblSubtitle = new JXLabel();
+		lblSubtitle.setForeground(fontColor);
+		lblSubtitle.setText("SUBTITLE");
+		GridBagConstraints gbc_lblSubtitle = new GridBagConstraints();
+		gbc_lblSubtitle.insets = new Insets(0, 0, 5, 0);
+		gbc_lblSubtitle.fill = GridBagConstraints.HORIZONTAL;
+		gbc_lblSubtitle.gridwidth = 2;
+		gbc_lblSubtitle.gridx = 0;
+		gbc_lblSubtitle.gridy = 1;
+		panelEntityTitle.add(lblSubtitle, gbc_lblSubtitle);
+		
+		JPanel panelEntityDetails = new JPanel();
+		panelEntityDetails.setOpaque(false);
+		GridBagConstraints gbc_panelEntityDetails = new GridBagConstraints();
+		gbc_panelEntityDetails.insets = new Insets(0, 0, 0, 10);
+		gbc_panelEntityDetails.fill = GridBagConstraints.BOTH;
+		gbc_panelEntityDetails.gridx = 2;
+		gbc_panelEntityDetails.gridy = 0;
+		add(panelEntityDetails, gbc_panelEntityDetails);
+		GridBagLayout gbl_panelEntityDetails = new GridBagLayout();
+		gbl_panelEntityDetails.columnWidths = new int[]{0, 0};
+		gbl_panelEntityDetails.rowHeights = new int[]{0, 0, 0};
+		gbl_panelEntityDetails.columnWeights = new double[]{1.0, Double.MIN_VALUE};
+		gbl_panelEntityDetails.rowWeights = new double[]{1.0, 1.0, Double.MIN_VALUE};
+		panelEntityDetails.setLayout(gbl_panelEntityDetails);
+		
+		panelDetailsTop = new JPanel();
+		panelDetailsTop.setOpaque(false);
+		FlowLayout flowLayout_1 = (FlowLayout) panelDetailsTop.getLayout();
+		flowLayout_1.setVgap(0);
+		flowLayout_1.setAlignment(FlowLayout.TRAILING);
+		GridBagConstraints gbc_panelDetailsTop = new GridBagConstraints();
+		gbc_panelDetailsTop.insets = new Insets(5, 0, 3, 0);
+		gbc_panelDetailsTop.fill = GridBagConstraints.BOTH;
+		gbc_panelDetailsTop.gridx = 0;
+		gbc_panelDetailsTop.gridy = 0;
+		panelEntityDetails.add(panelDetailsTop, gbc_panelDetailsTop);
+		
+		panelDetailsBottom = new JPanel();
+		panelDetailsBottom.setOpaque(false);
+		FlowLayout flowLayout = (FlowLayout) panelDetailsBottom.getLayout();
+		flowLayout.setVgap(0);
+		flowLayout.setAlignment(FlowLayout.TRAILING);
+		GridBagConstraints gbc_panelDetailsBottom = new GridBagConstraints();
+		gbc_panelDetailsBottom.insets = new Insets(0, 0, 5, 0);
+		gbc_panelDetailsBottom.fill = GridBagConstraints.BOTH;
+		gbc_panelDetailsBottom.gridx = 0;
+		gbc_panelDetailsBottom.gridy = 1;
+		panelEntityDetails.add(panelDetailsBottom, gbc_panelDetailsBottom);
+	}
+	
     public void setIcon(Entity entityType, boolean isActive){
-        panelIcon.removeAll();
-        panelIcon.add(ENTITY_ICON_FACTORY.getIconAsComponent(entityType, isActive), BorderLayout.CENTER);
+        panelEntityIcon.removeAll();
+        panelEntityIcon.add(entityIconFactory.getIconAsComponent(entityType, isActive), BorderLayout.CENTER);
     }
 
     public void setEntityName(String id, String name){
-        lblEntityName.setText("<html><body><b>"+id+"</b>&nbsp;" + name + "</body><html>");
+    	lblEntityId.setText(id);
+    	lblTitle.setText(name);
     }
 
-    public void setEntityDetails(String details, String defaultText){
-        if(StringUtils.isEmpty(details)){
-            lblEntityRelease.setText(defaultText);
+    public void setEntitySubTitle(String subTitle, String defaultText){
+        if(StringUtils.isEmpty(subTitle)){
+            lblSubtitle.setText(defaultText);
         } else {
-            lblEntityRelease.setText(details);
+        	lblSubtitle.setText(subTitle);
         }
     }
 
     public void addDetailsTop(String text){
-        text = "   " + text.trim();
+        text = " " + text.trim();
         JXLabel lbl = createLabel(text);
         lbl.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, JBColor.border()));
         panelDetailsTop.add(lbl);
     }
 
     public void addDetailsBottom(String text){
-        text = "   " + text.trim();
+        text = " " + text.trim();
         JXLabel lbl = createLabel(text);
         lbl.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, JBColor.border()));
         panelDetailsBottom.add(lbl);
