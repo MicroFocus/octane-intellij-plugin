@@ -25,7 +25,7 @@ import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER;
 public class HeaderPanel extends JPanel {
     private JXLabel nameDetails;
     private JXLabel phaseDetails;
-    private JBScrollPane refreshButtonPanel;
+    private JBScrollPane actionButtonsPanel;
     private DefaultActionGroup buttonActionGroup;
     private JXHyperlink entityLinkToBrowser;
     private PhaseComboBox comboBox;
@@ -102,12 +102,12 @@ public class HeaderPanel extends JPanel {
         comboBox.setPreferredSize(new Dimension(150, 30));
         phasePanel.add(comboBox);
 
-        refreshButtonPanel = new JBScrollPane();
-        refreshButtonPanel.setBorder(null);
-        refreshButtonPanel.setVerticalScrollBarPolicy(VERTICAL_SCROLLBAR_NEVER);
-        refreshButtonPanel.setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_NEVER);
-        refreshButtonPanel.setMinimumSize(new Dimension(0, 0));
-        add(refreshButtonPanel,BorderLayout.EAST);
+        actionButtonsPanel = new JBScrollPane();
+        actionButtonsPanel.setBorder(null);
+        actionButtonsPanel.setVerticalScrollBarPolicy(VERTICAL_SCROLLBAR_NEVER);
+        actionButtonsPanel.setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_NEVER);
+        actionButtonsPanel.setMinimumSize(new Dimension(0, 0));
+        add(actionButtonsPanel,BorderLayout.EAST);
         createActionToolBar();
 
     }
@@ -138,7 +138,7 @@ public class HeaderPanel extends JPanel {
         final ActionToolbar actionToolBar = ActionManager.getInstance().createActionToolbar("refresh | save", buttonActionGroup, true);
         final JXPanel buttonsPanel = new JXPanel(new BorderLayout());
         buttonsPanel.add(actionToolBar.getComponent(), BorderLayout.CENTER);
-        refreshButtonPanel.setViewportView(buttonsPanel);
+        actionButtonsPanel.setViewportView(buttonsPanel);
     }
 
     public void setActionToEntityLink(Runnable runnable) {

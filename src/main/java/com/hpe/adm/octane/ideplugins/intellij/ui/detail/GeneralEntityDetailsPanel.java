@@ -100,6 +100,7 @@ public class GeneralEntityDetailsPanel extends JPanel {
 
 		descriptionDetails = new JXTextArea();
 		descriptionDetails.setLineWrap(true);
+		descriptionDetails.setWrapStyleWord(true);
 		descriptionDetails.setEditable(false);
 		descriptionDetails.setOpaque(false);
 		descriptionDetails.setEditable(false);
