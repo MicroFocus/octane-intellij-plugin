@@ -11,7 +11,6 @@ import org.jdesktop.swingx.JXCollapsiblePane.Direction;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
-import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -142,8 +141,7 @@ public class GeneralEntityDetailsPanel extends JPanel {
 		commentsListPanel = new CommentsConversationPanel();
 		commentsListPanel.setPreferredSize(new Dimension(400,200));
 		commentsListPanel.setMaximumSize(new Dimension(400,200));
-		commentsListPanel.setBorder(new TitledBorder("Comments"));
-
+		commentsListPanel.setBorder(new MatteBorder(1, 1, 1, 1, JBColor.border()));
 		commetsDetails.getContentPane().add(commentsListPanel);
 
 		GridBagConstraints gbc_commentsPanel = new GridBagConstraints();

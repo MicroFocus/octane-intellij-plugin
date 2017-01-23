@@ -1,52 +1,31 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Date;
-
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.text.BadLocationException;
-
-import com.intellij.ui.ClickListener;
-import com.intellij.ui.JBColor;
+import java.awt.*;
+import java.awt.event.ActionListener;
 
 public class CommentsConversationPanel extends JPanel {
-	private JButton sendMessage;
+	private JButton sendMessageButton;
 	private JTextField messageBox;
 	private JTextArea chatBox;
-	private String username = "dasdas";
+	private String username;
 
 	public CommentsConversationPanel() {
 		setLayout(new BorderLayout());
 
 		JPanel southPanel = new JPanel();
-		southPanel.setBackground(JBColor.border());
 		southPanel.setLayout(new GridBagLayout());
 
 		messageBox = new JTextField(30);
-		messageBox.setBackground(JBColor.background());
 		messageBox.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		messageBox.setOpaque(false);
 		messageBox.requestFocusInWindow();
 
-		sendMessage = new JButton("Add");
-		sendMessage.addActionListener(new sendMessageButtonListener());
+		sendMessageButton = new JButton("Add");
 
 		chatBox = new JTextArea();
-		chatBox.setBackground(JBColor.background());
 		chatBox.setLineWrap(true);
 		chatBox.setWrapStyleWord(true);
 		chatBox.setEditable(false);
@@ -68,23 +47,19 @@ public class CommentsConversationPanel extends JPanel {
 		right.weighty = 1.0D;
 
 		southPanel.add(messageBox, left);
-		southPanel.add(sendMessage, right);
+		southPanel.add(sendMessageButton, right);
+        southPanel.setBorder(new EmptyBorder(0,5,0,5));
 
 		add(BorderLayout.NORTH, southPanel);
 		JScrollPane scrollChatBox =  new JScrollPane(chatBox);
-		scrollChatBox.setBorder(null);
+		scrollChatBox.setBorder(new EmptyBorder(0,5,0,5));
 		add(scrollChatBox, BorderLayout.CENTER);
 
 	}
 	
-	public void addNewComment(){
-		try {
-			chatBox.getDocument().insertString(0,new Date().toString()+" "+username + "| "+ messageBox.getText() +"\n", null);
-		} catch (BadLocationException e) {
-			e.printStackTrace();
-		}
-	}
-	public void addExistingComment(String commentPostDate,String username,String message){
+
+
+	public void addExistingComment(String commentPostDate, String username, String message){
 		try {
 			chatBox.getDocument().insertString(0,"\n" + commentPostDate+" "+username + ": "+ "\n"+message +"\n", null);
 		} catch (BadLocationException e) {
@@ -92,19 +67,8 @@ public class CommentsConversationPanel extends JPanel {
 		}
 	}
 
-	class sendMessageButtonListener implements ActionListener {
-		public void actionPerformed(ActionEvent event) {
-			if (messageBox.getText().length() < 1) {
-				// do nothing
-			} else {
-				addNewComment();
-				messageBox.setText("");
-			}
-			messageBox.requestFocusInWindow();
-		}
-	}
 	public void addSendNewCommentAction(ActionListener actionListener) {
-		sendMessage.addActionListener(actionListener);
+		sendMessageButton.addActionListener(actionListener);
 	}
 
 	public void setCommentMessageBoxText(String t) {
