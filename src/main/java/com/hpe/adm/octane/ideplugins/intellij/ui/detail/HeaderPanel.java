@@ -55,7 +55,6 @@ public class HeaderPanel extends JPanel {
         
         entityLinkToBrowser = new JXHyperlink();
         entityLinkToBrowser.setFont(new Font("Tahoma", Font.PLAIN, 13));
-        entityLinkToBrowser.setText("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
         entityLinkToBrowser.setBorder(new EmptyBorder(0, 5, 0, 0));
         entityLinkToBrowser.setUnclickedColor(JBColor.foreground());
         entityLinkToBrowser.setClickedColor(JBColor.foreground());
