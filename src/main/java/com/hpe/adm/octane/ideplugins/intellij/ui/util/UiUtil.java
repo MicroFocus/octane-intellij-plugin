@@ -44,7 +44,7 @@ public class UiUtil {
                 }
             }
         }
-        return (null == result) ? "" : result;
+        return (null == result) ? " " : result;
     }
 
     private static FieldModel getValueOfChild(EntityModel entityModel, String child) {

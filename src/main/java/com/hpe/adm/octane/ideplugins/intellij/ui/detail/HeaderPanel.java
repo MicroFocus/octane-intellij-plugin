@@ -7,7 +7,6 @@ import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.ui.JBColor;
-import com.intellij.ui.components.JBScrollPane;
 import org.jdesktop.swingx.JXHyperlink;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
@@ -19,19 +18,24 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Collection;
 
-import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
-import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER;
-
 public class HeaderPanel extends JPanel {
-    private JXLabel nameDetails;
-    private JXLabel phaseDetails;
-    private JBScrollPane actionButtonsPanel;
-    private DefaultActionGroup buttonActionGroup;
+
+    private JLabel entityIconLabel;
     private JXHyperlink entityLinkToBrowser;
-    private PhaseComboBox comboBox;
-    private JXLabel moveToLabel;
-    private AnAction saveSelectedPhaseAction;
+    
     private JXPanel phasePanel;
+    
+    private JXLabel phaseDetails;
+    private JXLabel currentPhaseLabel;
+    private JXLabel moveToLabel;
+    private PhaseComboBox phaseComboBox;
+    
+    private AnAction saveSelectedPhaseAction;
+
+    private DefaultActionGroup buttonActionGroup;
+    private JLabel lblNewLabel;
+    private JPanel panelActions;
+    private JPanel panelControls;
 
 
     public HeaderPanel() {
@@ -42,18 +46,16 @@ public class HeaderPanel extends JPanel {
 
         setToolTipText("");
         setBorder(null);
-        setLayout(new BorderLayout(0, 0));
-
-        JXPanel nameAndIconPanel = new JXPanel();
-        nameAndIconPanel.setBorder(null);
-        FlowLayout flowLayout = (FlowLayout) nameAndIconPanel.getLayout();
-        flowLayout.setHgap(0);
-        add(nameAndIconPanel, BorderLayout.WEST);
-
-        nameDetails = new JXLabel();
-        nameAndIconPanel.add(nameDetails);
-
+        GridBagLayout gridBagLayout = new GridBagLayout();
+        gridBagLayout.columnWidths = new int[]{0, 30, 0, 0};
+        gridBagLayout.rowHeights = new int[]{40, 0};
+        gridBagLayout.columnWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
+        gridBagLayout.rowWeights = new double[]{0.0, Double.MIN_VALUE};
+        setLayout(gridBagLayout);
+        
         entityLinkToBrowser = new JXHyperlink();
+        entityLinkToBrowser.setFont(new Font("Tahoma", Font.PLAIN, 13));
+        entityLinkToBrowser.setText("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
         entityLinkToBrowser.setBorder(new EmptyBorder(0, 5, 0, 0));
         entityLinkToBrowser.setUnclickedColor(JBColor.foreground());
         entityLinkToBrowser.setClickedColor(JBColor.foreground());
@@ -68,48 +70,86 @@ public class HeaderPanel extends JPanel {
                 entityLinkToBrowser.setForeground(JBColor.foreground());
             }
         });
-        nameAndIconPanel.add(entityLinkToBrowser);
-
+        
+        entityIconLabel = new JLabel("");
+        entityIconLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        GridBagConstraints gbc_entityIconLabel = new GridBagConstraints();
+        gbc_entityIconLabel.insets = new Insets(0, 20, 0, 5);
+        gbc_entityIconLabel.gridx = 0;
+        gbc_entityIconLabel.gridy = 0;
+        add(entityIconLabel, gbc_entityIconLabel);
+        GridBagConstraints gbc_labelReplaceme = new GridBagConstraints();
+        gbc_labelReplaceme.fill = GridBagConstraints.HORIZONTAL;
+        gbc_labelReplaceme.insets = new Insets(0, 0, 0, 5);
+        gbc_labelReplaceme.gridx = 1;
+        gbc_labelReplaceme.gridy = 0;
+        add(entityLinkToBrowser, gbc_labelReplaceme);
+        
+        panelControls = new JPanel(new BorderLayout());
+        GridBagConstraints gbc_panelControls = new GridBagConstraints();
+        gbc_panelControls.fill = GridBagConstraints.BOTH;
+        gbc_panelControls.gridx = 2;
+        gbc_panelControls.gridy = 0;
+        add(panelControls, gbc_panelControls);
+        panelControls.setLayout(new BorderLayout(0, 0));
+        
         phasePanel = new JXPanel();
-        phasePanel.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        panelControls.add(phasePanel);
         phasePanel.setBorder(null);
-        FlowLayout fl_phasePanel = (FlowLayout) phasePanel.getLayout();
-        fl_phasePanel.setAlignment(FlowLayout.RIGHT);
-        fl_phasePanel.setHgap(0);
-        add(phasePanel, BorderLayout.CENTER);
-
-        JXLabel currentPhaseLabel = new JXLabel();
-        currentPhaseLabel.setBorder(new EmptyBorder(0, 0, 0, 5));
-        currentPhaseLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
+        phasePanel.setAlignmentX(1.0f);
+        GridBagLayout gbl_phasePanel = new GridBagLayout();
+        gbl_phasePanel.columnWidths = new int[]{88, 44, 51, 200};
+        gbl_phasePanel.rowHeights = new int[]{16, 0};
+        gbl_phasePanel.columnWeights = new double[]{0.0, 0.0, 0.0, 1.0};
+        gbl_phasePanel.rowWeights = new double[]{1.0, Double.MIN_VALUE};
+        phasePanel.setLayout(gbl_phasePanel);
+        
+        currentPhaseLabel = new JXLabel();
         currentPhaseLabel.setText("Current phase:");
-        phasePanel.add(currentPhaseLabel);
-
+        currentPhaseLabel.setFont(new Font("Tahoma", Font.BOLD, 13));
+        currentPhaseLabel.setBorder(new EmptyBorder(0, 0, 0, 5));
+        GridBagConstraints gbc_currentPhaseLabel = new GridBagConstraints();
+        gbc_currentPhaseLabel.anchor = GridBagConstraints.WEST;
+        gbc_currentPhaseLabel.insets = new Insets(0, 0, 0, 5);
+        gbc_currentPhaseLabel.gridx = 0;
+        gbc_currentPhaseLabel.gridy = 0;
+        phasePanel.add(currentPhaseLabel, gbc_currentPhaseLabel);
+        
         phaseDetails = new JXLabel();
-        phaseDetails.setBorder(new EmptyBorder(0, 0, 0, 10));
-        phaseDetails.setFont(new Font("Tahoma", Font.PLAIN, 13));
         phaseDetails.setText("phase");
-        phasePanel.add(phaseDetails);
-
+        phaseDetails.setFont(new Font("Tahoma", Font.PLAIN, 13));
+        phaseDetails.setBorder(new EmptyBorder(0, 0, 0, 10));
+        GridBagConstraints gbc_phaseDetails = new GridBagConstraints();
+        gbc_phaseDetails.anchor = GridBagConstraints.WEST;
+        gbc_phaseDetails.insets = new Insets(0, 0, 0, 5);
+        gbc_phaseDetails.gridx = 1;
+        gbc_phaseDetails.gridy = 0;
+        phasePanel.add(phaseDetails, gbc_phaseDetails);
+        
         moveToLabel = new JXLabel();
+        moveToLabel.setText("Move to:");
+        moveToLabel.setFont(new Font("Tahoma", Font.BOLD, 13));
         moveToLabel.setBorder(new EmptyBorder(0, 0, 0, 5));
-        moveToLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
-        moveToLabel.setText("Move to");
-        phasePanel.add(moveToLabel);
-
-
-        comboBox = new PhaseComboBox();
-        comboBox.setEditable(true);
-        comboBox.setPreferredSize(new Dimension(150, 30));
-        phasePanel.add(comboBox);
-
-        actionButtonsPanel = new JBScrollPane();
-        actionButtonsPanel.setBorder(null);
-        actionButtonsPanel.setVerticalScrollBarPolicy(VERTICAL_SCROLLBAR_NEVER);
-        actionButtonsPanel.setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_NEVER);
-        actionButtonsPanel.setMinimumSize(new Dimension(0, 0));
-        add(actionButtonsPanel,BorderLayout.EAST);
-        createActionToolBar();
-
+        GridBagConstraints gbc_moveToLabel = new GridBagConstraints();
+        gbc_moveToLabel.anchor = GridBagConstraints.WEST;
+        gbc_moveToLabel.insets = new Insets(0, 0, 0, 5);
+        gbc_moveToLabel.gridx = 2;
+        gbc_moveToLabel.gridy = 0;
+        phasePanel.add(moveToLabel, gbc_moveToLabel);
+        
+        phaseComboBox = new PhaseComboBox();
+        phaseComboBox.setPreferredSize(new Dimension(150, 30));
+        phaseComboBox.setEditable(true);
+        GridBagConstraints gbc_phaseComboBox = new GridBagConstraints();
+        gbc_phaseComboBox.fill = GridBagConstraints.HORIZONTAL;
+        gbc_phaseComboBox.gridx = 3;
+        gbc_phaseComboBox.gridy = 0;
+        phasePanel.add(phaseComboBox, gbc_phaseComboBox);
+        
+        
+        buttonActionGroup = new DefaultActionGroup();
+        ActionToolbar actionToolBar = ActionManager.getInstance().createActionToolbar("refresh | save", buttonActionGroup, true);
+        panelControls.add(actionToolBar.getComponent(), BorderLayout.EAST);
     }
 
     public void setNameDetails(String nameDetails) {
@@ -121,24 +161,12 @@ public class HeaderPanel extends JPanel {
     }
 
     public void setEntityIcon(ImageIcon entityIcon) {
-        this.nameDetails.setIcon(entityIcon);
+    	entityIconLabel.setIcon(entityIcon);
     }
 
     public void setRefreshButton(AnAction refreshAction) {
         buttonActionGroup.addSeparator();
         buttonActionGroup.add(refreshAction);
-    }
-    public void setRunTestButon(AnAction refreshAction) {
-        //TODO: @osavencu: see if this can be added
-
-    }
-
-    public void createActionToolBar() {
-        buttonActionGroup = new DefaultActionGroup();
-        final ActionToolbar actionToolBar = ActionManager.getInstance().createActionToolbar("refresh | save", buttonActionGroup, true);
-        final JXPanel buttonsPanel = new JXPanel(new BorderLayout());
-        buttonsPanel.add(actionToolBar.getComponent(), BorderLayout.CENTER);
-        actionButtonsPanel.setViewportView(buttonsPanel);
     }
 
     public void setActionToEntityLink(Runnable runnable) {
@@ -151,16 +179,16 @@ public class HeaderPanel extends JPanel {
     }
 
     public void setPossiblePhasesForEntity(Collection<EntityModel> phasesList) {
-        comboBox.addItems(phasesList);
+    	phaseComboBox.addItems(phasesList);
         if (phasesList.size() == 1) {
-            comboBox.setEnabled(false);
+        	phaseComboBox.setEnabled(false);
         } else {
-            comboBox.setEnabled(true);
+        	phaseComboBox.setEnabled(true);
         }
     }
 
     public EntityModel getSelectedTransition() {
-        EntityModel selectedTransition = (EntityModel) comboBox.getSelectedItem();
+        EntityModel selectedTransition = (EntityModel) phaseComboBox.getSelectedItem();
         return selectedTransition;
     }
 
