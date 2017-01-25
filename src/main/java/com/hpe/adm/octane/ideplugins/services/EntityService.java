@@ -212,7 +212,11 @@ public class EntityService {
         for (EntityModel transition : transitions) {
             Long tempPhase = Long.valueOf(UiUtil.getUiDataFromModel(transition.getValue("source_phase"), "id"));
             if (currentPhaseId.equals(tempPhase)) {
-                possibleTransitions.add(transition);
+                if(transition.getValue("is_primary").getValue().equals(Boolean.TRUE)){
+                    possibleTransitions.add(0, transition);
+                } else {
+                    possibleTransitions.add(transition);
+                }
             }
         }
         return possibleTransitions;
