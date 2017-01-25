@@ -346,15 +346,15 @@ public class SnakeGame extends JPanel {
 	}
 	
 	private void drawGameStart(Graphics g, int x, int y, int width, int height){
-		int titleFontSize = 25;
-		int bottomFontSize = 15;
+		int titleFontSize = width * 5 / 100;
+		int bottomFontSize = width * 3 / 100;
 		
 		Font titleFont = new JLabel().getFont().deriveFont(Font.BOLD | Font.ITALIC).deriveFont((float)titleFontSize);
 		g.setColor(octaneGreen);
 		FontMetrics fontMetrics =  getFontMetrics(titleFont);
 		g.setFont(titleFont);
 		String title = "OCTANE SNAKE";
-		g.drawString(title, x + (width- fontMetrics.stringWidth(title)) / 2, y + height / 2 - titleFontSize / 2 + 5);
+		g.drawString(title, x + (width- fontMetrics.stringWidth(title)) / 2, y + height / 2 - titleFontSize / 2);
 		
 		
 		Font bottomFont = new JLabel().getFont().deriveFont(Font.BOLD).deriveFont((float)bottomFontSize);
@@ -362,18 +362,18 @@ public class SnakeGame extends JPanel {
 		fontMetrics =  getFontMetrics(bottomFont);
 		g.setFont(bottomFont);
 		String click = "Click to start, space/click to pause";
-		g.drawString(click, x + (width - fontMetrics.stringWidth(click)) / 2 , y + height / 2 + 10);
+		g.drawString(click, x + (width - fontMetrics.stringWidth(click)) / 2 , y + height / 2 + bottomFontSize);
 	}
 	
 	private void drawGamePaused(Graphics g, int x, int y, int width, int height){
-		int titleFontSize = 25;
-		int bottomFontSize = 15;
+		int titleFontSize = width * 5 / 100;
+		int bottomFontSize = width * 3 / 100;
 		Font titleFont = new JLabel().getFont().deriveFont(Font.BOLD | Font.ITALIC).deriveFont((float)titleFontSize);
 		g.setColor(octaneGray);
 		FontMetrics fontMetrics =  getFontMetrics(titleFont);
 		g.setFont(titleFont);
 		String title = "PAUSED";
-		g.drawString(title, x + (width- fontMetrics.stringWidth(title)) / 2, y + height / 2 - titleFontSize / 2 + 5);
+		g.drawString(title, x + (width- fontMetrics.stringWidth(title)) / 2, y + height / 2 - titleFontSize / 2);
 		
 		
 		Font bottomFont = new JLabel().getFont().deriveFont(Font.BOLD).deriveFont((float)bottomFontSize);
@@ -381,22 +381,22 @@ public class SnakeGame extends JPanel {
 		fontMetrics =  getFontMetrics(bottomFont);
 		g.setFont(bottomFont);
 		String score = "Score: " + (snakeBody.size() - INIT_SIZE);
-		g.drawString(score, x + (width - fontMetrics.stringWidth(score)) / 2 , y + height / 2 + 10);
+		g.drawString(score, x + (width - fontMetrics.stringWidth(score)) / 2 , y + height / 2 + bottomFontSize);
 		
 		String click = "Space/click to resume";
-		g.drawString(click, x + (width - fontMetrics.stringWidth(click)) / 2 , y + height / 2 + 25);
+		g.drawString(click, x + (width - fontMetrics.stringWidth(click)) / 2 , y + height / 2 + bottomFontSize * 2);
 		
 	}
 	
 	private void drawGameOver(Graphics g, int x, int y, int width, int height){
-		int titleFontSize = 25;
-		int bottomFontSize = 15;
+		int titleFontSize = width * 5 / 100;
+		int bottomFontSize = width * 3 / 100;
 		Font titleFont = new JLabel().getFont().deriveFont(Font.BOLD | Font.ITALIC).deriveFont((float)titleFontSize);
 		g.setColor(Color.RED);
 		FontMetrics fontMetrics =  getFontMetrics(titleFont);
 		g.setFont(titleFont);
 		String title = "GAME OVER";
-		g.drawString(title, x + (width- fontMetrics.stringWidth(title)) / 2, y + height / 2 - titleFontSize / 2 + 5);
+		g.drawString(title, x + (width- fontMetrics.stringWidth(title)) / 2, y + height / 2 - titleFontSize / 2);
 		
 		
 		Font bottomFont = new JLabel().getFont().deriveFont(Font.BOLD).deriveFont((float)bottomFontSize);
@@ -404,31 +404,31 @@ public class SnakeGame extends JPanel {
 		fontMetrics =  getFontMetrics(bottomFont);
 		g.setFont(bottomFont);
 		String score = "Score: " + (snakeBody.size() - INIT_SIZE);
-		g.drawString(score, x + (width - fontMetrics.stringWidth(score)) / 2 , y + height / 2 + 10);
+		g.drawString(score, x + (width - fontMetrics.stringWidth(score)) / 2 , y + height / 2 + bottomFontSize);
 		
 		String click = "Click to restart, or maybe get back to work...";
-		g.drawString(click, x + (width - fontMetrics.stringWidth(click)) / 2 , y + height / 2 + 25);
+		g.drawString(click, x + (width - fontMetrics.stringWidth(click)) / 2 , y + height / 2 + bottomFontSize * 2);
 	}
 	
-	private void drawGameWon(Graphics g, int x, int y, int width, int height){		
-		int titleFontSize = 25;
-		int bottomFontSize = 15;
+	private void drawGameWon(Graphics g, int x, int y, int width, int height){
+        int titleFontSize = width * 5 / 100;
+        int bottomFontSize = width * 3 / 100;
 		Font titleFont = new JLabel().getFont().deriveFont(Font.BOLD | Font.ITALIC).deriveFont((float)titleFontSize);
 		g.setColor(octaneGreen);
 		FontMetrics fontMetrics =  getFontMetrics(titleFont);
 		g.setFont(titleFont);
 		String title = "GAME WON";
-		g.drawString(title, x + (width- fontMetrics.stringWidth(title)) / 2, y + height / 2 - titleFontSize / 2 + 5);
+        g.drawString(title, x + (width- fontMetrics.stringWidth(title)) / 2, y + height / 2 - titleFontSize / 2);
 		
 		Font bottomFont = new JLabel().getFont().deriveFont(Font.BOLD).deriveFont((float)bottomFontSize);
 		g.setColor(octaneGray);
 		fontMetrics =  getFontMetrics(bottomFont);
 		g.setFont(bottomFont);
 		String score = "Wow, that's impressive!";
-		g.drawString(score, x + (width - fontMetrics.stringWidth(score)) / 2 , y + height / 2 + 10);
+        g.drawString(score, x + (width - fontMetrics.stringWidth(score)) / 2 , y + height / 2 + bottomFontSize);
 		
-		String click = "Maybe you should get back to work now...";
-		g.drawString(click, x + (width - fontMetrics.stringWidth(click)) / 2 , y + height / 2 + 25);
+		String click = "You should really get back to work now...";
+        g.drawString(click, x + (width - fontMetrics.stringWidth(click)) / 2 , y + height / 2 + bottomFontSize * 2);
 	}
 
 	private void setKeyBindings() {
@@ -455,9 +455,11 @@ public class SnakeGame extends JPanel {
 	}
 
 	private void changeDirection(SpriteDirection direction, SpriteDirection oppositeDir){
-        snakeDirectionQueue.clear();
-        snakeDirectionQueue.add(direction);
-        callTimerAction();
+		if(!snakeDirectionQueue.peek().equals(oppositeDir)) {
+			snakeDirectionQueue.clear();
+			snakeDirectionQueue.add(direction);
+			callTimerAction();
+		}
     }
 
     private void togglePaused(){
