@@ -247,10 +247,24 @@ public class SnakeGame extends JPanel {
 					repaint();
 				}
 			});
+            gameLoopTimer.setInitialDelay(0);
 		} else {
 			gameLoopTimer.setDelay(speed);
 		}
 	}
+
+    /**
+     * Calls the timer action instantly ignoring the delay
+     */
+    private void callTimerAction(){
+        int delay = gameLoopTimer.getDelay();
+        gameLoopTimer.stop();
+        gameLoopTimer.setDelay(0);
+        gameLoopTimer.start();
+        gameLoopTimer.stop();
+        gameLoopTimer.setDelay(delay);
+        gameLoopTimer.start();
+    }
 
 	@Override
 	public void paintComponent(Graphics g) {
@@ -441,9 +455,9 @@ public class SnakeGame extends JPanel {
 	}
 
 	private void changeDirection(SpriteDirection direction, SpriteDirection oppositeDir){
-        if(!snakeDirectionQueue.peekLast().equals(direction) && !snakeDirectionQueue.peekLast().equals(oppositeDir) && snakeDirectionQueue.size()<4){
-            snakeDirectionQueue.add(direction);
-        }
+        snakeDirectionQueue.clear();
+        snakeDirectionQueue.add(direction);
+        callTimerAction();
     }
 
     private void togglePaused(){

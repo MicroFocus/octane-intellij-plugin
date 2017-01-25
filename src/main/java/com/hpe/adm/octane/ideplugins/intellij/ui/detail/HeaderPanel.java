@@ -28,14 +28,12 @@ public class HeaderPanel extends JPanel {
     private JXLabel phaseDetails;
     private JXLabel currentPhaseLabel;
     private JXLabel moveToLabel;
-    private PhaseComboBox phaseComboBox;
-    
+    private PhaseComboBox phaseComboBox;    
     private AnAction saveSelectedPhaseAction;
 
-    private DefaultActionGroup buttonActionGroup;
-    private JLabel lblNewLabel;
-    private JPanel panelActions;
     private JPanel panelControls;
+    private DefaultActionGroup buttonActionGroup;
+
 
 
     public HeaderPanel() {
@@ -52,7 +50,7 @@ public class HeaderPanel extends JPanel {
         gridBagLayout.columnWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
         gridBagLayout.rowWeights = new double[]{0.0, Double.MIN_VALUE};
         setLayout(gridBagLayout);
-        
+
         entityLinkToBrowser = new JXHyperlink();
         entityLinkToBrowser.setFont(new Font("Tahoma", Font.PLAIN, 13));
         entityLinkToBrowser.setBorder(new EmptyBorder(0, 5, 0, 0));
