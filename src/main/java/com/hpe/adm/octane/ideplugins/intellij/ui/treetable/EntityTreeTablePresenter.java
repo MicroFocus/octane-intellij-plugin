@@ -24,15 +24,12 @@ import com.intellij.openapi.actionSystem.DataKeys;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vcs.VcsShowConfirmationOption;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ui.ConfirmationDialog;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
 
@@ -69,38 +66,68 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView>{
         // entityTreeModel.setEntities(myWork);
         // entityTreeView.setTreeModel(entityTreeModel);
 
-        Task.Backgroundable backgroundTask = new Task.Backgroundable(null, "Loading \"My work\"", false) {
+        SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 
-            private Collection<EntityModel> myWork;
-
-            public void run(@NotNull ProgressIndicator indicator) {
-                entityTreeTableView.setLoading(true);
-                myWork = entityService.getMyWork(EntityTreeCellRenderer.getEntityFieldMap());
-
-            }
-
-            public void onSuccess() {
-                entityTreeTableView.setLoading(false);
-
-                entityTreeTableView.setTreeModel(new EntityTreeModel(myWork));
-                entityTreeTableView.expandAllNodes();
-                updateActiveItem(myWork);
-            }
-
-            public void onError(@NotNull Exception ex) {
-                entityTreeTableView.setLoading(false);
-
-                String message;
-                if(ex instanceof OctaneException){
-                    message = SdkUtil.getMessageFromOctaneException((OctaneException) ex);
-                } else {
-                    message = ex.getMessage();
+            @Override
+            protected Void doInBackground() throws Exception {
+                try {
+                    entityTreeTableView.setLoading(true);
+                    Collection<EntityModel> myWork = entityService.getMyWork(EntityTreeCellRenderer.getEntityFieldMap());
+                    SwingUtilities.invokeLater(() -> {
+                        entityTreeTableView.setLoading(false);
+                        entityTreeTableView.setTreeModel(new EntityTreeModel(myWork));
+                        entityTreeTableView.expandAllNodes();
+                        updateActiveItem(myWork);
+                    });
+                    return null;
+                } catch (Exception ex) {
+                    entityTreeTableView.setLoading(false);
+                    String message;
+                    if(ex instanceof OctaneException){
+                        message = SdkUtil.getMessageFromOctaneException((OctaneException) ex);
+                    } else {
+                        message = ex.getMessage();
+                    }
+                    entityTreeTableView.setErrorMessage("Failed to load \"My work\" <br>" + message);
+                    return null;
                 }
-                entityTreeTableView.setErrorMessage("Failed to load \"My work\" <br>" + message);
             }
         };
 
-        backgroundTask.queue();
+        worker.execute();
+
+//        Task.Backgroundable backgroundTask = new Task.Backgroundable(null, "Loading \"My work\"", false) {
+//
+//            private Collection<EntityModel> myWork;
+//
+//            public void run(@NotNull ProgressIndicator indicator) {
+//                entityTreeTableView.setLoading(true);
+//                myWork = entityService.getMyWork(EntityTreeCellRenderer.getEntityFieldMap());
+//
+//            }
+//
+//            public void onSuccess() {
+//                entityTreeTableView.setLoading(false);
+//                System.out.println(" >> refreshing view");
+//                entityTreeTableView.setTreeModel(new EntityTreeModel(myWork));
+//                entityTreeTableView.expandAllNodes();
+//                updateActiveItem(myWork);
+//            }
+//
+//            public void onError(@NotNull Exception ex) {
+//                entityTreeTableView.setLoading(false);
+//
+//                String message;
+//                if(ex instanceof OctaneException){
+//                    message = SdkUtil.getMessageFromOctaneException((OctaneException) ex);
+//                } else {
+//                    message = ex.getMessage();
+//                }
+//                entityTreeTableView.setErrorMessage("Failed to load \"My work\" <br>" + message);
+//            }
+//        };
+//
+//        backgroundTask.queue();
     }
 
     /**
