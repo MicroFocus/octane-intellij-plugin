@@ -138,9 +138,6 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
     public void setView(TabbedPaneView tabbedPaneView) {
         this.tabbedPaneView = tabbedPaneView;
 
-        //Init tabbed pane view handlers
-        initHandlers();
-
         //open test entity tree view
         EntityTreeTablePresenter entityTreeTablePresenter = openMyWorkTab();
 
@@ -196,9 +193,20 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
         });
 
         //Persistence
+        PartialEntity selectedTabKey = getselectedTabToFromPersistentState();
+
         loadDetailTabsFromPersistentState();
-        selectSelectedTabToFromPersistentState();
+
+        //attempt to reselect prev tab
+        if(selectedTabKey!=null) {
+            selectDetailTab(selectedTabKey);
+        }
+
         loadSearchHistory();
+
+        // Make sure handler are init after history,
+        // activating this handler b4 can overwrite the saved settings
+        initHandlers();
     }
 
     private void initHandlers(){
@@ -312,12 +320,13 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
         }
     }
 
-    private void selectSelectedTabToFromPersistentState(){
+    private PartialEntity getselectedTabToFromPersistentState(){
         JSONObject jsonObject =  idePluginPersistentState.loadState(IdePluginPersistentState.Key.SELECTED_TAB);
-        if(jsonObject == null) return;
-        PartialEntity selectedTabKey = PartialEntity.fromJsonObject(jsonObject);
-        if(detailTabInfo.containsKey(selectedTabKey)){
-            selectDetailTab(selectedTabKey);
+        if(jsonObject == null){
+            return null;
+        } else {
+            PartialEntity selectedTabKey = PartialEntity.fromJsonObject(jsonObject);
+            return selectedTabKey;
         }
     }
 
