@@ -2,9 +2,10 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents;
 
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
-import com.intellij.ui.JBColor;
+import com.intellij.util.ui.UIUtil;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.plaf.basic.BasicComboBoxEditor;
 import java.awt.*;
 import java.util.Collection;
@@ -32,28 +33,21 @@ public class PhaseComboBox extends JComboBox {
         }
     }
 
+    private static final Border labelBorder = BorderFactory.createEmptyBorder(5,5,5,5);
+
     private class PhaseItemEditor extends BasicComboBoxEditor {
-        private JPanel panel = new JPanel();
         private JLabel labelItem = new JLabel();
         private EntityModel selectedValue;
 
         public PhaseItemEditor() {
-            panel.setLayout(new GridBagLayout());
-            GridBagConstraints constraints = new GridBagConstraints();
-            constraints.fill = GridBagConstraints.HORIZONTAL;
-            constraints.weightx = 1.0;
-            constraints.insets = new Insets(2, 5, 2, 2);
-
-            labelItem.setOpaque(false);
+            labelItem = new JLabel();
+            labelItem.setBorder(labelBorder);
             labelItem.setHorizontalAlignment(JLabel.LEFT);
-            labelItem.setForeground(JBColor.foreground());
-
-            panel.add(labelItem, constraints);
-            panel.setBackground(JBColor.background());
+            labelItem.setVerticalAlignment(JLabel.CENTER);
         }
 
         public Component getEditorComponent() {
-            return this.panel;
+            return labelItem;
         }
 
         public Object getItem() {
@@ -67,28 +61,10 @@ public class PhaseComboBox extends JComboBox {
             EntityModel phaseItem = (EntityModel) item;
             selectedValue = phaseItem;
             labelItem.setText(UiUtil.getUiDataFromModel(phaseItem.getValue("target_phase"), "name"));
-            labelItem.setForeground(JBColor.foreground());
-            labelItem.setBackground(JBColor.background());
-//            labelItem.setIcon(new ImageIcon(phaseItem[1]));
         }
     }
 
     private class PhaseItemRenderer extends JPanel implements ListCellRenderer {
-        private JLabel labelItem = new JLabel();
-
-        public PhaseItemRenderer() {
-            setLayout(new GridBagLayout());
-            GridBagConstraints constraints = new GridBagConstraints();
-            constraints.fill = GridBagConstraints.HORIZONTAL;
-            constraints.weightx = 1.0;
-            constraints.insets = new Insets(2, 2, 2, 2);
-
-            labelItem.setOpaque(true);
-            labelItem.setHorizontalAlignment(JLabel.LEFT);
-
-            add(labelItem, constraints);
-            setBackground(JBColor.background());
-        }
 
         @Override
         public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
@@ -98,18 +74,19 @@ public class PhaseComboBox extends JComboBox {
                 phaseItem = new EntityModel("target_phase", "No transition");
             }
 
+            JLabel labelItem = new JLabel();
+            labelItem.setOpaque(true);
+            labelItem.setBorder(labelBorder);
+            labelItem.setHorizontalAlignment(JLabel.LEFT);
+            labelItem.setVerticalAlignment(JLabel.CENTER);
             labelItem.setText(UiUtil.getUiDataFromModel(phaseItem.getValue("target_phase"), "name"));
 
             if (isSelected) {
-                labelItem.setBackground(JBColor.background());
-                labelItem.setForeground(JBColor.foreground());
-            } else {
-                labelItem.setForeground(JBColor.foreground());
-                labelItem.setBackground(JBColor.background());
+                labelItem.setBackground(UIUtil.getListSelectionBackground());
+                labelItem.setForeground(UIUtil.getListSelectionForeground());
             }
 
-
-            return this;
+            return labelItem;
         }
 
     }
