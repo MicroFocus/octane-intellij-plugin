@@ -1,5 +1,7 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
+import com.intellij.util.ui.UIUtil;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.BadLocationException;
@@ -22,6 +24,8 @@ public class CommentsConversationPanel extends JPanel {
 		messageBox.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		messageBox.setOpaque(false);
 		messageBox.requestFocusInWindow();
+		messageBox.setOpaque(true);
+		messageBox.setBackground(UIUtil.getTextFieldBackground());
 
 		sendMessageButton = new JButton("Add");
 
@@ -56,8 +60,6 @@ public class CommentsConversationPanel extends JPanel {
 		add(scrollChatBox, BorderLayout.CENTER);
 
 	}
-	
-
 
 	public void addExistingComment(String commentPostDate, String username, String message){
 		try {
