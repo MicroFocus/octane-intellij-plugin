@@ -13,12 +13,16 @@ import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBScrollPane;
 import org.jdesktop.swingx.JXLabel;
 
+import javax.inject.Provider;
 import javax.swing.*;
 import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
 
@@ -226,21 +230,17 @@ public class EntityTreeView implements View {
         tree.setModel(model);
 
         if (model.size() == 0) {
-            scrollPane.setViewportView(whenEmptyComponent);
+            scrollPane.setViewportView(componentWhenEmptyProvider.get());
         } else {
             scrollPane.setViewportView(tree);
         }
     }
 
     //Default value
-    private JComponent whenEmptyComponent = new NoWorkPanel();
+    private Provider<JComponent> componentWhenEmptyProvider = () -> new NoWorkPanel();
 
-    /**
-     * What to show when the model has nothing in it
-     * @param emptyComponent
-     */
-    public void setComponentWhenEmpty(JComponent emptyComponent){
-        whenEmptyComponent = emptyComponent;
+    public void setComponentWhenEmpty(Provider<JComponent> componentWhenEmptyProvider){
+        this.componentWhenEmptyProvider = componentWhenEmptyProvider;
     }
 
     public void setEntityContextMenuFactory(EntityContextMenuFactory entityContextMenuFactory){

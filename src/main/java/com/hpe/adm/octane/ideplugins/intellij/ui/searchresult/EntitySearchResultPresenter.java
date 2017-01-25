@@ -94,7 +94,7 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
         this.entityTreeView.addActionToToolbar(new EntityTreeView.CollapseNodesAction(this.entityTreeView));
         this.entityTreeView.addSeparatorToToolbar();
 
-        entityTreeView.setComponentWhenEmpty(new NoSearchResultsPanel());
+        entityTreeView.setComponentWhenEmpty(() -> new NoSearchResultsPanel());
     }
 
     private EntityTreeModel createEmptyEntityTreeModel(Collection<EntityModel> entityModels){
