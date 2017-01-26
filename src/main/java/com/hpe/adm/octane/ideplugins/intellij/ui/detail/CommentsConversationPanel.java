@@ -4,15 +4,13 @@ import com.intellij.util.ui.UIUtil;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.text.BadLocationException;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
 public class CommentsConversationPanel extends JPanel {
 	private JButton sendMessageButton;
 	private JTextField messageBox;
-	private JTextArea chatBox;
-	private String username;
+	private JTextPane chatBox;
 
 	public CommentsConversationPanel() {
 		setLayout(new BorderLayout());
@@ -29,9 +27,8 @@ public class CommentsConversationPanel extends JPanel {
 
 		sendMessageButton = new JButton("Add");
 
-		chatBox = new JTextArea();
-		chatBox.setLineWrap(true);
-		chatBox.setWrapStyleWord(true);
+		chatBox = new JTextPane();
+        chatBox.setContentType("text/html");
 		chatBox.setEditable(false);
 		chatBox.setOpaque(false);
 		chatBox.setBorder(null);
@@ -58,16 +55,26 @@ public class CommentsConversationPanel extends JPanel {
 		JScrollPane scrollChatBox =  new JScrollPane(chatBox);
 		scrollChatBox.setBorder(new EmptyBorder(0,5,0,5));
 		add(scrollChatBox, BorderLayout.CENTER);
-
 	}
 
 	public void addExistingComment(String commentPostDate, String username, String message){
-		try {
-			chatBox.getDocument().insertString(0,"\n" + commentPostDate+" "+username + ": "+ "\n"+message +"\n", null);
-		} catch (BadLocationException e) {
-			e.printStackTrace();
-		}
+        String currentText = removeHtmlStructure(chatBox.getText());
+	    String strippedMessage = removeHtmlStructure(message);
+	    //remove links, as they wont work in swing sadly
+        strippedMessage = strippedMessage.replaceAll("<a.*?>", "").replaceAll("</a>", "");
+        currentText +=  commentPostDate + " <b>" + username + ":</b> <br>" + strippedMessage + "<hr>";
+        chatBox.setText(currentText);
 	}
+
+	private String removeHtmlStructure(String htmlString){
+        htmlString = htmlString.replace("<html>", "");
+        htmlString = htmlString.replace("</html>", "");
+        htmlString = htmlString.replace("<body>", "");
+        htmlString = htmlString.replace("</body>", "");
+        htmlString = htmlString.replace("<head>", "");
+        htmlString = htmlString.replace("</head>", "");
+        return htmlString;
+    }
 
 	public void addSendNewCommentAction(ActionListener actionListener) {
 		sendMessageButton.addActionListener(actionListener);
@@ -76,7 +83,6 @@ public class CommentsConversationPanel extends JPanel {
 	public void setCommentMessageBoxText(String t) {
 		messageBox.setText(t);
 	}
-
 	public String getCommentMessageBoxText() {
 		return messageBox.getText();
 	}

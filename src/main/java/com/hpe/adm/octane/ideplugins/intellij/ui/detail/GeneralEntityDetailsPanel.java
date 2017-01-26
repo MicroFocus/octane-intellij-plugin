@@ -13,9 +13,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 
 import static com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil.getUiDataFromModel;
 import static com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil.stripHtml;
@@ -418,18 +416,12 @@ public class GeneralEntityDetailsPanel extends JPanel {
         return qualityStoryDetailsPanel;
     }
 
-	public void addNewComment() {
-
-	}
-
 	public void setComments(Collection<EntityModel> comments) {
 		commentsListPanel.clearCurrentComments();
-		ArrayList<EntityModel>listOfComments =  new ArrayList<>(comments);
-		Collections.reverse(listOfComments);
-		for(EntityModel comment:listOfComments){
+		for(EntityModel comment: comments){
 			String commentsPostTime = getUiDataFromModel(comment.getValue(DetailsViewDefaultFields.FIELD_CREATION_TIME));
 			String userName = getUiDataFromModel(comment.getValue(DetailsViewDefaultFields.FIELD_AUTHOR),"full_name");
-			String commentLine = stripHtml(getUiDataFromModel(comment.getValue(DetailsViewDefaultFields.FIELD_COMMENT_TEXT)));
+			String commentLine = getUiDataFromModel(comment.getValue(DetailsViewDefaultFields.FIELD_COMMENT_TEXT));
 			commentsListPanel.addExistingComment(commentsPostTime,userName,commentLine);
 		}
 		commentsListPanel.scrollCommentListToTop();
