@@ -4,6 +4,7 @@ import com.intellij.util.ui.UIUtil;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.HyperlinkEvent;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
@@ -33,6 +34,13 @@ public class CommentsConversationPanel extends JPanel {
 		chatBox.setOpaque(false);
 		chatBox.setBorder(null);
 		chatBox.setFont(new Font("Tahoma", Font.PLAIN, 11));
+        chatBox.addHyperlinkListener(e -> {
+            if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                try {
+                    Desktop.getDesktop().browse(e.getURL().toURI());
+                } catch (Exception e1) {}
+            }
+        });
 
 		GridBagConstraints left = new GridBagConstraints();
 		left.anchor = GridBagConstraints.LINE_START;
@@ -61,7 +69,7 @@ public class CommentsConversationPanel extends JPanel {
         String currentText = removeHtmlStructure(chatBox.getText());
 	    String strippedMessage = removeHtmlStructure(message);
 	    //remove links, as they wont work in swing sadly
-        strippedMessage = strippedMessage.replaceAll("<a.*?>", "").replaceAll("</a>", "");
+        //strippedMessage = strippedMessage.replaceAll("<a.*?>", "").replaceAll("</a>", "");
         currentText +=  commentPostDate + " <b>" + username + ":</b> <br>" + strippedMessage + "<hr>";
         chatBox.setText(currentText);
 	}
