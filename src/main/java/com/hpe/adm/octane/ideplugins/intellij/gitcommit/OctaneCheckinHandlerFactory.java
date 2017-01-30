@@ -2,6 +2,7 @@ package com.hpe.adm.octane.ideplugins.intellij.gitcommit;
 
 import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
+import com.hpe.adm.octane.ideplugins.services.EntityService;
 import com.hpe.adm.octane.ideplugins.services.nonentity.CommitMessageService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.CheckinProjectPanel;
@@ -20,6 +21,7 @@ public class OctaneCheckinHandlerFactory extends CheckinHandlerFactory {
         CheckinHandler checkinHandler = new OctaneCheckinHandler(
                 pluginModule.getInstance(IdePluginPersistentState.class),
                 pluginModule.getInstance(CommitMessageService.class),
+                pluginModule.getInstance(EntityService.class),
                 panel
         );
         return checkinHandler;

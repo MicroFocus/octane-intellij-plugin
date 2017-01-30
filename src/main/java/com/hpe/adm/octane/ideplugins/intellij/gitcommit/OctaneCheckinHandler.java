@@ -1,7 +1,10 @@
 package com.hpe.adm.octane.ideplugins.intellij.gitcommit;
 
+import com.hpe.adm.nga.sdk.Query;
+import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.PartialEntity;
+import com.hpe.adm.octane.ideplugins.services.EntityService;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.nonentity.CommitMessageService;
 import com.intellij.openapi.project.Project;
@@ -17,32 +20,38 @@ import com.intellij.ui.awt.RelativePoint;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class OctaneCheckinHandler extends CheckinHandler {
 
     private CommitMessageService commitMessageService;
+    private EntityService entityService;
     private Project project;
     private CheckinProjectPanel panel;
     private IdePluginPersistentState idePluginPersistentState;
+    private PartialEntity activatedItem;
+    private EntityModel parentStory;
 
     public OctaneCheckinHandler(
             IdePluginPersistentState idePluginPersistentState,
             CommitMessageService commitMessageService,
+            EntityService entityService,
             CheckinProjectPanel panel) {
         this.idePluginPersistentState = idePluginPersistentState;
         this.panel = panel;
         this.project = panel.getProject();
         this.commitMessageService = commitMessageService;
+        this.entityService = entityService;
 
         panel.setCommitMessage("");
     }
 
-    private String getMessageForActivatedItem(PartialEntity activatedEntity) {
+    private String getMessageForActivatedItem() {
 
         StringBuilder messageBuilder = new StringBuilder();
-        Entity type = activatedEntity.getEntityType();
+        Entity type = activatedItem.getEntityType() == Entity.TASK ? Entity.getEntityType(parentStory)
+                : activatedItem.getEntityType();
 
         if (type != null) {
             switch (type) {
@@ -59,8 +68,15 @@ public class OctaneCheckinHandler extends CheckinHandler {
         } else {
             return null;
         }
-        messageBuilder.append(activatedEntity.getEntityId() + ": ");
-        messageBuilder.append(activatedEntity.getEntityName());
+        if (activatedItem.getEntityType() == Entity.TASK) {
+            messageBuilder.append(parentStory.getValue("id").getValue());
+            messageBuilder.append(" > task #");
+            messageBuilder.append(activatedItem.getEntityId() + ": ");
+            messageBuilder.append(activatedItem.getEntityName());
+        } else {
+            messageBuilder.append(activatedItem.getEntityId() + ": ");
+            messageBuilder.append(activatedItem.getEntityName());
+        }
 
         return messageBuilder.toString();
     }
@@ -87,25 +103,36 @@ public class OctaneCheckinHandler extends CheckinHandler {
 
     private void validate(Runnable runnableValid, Runnable runnableInvalid) {
 
-        PartialEntity activatedItem =
-                PartialEntity.fromJsonObject(
-                        idePluginPersistentState.loadState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM));
-
-
         SwingWorker<Boolean, Void> validateMessageWorker = new SwingWorker<Boolean, Void>() {
             @Override
             protected Boolean doInBackground() throws Exception {
+
+                if (activatedItem.getEntityType() == Entity.TASK) {
+                    Set<String> storyField = new HashSet<>(Arrays.asList("story"));
+                    Query.QueryBuilder idQuery = new Query.QueryBuilder("id", Query::equalTo, activatedItem.getEntityId());
+                    Collection<EntityModel> results = entityService.findEntities(Entity.TASK, idQuery, storyField);
+                    if (!results.isEmpty()) {
+                        parentStory = (EntityModel) results.iterator().next().getValue("story").getValue();
+                        return commitMessageService.validateCommitMessage(
+                                getMessageForActivatedItem(),
+                                Entity.getEntityType(parentStory),
+                                Long.parseLong(parentStory.getValue("id").getValue().toString()));
+                    } else {
+                        return null;
+                    }
+                }
                 return commitMessageService.validateCommitMessage(
-                        getMessageForActivatedItem(activatedItem),
+                        getMessageForActivatedItem(),
                         activatedItem.getEntityType(),
                         activatedItem.getEntityId());
             }
 
             @Override
             protected void done() {
-                super.done();
                 try {
-                    if (get()) {
+                    if (get() == null) {
+                        return;
+                    } else if (get()) {
                         runnableValid.run();
                     } else {
                         runnableInvalid.run();
@@ -119,12 +146,12 @@ public class OctaneCheckinHandler extends CheckinHandler {
         validateMessageWorker.execute();
     }
 
-    private void showCommitPatterns(PartialEntity activatedItem) {
+    private void showCommitPatterns(Entity entityType) {
         panel.setCommitMessage("");
         SwingWorker<List<String>, Void> fetchPatternsWorker = new SwingWorker<List<String>, Void>() {
             @Override
             protected List<String> doInBackground() throws Exception {
-                return commitMessageService.getCommitPatternsForStoryType(activatedItem.getEntityType());
+                return commitMessageService.getCommitPatternsForStoryType(entityType);
             }
 
             @Override
@@ -146,13 +173,18 @@ public class OctaneCheckinHandler extends CheckinHandler {
     @Override
     public RefreshableOnComponent getBeforeCheckinConfigurationPanel() {
 
-        PartialEntity activatedItem =
-                PartialEntity.fromJsonObject(
-                        idePluginPersistentState.loadState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM));
+        activatedItem = PartialEntity.fromJsonObject(
+                idePluginPersistentState.loadState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM));
 
         if (activatedItem != null) {
             validate(
-                    () -> panel.setCommitMessage(getMessageForActivatedItem(activatedItem)), () -> showCommitPatterns(activatedItem));
+                    () -> panel.setCommitMessage(getMessageForActivatedItem()),
+                    () -> {
+                        Entity type = activatedItem.getEntityType() == Entity.TASK ? Entity.getEntityType(parentStory)
+                                : activatedItem.getEntityType();
+                        showCommitPatterns(type);
+                    }
+            );
         }
 
         return super.getBeforeCheckinConfigurationPanel();

@@ -207,7 +207,8 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView>{
                 popup.add(downloadScriptItem);
             }
 
-            if (entityType == Entity.DEFECT || entityType == Entity.USER_STORY || entityType == Entity.QUALITY_STORY) {
+            if (entityType == Entity.DEFECT || entityType == Entity.USER_STORY || entityType == Entity.QUALITY_STORY
+                    || entityType == Entity.TASK) {
                 popup.addSeparator();
 
                 PartialEntity selectedItem = new PartialEntity(entityId.longValue(), entityName, entityType);
