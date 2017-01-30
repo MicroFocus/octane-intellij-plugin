@@ -100,7 +100,7 @@ public class EntityModelRow extends JPanel {
 		JPanel panelEntityDetails = new JPanel();
 		panelEntityDetails.setOpaque(false);
 		GridBagConstraints gbc_panelEntityDetails = new GridBagConstraints();
-		gbc_panelEntityDetails.insets = new Insets(0, 0, 0, 10);
+		gbc_panelEntityDetails.insets = new Insets(0, 0, 0, 15);
 		gbc_panelEntityDetails.fill = GridBagConstraints.BOTH;
 		gbc_panelEntityDetails.gridx = 2;
 		gbc_panelEntityDetails.gridy = 0;
