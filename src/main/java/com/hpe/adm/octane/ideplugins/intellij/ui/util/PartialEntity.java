@@ -1,11 +1,20 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.util;
 
+import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import org.json.JSONObject;
 
 public class PartialEntity extends EntityTypeIdPair {
 
     String entityName;
+
+    public PartialEntity(EntityModel entityModel){
+        super(
+                Long.parseLong(entityModel.getValue("id").getValue().toString()),
+                Entity.getEntityType(entityModel)
+        );
+        this.entityName = entityModel.getValue("name").getValue().toString();
+    }
 
     public PartialEntity(Long entityId, String entityName, Entity entityType){
         super(entityId, entityType);

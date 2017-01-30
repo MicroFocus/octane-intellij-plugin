@@ -1,11 +1,14 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.treetable;
 
+import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.hpe.adm.nga.sdk.exception.OctaneException;
 import com.hpe.adm.nga.sdk.model.EntityModel;
+import com.hpe.adm.octane.ideplugins.intellij.eventbus.OpenDetailTabEvent;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
+import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.PartialEntity;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
 import com.hpe.adm.octane.ideplugins.intellij.util.Constants;
@@ -34,6 +37,7 @@ import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.*;
@@ -46,10 +50,15 @@ import static com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil.getUiDataFro
 
 public class EntityTreeTablePresenter implements Presenter<EntityTreeView>{
 
+    private static final EntityIconFactory entityIconFactory = new EntityIconFactory(25, 25, 12, Color.WHITE);
+
     private EntityTreeView entityTreeTableView;
 
     @Inject
     private EntityService entityService;
+
+    @Inject
+    private EventBus eventBus;
 
     @Inject
     private IdePluginPersistentState persistentState;
@@ -193,6 +202,21 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView>{
                 }
             });
             popup.add(viewInBrowserItem);
+
+            if (entityType == Entity.TASK) {
+                //Get parent info
+                EntityModel storyEntityModel = (EntityModel) entityModel.getValue("story").getValue();
+                Icon icon = new ImageIcon(entityIconFactory.getIconAsImage(Entity.getEntityType(storyEntityModel)));
+
+                JMenuItem viewParentMenuItem = new JMenuItem("View parent", icon);
+                viewParentMenuItem.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mousePressed(MouseEvent e) {
+                        eventBus.post(new OpenDetailTabEvent(storyEntityModel));
+                    }
+                });
+                popup.add(viewParentMenuItem);
+            }
 
             if (entityType == Entity.GHERKIN_TEST) {
                 JMenuItem downloadScriptItem = new JMenuItem("Download script", AllIcons.Actions.Download);

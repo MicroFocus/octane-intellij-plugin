@@ -3,9 +3,11 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.tabbedpane;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.hpe.adm.nga.sdk.model.EntityModel;
+import com.hpe.adm.octane.ideplugins.intellij.eventbus.OpenDetailTabEventListener;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.ToolbarActiveItem;
@@ -55,7 +57,10 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
     private static EntityIconFactory entityIconFactory = new EntityIconFactory(25, 25, 12, Color.WHITE);
 
     @Inject
-    TabbedPaneView tabbedPaneView;
+    private TabbedPaneView tabbedPaneView;
+
+    @Inject
+    private EventBus eventBus;
 
     @Inject
     private Provider<EntityDetailPresenter> entityDetailPresenterProvider;
@@ -229,6 +234,16 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
             public void tabsMoved() {
                 saveDetailTabsToPersistentState();
             }
+        });
+
+        //Open tabs from the event bus
+        eventBus.register((OpenDetailTabEventListener) openDetailTabEvent -> {
+            EntityModel entityModel = openDetailTabEvent.getEntityModel();
+            TabbedPanePresenter.this.onEntityAction(
+                    Entity.getEntityType(entityModel),
+                    Long.parseLong(entityModel.getValue("id").getValue().toString()),
+                    entityModel,
+                    true);
         });
     }
 

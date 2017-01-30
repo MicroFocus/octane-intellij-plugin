@@ -2,6 +2,7 @@ package com.hpe.adm.octane.ideplugins.intellij;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
+import com.google.common.eventbus.EventBus;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -154,6 +155,14 @@ public class PluginModule extends AbstractModule {
     @Provides
     Project getProject(){
         return project;
+    }
+
+    //1 per plugin module
+    private EventBus eventBus = new EventBus();
+
+    @Provides
+    EventBus getEventBus(){
+        return eventBus;
     }
 
     /**
