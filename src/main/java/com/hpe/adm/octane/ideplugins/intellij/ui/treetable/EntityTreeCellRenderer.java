@@ -52,6 +52,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
         //entityFields.get(Entity.TASK).add("type"); //not a subtype
         entityFields.get(Entity.TASK).add(FIELD_RELEASE);
         entityFields.get(Entity.TASK).add(FIELD_AUTHOR);
+        entityFields.get(Entity.TASK).add(FIELD_STORY);
         Collections.addAll(entityFields.get(Entity.TASK), progressFields);
 
         //DEFECT

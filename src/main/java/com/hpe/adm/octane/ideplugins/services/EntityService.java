@@ -69,6 +69,8 @@ public class EntityService {
                     result.addAll(findEntities(entityType, query, fieldListMap.get(entityType)));
                 }
         );
+
+        //Fetching manual tests and test suites
         Query.QueryBuilder parentIsNull = new Query.QueryBuilder("parent_suite", Query::equalTo, null);
         Query.QueryBuilder runByQuery = new Query.QueryBuilder("run_by", Query::equalTo,
                 new Query.QueryBuilder("id", Query::equalTo, userService.getCurrentUserId()));
@@ -77,6 +79,7 @@ public class EntityService {
         result.addAll(findEntities(MANUAL_TEST_RUN, finalQuery, fieldListMap.get(MANUAL_TEST_RUN)));
         result.addAll(findEntities(TEST_SUITE_RUN, finalQuery, fieldListMap.get(TEST_SUITE_RUN)));
 
+        //Fetching comments
         Query.QueryBuilder mentionedUserQuery = new Query.QueryBuilder("mention_user", Query::equalTo,
                 new Query.QueryBuilder("id", Query::equalTo, userService.getCurrentUserId()));
 
