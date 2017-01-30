@@ -207,9 +207,26 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
                 addProgress(rowPanel, entityModel);
 
             } else if (Entity.TASK.equals(entityType)) {
-                rowPanel.setEntitySubTitle(
-                        UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_RELEASE)),
-                        "No release");
+
+                //Add parent details for tasks
+                EntityModel storyEntityModel = (EntityModel) entityModel.getValue("story").getValue();
+
+                String type;
+                if(storyEntityModel.getValue("subtype") != null){
+                    type = storyEntityModel.getValue("subtype").getValue().toString();
+                } else {
+                    type = storyEntityModel.getValue("type").getValue().toString();
+                }
+                String storyTypeName = subtypeNames.get(type);
+
+                StringBuilder parentInfoSb = new StringBuilder();
+                parentInfoSb.append("<html>");
+                parentInfoSb.append("Task of " + storyTypeName.toLowerCase());
+                parentInfoSb.append(" <b>" + storyEntityModel.getValue("id").getValue().toString() + ":</b>");
+                parentInfoSb.append(" " + storyEntityModel.getValue("name").getValue().toString());
+                parentInfoSb.append("</html>");
+                rowPanel.setEntitySubTitle(parentInfoSb.toString(), "no parent");
+
 
                 rowPanel.addDetailsTop("Author: " + UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_AUTHOR), FIELD_FULL_NAME));
                 addProgress(rowPanel, entityModel);
