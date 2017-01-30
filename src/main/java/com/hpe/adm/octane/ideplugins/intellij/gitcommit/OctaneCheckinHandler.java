@@ -56,7 +56,7 @@ public class OctaneCheckinHandler extends CheckinHandler {
         if (type != null) {
             switch (type) {
                 case USER_STORY:
-                    messageBuilder.append("story #");
+                    messageBuilder.append("user story #");
                     break;
                 case QUALITY_STORY:
                     messageBuilder.append("quality story #");
