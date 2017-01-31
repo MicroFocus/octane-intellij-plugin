@@ -172,6 +172,7 @@ public class ManualTestRunDetailsPanel extends JXPanel {
         environmentDetails.setText(" ");
         environmentDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_environmentDetails = new GridBagConstraints();
+        gbc_environmentDetails.anchor = GridBagConstraints.SOUTH;
         gbc_environmentDetails.fill = GridBagConstraints.HORIZONTAL;
         gbc_environmentDetails.gridx = 1;
         gbc_environmentDetails.gridy = 5;
@@ -290,6 +291,7 @@ public class ManualTestRunDetailsPanel extends JXPanel {
         versionFromReleaseDescription.setText(" ");
         versionFromReleaseDescription.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_versionFromReleaseDescription = new GridBagConstraints();
+        gbc_versionFromReleaseDescription.anchor = GridBagConstraints.SOUTH;
         gbc_versionFromReleaseDescription.fill = GridBagConstraints.HORIZONTAL;
         gbc_versionFromReleaseDescription.insets = new Insets(0, 0, 5, 0);
         gbc_versionFromReleaseDescription.gridx = 1;
@@ -311,6 +313,7 @@ public class ManualTestRunDetailsPanel extends JXPanel {
         lastModifiedDetails.setText(" ");
         lastModifiedDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_lastModifiedDetails = new GridBagConstraints();
+        gbc_lastModifiedDetails.anchor = GridBagConstraints.SOUTH;
         gbc_lastModifiedDetails.fill = GridBagConstraints.HORIZONTAL;
         gbc_lastModifiedDetails.gridx = 1;
         gbc_lastModifiedDetails.gridy = 5;
