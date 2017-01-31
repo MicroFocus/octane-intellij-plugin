@@ -5,10 +5,8 @@ import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.nga.sdk.model.FieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.EntityTypeIdPair;
-import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.intellij.ui.JBColor;
-import org.apache.commons.lang.StringUtils;
 import org.jdesktop.swingx.JXLabel;
 
 import javax.swing.*;
@@ -17,6 +15,9 @@ import java.awt.*;
 import java.util.*;
 
 import static com.hpe.adm.octane.ideplugins.intellij.ui.detail.DetailsViewDefaultFields.*;
+import static com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityModelRow.*;
+import static com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil.getContainerItemForCommentModel;
+import static com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil.getUiDataFromModel;
 
 public class EntityTreeCellRenderer implements TreeCellRenderer {
 
@@ -90,6 +91,16 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
         entityFields.get(Entity.COMMENT).add("owner_test");
         entityFields.get(Entity.COMMENT).add("owner_run");
 
+        //MANUAL TEST RUNS
+        entityFields.put(Entity.MANUAL_TEST_RUN, new HashSet<>());
+        entityFields.get(Entity.MANUAL_TEST_RUN).add("subtype");
+        entityFields.get(Entity.MANUAL_TEST_RUN).add("name");
+        entityFields.get(Entity.MANUAL_TEST_RUN).add("native_status");
+        entityFields.get(Entity.MANUAL_TEST_RUN).add(FIELD_AUTHOR);
+        entityFields.get(Entity.MANUAL_TEST_RUN).add(FIELD_ENVIROMENT);
+        entityFields.get(Entity.MANUAL_TEST_RUN).add("started");
+        entityFields.get(Entity.MANUAL_TEST_RUN).add("test_name");
+
         subtypeNames.put("story", "User Story");
         subtypeNames.put("defect", "Defect");
         subtypeNames.put("quality_story", "Quality Story");
@@ -100,16 +111,6 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
         subtypeNames.put("run_manual", "Manual Run");
         subtypeNames.put("test_suite", "Test Suite");
         subtypeNames.put("run_suite", "Run Suite");
-
-        //MANUAL TEST RUNS
-        entityFields.put(Entity.MANUAL_TEST_RUN, new HashSet<>());
-        entityFields.get(Entity.MANUAL_TEST_RUN).add("subtype");
-        entityFields.get(Entity.MANUAL_TEST_RUN).add("name");
-        entityFields.get(Entity.MANUAL_TEST_RUN).add("native_status");
-        entityFields.get(Entity.MANUAL_TEST_RUN).add(FIELD_AUTHOR);
-        entityFields.get(Entity.MANUAL_TEST_RUN).add(FIELD_ENVIROMENT);
-        entityFields.get(Entity.MANUAL_TEST_RUN).add("started");
-        entityFields.get(Entity.MANUAL_TEST_RUN).add("test_name");
     }
 
     /**
@@ -151,7 +152,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
 
             EntityModel entityModel = (EntityModel) value;
             Entity entityType = Entity.getEntityType(entityModel);
-            Long entityId = Long.valueOf(UiUtil.getUiDataFromModel(entityModel.getValue("id")));
+            Long entityId = Long.valueOf(getUiDataFromModel(entityModel.getValue("id")));
 
             EntityModelRow rowPanel;
 
@@ -175,35 +176,35 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
 
             if (entityType != Entity.COMMENT) {
                 if (entityType.equals(Entity.MANUAL_TEST_RUN) || entityType.equals(Entity.TEST_SUITE_RUN)) {
-                    String nativeStatus = "Status: " + UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_TEST_RUN_NATIVE_STATUS));
-                    rowPanel.addDetailsTop(nativeStatus);
+                    String nativeStatus = getUiDataFromModel(entityModel.getValue(FIELD_TEST_RUN_NATIVE_STATUS));
+                    rowPanel.addDetails("Status", nativeStatus, DetailsPosition.TOP);
                 }else{
-                    String phase = "Phase: " + UiUtil.getUiDataFromModel(entityModel.getValue("phase"));
-                    rowPanel.addDetailsTop(phase);
+                    String phase = getUiDataFromModel(entityModel.getValue("phase"));
+                    rowPanel.addDetails("Phase", phase, DetailsPosition.TOP);
                 }
 
                 String id = wrapHtml("<b>"+entityId+"</b>");
-                rowPanel.setEntityName(id, UiUtil.getUiDataFromModel(entityModel.getValue("name")));
+                rowPanel.setEntityName(id, getUiDataFromModel(entityModel.getValue("name")));
             }
 
 
             if (Entity.DEFECT.equals(entityType)) {
                 rowPanel.setEntitySubTitle(
-                        UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_ENVIROMENT)),
+                        getUiDataFromModel(entityModel.getValue(FIELD_ENVIROMENT)),
                         "No environment");
 
-                rowPanel.addDetailsTop(getStoryPoints(entityModel));
-                rowPanel.addDetailsTop("Detected by: " + UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_DETECTEDBY)));
-                rowPanel.addDetailsBottom("Severity: " + UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_SEVERITY)));
+                addStoryPoints(rowPanel, entityModel);
+                rowPanel.addDetails("Detected by", getUiDataFromModel(entityModel.getValue(FIELD_DETECTEDBY)), DetailsPosition.TOP);
+                rowPanel.addDetails("Severity" , getUiDataFromModel(entityModel.getValue(FIELD_SEVERITY)), DetailsPosition.TOP);
                 addProgress(rowPanel, entityModel);
 
             } else if (Entity.USER_STORY.equals(entityType) || Entity.QUALITY_STORY.equals(entityType)) {
                 rowPanel.setEntitySubTitle(
-                        UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_RELEASE)),
+                        getUiDataFromModel(entityModel.getValue(FIELD_RELEASE)),
                         "No release");
 
-                rowPanel.addDetailsTop(getStoryPoints(entityModel));
-                rowPanel.addDetailsTop("Author: " + UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_AUTHOR), FIELD_FULL_NAME));
+                addStoryPoints(rowPanel, entityModel);
+                addAuthor(rowPanel, entityModel);
                 addProgress(rowPanel, entityModel);
 
             } else if (Entity.TASK.equals(entityType)) {
@@ -227,57 +228,57 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
                 parentInfoSb.append("</html>");
                 rowPanel.setEntitySubTitle(parentInfoSb.toString(), "no parent");
 
-
-                rowPanel.addDetailsTop("Author: " + UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_AUTHOR), FIELD_FULL_NAME));
+                addAuthor(rowPanel, entityModel);
                 addProgress(rowPanel, entityModel);
 
             } else if (Entity.GHERKIN_TEST.equals(entityType)) {
                 rowPanel.setEntitySubTitle(
-                        UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_TEST_TYPE)),
+                        getUiDataFromModel(entityModel.getValue(FIELD_TEST_TYPE)),
                         "");
-
-                rowPanel.addDetailsTop("Author: " + UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_AUTHOR), FIELD_FULL_NAME));
-                rowPanel.addDetailsBottom("Automation status: " + UiUtil.getUiDataFromModel(entityModel.getValue("automation_status")));
+                addAuthor(rowPanel, entityModel);
+                rowPanel.addDetails("Automation status",
+                        getUiDataFromModel(entityModel.getValue("automation_status")),
+                        DetailsPosition.BOTTOM);
 
                 //addProgress(rowPanel, entityModel);
 
             } else if (Entity.MANUAL_TEST.equals(entityType)) {
                 rowPanel.setEntitySubTitle(
-                        UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_TEST_TYPE)),
+                        getUiDataFromModel(entityModel.getValue(FIELD_TEST_TYPE)),
                         "");
 
-                rowPanel.addDetailsTop("Author: " + UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_AUTHOR), FIELD_FULL_NAME));
-                rowPanel.addDetailsBottom("Steps: " + UiUtil.getUiDataFromModel(entityModel.getValue("steps_num")));
+                addAuthor(rowPanel, entityModel);
+                rowPanel.addDetails("Steps", getUiDataFromModel(entityModel.getValue("steps_num")), DetailsPosition.BOTTOM);
 
             } else if (Entity.COMMENT.equals(entityType)) {
-                String text = UiUtil.getUiDataFromModel(entityModel.getValue("text"));
+                String text = getUiDataFromModel(entityModel.getValue("text"));
                 text = text.replaceFirst("<p>", "<p>&nbsp;Comment:&nbsp;");
                 text = text.replaceFirst("<a.*?>", "").replaceFirst("</a>", "");
-                String author = UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_AUTHOR), FIELD_FULL_NAME);
-                FieldModel owner = UiUtil.getContainerItemForCommentModel(entityModel);
-                String ownerId = UiUtil.getUiDataFromModel(owner, "id");
-                String ownerName = UiUtil.getUiDataFromModel(owner, "name");
-                String ownerSubtype = UiUtil.getUiDataFromModel(owner, "subtype");
+                String author = getUiDataFromModel(entityModel.getValue(FIELD_AUTHOR), FIELD_FULL_NAME);
+                FieldModel owner = getContainerItemForCommentModel(entityModel);
+                String ownerId = getUiDataFromModel(owner, "id");
+                String ownerName = getUiDataFromModel(owner, "name");
+                String ownerSubtype = getUiDataFromModel(owner, "subtype");
 
                 String entityName = wrapHtml("Appears in " + getSubtypeName(ownerSubtype) + ": " + "<b>" + ownerId + "</b>" + " " + ownerName);
 
                 rowPanel.setEntityName("", entityName);
                 rowPanel.setEntitySubTitle(text, "");
-                rowPanel.addDetailsTop("Author: " + author);
+                rowPanel.addDetails("Author", author, DetailsPosition.TOP);
 
             } else if (Entity.MANUAL_TEST_RUN.equals(entityType)) {
                 rowPanel.setEntitySubTitle(
-                        UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_ENVIROMENT)),
+                        getUiDataFromModel(entityModel.getValue(FIELD_ENVIROMENT)),
                         "No environment");
-                rowPanel.addDetailsTop("Author: " + UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_AUTHOR), FIELD_FULL_NAME));
-                rowPanel.addDetailsBottom("Started: " + UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_TEST_RUN_STARTED_DATE)));
+                addAuthor(rowPanel, entityModel);
+                rowPanel.addDetails("Started", getUiDataFromModel(entityModel.getValue(FIELD_TEST_RUN_STARTED_DATE)), DetailsPosition.BOTTOM);
 
             } else if (Entity.TEST_SUITE_RUN.equals(entityType)) {
                 rowPanel.setEntitySubTitle(
-                        UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_ENVIROMENT)),
+                        getUiDataFromModel(entityModel.getValue(FIELD_ENVIROMENT)),
                         "No environment");
-                rowPanel.addDetailsTop("Author: " + UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_AUTHOR), FIELD_FULL_NAME));
-                rowPanel.addDetailsBottom("Started: " + UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_TEST_RUN_STARTED_DATE)));
+                rowPanel.addDetails("Author", getUiDataFromModel(entityModel.getValue(FIELD_AUTHOR), FIELD_FULL_NAME), DetailsPosition.TOP);
+                rowPanel.addDetails("Started", getUiDataFromModel(entityModel.getValue(FIELD_TEST_RUN_STARTED_DATE)), DetailsPosition.BOTTOM);
             }
 
 
@@ -288,17 +289,19 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
     }
 
     private void addProgress(EntityModelRow rowPanel, EntityModel entityModel) {
-        rowPanel.addDetailsBottom("Invested hours: " + UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_INVESTED_HOURS)));
-        rowPanel.addDetailsBottom("Remaining hours: " + UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_REMAINING_HOURS)));
-        rowPanel.addDetailsBottom("Estimated hours: " + UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_ESTIMATED_HOURS)));
+        rowPanel.addDetails("Invested hours", getUiDataFromModel(entityModel.getValue(FIELD_INVESTED_HOURS)), DetailsPosition.BOTTOM);
+        rowPanel.addDetails("Remaining hours", getUiDataFromModel(entityModel.getValue(FIELD_REMAINING_HOURS)), DetailsPosition.BOTTOM);
+        rowPanel.addDetails("Estimated hours", getUiDataFromModel(entityModel.getValue(FIELD_ESTIMATED_HOURS)), DetailsPosition.BOTTOM);
     }
 
-    private String getStoryPoints(EntityModel entityModel) {
-        String storyPoints = UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_STORYPOINTS));
-        if (StringUtils.isEmpty(storyPoints)) {
-            storyPoints = "-";
-        }
-        return "SP: " + storyPoints;
+    private void addStoryPoints(EntityModelRow entityModelRow, EntityModel entityModel) {
+        String storyPoints = getUiDataFromModel(entityModel.getValue(FIELD_STORYPOINTS));
+        entityModelRow.addDetails("SP", storyPoints, DetailsPosition.TOP);
+    }
+
+    private void addAuthor(EntityModelRow entityModelRow, EntityModel entityModel) {
+        String storyPoints = getUiDataFromModel(entityModel.getValue(FIELD_AUTHOR));
+        entityModelRow.addDetails("Author", storyPoints, DetailsPosition.TOP);
     }
 
     private static String wrapHtml(String string){
