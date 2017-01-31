@@ -38,9 +38,9 @@ public class SuiteTestRunDetailsPanel extends JXPanel {
 		detailsPanelMain.add(detailsPanelLeft, BorderLayout.WEST);
 		GridBagLayout gbl_detailsPanelLeft = new GridBagLayout();
 		gbl_detailsPanelLeft.columnWidths = new int[] { 0, 0 };
-		gbl_detailsPanelLeft.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 0 };
+		gbl_detailsPanelLeft.rowHeights = new int[] { 0, 0, 0, 0, 0, 0 };
 		gbl_detailsPanelLeft.columnWeights = new double[] { 0.0, 1.0 };
-		gbl_detailsPanelLeft.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
+		gbl_detailsPanelLeft.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
 		detailsPanelLeft.setLayout(gbl_detailsPanelLeft);
 
 		JXLabel suiteNameLabel = new JXLabel();
@@ -137,7 +137,7 @@ public class SuiteTestRunDetailsPanel extends JXPanel {
 		releaseLabel.setText("Release");
 		GridBagConstraints gbc_releaseLabel = new GridBagConstraints();
 		gbc_releaseLabel.anchor = GridBagConstraints.WEST;
-		gbc_releaseLabel.insets = new Insets(0, 0, 5, 5);
+		gbc_releaseLabel.insets = new Insets(0, 0, 0, 5);
 		gbc_releaseLabel.gridx = 0;
 		gbc_releaseLabel.gridy = 4;
 		detailsPanelLeft.add(releaseLabel, gbc_releaseLabel);
@@ -146,7 +146,6 @@ public class SuiteTestRunDetailsPanel extends JXPanel {
 		releaseDetails.setText(" ");
 		releaseDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
 		GridBagConstraints gbc_releaseDetails = new GridBagConstraints();
-		gbc_releaseDetails.insets = new Insets(0, 0, 5, 0);
 		gbc_releaseDetails.anchor = GridBagConstraints.SOUTH;
 		gbc_releaseDetails.fill = GridBagConstraints.HORIZONTAL;
 		gbc_releaseDetails.gridx = 1;
@@ -158,9 +157,9 @@ public class SuiteTestRunDetailsPanel extends JXPanel {
 		detailsPanelMain.add(detailsPanelRight, BorderLayout.CENTER);
 		GridBagLayout gbl_detailsPanelRight = new GridBagLayout();
 		gbl_detailsPanelRight.columnWidths = new int[] { 0, 0, 0 };
-		gbl_detailsPanelRight.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 0 };
+		gbl_detailsPanelRight.rowHeights = new int[] { 0, 0, 0, 0, 0, 0 };
 		gbl_detailsPanelRight.columnWeights = new double[] { 0.0, 1.0, Double.MIN_VALUE };
-		gbl_detailsPanelRight.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
+		gbl_detailsPanelRight.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
 		detailsPanelRight.setLayout(gbl_detailsPanelRight);
 
 		JXLabel nativeStatusLabel = new JXLabel();
@@ -222,6 +221,7 @@ public class SuiteTestRunDetailsPanel extends JXPanel {
 		lastModifiedDetails.setText(" ");
 		lastModifiedDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
 		GridBagConstraints gbc_lastModifiedDetails = new GridBagConstraints();
+		gbc_lastModifiedDetails.anchor = GridBagConstraints.SOUTH;
 		gbc_lastModifiedDetails.insets = new Insets(0, 0, 5, 0);
 		gbc_lastModifiedDetails.fill = GridBagConstraints.HORIZONTAL;
 		gbc_lastModifiedDetails.gridx = 1;
@@ -252,7 +252,7 @@ public class SuiteTestRunDetailsPanel extends JXPanel {
 
 		JXLabel environmentLabel = new JXLabel();
 		GridBagConstraints gbc_environmentLabel = new GridBagConstraints();
-		gbc_environmentLabel.insets = new Insets(0, 0, 5, 5);
+		gbc_environmentLabel.insets = new Insets(0, 0, 0, 5);
 		gbc_environmentLabel.gridx = 0;
 		gbc_environmentLabel.gridy = 4;
 		detailsPanelRight.add(environmentLabel, gbc_environmentLabel);
@@ -262,8 +262,8 @@ public class SuiteTestRunDetailsPanel extends JXPanel {
 
 		environmentDetails = new JXLabel();
 		GridBagConstraints gbc_environmentDetails = new GridBagConstraints();
+		gbc_environmentDetails.anchor = GridBagConstraints.SOUTH;
 		gbc_environmentDetails.fill = GridBagConstraints.HORIZONTAL;
-		gbc_environmentDetails.insets = new Insets(0, 0, 5, 0);
 		gbc_environmentDetails.gridx = 1;
 		gbc_environmentDetails.gridy = 4;
 		detailsPanelRight.add(environmentDetails, gbc_environmentDetails);
