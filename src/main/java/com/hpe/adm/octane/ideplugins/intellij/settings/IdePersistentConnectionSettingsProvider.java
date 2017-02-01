@@ -14,9 +14,17 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @State(
-        name = "OctanePluginConnectionSettings"
+        name = "OctanePluginConnectionSettings",
+        presentableName = IdePersistentConnectionSettingsProvider.OctanePluginNameGetter.class
 )
 public class IdePersistentConnectionSettingsProvider extends BasicConnectionSettingProvider implements PersistentStateComponent<Element> {
+
+    public static class OctanePluginNameGetter extends State.NameGetter{
+        @Override
+        public String get() {
+            return "Octane IntelliJ Plugin";
+        }
+    }
 
     private static final String OCTANE_PASSWORD_KEY = "OCTANE_PASSWORD_KEY";
 
@@ -93,7 +101,12 @@ public class IdePersistentConnectionSettingsProvider extends BasicConnectionSett
     @NotNull
     private void encryptPassword(String password) {
         try {
-            PasswordSafe.getInstance().storePassword (project, IdePersistentConnectionSettingsProvider.class, OCTANE_PASSWORD_KEY, password);
+            if((password == null || StringUtils.isBlank(password))
+                    && PasswordSafe.getInstance().getPassword(project, IdePersistentConnectionSettingsProvider.class, OCTANE_PASSWORD_KEY) != null){
+                PasswordSafe.getInstance().removePassword(project, IdePersistentConnectionSettingsProvider.class, OCTANE_PASSWORD_KEY);
+            } else {
+                PasswordSafe.getInstance().storePassword(project, IdePersistentConnectionSettingsProvider.class, OCTANE_PASSWORD_KEY, password);
+            }
         } catch (NullPointerException | PasswordSafeException e) {
             //log.info("Couldn't get password for key [" + OCTANE_PASSWORD_KEY + "]", e);
         }

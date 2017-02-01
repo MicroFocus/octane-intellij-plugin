@@ -8,8 +8,6 @@ import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
 import com.hpe.adm.octane.ideplugins.services.util.UrlParser;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
@@ -58,15 +56,10 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
     }
 
     public ConnectionSettingsConfigurable(@NotNull final Project currentProject){
-        ApplicationManager.getApplication().invokeAndWait(()->
-                ApplicationManager.getApplication().runReadAction(() -> {
-                    PluginModule module = PluginModule.getPluginModuleForProject(currentProject);
-                    connectionSettingsProvider = module.getInstance(ConnectionSettingsProvider.class);
-                    testService = module.getInstance(TestService.class);
-                    idePluginPersistentState = module.getInstance(IdePluginPersistentState.class);
-                }),
-                ModalityState.current()
-        );
+        PluginModule module = PluginModule.getPluginModuleForProject(currentProject);
+        connectionSettingsProvider = module.getInstance(ConnectionSettingsProvider.class);
+        testService = module.getInstance(TestService.class);
+        idePluginPersistentState = module.getInstance(IdePluginPersistentState.class);
     }
 
     @Nullable
