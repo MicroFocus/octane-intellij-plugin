@@ -48,7 +48,7 @@ import java.util.stream.Collectors;
 
 import static com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil.getUiDataFromModel;
 
-public class EntityTreeTablePresenter implements Presenter<EntityTreeView>{
+public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
 
     private static final EntityIconFactory entityIconFactory = new EntityIconFactory(25, 25, 12, Color.WHITE);
 
@@ -66,10 +66,10 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView>{
     @Inject
     private DownloadScriptService scriptService;
 
-    public EntityTreeTablePresenter(){
+    public EntityTreeTablePresenter() {
     }
 
-    public void refresh(){
+    public void refresh() {
 
         // Collection<EntityModel> myWork = entityService.getMyWork();
         // entityTreeModel.setEntities(myWork);
@@ -92,7 +92,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView>{
                 } catch (Exception ex) {
                     entityTreeTableView.setLoading(false);
                     String message;
-                    if(ex instanceof OctaneException){
+                    if (ex instanceof OctaneException) {
                         message = SdkUtil.getMessageFromOctaneException((OctaneException) ex);
                     } else {
                         message = ex.getMessage();
@@ -142,11 +142,12 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView>{
     /**
      * Clear active item if it's not in my work
      */
-    private void updateActiveItem(Collection<EntityModel> myWork){
+    private void updateActiveItem(Collection<EntityModel> myWork) {
         PartialEntity activeItem = getActiveItemFromPersistentState();
         if (activeItem != null && myWork != null) {
             List<EntityModel> matchedItems = myWork.stream()
-                    .filter(entityModel -> activeItem.getEntityId() == Long.parseLong(entityModel.getValue("id").getValue().toString()))
+                    .filter(entityModel -> activeItem.getEntityId() == Long.parseLong(entityModel.getValue("id").getValue().toString())
+                            && activeItem.getEntityType() == Entity.getEntityType(entityModel))
                     .collect(Collectors.toList());
             if (!matchedItems.isEmpty()) {
                 activeItem.setEntityName(matchedItems.get(0).getValue("name").getValue().toString());
@@ -159,7 +160,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView>{
         }
     }
 
-    public EntityTreeView getView(){
+    public EntityTreeView getView() {
         return entityTreeTableView;
     }
 
@@ -185,7 +186,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView>{
         refresh();
     }
 
-    private void setContextMenuFactory(EntityTreeView entityTreeView){
+    private void setContextMenuFactory(EntityTreeView entityTreeView) {
         entityTreeView.setEntityContextMenuFactory(entityModel -> {
 
             Entity entityType = Entity.getEntityType(entityModel);
