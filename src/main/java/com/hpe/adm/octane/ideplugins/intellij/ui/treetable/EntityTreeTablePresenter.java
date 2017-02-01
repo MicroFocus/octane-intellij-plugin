@@ -18,12 +18,9 @@ import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.nonentity.DownloadScriptService;
 import com.hpe.adm.octane.ideplugins.services.util.SdkUtil;
 import com.intellij.icons.AllIcons;
-import com.intellij.ide.DataManager;
 import com.intellij.ide.actions.OpenProjectFileChooserDescriptor;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.actionSystem.DataKeys;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -66,15 +63,13 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView>{
     @Inject
     private DownloadScriptService scriptService;
 
+    @Inject
+    private Project project;
+
     public EntityTreeTablePresenter(){
     }
 
     public void refresh(){
-
-        // Collection<EntityModel> myWork = entityService.getMyWork();
-        // entityTreeModel.setEntities(myWork);
-        // entityTreeView.setTreeModel(entityTreeModel);
-
         SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 
             @Override
@@ -102,41 +97,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView>{
                 }
             }
         };
-
         worker.execute();
-
-//        Task.Backgroundable backgroundTask = new Task.Backgroundable(null, "Loading \"My work\"", false) {
-//
-//            private Collection<EntityModel> myWork;
-//
-//            public void run(@NotNull ProgressIndicator indicator) {
-//                entityTreeTableView.setLoading(true);
-//                myWork = entityService.getMyWork(EntityTreeCellRenderer.getEntityFieldMap());
-//
-//            }
-//
-//            public void onSuccess() {
-//                entityTreeTableView.setLoading(false);
-//                System.out.println(" >> refreshing view");
-//                entityTreeTableView.setTreeModel(new EntityTreeModel(myWork));
-//                entityTreeTableView.expandAllNodes();
-//                updateActiveItem(myWork);
-//            }
-//
-//            public void onError(@NotNull Exception ex) {
-//                entityTreeTableView.setLoading(false);
-//
-//                String message;
-//                if(ex instanceof OctaneException){
-//                    message = SdkUtil.getMessageFromOctaneException((OctaneException) ex);
-//                } else {
-//                    message = ex.getMessage();
-//                }
-//                entityTreeTableView.setErrorMessage("Failed to load \"My work\" <br>" + message);
-//            }
-//        };
-//
-//        backgroundTask.queue();
     }
 
     /**
@@ -266,9 +227,6 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView>{
     }
 
     private void downloadScriptForGherkinTest(EntityModel gherkinTest) {
-        DataContext dataContext = DataManager.getInstance().getDataContext();
-        Project project = DataKeys.PROJECT.getData(dataContext);
-
         VirtualFile selectedFolder = chooseScriptFolder(project);
         if (selectedFolder != null) {
             long gherkinTestId = Long.parseLong(gherkinTest.getValue("id").getValue().toString());
