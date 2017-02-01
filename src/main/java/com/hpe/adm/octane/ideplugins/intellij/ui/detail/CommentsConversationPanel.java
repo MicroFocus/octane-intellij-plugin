@@ -1,9 +1,12 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
 import com.intellij.util.ui.UIUtil;
+import org.apache.commons.lang.StringUtils;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.HyperlinkEvent;
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -25,7 +28,17 @@ public class CommentsConversationPanel extends JPanel {
 		messageBox.requestFocusInWindow();
 		messageBox.setOpaque(true);
 		messageBox.setBackground(UIUtil.getTextFieldBackground());
-
+		messageBox.getDocument().addDocumentListener(new DocumentListener() {
+            public void changedUpdate(DocumentEvent e) {
+                enableButton();
+            }
+            public void removeUpdate(DocumentEvent e) {
+                enableButton();
+            }
+            public void insertUpdate(DocumentEvent e) {
+                enableButton();
+            }
+        });
 		sendMessageButton = new JButton("Add");
 
 		chatBox = new JTextPane();
@@ -63,13 +76,12 @@ public class CommentsConversationPanel extends JPanel {
 		JScrollPane scrollChatBox =  new JScrollPane(chatBox);
 		scrollChatBox.setBorder(new EmptyBorder(0,5,0,5));
 		add(scrollChatBox, BorderLayout.CENTER);
+        enableButton();
 	}
 
 	public void addExistingComment(String commentPostDate, String username, String message){
         String currentText = removeHtmlStructure(chatBox.getText());
 	    String strippedMessage = removeHtmlStructure(message);
-	    //remove links, as they wont work in swing sadly
-        //strippedMessage = strippedMessage.replaceAll("<a.*?>", "").replaceAll("</a>", "");
         currentText +=  commentPostDate + " <b>" + username + ":</b> <br>" + strippedMessage + "<hr>";
         chatBox.setText(currentText);
 	}
@@ -87,6 +99,16 @@ public class CommentsConversationPanel extends JPanel {
 	public void addSendNewCommentAction(ActionListener actionListener) {
 		sendMessageButton.addActionListener(actionListener);
 	}
+    private void enableButton() {
+        if (StringUtils.isBlank(messageBox.getText()))
+        {
+            sendMessageButton.setEnabled(false);
+        }
+        else
+        {
+            sendMessageButton.setEnabled(true);
+        }
+    }
 
 	public void setCommentMessageBoxText(String t) {
 		messageBox.setText(t);
