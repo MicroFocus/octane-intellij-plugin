@@ -69,8 +69,9 @@ public class OctaneCheckinHandler extends CheckinHandler {
             return null;
         }
         if (activatedItem.getEntityType() == Entity.TASK) {
-            messageBuilder.append(parentStory.getValue("id").getValue());
-            messageBuilder.append(" > task #");
+            messageBuilder.append(parentStory.getValue("id").getValue() + ": ");
+            messageBuilder.append(parentStory.getValue("name").getValue());
+            messageBuilder.append("\ntask #");
             messageBuilder.append(activatedItem.getEntityId() + ": ");
             messageBuilder.append(activatedItem.getEntityName());
         } else {
@@ -102,6 +103,8 @@ public class OctaneCheckinHandler extends CheckinHandler {
     }
 
     private void validate(Runnable runnableValid, Runnable runnableInvalid) {
+
+        panel.setCommitMessage("loading commit message ...");
 
         SwingWorker<Boolean, Void> validateMessageWorker = new SwingWorker<Boolean, Void>() {
             @Override
@@ -180,6 +183,7 @@ public class OctaneCheckinHandler extends CheckinHandler {
             validate(
                     () -> panel.setCommitMessage(getMessageForActivatedItem()),
                     () -> {
+                        panel.setCommitMessage("");
                         Entity type = activatedItem.getEntityType() == Entity.TASK ? Entity.getEntityType(parentStory)
                                 : activatedItem.getEntityType();
                         showCommitPatterns(type);
