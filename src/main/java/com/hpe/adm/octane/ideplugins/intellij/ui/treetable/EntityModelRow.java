@@ -155,18 +155,23 @@ public class EntityModelRow extends JPanel {
         }
     }
 
-    public void addDetailsTop(String text){
-        text = " " + text.trim();
-        JXLabel lbl = createLabel(text);
-        lbl.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, JBColor.border()));
-        panelDetailsTop.add(lbl);
-    }
+    public enum DetailsPosition {
+    	TOP, BOTTOM
+	}
 
-    public void addDetailsBottom(String text){
-        text = " " + text.trim();
-        JXLabel lbl = createLabel(text);
+    public void addDetails(String fieldName, String fieldValue, DetailsPosition position){
+		fieldName = " " + fieldName.trim();
+		if(fieldValue == null || StringUtils.isBlank(fieldValue.trim())){
+			fieldValue = " - ";
+		}
+        JXLabel lbl = createLabel(fieldName + ": " + fieldValue);
         lbl.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, JBColor.border()));
-        panelDetailsBottom.add(lbl);
+        if(DetailsPosition.TOP.equals(position)){
+			panelDetailsTop.add(lbl);
+		}
+		else if(DetailsPosition.BOTTOM.equals(position)){
+			panelDetailsBottom.add(lbl);
+		}
     }
 
     private JXLabel createLabel(String text){
