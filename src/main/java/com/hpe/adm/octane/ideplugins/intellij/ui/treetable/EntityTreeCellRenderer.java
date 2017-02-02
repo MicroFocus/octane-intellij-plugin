@@ -5,6 +5,7 @@ import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.nga.sdk.model.FieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.EntityTypeIdPair;
+import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.intellij.ui.JBColor;
 import org.jdesktop.swingx.JXLabel;
@@ -252,9 +253,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
 
             } else if (Entity.COMMENT.equals(entityType)) {
                 String text = getUiDataFromModel(entityModel.getValue("text"));
-                text = text.replaceFirst("<p>", "<p>&nbsp;Comment:&nbsp;");
-                text = text.replaceAll("<a.*?>", "").replaceAll("</a>", "");
-                text = text.replaceAll("</p>\\s*<p>", "&nbsp;");
+                text = " Comment: " + UiUtil.stripHtml(text);
                 String author = getUiDataFromModel(entityModel.getValue(FIELD_AUTHOR), FIELD_FULL_NAME);
                 FieldModel owner = getContainerItemForCommentModel(entityModel);
                 String ownerId = getUiDataFromModel(owner, "id");
