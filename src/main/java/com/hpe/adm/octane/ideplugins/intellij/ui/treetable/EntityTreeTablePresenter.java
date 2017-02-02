@@ -165,12 +165,23 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
             });
             popup.add(viewInBrowserItem);
 
+            Icon icon = new ImageIcon(entityIconFactory.getIconAsImage(entityType));
+            JMenuItem viewDetailMenuItem = new JMenuItem("View details", icon);
+            viewDetailMenuItem.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    eventBus.post(new OpenDetailTabEvent(entityModel));
+                }
+            });
+
+            popup.add(viewDetailMenuItem);
+
             if (entityType == Entity.TASK) {
                 //Get parent info
                 EntityModel storyEntityModel = (EntityModel) entityModel.getValue("story").getValue();
-                Icon icon = new ImageIcon(entityIconFactory.getIconAsImage(Entity.getEntityType(storyEntityModel)));
+                icon = new ImageIcon(entityIconFactory.getIconAsImage(Entity.getEntityType(storyEntityModel)));
 
-                JMenuItem viewParentMenuItem = new JMenuItem("View parent", icon);
+                JMenuItem viewParentMenuItem = new JMenuItem("View parent details", icon);
                 viewParentMenuItem.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mousePressed(MouseEvent e) {
