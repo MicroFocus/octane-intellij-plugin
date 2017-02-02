@@ -178,12 +178,12 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
                 if (entityType.equals(Entity.MANUAL_TEST_RUN) || entityType.equals(Entity.TEST_SUITE_RUN)) {
                     String nativeStatus = getUiDataFromModel(entityModel.getValue(FIELD_TEST_RUN_NATIVE_STATUS));
                     rowPanel.addDetails("Status", nativeStatus, DetailsPosition.TOP);
-                }else{
+                } else {
                     String phase = getUiDataFromModel(entityModel.getValue("phase"));
                     rowPanel.addDetails("Phase", phase, DetailsPosition.TOP);
                 }
 
-                String id = wrapHtml("<b>"+entityId+"</b>");
+                String id = wrapHtml("<b>" + entityId + "</b>");
                 rowPanel.setEntityName(id, getUiDataFromModel(entityModel.getValue("name")));
             }
 
@@ -195,7 +195,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
 
                 addStoryPoints(rowPanel, entityModel);
                 rowPanel.addDetails("Detected by", getUiDataFromModel(entityModel.getValue(FIELD_DETECTEDBY)), DetailsPosition.TOP);
-                rowPanel.addDetails("Severity" , getUiDataFromModel(entityModel.getValue(FIELD_SEVERITY)), DetailsPosition.TOP);
+                rowPanel.addDetails("Severity", getUiDataFromModel(entityModel.getValue(FIELD_SEVERITY)), DetailsPosition.TOP);
                 addProgress(rowPanel, entityModel);
 
             } else if (Entity.USER_STORY.equals(entityType) || Entity.QUALITY_STORY.equals(entityType)) {
@@ -213,7 +213,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
                 EntityModel storyEntityModel = (EntityModel) entityModel.getValue("story").getValue();
 
                 String type;
-                if(storyEntityModel.getValue("subtype") != null){
+                if (storyEntityModel.getValue("subtype") != null) {
                     type = storyEntityModel.getValue("subtype").getValue().toString();
                 } else {
                     type = storyEntityModel.getValue("type").getValue().toString();
@@ -253,7 +253,8 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
             } else if (Entity.COMMENT.equals(entityType)) {
                 String text = getUiDataFromModel(entityModel.getValue("text"));
                 text = text.replaceFirst("<p>", "<p>&nbsp;Comment:&nbsp;");
-                text = text.replaceFirst("<a.*?>", "").replaceFirst("</a>", "");
+                text = text.replaceAll("<a.*?>", "").replaceAll("</a>", "");
+                text = text.replaceAll("</p>\\s*<p>", "&nbsp;");
                 String author = getUiDataFromModel(entityModel.getValue(FIELD_AUTHOR), FIELD_FULL_NAME);
                 FieldModel owner = getContainerItemForCommentModel(entityModel);
                 String ownerId = getUiDataFromModel(owner, "id");
@@ -304,7 +305,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
         entityModelRow.addDetails("Author", storyPoints, DetailsPosition.TOP);
     }
 
-    private static String wrapHtml(String string){
+    private static String wrapHtml(String string) {
         return "<html><body>" + string + "</body></html>";
     }
 
