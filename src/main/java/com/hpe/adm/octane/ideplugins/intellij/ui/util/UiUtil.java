@@ -5,6 +5,8 @@ import com.hpe.adm.nga.sdk.model.FieldModel;
 import com.hpe.adm.nga.sdk.model.MultiReferenceFieldModel;
 import com.hpe.adm.nga.sdk.model.ReferenceFieldModel;
 import org.apache.commons.lang.CharEncoding;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Entities;
@@ -20,10 +22,21 @@ import static com.hpe.adm.octane.ideplugins.intellij.util.Constants.OCTANE_DATE_
 
 public class UiUtil {
 
+    /**
+     * This method is for displaying in the UI only
+     * @param fieldModel
+     * @return
+     */
     public static String getUiDataFromModel(FieldModel fieldModel) {
         return getUiDataFromModel(fieldModel, "name");
     }
 
+    /**
+     * This method is for displaying in the UI only
+     * @param fieldModel
+     * @param neededProperty
+     * @return
+     */
     public static String getUiDataFromModel(FieldModel fieldModel, String neededProperty) {
         String result = "";
         if (null != fieldModel) {
@@ -44,6 +57,16 @@ public class UiUtil {
                 }
             }
         }
+
+        //if the string happens to be valid json, strip it down to look like a normal string
+        try {
+            new JSONObject(result);
+            //in case it is json, make it pretty!
+            result = result.replaceAll("\"","");
+            result = result.replaceAll("\\}","");
+            result = result.replaceAll("\\{","");
+        } catch (JSONException ex){}
+
         return (null == result) ? " " : result;
     }
 
