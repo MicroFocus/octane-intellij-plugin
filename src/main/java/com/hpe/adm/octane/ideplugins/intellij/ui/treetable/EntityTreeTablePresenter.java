@@ -47,7 +47,7 @@ import static com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil.getUiDataFro
 
 public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
 
-    private static final EntityIconFactory entityIconFactory = new EntityIconFactory(25, 25, 12, Color.WHITE);
+    private static final EntityIconFactory entityIconFactory = new EntityIconFactory(20, 20, 11, Color.WHITE);
 
     private EntityTreeView entityTreeTableView;
 
