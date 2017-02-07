@@ -165,27 +165,34 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
             });
             popup.add(viewInBrowserItem);
 
-            Icon icon = new ImageIcon(entityIconFactory.getIconAsImage(entityType));
-            JMenuItem viewDetailMenuItem = new JMenuItem("View details", icon);
-            viewDetailMenuItem.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mousePressed(MouseEvent e) {
-                    eventBus.post(new OpenDetailTabEvent(entityModel));
-                }
-            });
+            if(entityType != Entity.COMMENT) {
+                Icon icon = new ImageIcon(entityIconFactory.getIconAsImage(entityType));
+                JMenuItem viewDetailMenuItem = new JMenuItem("View details", icon);
+                viewDetailMenuItem.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mousePressed(MouseEvent e) {
+                        eventBus.post(new OpenDetailTabEvent(entityModel));
+                    }
+                });
+                popup.add(viewDetailMenuItem);
+            }
 
-            popup.add(viewDetailMenuItem);
-
-            if (entityType == Entity.TASK) {
+            if (entityType == Entity.TASK || entityType == Entity.COMMENT) {
                 //Get parent info
-                EntityModel storyEntityModel = (EntityModel) entityModel.getValue("story").getValue();
-                icon = new ImageIcon(entityIconFactory.getIconAsImage(Entity.getEntityType(storyEntityModel)));
+                EntityModel parentEntityModel;
+                if(entityType == Entity.TASK){
+                    parentEntityModel = (EntityModel) entityModel.getValue("story").getValue();
+                } else {
+                    parentEntityModel = (EntityModel) UiUtil.getContainerItemForCommentModel(entityModel).getValue();
+                }
 
+                //Add option
+                Icon icon = new ImageIcon(entityIconFactory.getIconAsImage(Entity.getEntityType(parentEntityModel)));
                 JMenuItem viewParentMenuItem = new JMenuItem("View parent details", icon);
                 viewParentMenuItem.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mousePressed(MouseEvent e) {
-                        eventBus.post(new OpenDetailTabEvent(storyEntityModel));
+                        eventBus.post(new OpenDetailTabEvent(parentEntityModel));
                     }
                 });
                 popup.add(viewParentMenuItem);
@@ -204,8 +211,11 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
                 popup.add(downloadScriptItem);
             }
 
-            if (entityType == Entity.DEFECT || entityType == Entity.USER_STORY || entityType == Entity.QUALITY_STORY
-                    || entityType == Entity.TASK) {
+            if (entityType == Entity.DEFECT ||
+                entityType == Entity.USER_STORY ||
+                entityType == Entity.QUALITY_STORY ||
+                entityType == Entity.TASK) {
+
                 popup.addSeparator();
 
                 PartialEntity selectedItem = new PartialEntity(entityId.longValue(), entityName, entityType);
