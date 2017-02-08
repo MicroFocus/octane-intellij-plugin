@@ -52,12 +52,6 @@ public class EntityServiceITCase extends IntegrationTestBase {
     }
 
     @Test
-    public void testGetMyWork() {
-        Collection<EntityModel> entityModels = entityService.getMyWork();
-        System.out.println(entityModels.size());
-    }
-
-    @Test
     public void testConnection() {
         ConnectionSettings connectionSettings = connectionSettingsProvider.getConnectionSettings();
 
@@ -72,7 +66,6 @@ public class EntityServiceITCase extends IntegrationTestBase {
         } catch (Exception e) {
             Assert.fail(e.toString());
         }
-
     }
 
 }

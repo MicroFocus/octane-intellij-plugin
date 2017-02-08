@@ -14,6 +14,7 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
 import com.hpe.adm.octane.ideplugins.intellij.util.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
 import com.hpe.adm.octane.ideplugins.services.EntityService;
+import com.hpe.adm.octane.ideplugins.services.MyWorkService;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.nonentity.DownloadScriptService;
 import com.hpe.adm.octane.ideplugins.services.util.SdkUtil;
@@ -52,6 +53,9 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
     private EntityTreeView entityTreeTableView;
 
     @Inject
+    private MyWorkService myWorkService;
+
+    @Inject
     private EntityService entityService;
 
     @Inject
@@ -76,7 +80,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
             protected Void doInBackground() throws Exception {
                 try {
                     entityTreeTableView.setLoading(true);
-                    Collection<EntityModel> myWork = entityService.getMyWork(EntityTreeCellRenderer.getEntityFieldMap());
+                    Collection<EntityModel> myWork = myWorkService.getMyWork(EntityTreeCellRenderer.getEntityFieldMap());
                     SwingUtilities.invokeLater(() -> {
                         entityTreeTableView.setLoading(false);
                         entityTreeTableView.setTreeModel(new EntityTreeModel(myWork));
