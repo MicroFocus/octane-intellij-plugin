@@ -13,7 +13,7 @@ import javax.swing.*;
  */
 public class WelcomeViewComponent implements HasComponent {
 
-    private static final String OCTANE_SETTINGS_TEXT = "To start, go to Settings in the ribbon above and connect to ALM Octane";
+    private static final String OCTANE_SETTINGS_TEXT = "To start, go to Settings and connect.";
     private static final String WELCOME_TEXT = "Welcome to ALM Octane plugin";
     private JPanel rootPanel;
 
