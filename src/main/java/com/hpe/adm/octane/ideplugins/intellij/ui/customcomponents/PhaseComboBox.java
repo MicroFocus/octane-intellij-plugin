@@ -71,7 +71,7 @@ public class PhaseComboBox extends JComboBox {
                                                       boolean cellHasFocus) {
             EntityModel phaseItem = (EntityModel) value;
             if (null == value) {
-                phaseItem = new EntityModel("target_phase", "No transition");
+                phaseItem = new EntityModel("target_phase", "Loading phases...");
             }
 
             JLabel labelItem = new JLabel();
