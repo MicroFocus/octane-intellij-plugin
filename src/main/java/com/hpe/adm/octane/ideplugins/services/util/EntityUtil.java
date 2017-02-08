@@ -4,7 +4,9 @@ import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import org.apache.commons.lang.ObjectUtils;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 public class EntityUtil {
 
@@ -37,6 +39,16 @@ public class EntityUtil {
             }
         }
         return false;
+    }
+
+    public static void removeEntityModel(Collection<EntityModel> collection, EntityModel entityModel){
+        List<EntityModel> toBeRemoved = new ArrayList<>();
+        for(EntityModel em : collection){
+            if(areEqual(em, entityModel)){
+                toBeRemoved.add(em);
+            }
+        }
+        collection.removeAll(toBeRemoved);
     }
 
 }

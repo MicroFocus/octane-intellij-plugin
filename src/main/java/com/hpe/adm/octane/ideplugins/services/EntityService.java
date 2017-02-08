@@ -75,10 +75,20 @@ public class EntityService {
      * @return
      * @throws ServiceException
      */
-    public EntityModel findEntity(Entity entityType, Long entityId) throws ServiceException {
-        EntityModel result;
+    public EntityModel findEntity(Entity entityType, Long entityId, Set<String> fields) throws ServiceException {
         try {
-            result = octaneProvider.getOctane().entityList(entityType.getApiEntityName()).at(entityId.intValue()).get().execute();
+            EntityListService.Entities.Get get =
+                    octaneProvider.getOctane()
+                            .entityList(entityType.getApiEntityName())
+                            .at(entityId.intValue())
+                            .get();
+
+            if(fields != null && fields.size() != 0){
+                get = get.addFields(fields.toArray(new String[]{}));
+            }
+
+            return get.execute();
+
         } catch (Exception e) {
             String message = "Failed to get " + entityType.name() + ": " + entityId;
             if (e instanceof OctaneException) {
@@ -86,8 +96,10 @@ public class EntityService {
             }
             throw new ServiceException(message, e);
         }
+    }
 
-        return result;
+    public EntityModel findEntity(Entity entityType, Long entityId) throws ServiceException {
+        return findEntity(entityType, entityId, null);
     }
 
     /**

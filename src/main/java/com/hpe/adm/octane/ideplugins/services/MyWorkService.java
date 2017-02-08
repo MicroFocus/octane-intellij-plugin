@@ -5,8 +5,11 @@ import com.hpe.adm.nga.sdk.Octane;
 import com.hpe.adm.nga.sdk.Query;
 import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
 import com.hpe.adm.nga.sdk.model.EntityModel;
+import com.hpe.adm.nga.sdk.model.MultiReferenceFieldModel;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import com.hpe.adm.octane.ideplugins.services.connection.OctaneProvider;
+import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
+import com.hpe.adm.octane.ideplugins.services.exception.ServiceRuntimeException;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.util.EntityUtil;
 
@@ -49,49 +52,49 @@ public class MyWorkService {
 
         //Standard backlog items
         filterCriteria.put(GHERKIN_TEST,
-                    createPhaseQuery(TEST, "new", "indesign")
-                .and(createCurrentUserQuery("owner"))
+                createPhaseQuery(TEST, "new", "indesign")
+                        .and(createCurrentUserQuery("owner"))
         );
 
         filterCriteria.put(MANUAL_TEST,
-                    createPhaseQuery(TEST, "new", "indesign")
-                .and(createCurrentUserQuery("owner"))
+                createPhaseQuery(TEST, "new", "indesign")
+                        .and(createCurrentUserQuery("owner"))
         );
 
         filterCriteria.put(DEFECT,
-                    createPhaseQuery(DEFECT, "new", "inprogress", "intesting")
-                .and(createCurrentUserQuery("owner"))
+                createPhaseQuery(DEFECT, "new", "inprogress", "intesting")
+                        .and(createCurrentUserQuery("owner"))
         );
 
         filterCriteria.put(USER_STORY,
-                    createPhaseQuery(USER_STORY, "new", "inprogress", "intesting")
-                .and(createCurrentUserQuery("owner"))
+                createPhaseQuery(USER_STORY, "new", "inprogress", "intesting")
+                        .and(createCurrentUserQuery("owner"))
         );
 
         filterCriteria.put(TASK,
-                    createPhaseQuery(TASK, "new", "inprogress")
-                .and(createCurrentUserQuery("owner"))
+                createPhaseQuery(TASK, "new", "inprogress")
+                        .and(createCurrentUserQuery("owner"))
         );
 
         filterCriteria.put(QUALITY_STORY,
-                    createPhaseQuery(QUALITY_STORY, "new", "inprogress")
-                .and(createCurrentUserQuery("owner"))
+                createPhaseQuery(QUALITY_STORY, "new", "inprogress")
+                        .and(createCurrentUserQuery("owner"))
         );
 
         filterCriteria.put(QUALITY_STORY,
-                    createPhaseQuery(QUALITY_STORY, "new", "inprogress")
-                .and(createCurrentUserQuery("owner"))
+                createPhaseQuery(QUALITY_STORY, "new", "inprogress")
+                        .and(createCurrentUserQuery("owner"))
         );
 
         filterCriteria.put(QUALITY_STORY,
-                    createPhaseQuery(QUALITY_STORY, "new", "inprogress")
-                .and(createCurrentUserQuery("owner"))
+                createPhaseQuery(QUALITY_STORY, "new", "inprogress")
+                        .and(createCurrentUserQuery("owner"))
         );
 
         filterCriteria.put(MANUAL_TEST_RUN,
-                    createNativeStatusQuery("list_node.run_native_status.blocked", "list_node.run_native_status.not_completed")
-                .and(createCurrentUserQuery("run_by"))
-                .and(new Query.QueryBuilder("parent_suite", Query::equalTo, null))
+                createNativeStatusQuery("list_node.run_native_status.blocked", "list_node.run_native_status.not_completed")
+                        .and(createCurrentUserQuery("run_by"))
+                        .and(new Query.QueryBuilder("parent_suite", Query::equalTo, null))
         );
 
         filterCriteria.put(TEST_SUITE_RUN,
@@ -106,10 +109,10 @@ public class MyWorkService {
         filterCriteria
                 .keySet()
                 .stream()
-                .filter(this::isFollowingItemsSupported)
+                .filter(this::isFollowingEntitySupported)
                 .forEach(key -> {
                     filterCriteria.put(key, createCurrentUserQuery(FOLLOW_ITEMS_OWNER_FIELD).or(filterCriteria.get(key)));
-                    if(fieldListMap!= null && fieldListMap.containsKey(key)){
+                    if (fieldListMap != null && fieldListMap.containsKey(key)) {
                         fieldListMap.get(key).add(FOLLOW_ITEMS_OWNER_FIELD);
                     }
                 });
@@ -121,10 +124,10 @@ public class MyWorkService {
                 .keySet()
                 .parallelStream()
                 .flatMap(entityType ->
-                            entityService.findEntities(
-                                    entityType,
-                                    filterCriteria.get(entityType),
-                                    fieldListMap.get(entityType)
+                        entityService.findEntities(
+                                entityType,
+                                filterCriteria.get(entityType),
+                                fieldListMap.get(entityType)
                         ).stream()
                 )
                 .filter(entityModel -> !EntityUtil.containsEntityModel(result, entityModel))
@@ -134,7 +137,7 @@ public class MyWorkService {
         Collections.sort(result, (leftSide, rightSide) -> {
             Entity left = Entity.getEntityType(leftSide);
             Entity right = Entity.getEntityType(rightSide);
-            if(left != right){
+            if (left != right) {
                 return left.name().compareTo(right.name());
             }
             Long leftId = Long.parseLong(leftSide.getValue("id").getValue().toString());
@@ -169,8 +172,8 @@ public class MyWorkService {
 
         return new Query.QueryBuilder("phase", Query::equalTo, phaseQueryBuilder);
     }
+
     /**
-     *
      * @param logicalNames
      * @return
      */
@@ -188,7 +191,7 @@ public class MyWorkService {
         return new Query.QueryBuilder("native_status", Query::equalTo, nativeStatusQueryBuilder);
     }
 
-    private Query.QueryBuilder createCurrentUserQuery(String fieldName){
+    private Query.QueryBuilder createCurrentUserQuery(String fieldName) {
         return new Query.QueryBuilder(fieldName, Query::equalTo,
                 new Query.QueryBuilder("id", Query::equalTo, userService.getCurrentUserId()));
     }
@@ -198,18 +201,19 @@ public class MyWorkService {
 
     /**
      * TODO This check is quite optimistic, only checks US
+     *
      * @return fields exits
      */
-    public boolean isFollowingItemsSupported(Entity entityType){
+    public boolean isFollowingEntitySupported(Entity entityType) {
 
         //init cache map
-        if(followingSupportEntityMap == null){
+        if (followingSupportEntityMap == null) {
             followingSupportEntityMap = new HashMap<>();
             //Clear on settings changed
-            connectionSettingsProvider.addChangeHandler(()-> followingSupportEntityMap.clear());
+            connectionSettingsProvider.addChangeHandler(() -> followingSupportEntityMap.clear());
         }
 
-        if(followingSupportEntityMap.containsKey(entityType)){
+        if (followingSupportEntityMap.containsKey(entityType)) {
             return followingSupportEntityMap.get(entityType);
         }
 
@@ -224,4 +228,79 @@ public class MyWorkService {
         return followFieldExits && newFieldExits;
     }
 
+    public boolean isCurrentUserFollowing(EntityModel entityModel) {
+        if (entityModel.getValue(FOLLOW_ITEMS_OWNER_FIELD) == null ||
+                entityModel.getValue(FOLLOW_ITEMS_OWNER_FIELD).getValue() == null) {
+
+            entityModel = fetchEntityFields(entityModel, FOLLOW_ITEMS_OWNER_FIELD);
+        }
+
+        EntityModel currentUser = userService.getCurrentUser();
+        MultiReferenceFieldModel fieldModel = entityModel.getValue(FOLLOW_ITEMS_OWNER_FIELD);
+
+        return EntityUtil.containsEntityModel(fieldModel.getValue(), currentUser);
+    }
+
+    public void addCurrentUserToFollowers(EntityModel entityModel) {
+        EntityModel updateEntityModel = createUpdateEntityModelForFollow(entityModel);
+        EntityModel currentUser = userService.getCurrentUser();
+        MultiReferenceFieldModel fieldModel = updateEntityModel.getValue(FOLLOW_ITEMS_OWNER_FIELD);
+
+        if (!EntityUtil.containsEntityModel(fieldModel.getValue(), currentUser)) {
+            fieldModel.getValue().add(currentUser);
+
+            //Do update
+            Octane octane = octaneProvider.getOctane();
+            Integer id = Integer.valueOf(entityModel.getValue("id").getValue().toString());
+            octane.entityList(Entity.getEntityType(entityModel).getApiEntityName())
+                    .at(id)
+                    .update()
+                    .entity(updateEntityModel)
+                    .execute();
+        }
+    }
+
+    public void removeCurrentUserFromFollowers(EntityModel entityModel) {
+        EntityModel updateEntityModel = createUpdateEntityModelForFollow(entityModel);
+        EntityModel currentUser = userService.getCurrentUser();
+        MultiReferenceFieldModel fieldModel = updateEntityModel.getValue(FOLLOW_ITEMS_OWNER_FIELD);
+
+        EntityUtil.removeEntityModel(fieldModel.getValue(), currentUser);
+
+        //Do update
+        Octane octane = octaneProvider.getOctane();
+        Integer id = Integer.valueOf(entityModel.getValue("id").getValue().toString());
+        octane.entityList(Entity.getEntityType(entityModel).getApiEntityName())
+                .at(id)
+                .update()
+                .entity(updateEntityModel)
+                .execute();
+
+    }
+
+    private EntityModel createUpdateEntityModelForFollow(EntityModel entityModel){
+
+        if (entityModel.getValue(FOLLOW_ITEMS_OWNER_FIELD) == null ||
+            entityModel.getValue(FOLLOW_ITEMS_OWNER_FIELD).getValue() == null) {
+
+            entityModel = fetchEntityFields(entityModel, FOLLOW_ITEMS_OWNER_FIELD);
+        }
+
+        MultiReferenceFieldModel fieldModel = entityModel.getValue(FOLLOW_ITEMS_OWNER_FIELD);
+        EntityModel updateEntityModel = new EntityModel();
+        updateEntityModel.setValue(fieldModel);
+        return updateEntityModel;
+    }
+
+    private EntityModel fetchEntityFields(EntityModel entityModel, String... fields){
+        try {
+            return entityService.findEntity(
+                    Entity.getEntityType(entityModel),
+                    Long.parseLong(entityModel.getValue("id").getValue().toString()),
+                    new HashSet<>(Arrays.asList(fields))
+            );
+        } catch (ServiceException e) {
+            throw new ServiceRuntimeException(e);
+        }
+    }
 }
