@@ -23,6 +23,7 @@ import com.hpe.adm.octane.ideplugins.services.util.SdkUtil;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.util.IconLoader;
@@ -170,8 +171,15 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
             addToMyWorkMenuItem.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
-                    myWorkService.addCurrentUserToFollowers(entityModel);
-                    eventBus.post(new RefreshMyWorkEvent());
+                    ApplicationManager.getApplication().invokeLater(() -> {
+                        Task.Backgroundable backgroundTask = new Task.Backgroundable(null, "Adding item to to \"My Work\"", true) {
+                            public void run(@NotNull ProgressIndicator indicator) {
+                                myWorkService.addCurrentUserToFollowers(entityModel);
+                                eventBus.post(new RefreshMyWorkEvent());
+                            }
+                        };
+                        backgroundTask.queue();
+                    });
                 }
             });
             popup.add(addToMyWorkMenuItem);

@@ -23,15 +23,19 @@ import com.intellij.icons.AllIcons;
 import com.intellij.ide.actions.OpenProjectFileChooserDescriptor;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vcs.VcsShowConfirmationOption;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ui.ConfirmationDialog;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
 
@@ -258,8 +262,23 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
                 removeFromMyWorkMenuItem.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mousePressed(MouseEvent e) {
-                        myWorkService.removeCurrentUserFromFollowers(entityModel);
-                        refresh();
+                        ApplicationManager.getApplication().invokeLater(() -> {
+                            Task.Backgroundable backgroundTask =
+
+                                    new Task.Backgroundable(
+                                            null,
+                                            "Dismissing item from to \"My Work\"",
+                                            true) {
+
+                                public void run(@NotNull ProgressIndicator indicator) {
+                                    myWorkService.removeCurrentUserFromFollowers(entityModel);
+                                    refresh();
+                                }
+
+                            };
+
+                            backgroundTask.queue();
+                        });
                     }
                 });
                 popup.add(removeFromMyWorkMenuItem);
