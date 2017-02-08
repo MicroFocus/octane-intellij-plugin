@@ -14,6 +14,7 @@ import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.util.EntityUtil;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.*;
 import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.MANUAL_TEST_RUN;
@@ -120,9 +121,10 @@ public class MyWorkService {
         List<EntityModel> result = new ArrayList<>();
 
         //TODO, known subtypes should be under same rest call
+        //TODO, parallel stream
         filterCriteria
                 .keySet()
-                .parallelStream()
+                .stream()
                 .flatMap(entityType ->
                         entityService.findEntities(
                                 entityType,
