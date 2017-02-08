@@ -271,8 +271,9 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
                                             true) {
 
                                 public void run(@NotNull ProgressIndicator indicator) {
-                                    myWorkService.removeCurrentUserFromFollowers(entityModel);
-                                    refresh();
+                                    if(myWorkService.removeCurrentUserFromFollowers(entityModel)) {
+                                        refresh();
+                                    }
                                 }
 
                             };

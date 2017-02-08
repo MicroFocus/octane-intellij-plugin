@@ -243,7 +243,7 @@ public class MyWorkService {
         return EntityUtil.containsEntityModel(fieldModel.getValue(), currentUser);
     }
 
-    public void addCurrentUserToFollowers(EntityModel entityModel) {
+    public boolean addCurrentUserToFollowers(EntityModel entityModel) {
         EntityModel updateEntityModel = createUpdateEntityModelForFollow(entityModel);
         EntityModel currentUser = userService.getCurrentUser();
         MultiReferenceFieldModel fieldModel = updateEntityModel.getValue(FOLLOW_ITEMS_OWNER_FIELD);
@@ -259,25 +259,44 @@ public class MyWorkService {
                     .update()
                     .entity(updateEntityModel)
                     .execute();
+
+            //Was added
+            return true;
         }
+
+        //No need to add
+        return false;
     }
 
-    public void removeCurrentUserFromFollowers(EntityModel entityModel) {
+    public boolean removeCurrentUserFromFollowers(EntityModel entityModel) {
         EntityModel updateEntityModel = createUpdateEntityModelForFollow(entityModel);
         EntityModel currentUser = userService.getCurrentUser();
         MultiReferenceFieldModel fieldModel = updateEntityModel.getValue(FOLLOW_ITEMS_OWNER_FIELD);
 
-        EntityUtil.removeEntityModel(fieldModel.getValue(), currentUser);
+        if(EntityUtil.removeEntityModel(fieldModel.getValue(), currentUser)){
+            //Do update
+            Octane octane = octaneProvider.getOctane();
 
-        //Do update
-        Octane octane = octaneProvider.getOctane();
-        Integer id = Integer.valueOf(entityModel.getValue("id").getValue().toString());
-        octane.entityList(Entity.getEntityType(entityModel).getApiEntityName())
-                .at(id)
-                .update()
-                .entity(updateEntityModel)
-                .execute();
+            try {
+                Integer id = Integer.valueOf(entityModel.getValue("id").getValue().toString());
+                octane.entityList(Entity.getEntityType(entityModel).getApiEntityName())
+                        .at(id)
+                        .update()
+                        .entity(updateEntityModel)
+                        .execute();
 
+            } catch (Exception ex) {
+                //Re-add it if the call failed
+                fieldModel.getValue().add(currentUser);
+                throw ex;
+            }
+
+            //Was removed
+            return true;
+        }
+
+        //No need to remove
+        return false;
     }
 
     private EntityModel createUpdateEntityModelForFollow(EntityModel entityModel){

@@ -41,14 +41,20 @@ public class EntityUtil {
         return false;
     }
 
-    public static void removeEntityModel(Collection<EntityModel> collection, EntityModel entityModel){
+    public static boolean removeEntityModel(Collection<EntityModel> collection, EntityModel entityModel){
         List<EntityModel> toBeRemoved = new ArrayList<>();
         for(EntityModel em : collection){
             if(areEqual(em, entityModel)){
                 toBeRemoved.add(em);
             }
         }
-        collection.removeAll(toBeRemoved);
+
+        if(toBeRemoved.size()==0){
+            return false;
+        } else {
+            collection.removeAll(toBeRemoved);
+            return true;
+        }
     }
 
 }
