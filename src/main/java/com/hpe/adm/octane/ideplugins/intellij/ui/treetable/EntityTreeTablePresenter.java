@@ -6,6 +6,7 @@ import com.google.inject.name.Named;
 import com.hpe.adm.nga.sdk.exception.OctaneException;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.eventbus.OpenDetailTabEvent;
+import com.hpe.adm.octane.ideplugins.intellij.eventbus.RefreshMyWorkEvent;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
@@ -148,6 +149,10 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
         entityTreeTableView.addActionToToolbar(new EntityTreeView.ExpandNodesAction(entityTreeTableView));
         entityTreeTableView.addActionToToolbar(new EntityTreeView.CollapseNodesAction(entityTreeTableView));
         entityTreeTableView.addSeparatorToToolbar();
+
+        //Also register event handler
+        eventBus.register((RefreshMyWorkEvent.RefreshMyWorkEventListener) refreshMyWorkEvent -> refresh());
+
         refresh();
     }
 
@@ -254,6 +259,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
                     @Override
                     public void mousePressed(MouseEvent e) {
                         myWorkService.removeCurrentUserFromFollowers(entityModel);
+                        refresh();
                     }
                 });
                 popup.add(removeFromMyWorkMenuItem);

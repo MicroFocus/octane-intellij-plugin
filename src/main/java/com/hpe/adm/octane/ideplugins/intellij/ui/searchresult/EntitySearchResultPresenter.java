@@ -6,6 +6,7 @@ import com.google.inject.name.Named;
 import com.hpe.adm.nga.sdk.exception.OctaneException;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.eventbus.OpenDetailTabEvent;
+import com.hpe.adm.octane.ideplugins.intellij.eventbus.RefreshMyWorkEvent;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
@@ -170,6 +171,7 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
                 @Override
                 public void mousePressed(MouseEvent e) {
                     myWorkService.addCurrentUserToFollowers(entityModel);
+                    eventBus.post(new RefreshMyWorkEvent());
                 }
             });
             popup.add(addToMyWorkMenuItem);
