@@ -30,11 +30,8 @@ public class MyWorkService {
     @Inject
     private ConnectionSettingsProvider connectionSettingsProvider;
 
-    private static final String FOLLOW_ITEMS_OWNER_FIELD = "my_follow_items_owner";
-    private static final String NEW_ITEMS_OWNER_FIELD = "my_follow_items_owner";
-
-    private static final String[] mandatoryFields
-            = new String[]{"author"};
+    public static final String FOLLOW_ITEMS_OWNER_FIELD = "my_follow_items_owner";
+    public static final String NEW_ITEMS_OWNER_FIELD = "my_follow_items_owner";
 
     public Collection<EntityModel> getMyWork() {
         return getMyWork(new HashMap<>());
@@ -110,35 +107,42 @@ public class MyWorkService {
                 .keySet()
                 .stream()
                 .filter(this::isFollowingItemsSupported)
-                .forEach(key -> filterCriteria.put(key, createCurrentUserQuery(FOLLOW_ITEMS_OWNER_FIELD).or(filterCriteria.get(key))));
+                .forEach(key -> {
+                    filterCriteria.put(key, createCurrentUserQuery(FOLLOW_ITEMS_OWNER_FIELD).or(filterCriteria.get(key)));
+                    if(fieldListMap!= null && fieldListMap.containsKey(key)){
+                        fieldListMap.get(key).add(FOLLOW_ITEMS_OWNER_FIELD);
+                    }
+                });
 
-        Collection<EntityModel> result = new ArrayList<>();
+        List<EntityModel> result = new ArrayList<>();
 
         //TODO, known subtypes should be under same rest call
         filterCriteria
                 .keySet()
-                .stream()
+                .parallelStream()
                 .flatMap(entityType ->
                             entityService.findEntities(
                                     entityType,
                                     filterCriteria.get(entityType),
-                                    addAndReturn(fieldListMap.get(entityType), mandatoryFields)
+                                    fieldListMap.get(entityType)
                         ).stream()
                 )
                 .filter(entityModel -> !EntityUtil.containsEntityModel(result, entityModel))
                 .forEach(result::add);
 
-        return result;
-    }
+        //Sort based on entity type and id
+        Collections.sort(result, (leftSide, rightSide) -> {
+            Entity left = Entity.getEntityType(leftSide);
+            Entity right = Entity.getEntityType(rightSide);
+            if(left != right){
+                return left.name().compareTo(right.name());
+            }
+            Long leftId = Long.parseLong(leftSide.getValue("id").getValue().toString());
+            Long rightId = Long.parseLong(rightSide.getValue("id").getValue().toString());
+            return leftId.compareTo(rightId);
+        });
 
-    private <T> Set<T> addAndReturn(Set<T> set, T[] array){
-        if(set == null) {
-            return null;
-        } else {
-            Set<T> result = new HashSet<>(set);
-            result.addAll(Arrays.asList(array));
-            return result;
-        }
+        return result;
     }
 
     /**
