@@ -1,8 +1,12 @@
 package com.hpe.adm.octane.ideplugins.services;
 
 import com.google.inject.Inject;
+import com.hpe.adm.nga.sdk.Octane;
 import com.hpe.adm.nga.sdk.Query;
+import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
 import com.hpe.adm.nga.sdk.model.EntityModel;
+import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
+import com.hpe.adm.octane.ideplugins.services.connection.OctaneProvider;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.util.EntityUtil;
 
@@ -15,10 +19,22 @@ import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.TEST_SUITE
 public class MyWorkService {
 
     @Inject
-    EntityService entityService;
+    private EntityService entityService;
 
     @Inject
-    UserService userService;
+    private UserService userService;
+
+    @Inject
+    private OctaneProvider octaneProvider;
+
+    @Inject
+    private ConnectionSettingsProvider connectionSettingsProvider;
+
+    private static final String FOLLOW_ITEMS_OWNER_FIELD = "my_follow_items_owner";
+    private static final String NEW_ITEMS_OWNER_FIELD = "my_follow_items_owner";
+
+    private static final String[] mandatoryFields
+            = new String[]{"author"};
 
     public Collection<EntityModel> getMyWork() {
         return getMyWork(new HashMap<>());
@@ -89,17 +105,40 @@ public class MyWorkService {
 
         filterCriteria.put(COMMENT, createCurrentUserQuery("mention_user"));
 
+        //In case it's supported, also get the work items you are following
+        filterCriteria
+                .keySet()
+                .stream()
+                .filter(this::isFollowingItemsSupported)
+                .forEach(key -> filterCriteria.put(key, createCurrentUserQuery(FOLLOW_ITEMS_OWNER_FIELD).or(filterCriteria.get(key))));
+
         Collection<EntityModel> result = new ArrayList<>();
 
         //TODO, known subtypes should be under same rest call
         filterCriteria
                 .keySet()
                 .stream()
-                .flatMap(entityType -> entityService.findEntities(entityType, filterCriteria.get(entityType), fieldListMap.get(entityType)).stream())
+                .flatMap(entityType ->
+                            entityService.findEntities(
+                                    entityType,
+                                    filterCriteria.get(entityType),
+                                    addAndReturn(fieldListMap.get(entityType), mandatoryFields)
+                        ).stream()
+                )
                 .filter(entityModel -> !EntityUtil.containsEntityModel(result, entityModel))
                 .forEach(result::add);
 
         return result;
+    }
+
+    private <T> Set<T> addAndReturn(Set<T> set, T[] array){
+        if(set == null) {
+            return null;
+        } else {
+            Set<T> result = new HashSet<>(set);
+            result.addAll(Arrays.asList(array));
+            return result;
+        }
     }
 
     /**
@@ -148,6 +187,37 @@ public class MyWorkService {
     private Query.QueryBuilder createCurrentUserQuery(String fieldName){
         return new Query.QueryBuilder(fieldName, Query::equalTo,
                 new Query.QueryBuilder("id", Query::equalTo, userService.getCurrentUserId()));
+    }
+
+
+    private Map<Entity, Boolean> followingSupportEntityMap;
+
+    /**
+     * TODO This check is quite optimistic, only checks US
+     * @return fields exits
+     */
+    public boolean isFollowingItemsSupported(Entity entityType){
+
+        //init cache map
+        if(followingSupportEntityMap == null){
+            followingSupportEntityMap = new HashMap<>();
+            //Clear on settings changed
+            connectionSettingsProvider.addChangeHandler(()-> followingSupportEntityMap.clear());
+        }
+
+        if(followingSupportEntityMap.containsKey(entityType)){
+            return followingSupportEntityMap.get(entityType);
+        }
+
+        Octane octane = octaneProvider.getOctane();
+        Collection<FieldMetadata> fields = octane.metadata().fields(entityType.getTypeName()).execute();
+        boolean followFieldExits =
+                fields.stream().anyMatch(fieldMetadata -> FOLLOW_ITEMS_OWNER_FIELD.equals(fieldMetadata.getName()));
+        boolean newFieldExits =
+                fields.stream().anyMatch(fieldMetadata -> NEW_ITEMS_OWNER_FIELD.equals(fieldMetadata.getName()));
+
+        followingSupportEntityMap.put(entityType, followFieldExits && newFieldExits);
+        return followFieldExits && newFieldExits;
     }
 
 }

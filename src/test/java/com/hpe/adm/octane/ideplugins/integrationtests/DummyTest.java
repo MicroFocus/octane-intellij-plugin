@@ -3,9 +3,9 @@ package com.hpe.adm.octane.ideplugins.integrationtests;
 import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.Octane;
 import com.hpe.adm.nga.sdk.exception.OctaneException;
+import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.nga.sdk.model.MultiReferenceFieldModel;
-import com.hpe.adm.octane.ideplugins.services.CommentService;
 import com.hpe.adm.octane.ideplugins.services.EntityService;
 import com.hpe.adm.octane.ideplugins.services.UserService;
 import com.hpe.adm.octane.ideplugins.services.connection.OctaneProvider;
@@ -14,10 +14,11 @@ import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import hidden.edu.emory.mathcs.backport.java.util.Arrays;
 import org.junit.Test;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-public class DummyTest {
+public class DummyTest extends IntegrationTestBase {
 
     @Inject
     private EntityService entityService;
@@ -94,10 +95,27 @@ public class DummyTest {
 
     }
 
+    @Test
+    public void isSupported(){
+        Octane octane = octaneProvider.getOctane();
+        Collection<FieldMetadata> fields = octane.metadata().fields(Entity.USER_STORY.getTypeName()).execute();
+
+        fields.forEach(fieldMetadata -> {
+            if("my_follow_items_owner".equals(fieldMetadata.getName())){
+                System.out.println("YES");
+                return;
+            }
+        });
+        System.out.println("NO");
+    }
+
 
     private Set getSet(Object... fm) {
         Set set = new HashSet<>(Arrays.asList(fm));
         return set;
     }
+
+
+
 
 }
