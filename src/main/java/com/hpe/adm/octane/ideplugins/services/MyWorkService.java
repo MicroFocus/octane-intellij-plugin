@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.Query;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
+import com.hpe.adm.octane.ideplugins.services.util.EntityUtil;
 
 import java.util.*;
 
@@ -31,42 +32,72 @@ public class MyWorkService {
      */
     public Collection<EntityModel> getMyWork(Map<Entity, Set<String>> fieldListMap) {
 
-        Map<Entity, Query.QueryBuilder> myWorkFilter = new HashMap<>();
+        Map<Entity, Query.QueryBuilder> filterCriteria = new HashMap<>();
 
-        myWorkFilter.put(GHERKIN_TEST, createPhaseQuery(TEST, "new", "indesign"));
-        myWorkFilter.put(MANUAL_TEST, createPhaseQuery(TEST, "new", "indesign"));
-        myWorkFilter.put(DEFECT, createPhaseQuery(DEFECT, "new", "inprogress", "intesting"));
-        myWorkFilter.put(USER_STORY, createPhaseQuery(USER_STORY, "new", "inprogress", "intesting"));
-        myWorkFilter.put(TASK, createPhaseQuery(TASK, "new", "inprogress"));
-        myWorkFilter.put(QUALITY_STORY, createPhaseQuery(QUALITY_STORY, "new", "inprogress"));
+        //Standard backlog items
+        filterCriteria.put(GHERKIN_TEST,
+                    createPhaseQuery(TEST, "new", "indesign")
+                .and(createCurrentUserQuery("owner"))
+        );
 
-        Query.QueryBuilder currentUserQuery = new Query.QueryBuilder("owner", Query::equalTo,
-                new Query.QueryBuilder("id", Query::equalTo, userService.getCurrentUserId()));
+        filterCriteria.put(MANUAL_TEST,
+                    createPhaseQuery(TEST, "new", "indesign")
+                .and(createCurrentUserQuery("owner"))
+        );
+
+        filterCriteria.put(DEFECT,
+                    createPhaseQuery(DEFECT, "new", "inprogress", "intesting")
+                .and(createCurrentUserQuery("owner"))
+        );
+
+        filterCriteria.put(USER_STORY,
+                    createPhaseQuery(USER_STORY, "new", "inprogress", "intesting")
+                .and(createCurrentUserQuery("owner"))
+        );
+
+        filterCriteria.put(TASK,
+                    createPhaseQuery(TASK, "new", "inprogress")
+                .and(createCurrentUserQuery("owner"))
+        );
+
+        filterCriteria.put(QUALITY_STORY,
+                    createPhaseQuery(QUALITY_STORY, "new", "inprogress")
+                .and(createCurrentUserQuery("owner"))
+        );
+
+        filterCriteria.put(QUALITY_STORY,
+                    createPhaseQuery(QUALITY_STORY, "new", "inprogress")
+                .and(createCurrentUserQuery("owner"))
+        );
+
+        filterCriteria.put(QUALITY_STORY,
+                    createPhaseQuery(QUALITY_STORY, "new", "inprogress")
+                .and(createCurrentUserQuery("owner"))
+        );
+
+        filterCriteria.put(MANUAL_TEST_RUN,
+                    createNativeStatusQuery("list_node.run_native_status.blocked", "list_node.run_native_status.not_completed")
+                .and(createCurrentUserQuery("run_by"))
+                .and(new Query.QueryBuilder("parent_suite", Query::equalTo, null))
+        );
+
+        filterCriteria.put(TEST_SUITE_RUN,
+                createNativeStatusQuery("list_node.run_native_status.blocked", "list_node.run_native_status.not_completed")
+                        .and(createCurrentUserQuery("run_by"))
+                        .and(new Query.QueryBuilder("parent_suite", Query::equalTo, null))
+        );
+
+        filterCriteria.put(COMMENT, createCurrentUserQuery("mention_user"));
 
         Collection<EntityModel> result = new ArrayList<>();
 
         //TODO, known subtypes should be under same rest call
-        myWorkFilter.keySet().forEach(entityType -> {
-                    Query.QueryBuilder query = myWorkFilter.get(entityType).and(currentUserQuery);
-                    result.addAll(entityService.findEntities(entityType, query, fieldListMap.get(entityType)));
-                }
-        );
-
-        //Fetching manual tests and test suites
-        Query.QueryBuilder parentIsNull = new Query.QueryBuilder("parent_suite", Query::equalTo, null);
-        Query.QueryBuilder runByQuery = new Query.QueryBuilder("run_by", Query::equalTo,
-                new Query.QueryBuilder("id", Query::equalTo, userService.getCurrentUserId()));
-        Query.QueryBuilder nativeStatusQuery = createNativeStatusQuery("list_node.run_native_status.blocked", "list_node.run_native_status.not_completed");
-        Query.QueryBuilder finalQuery = nativeStatusQuery.and(runByQuery).and(parentIsNull);
-        result.addAll(entityService.findEntities(MANUAL_TEST_RUN, finalQuery, fieldListMap.get(MANUAL_TEST_RUN)));
-        result.addAll(entityService.findEntities(TEST_SUITE_RUN, finalQuery, fieldListMap.get(TEST_SUITE_RUN)));
-
-        //Fetching comments
-        Query.QueryBuilder mentionedUserQuery = new Query.QueryBuilder("mention_user", Query::equalTo,
-                new Query.QueryBuilder("id", Query::equalTo, userService.getCurrentUserId()));
-
-        Collection<EntityModel> comments = entityService.findEntities(Entity.COMMENT, mentionedUserQuery, fieldListMap.get(Entity.COMMENT));
-        result.addAll(comments);
+        filterCriteria
+                .keySet()
+                .stream()
+                .flatMap(entityType -> entityService.findEntities(entityType, filterCriteria.get(entityType), fieldListMap.get(entityType)).stream())
+                .filter(entityModel -> !EntityUtil.containsEntityModel(result, entityModel))
+                .forEach(result::add);
 
         return result;
     }
@@ -100,7 +131,7 @@ public class MyWorkService {
      * @param logicalNames
      * @return
      */
-    public Query.QueryBuilder createNativeStatusQuery(String... logicalNames) {
+    private Query.QueryBuilder createNativeStatusQuery(String... logicalNames) {
         Query.QueryBuilder nativeStatusQueryBuilder = null;
         for (String logicalName : logicalNames) {
             Query.QueryBuilder currentNativeStatusQueryBuilder =
@@ -112,6 +143,11 @@ public class MyWorkService {
             }
         }
         return new Query.QueryBuilder("native_status", Query::equalTo, nativeStatusQueryBuilder);
+    }
+
+    private Query.QueryBuilder createCurrentUserQuery(String fieldName){
+        return new Query.QueryBuilder(fieldName, Query::equalTo,
+                new Query.QueryBuilder("id", Query::equalTo, userService.getCurrentUserId()));
     }
 
 }

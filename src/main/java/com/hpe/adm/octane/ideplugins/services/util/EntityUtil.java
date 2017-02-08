@@ -8,19 +8,19 @@ import java.util.Collection;
 
 public class EntityUtil {
 
-    public static boolean areEqual(EntityModel em1, EntityModel em2){
-        if(!ObjectUtils.equals(Entity.getEntityType(em1), Entity.getEntityType(em2))){
+    public static boolean areEqual(EntityModel leftSide, EntityModel rightSide){
+        if(!ObjectUtils.equals(Entity.getEntityType(leftSide), Entity.getEntityType(rightSide))){
             return false;
         }
 
         String em1Id = "";
-        if(em1.getValue("id") != null){
-            em1Id = em1.getValue("id").getValue().toString();
+        if(leftSide.getValue("id") != null){
+            em1Id = leftSide.getValue("id").getValue().toString();
         }
 
         String em2Id = "";
-        if(em2.getValue("id") != null){
-            em2Id = em1.getValue("id").getValue().toString();
+        if(rightSide.getValue("id") != null){
+            em2Id = rightSide.getValue("id").getValue().toString();
         }
 
         if(!em1Id.equals(em2Id)){
