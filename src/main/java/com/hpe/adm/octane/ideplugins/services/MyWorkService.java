@@ -14,8 +14,7 @@ import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.util.EntityUtil;
 
 import java.util.*;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.*;
 
@@ -50,47 +49,55 @@ public class MyWorkService {
 
         Map<Entity, Query.QueryBuilder> filterCriteria = new HashMap<>();
 
-        //Standard backlog items
         filterCriteria.put(GHERKIN_TEST,
-                createPhaseQuery(TEST, "new", "indesign")
-                        .and(createCurrentUserQuery("owner"))
+                createCurrentUserQuery("owner")
+                        .and(GHERKIN_TEST.createMatchSubtypeQueryBuilder())
+                        .and(createPhaseQuery(TEST, "new", "indesign"))
         );
 
         filterCriteria.put(MANUAL_TEST,
-                createPhaseQuery(TEST, "new", "indesign")
-                        .and(createCurrentUserQuery("owner"))
+                createCurrentUserQuery("owner")
+                        .and(MANUAL_TEST.createMatchSubtypeQueryBuilder())
+                        .and(createPhaseQuery(TEST, "new", "indesign"))
+
         );
 
         filterCriteria.put(DEFECT,
-                createPhaseQuery(DEFECT, "new", "inprogress", "intesting")
-                        .and(createCurrentUserQuery("owner"))
+                createCurrentUserQuery("owner")
+                        .and(DEFECT.createMatchSubtypeQueryBuilder())
+                        .and(createPhaseQuery(DEFECT, "new", "inprogress", "intesting"))
         );
 
         filterCriteria.put(USER_STORY,
-                createPhaseQuery(USER_STORY, "new", "inprogress", "intesting")
-                        .and(createCurrentUserQuery("owner"))
-        );
-
-        filterCriteria.put(TASK,
-                createPhaseQuery(TASK, "new", "inprogress")
-                        .and(createCurrentUserQuery("owner"))
+                createCurrentUserQuery("owner")
+                        .and(USER_STORY.createMatchSubtypeQueryBuilder())
+                        .and(createPhaseQuery(USER_STORY, "new", "inprogress", "intesting"))
         );
 
         filterCriteria.put(QUALITY_STORY,
-                createPhaseQuery(QUALITY_STORY, "new", "inprogress")
-                        .and(createCurrentUserQuery("owner"))
+                createCurrentUserQuery("owner")
+                        .and(QUALITY_STORY.createMatchSubtypeQueryBuilder())
+                        .and(createPhaseQuery(QUALITY_STORY, "new", "inprogress"))
         );
 
+        filterCriteria.put(TASK,
+                createCurrentUserQuery("owner")
+                        .and(createPhaseQuery(TASK, "new", "inprogress"))
+        );
+
+
         filterCriteria.put(MANUAL_TEST_RUN,
-                createNativeStatusQuery("list_node.run_native_status.blocked", "list_node.run_native_status.not_completed")
-                        .and(createCurrentUserQuery("run_by"))
+                createCurrentUserQuery("run_by")
+                        .and(MANUAL_TEST_RUN.createMatchSubtypeQueryBuilder())
                         .and(new Query.QueryBuilder("parent_suite", Query::equalTo, null))
+                        .and(createNativeStatusQuery("list_node.run_native_status.blocked", "list_node.run_native_status.not_completed"))
         );
 
         filterCriteria.put(TEST_SUITE_RUN,
-                createNativeStatusQuery("list_node.run_native_status.blocked", "list_node.run_native_status.not_completed")
-                        .and(createCurrentUserQuery("run_by"))
-                        .and(new Query.QueryBuilder("parent_suite", Query::equalTo, null))
+                createCurrentUserQuery("run_by")
+                        .and(TEST_SUITE_RUN.createMatchSubtypeQueryBuilder())
+                        .and(createNativeStatusQuery("list_node.run_native_status.blocked", "list_node.run_native_status.not_completed")
+                                .and(new Query.QueryBuilder("parent_suite", Query::equalTo, null)))
         );
 
         filterCriteria.put(COMMENT, createCurrentUserQuery("mention_user"));
@@ -101,47 +108,47 @@ public class MyWorkService {
                 .stream()
                 .filter(this::isFollowingEntitySupported)
                 .forEach(key -> {
-                    filterCriteria.put(key, createCurrentUserQuery(FOLLOW_ITEMS_OWNER_FIELD).or(filterCriteria.get(key)));
+
+                    Query.QueryBuilder qb;
+                    if (key.isSubtype()) {
+                        qb = key.createMatchSubtypeQueryBuilder().and(createCurrentUserQuery(FOLLOW_ITEMS_OWNER_FIELD))
+                                .or(filterCriteria.get(key));
+                    } else {
+                        qb = createCurrentUserQuery(FOLLOW_ITEMS_OWNER_FIELD).or(filterCriteria.get(key));
+                    }
+
+                    filterCriteria.put(key, qb);
                     if (fieldListMap != null && fieldListMap.containsKey(key)) {
                         fieldListMap.get(key).add(FOLLOW_ITEMS_OWNER_FIELD);
                         fieldListMap.get(key).add(NEW_ITEMS_OWNER_FIELD);
                     }
                 });
 
-        List<EntityModel> result = new ArrayList<>();
-
-        Lock _mutex = new ReentrantLock(true);
+        Map<Entity, Collection> resultMap = new ConcurrentHashMap<>();
 
         //TODO, known subtypes should be under same rest call
-        //TODO, parallel stream
         filterCriteria
                 .keySet()
                 .parallelStream()
-                .flatMap(entityType ->
-                        entityService.findEntities(
-                                entityType,
-                                filterCriteria.get(entityType),
-                                fieldListMap.get(entityType)
-                        ).stream()
-                )
-                .filter(entityModel -> !EntityUtil.containsEntityModel(result, entityModel))
-                .forEach(entityModel -> {
-                    _mutex.lock();
-                    result.add(entityModel);
-                    _mutex.unlock();
-                });
+                .forEach(
+                        entityType ->
+                                resultMap.put(entityType,
+                                        entityService.findEntities(
+                                                entityType.getApiEntityName(),
+                                                filterCriteria.get(entityType),
+                                                fieldListMap.get(entityType)
+                                        )
+                                )
+                );
 
-        //Sort based on entity type and id
-        Collections.sort(result, (leftSide, rightSide) -> {
-            Entity left = Entity.getEntityType(leftSide);
-            Entity right = Entity.getEntityType(rightSide);
-            if (left != right) {
-                return left.name().compareTo(right.name());
-            }
-            Long leftId = Long.parseLong(leftSide.getValue("id").getValue().toString());
-            Long rightId = Long.parseLong(rightSide.getValue("id").getValue().toString());
-            return leftId.compareTo(rightId);
-        });
+        List<EntityModel> result = new ArrayList<>();
+
+        resultMap
+                .keySet()
+                .stream()
+                .sorted(Comparator.comparing(Enum::name))
+                .map(resultMap::get)
+                .forEach(result::addAll);
 
         return result;
     }

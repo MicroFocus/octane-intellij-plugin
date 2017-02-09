@@ -18,17 +18,16 @@ import com.hpe.adm.octane.ideplugins.services.util.UrlParser;
 
 import java.awt.*;
 import java.net.URI;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import static com.hpe.adm.nga.sdk.utils.CommonUtils.getIdFromEntityModel;
 import static com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil.getUiDataFromModel;
-import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.*;
 
 
 public class EntityService {
-
-    @Inject
-    private UserService userService;
 
     @Inject
     private OctaneProvider octaneProvider;
@@ -66,7 +65,24 @@ public class EntityService {
         }
         getRequest.addOrderBy("id", true);
 
-        return getRequest.execute();
+        Collection<EntityModel> col = getRequest.execute();
+        return col;
+    }
+
+    public Collection<EntityModel> findEntities(String apiEntity, Query.QueryBuilder query, Set<String> fields) {
+        EntityList entityList = octaneProvider.getOctane().entityList(apiEntity);
+
+        EntityListService.Get getRequest = entityList.get();
+        if (query != null) {
+            getRequest = getRequest.query(query.build());
+        }
+        if (fields != null && fields.size() != 0) {
+            getRequest = getRequest.addFields(fields.toArray(new String[]{}));
+        }
+        getRequest.addOrderBy("id", true);
+
+        Collection<EntityModel> col = getRequest.execute();
+        return col;
     }
 
     /**
