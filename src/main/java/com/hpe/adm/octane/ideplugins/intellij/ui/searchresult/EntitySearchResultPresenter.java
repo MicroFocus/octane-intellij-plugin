@@ -7,12 +7,10 @@ import com.hpe.adm.nga.sdk.exception.OctaneException;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.eventbus.OpenDetailTabEvent;
 import com.hpe.adm.octane.ideplugins.intellij.eventbus.RefreshMyWorkEvent;
-import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeView;
-import com.hpe.adm.octane.ideplugins.intellij.ui.util.PartialEntity;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
 import com.hpe.adm.octane.ideplugins.intellij.util.Constants;
 import com.hpe.adm.octane.ideplugins.services.EntityService;
@@ -20,7 +18,6 @@ import com.hpe.adm.octane.ideplugins.services.MyWorkService;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.nonentity.EntitySearchService;
 import com.hpe.adm.octane.ideplugins.services.util.SdkUtil;
-import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
@@ -34,6 +31,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -119,6 +117,8 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
         this.entityTreeView.addActionToToolbar(new EntityTreeView.CollapseNodesAction(this.entityTreeView));
         this.entityTreeView.addSeparatorToToolbar();
 
+        //eager init my work service support cache
+        Arrays.asList(Entity.values()).forEach(myWorkService::isFollowingEntitySupported);
         setContextMenuFactory(this.entityTreeView);
 
         entityTreeView.setComponentWhenEmpty(() -> new NoSearchResultsPanel());

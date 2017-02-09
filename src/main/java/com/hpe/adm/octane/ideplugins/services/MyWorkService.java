@@ -14,11 +14,10 @@ import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.util.EntityUtil;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.*;
-import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.MANUAL_TEST_RUN;
-import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.TEST_SUITE_RUN;
 
 public class MyWorkService {
 
@@ -82,16 +81,6 @@ public class MyWorkService {
                         .and(createCurrentUserQuery("owner"))
         );
 
-        filterCriteria.put(QUALITY_STORY,
-                createPhaseQuery(QUALITY_STORY, "new", "inprogress")
-                        .and(createCurrentUserQuery("owner"))
-        );
-
-        filterCriteria.put(QUALITY_STORY,
-                createPhaseQuery(QUALITY_STORY, "new", "inprogress")
-                        .and(createCurrentUserQuery("owner"))
-        );
-
         filterCriteria.put(MANUAL_TEST_RUN,
                 createNativeStatusQuery("list_node.run_native_status.blocked", "list_node.run_native_status.not_completed")
                         .and(createCurrentUserQuery("run_by"))
@@ -121,11 +110,13 @@ public class MyWorkService {
 
         List<EntityModel> result = new ArrayList<>();
 
+        Lock _mutex = new ReentrantLock(true);
+
         //TODO, known subtypes should be under same rest call
         //TODO, parallel stream
         filterCriteria
                 .keySet()
-                .stream()
+                .parallelStream()
                 .flatMap(entityType ->
                         entityService.findEntities(
                                 entityType,
@@ -134,7 +125,11 @@ public class MyWorkService {
                         ).stream()
                 )
                 .filter(entityModel -> !EntityUtil.containsEntityModel(result, entityModel))
-                .forEach(result::add);
+                .forEach(entityModel -> {
+                    _mutex.lock();
+                    result.add(entityModel);
+                    _mutex.unlock();
+                });
 
         //Sort based on entity type and id
         Collections.sort(result, (leftSide, rightSide) -> {
@@ -254,7 +249,7 @@ public class MyWorkService {
         if (!EntityUtil.containsEntityModel(fieldModelFollow.getValue(), currentUser)) {
             fieldModelFollow.getValue().add(currentUser);
 
-            if(!EntityUtil.containsEntityModel(fieldModelNew.getValue(), currentUser)){
+            if (!EntityUtil.containsEntityModel(fieldModelNew.getValue(), currentUser)) {
                 fieldModelNew.getValue().add(currentUser);
             }
 
@@ -280,7 +275,7 @@ public class MyWorkService {
         EntityModel currentUser = userService.getCurrentUser();
         MultiReferenceFieldModel fieldModel = updateEntityModel.getValue(FOLLOW_ITEMS_OWNER_FIELD);
 
-        if(EntityUtil.removeEntityModel(fieldModel.getValue(), currentUser)){
+        if (EntityUtil.removeEntityModel(fieldModel.getValue(), currentUser)) {
             //Do update
             Octane octane = octaneProvider.getOctane();
 
@@ -306,12 +301,12 @@ public class MyWorkService {
         return false;
     }
 
-    private EntityModel createUpdateEntityModelForFollow(EntityModel entityModel){
+    private EntityModel createUpdateEntityModelForFollow(EntityModel entityModel) {
 
         if (entityModel.getValue(FOLLOW_ITEMS_OWNER_FIELD) == null ||
-            entityModel.getValue(FOLLOW_ITEMS_OWNER_FIELD).getValue() == null ||
-            entityModel.getValue(NEW_ITEMS_OWNER_FIELD) == null ||
-            entityModel.getValue(NEW_ITEMS_OWNER_FIELD).getValue() == null) {
+                entityModel.getValue(FOLLOW_ITEMS_OWNER_FIELD).getValue() == null ||
+                entityModel.getValue(NEW_ITEMS_OWNER_FIELD) == null ||
+                entityModel.getValue(NEW_ITEMS_OWNER_FIELD).getValue() == null) {
 
             entityModel = fetchEntityFields(entityModel, FOLLOW_ITEMS_OWNER_FIELD, NEW_ITEMS_OWNER_FIELD);
         }
@@ -322,7 +317,7 @@ public class MyWorkService {
         return updateEntityModel;
     }
 
-    private EntityModel fetchEntityFields(EntityModel entityModel, String... fields){
+    private EntityModel fetchEntityFields(EntityModel entityModel, String... fields) {
         try {
             return entityService.findEntity(
                     Entity.getEntityType(entityModel),
