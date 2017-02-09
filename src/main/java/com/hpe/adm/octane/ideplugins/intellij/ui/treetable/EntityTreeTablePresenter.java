@@ -258,7 +258,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
             }
 
             if(myWorkService.isCurrentUserFollowing(entityModel)) {
-                JMenuItem removeFromMyWorkMenuItem = new JMenuItem("Dismiss");
+                JMenuItem removeFromMyWorkMenuItem = new JMenuItem("Dismiss", AllIcons.General.Remove);
                 removeFromMyWorkMenuItem.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mousePressed(MouseEvent e) {

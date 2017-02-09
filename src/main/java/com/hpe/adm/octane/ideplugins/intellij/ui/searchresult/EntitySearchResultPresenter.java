@@ -18,6 +18,7 @@ import com.hpe.adm.octane.ideplugins.services.MyWorkService;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.nonentity.EntitySearchService;
 import com.hpe.adm.octane.ideplugins.services.util.SdkUtil;
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
@@ -168,7 +169,7 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
             }
 
             if(myWorkService.isFollowingEntitySupported(entityType)) {
-                JMenuItem addToMyWorkMenuItem = new JMenuItem("Add to \"My Work\"");
+                JMenuItem addToMyWorkMenuItem = new JMenuItem("Add to \"My Work\"", AllIcons.General.Add);
                 addToMyWorkMenuItem.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mousePressed(MouseEvent e) {
