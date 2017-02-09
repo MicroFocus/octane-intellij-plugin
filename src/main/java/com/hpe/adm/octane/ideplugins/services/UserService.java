@@ -61,6 +61,7 @@ public class UserService {
         }
         else if(!lastConnectionSettings.equals(connectionSettingsProvider.getConnectionSettings())){
             getCurrentUserRunnable.run();
+            lastConnectionSettings = connectionSettingsProvider.getConnectionSettings();
         }
         return currentUserEntityModel;
     }
