@@ -259,7 +259,8 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
                 popup.add(activateItem);
             }
 
-            if(myWorkService.isCurrentUserFollowing(entityModel)) {
+            if(myWorkService.isFollowingEntitySupported(entityType) && myWorkService.isCurrentUserFollowing(entityModel)) {
+
                 JMenuItem removeFromMyWorkMenuItem = new JMenuItem("Dismiss", AllIcons.General.Remove);
                 removeFromMyWorkMenuItem.addMouseListener(new MouseAdapter() {
                     @Override
