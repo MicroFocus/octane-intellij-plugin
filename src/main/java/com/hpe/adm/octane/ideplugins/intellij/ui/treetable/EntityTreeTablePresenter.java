@@ -117,19 +117,32 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
      */
     private void updateActiveItem(Collection<EntityModel> myWork) {
         PartialEntity activeItem = getActiveItemFromPersistentState();
-        if (activeItem != null && myWork != null) {
-            List<EntityModel> matchedItems = myWork.stream()
-                    .filter(entityModel -> activeItem.getEntityId() == Long.parseLong(entityModel.getValue("id").getValue().toString())
-                            && activeItem.getEntityType() == Entity.getEntityType(entityModel))
-                    .collect(Collectors.toList());
-            if (!matchedItems.isEmpty()) {
-                activeItem.setEntityName(matchedItems.get(0).getValue("name").getValue().toString());
-                persistentState.saveState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM, PartialEntity.toJsonObject(activeItem));
-            } else {
-                persistentState.clearState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM);
+        if(activeItem == null) return;
+
+        boolean clearActiveItem = false;
+
+        if (myWork != null) {
+            boolean activeItemInMyWork = myWork
+                    .stream()
+                    .anyMatch(entityModel ->  EntityUtil.areEqual(entityModel, activeItem));
+
+            if(!activeItemInMyWork){
+                clearActiveItem = true;
             }
         } else {
+            clearActiveItem = true;
+        }
+
+        if(clearActiveItem){
             persistentState.clearState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM);
+            UiUtil.showWarningBalloon(null,
+                    "Active item cleared, no longer part of \"My Work\"",
+                    "Active item: \""
+                            + activeItem.getEntityType().getEntityName()
+                            + " " + activeItem.getEntityId() + ": "
+                            + " " + activeItem.getEntityName()
+                            + "\" has been removed, it is no longer part of \"My Work\"",
+                    NotificationType.INFORMATION);
         }
     }
 
@@ -287,8 +300,10 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
                                                 .collect(Collectors.toList());
 
                                         SwingUtilities.invokeLater(() -> {
+                                            updateActiveItem(list);
                                             entityTreeView.setTreeModel(new EntityTreeModel(list));
                                             entityTreeView.expandAllNodes();
+
                                         });
 
                                         //refresh();
