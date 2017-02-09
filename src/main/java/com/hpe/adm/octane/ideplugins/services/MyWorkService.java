@@ -212,12 +212,6 @@ public class MyWorkService {
         //init cache map
         if (followingSupportEntityMap == null) {
             followingSupportEntityMap = new HashMap<>();
-
-            //eager init
-            for(Entity entity : Entity.values()){
-                isFollowingEntitySupported(entity);
-            }
-
             //Clear on settings changed
             connectionSettingsProvider.addChangeHandler(() -> followingSupportEntityMap.clear());
         }
