@@ -3,10 +3,14 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.treetable;
 import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.nga.sdk.model.FieldModel;
+import com.hpe.adm.nga.sdk.model.MultiReferenceFieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.EntityTypeIdPair;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
+import com.hpe.adm.octane.ideplugins.services.MyWorkService;
+import com.hpe.adm.octane.ideplugins.services.UserService;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
+import com.hpe.adm.octane.ideplugins.services.util.EntityUtil;
 import com.intellij.ui.JBColor;
 import org.jdesktop.swingx.JXLabel;
 
@@ -38,6 +42,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
         entityFields.get(Entity.USER_STORY).add(FIELD_RELEASE);
         entityFields.get(Entity.USER_STORY).add(FIELD_AUTHOR);
         entityFields.get(Entity.USER_STORY).add(FIELD_STORYPOINTS);
+        entityFields.get(Entity.USER_STORY).add(FIELD_OWNER);
         Collections.addAll(entityFields.get(Entity.USER_STORY), progressFields);
 
         entityFields.put(Entity.QUALITY_STORY, new HashSet<>());
@@ -46,6 +51,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
         entityFields.get(Entity.QUALITY_STORY).add(FIELD_RELEASE);
         entityFields.get(Entity.QUALITY_STORY).add(FIELD_AUTHOR);
         entityFields.get(Entity.QUALITY_STORY).add(FIELD_STORYPOINTS);
+        entityFields.get(Entity.QUALITY_STORY).add(FIELD_OWNER);
         Collections.addAll(entityFields.get(Entity.QUALITY_STORY), progressFields);
 
         //TASK
@@ -55,6 +61,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
         entityFields.get(Entity.TASK).add(FIELD_RELEASE);
         entityFields.get(Entity.TASK).add(FIELD_AUTHOR);
         entityFields.get(Entity.TASK).add(FIELD_STORY);
+        entityFields.get(Entity.TASK).add(FIELD_OWNER);
         Collections.addAll(entityFields.get(Entity.TASK), progressFields);
 
         //DEFECT
@@ -65,6 +72,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
         entityFields.get(Entity.DEFECT).add(FIELD_DETECTEDBY);
         entityFields.get(Entity.DEFECT).add(FIELD_STORYPOINTS);
         entityFields.get(Entity.DEFECT).add(FIELD_SEVERITY);
+        entityFields.get(Entity.DEFECT).add(FIELD_OWNER);
         Collections.addAll(entityFields.get(Entity.DEFECT), progressFields);
 
         //GHERKIN_TEST
@@ -73,6 +81,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
         entityFields.get(Entity.GHERKIN_TEST).add("subtype");
         entityFields.get(Entity.GHERKIN_TEST).add(FIELD_TEST_TYPE);
         entityFields.get(Entity.GHERKIN_TEST).add(FIELD_AUTHOR);
+        entityFields.get(Entity.GHERKIN_TEST).add(FIELD_OWNER);
         entityFields.get(Entity.GHERKIN_TEST).add("automation_status");
 
         //MANUAL_TEST
@@ -81,16 +90,8 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
         entityFields.get(Entity.MANUAL_TEST).add("subtype");
         entityFields.get(Entity.MANUAL_TEST).add(FIELD_TEST_TYPE);
         entityFields.get(Entity.MANUAL_TEST).add(FIELD_AUTHOR);
+        entityFields.get(Entity.MANUAL_TEST).add(FIELD_OWNER);
         entityFields.get(Entity.MANUAL_TEST).add("steps_num");
-
-        //COMMENTS
-        entityFields.put(Entity.COMMENT, new HashSet<>());
-        entityFields.get(Entity.COMMENT).add("id");
-        entityFields.get(Entity.COMMENT).add("text");
-        entityFields.get(Entity.COMMENT).add("author");
-        entityFields.get(Entity.COMMENT).add("owner_work_item");
-        entityFields.get(Entity.COMMENT).add("owner_test");
-        entityFields.get(Entity.COMMENT).add("owner_run");
 
         //MANUAL TEST RUNS
         entityFields.put(Entity.MANUAL_TEST_RUN, new HashSet<>());
@@ -101,6 +102,15 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
         entityFields.get(Entity.MANUAL_TEST_RUN).add(FIELD_ENVIROMENT);
         entityFields.get(Entity.MANUAL_TEST_RUN).add("started");
         entityFields.get(Entity.MANUAL_TEST_RUN).add("test_name");
+
+        //COMMENTS
+        entityFields.put(Entity.COMMENT, new HashSet<>());
+        entityFields.get(Entity.COMMENT).add("id");
+        entityFields.get(Entity.COMMENT).add("text");
+        entityFields.get(Entity.COMMENT).add("author");
+        entityFields.get(Entity.COMMENT).add("owner_work_item");
+        entityFields.get(Entity.COMMENT).add("owner_test");
+        entityFields.get(Entity.COMMENT).add("owner_run");
 
         subtypeNames.put("story", "User Story");
         subtypeNames.put("defect", "Defect");
@@ -113,6 +123,9 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
         subtypeNames.put("test_suite", "Test Suite");
         subtypeNames.put("run_suite", "Run Suite");
     }
+
+    @Inject
+    private UserService userService;
 
     /**
      * Returns a map of fields that this cell will display for each entity type, needed for making the request
@@ -135,34 +148,63 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
         if (value instanceof String) {
             return new JLabel((String) value);
         } else if (value instanceof EntityTreeModel.EntityCategory) {
-
             EntityTreeModel model = (EntityTreeModel) tree.getModel();
             EntityTreeModel.EntityCategory category = (EntityTreeModel.EntityCategory) value;
             int count = model.getChildCount(value);
             String labelText = category.getName() + " (" + count + ")";
-
             JXLabel lbl = new JXLabel(labelText);
             Font font = new Font(lbl.getFont().getFontName(), Font.BOLD, lbl.getFont().getSize() + 4);
             lbl.setFont(font);
             if (selected && hasFocus) {
                 lbl.setForeground(new Color(255, 255, 255));
             }
-
             return lbl;
+
         } else if (value instanceof EntityModel) {
 
             EntityModel entityModel = (EntityModel) value;
             Entity entityType = Entity.getEntityType(entityModel);
             Long entityId = Long.valueOf(getUiDataFromModel(entityModel.getValue("id")));
 
-            EntityModelRow rowPanel;
-
+            //Init row panel
+            final EntityModelRow rowPanel;
             if (selected && hasFocus) {
                 rowPanel = new EntityModelRow(new Color(255, 255, 255));
             } else {
                 rowPanel = new EntityModelRow();
             }
             rowPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, JBColor.border()));
+
+            //Add owner if entity is not owned by the current plugin user
+            String ownerText = null;
+
+            //check who the entity belongs too if the owner field exits
+            if(entityModel.getValue("owner") != null) {
+                if (entityModel.getValue("owner").getValue() == null) {
+                    ownerText = "";
+                } else {
+                    EntityModel ownerEntity = (EntityModel) entityModel.getValue("owner").getValue();
+                    if (!EntityUtil.areEqual(userService.getCurrentUser(), ownerEntity)) {
+                        ownerText = getUiDataFromModel(ownerEntity.getValue(FIELD_FULL_NAME));
+                    }
+                }
+            }
+            if(ownerText != null) {
+                rowPanel.addDetails(
+                        "Owner",
+                        ownerText,
+                        DetailsPosition.TOP);
+            }
+
+            //Check if the item is dismissible or not
+            if(entityModel.getValue(MyWorkService.FOLLOW_ITEMS_OWNER_FIELD) != null &&
+                    entityModel.getValue(MyWorkService.FOLLOW_ITEMS_OWNER_FIELD) .getValue() != null) {
+
+                MultiReferenceFieldModel field = entityModel.getValue(MyWorkService.FOLLOW_ITEMS_OWNER_FIELD);
+                if(EntityUtil.containsEntityModel(field.getValue(), userService.getCurrentUser())){
+                    rowPanel.addSimpleDetails("Dismissible", DetailsPosition.BOTTOM);
+                }
+            }
 
             //Check if the rendered item is the active item or not
             EntityTypeIdPair entityTypeIdPair =
@@ -174,6 +216,8 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
             } else {
                 rowPanel.setIcon(Entity.getEntityType(entityModel), false);
             }
+
+            //Add specific details for each item type
 
             if (entityType != Entity.COMMENT) {
                 if (entityType.equals(Entity.MANUAL_TEST_RUN) || entityType.equals(Entity.TEST_SUITE_RUN)) {
@@ -187,7 +231,6 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
                 String id = wrapHtml("<b>" + entityId + "</b>");
                 rowPanel.setEntityName(id, getUiDataFromModel(entityModel.getValue("name")));
             }
-
 
             if (Entity.DEFECT.equals(entityType)) {
                 rowPanel.setEntitySubTitle(
@@ -233,6 +276,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
                 addProgress(rowPanel, entityModel);
 
             } else if (Entity.GHERKIN_TEST.equals(entityType)) {
+
                 rowPanel.setEntitySubTitle(
                         getUiDataFromModel(entityModel.getValue(FIELD_TEST_TYPE)),
                         "");
@@ -244,6 +288,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
                 //addProgress(rowPanel, entityModel);
 
             } else if (Entity.MANUAL_TEST.equals(entityType)) {
+
                 rowPanel.setEntitySubTitle(
                         getUiDataFromModel(entityModel.getValue(FIELD_TEST_TYPE)),
                         "");
@@ -252,6 +297,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
                 rowPanel.addDetails("Steps", getUiDataFromModel(entityModel.getValue("steps_num")), DetailsPosition.BOTTOM);
 
             } else if (Entity.COMMENT.equals(entityType)) {
+
                 String text = getUiDataFromModel(entityModel.getValue("text"));
                 text = " Comment: " + UiUtil.stripHtml(text);
                 String author = getUiDataFromModel(entityModel.getValue(FIELD_AUTHOR), FIELD_FULL_NAME);
@@ -280,7 +326,6 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
                 rowPanel.addDetails("Author", getUiDataFromModel(entityModel.getValue(FIELD_AUTHOR), FIELD_FULL_NAME), DetailsPosition.TOP);
                 rowPanel.addDetails("Started", getUiDataFromModel(entityModel.getValue(FIELD_TEST_RUN_STARTED_DATE)), DetailsPosition.BOTTOM);
             }
-
 
             return rowPanel;
         }
