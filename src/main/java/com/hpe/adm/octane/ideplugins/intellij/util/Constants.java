@@ -18,9 +18,9 @@ public class Constants {
     public static final String IMG_START_TIMER = IMAGE_FOLDER_PATH + "startTimer-16x16.png";
     public static final String IMG_STOP_TIMER = IMAGE_FOLDER_PATH + "stopTimer-16x16.png";
 
-    public static final String IMG_UNIDRAG = IMAGE_FOLDER_PATH + "unidrag.png";
     public static final String IMG_UNIDRAG_SMALL = IMAGE_FOLDER_PATH + "unidrag-small.png";
     public static final String IMG_UNIDRAG_SMALL_SAD = IMAGE_FOLDER_PATH + "unidrag-small-sad.png";
+    public static final String IMG_ACTIVE_ITEM = IMAGE_FOLDER_PATH + "activeitem.png";
 
     public static final String IMG_MYWORK = IMAGE_FOLDER_PATH + "mywork.png";
 
