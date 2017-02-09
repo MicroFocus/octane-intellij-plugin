@@ -4,6 +4,10 @@ import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.nga.sdk.model.FieldModel;
 import com.hpe.adm.nga.sdk.model.MultiReferenceFieldModel;
 import com.hpe.adm.nga.sdk.model.ReferenceFieldModel;
+import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationType;
+import com.intellij.openapi.project.Project;
 import org.apache.commons.lang.CharEncoding;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -148,6 +152,38 @@ public class UiUtil {
         } catch (ParseException e) {}
 
         return new SimpleDateFormat(OCTANE_DATE_TIME_FORMAT).format(scheduleTime);
+    }
+
+    public static void showWarningBalloon(Project project, String title, String htmlText, NotificationType type){
+        Notification notification =
+                new Notification(
+                        "Octane IntelliJ Plugin",
+                        title,
+                        htmlText,
+                        type,
+                        null);
+
+        notification.notify(project);
+    }
+
+    public static String entityToString(EntityModel entityModel){
+        StringBuilder result = new StringBuilder();
+
+        if(Entity.getEntityType(entityModel) != null){
+            result.append(Entity.getEntityType(entityModel).getEntityName());
+            result.append(" ");
+        }
+
+        if(entityModel.getValue("id") != null){
+            result.append(entityModel.getValue("id").getValue().toString());
+            result.append(": ");
+        }
+
+        if(entityModel.getValue("name") != null){
+            result.append(entityModel.getValue("name").getValue().toString());
+        }
+
+        return result.toString();
     }
 
 }

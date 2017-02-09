@@ -160,4 +160,8 @@ public class EntityTreeModel extends AbstractTreeModel {
     public void setEntityCategories(List<EntityCategory> entityCategories) {
         this.entityCategories = entityCategories;
     }
+
+    public Map<EntityCategory, List<EntityModel>> getGroupedEntities() {
+        return groupedEntities;
+    }
 }

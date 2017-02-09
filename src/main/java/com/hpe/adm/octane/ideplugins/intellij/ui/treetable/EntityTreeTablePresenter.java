@@ -18,9 +18,11 @@ import com.hpe.adm.octane.ideplugins.services.EntityService;
 import com.hpe.adm.octane.ideplugins.services.MyWorkService;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.nonentity.DownloadScriptService;
+import com.hpe.adm.octane.ideplugins.services.util.EntityUtil;
 import com.hpe.adm.octane.ideplugins.services.util.SdkUtil;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.actions.OpenProjectFileChooserDescriptor;
+import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
@@ -272,7 +274,21 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
 
                                 public void run(@NotNull ProgressIndicator indicator) {
                                     if(myWorkService.removeCurrentUserFromFollowers(entityModel)) {
-                                        refresh();
+
+                                        List list = entityTreeView.getTreeModel().getGroupedEntities()
+                                                .values()
+                                                .stream()
+                                                .flatMap(Collection::stream)
+                                                .filter(currentEntityModel -> !EntityUtil.areEqual(currentEntityModel, entityModel))
+                                                .collect(Collectors.toList());
+
+                                        SwingUtilities.invokeLater(() -> entityTreeView.setTreeModel(new EntityTreeModel(list)));
+
+                                        //refresh();
+                                        UiUtil.showWarningBalloon(null,
+                                                "Item dismissed",
+                                                UiUtil.entityToString(entityModel),
+                                                NotificationType.INFORMATION);
                                     }
                                 }
 

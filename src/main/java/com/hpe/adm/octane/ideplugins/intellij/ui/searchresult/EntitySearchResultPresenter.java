@@ -19,6 +19,7 @@ import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.nonentity.EntitySearchService;
 import com.hpe.adm.octane.ideplugins.services.util.SdkUtil;
 import com.intellij.icons.AllIcons;
+import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
@@ -176,8 +177,19 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
                         ApplicationManager.getApplication().invokeLater(() -> {
                             Task.Backgroundable backgroundTask = new Task.Backgroundable(null, "Adding item to to \"My Work\"", true) {
                                 public void run(@NotNull ProgressIndicator indicator) {
-                                    myWorkService.addCurrentUserToFollowers(entityModel);
-                                    eventBus.post(new RefreshMyWorkEvent());
+                                    if(myWorkService.addCurrentUserToFollowers(entityModel)) {
+                                        eventBus.post(new RefreshMyWorkEvent());
+                                        UiUtil.showWarningBalloon(null,
+                                                "Item added",
+                                                UiUtil.entityToString(entityModel),
+                                                NotificationType.INFORMATION);
+                                    } else {
+                                        //also show a notification with the exception
+                                        UiUtil.showWarningBalloon(null,
+                                                "Item was not added, is already in \"My Work\"",
+                                                UiUtil.entityToString(entityModel),
+                                                NotificationType.WARNING);
+                                    }
                                 }
                             };
                             backgroundTask.queue();
