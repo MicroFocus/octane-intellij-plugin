@@ -35,7 +35,7 @@ public class MyWorkService {
     private ConnectionSettingsProvider connectionSettingsProvider;
 
     public static final String FOLLOW_ITEMS_OWNER_FIELD = "my_follow_items_owner";
-    public static final String NEW_ITEMS_OWNER_FIELD = "my_follow_items_owner";
+    public static final String NEW_ITEMS_OWNER_FIELD = "my_new_items_owner";
 
     public Collection<EntityModel> getMyWork() {
         return getMyWork(new HashMap<>());
@@ -115,6 +115,7 @@ public class MyWorkService {
                     filterCriteria.put(key, createCurrentUserQuery(FOLLOW_ITEMS_OWNER_FIELD).or(filterCriteria.get(key)));
                     if (fieldListMap != null && fieldListMap.containsKey(key)) {
                         fieldListMap.get(key).add(FOLLOW_ITEMS_OWNER_FIELD);
+                        fieldListMap.get(key).add(NEW_ITEMS_OWNER_FIELD);
                     }
                 });
 
@@ -211,6 +212,12 @@ public class MyWorkService {
         //init cache map
         if (followingSupportEntityMap == null) {
             followingSupportEntityMap = new HashMap<>();
+
+            //eager init
+            for(Entity entity : Entity.values()){
+                isFollowingEntitySupported(entity);
+            }
+
             //Clear on settings changed
             connectionSettingsProvider.addChangeHandler(() -> followingSupportEntityMap.clear());
         }
@@ -246,10 +253,16 @@ public class MyWorkService {
     public boolean addCurrentUserToFollowers(EntityModel entityModel) {
         EntityModel updateEntityModel = createUpdateEntityModelForFollow(entityModel);
         EntityModel currentUser = userService.getCurrentUser();
-        MultiReferenceFieldModel fieldModel = updateEntityModel.getValue(FOLLOW_ITEMS_OWNER_FIELD);
 
-        if (!EntityUtil.containsEntityModel(fieldModel.getValue(), currentUser)) {
-            fieldModel.getValue().add(currentUser);
+        MultiReferenceFieldModel fieldModelFollow = updateEntityModel.getValue(FOLLOW_ITEMS_OWNER_FIELD);
+        MultiReferenceFieldModel fieldModelNew = updateEntityModel.getValue(NEW_ITEMS_OWNER_FIELD);
+
+        if (!EntityUtil.containsEntityModel(fieldModelFollow.getValue(), currentUser)) {
+            fieldModelFollow.getValue().add(currentUser);
+
+            if(!EntityUtil.containsEntityModel(fieldModelNew.getValue(), currentUser)){
+                fieldModelNew.getValue().add(currentUser);
+            }
 
             //Do update
             Octane octane = octaneProvider.getOctane();
@@ -302,14 +315,16 @@ public class MyWorkService {
     private EntityModel createUpdateEntityModelForFollow(EntityModel entityModel){
 
         if (entityModel.getValue(FOLLOW_ITEMS_OWNER_FIELD) == null ||
-            entityModel.getValue(FOLLOW_ITEMS_OWNER_FIELD).getValue() == null) {
+            entityModel.getValue(FOLLOW_ITEMS_OWNER_FIELD).getValue() == null ||
+            entityModel.getValue(NEW_ITEMS_OWNER_FIELD) == null ||
+            entityModel.getValue(NEW_ITEMS_OWNER_FIELD).getValue() == null) {
 
-            entityModel = fetchEntityFields(entityModel, FOLLOW_ITEMS_OWNER_FIELD);
+            entityModel = fetchEntityFields(entityModel, FOLLOW_ITEMS_OWNER_FIELD, NEW_ITEMS_OWNER_FIELD);
         }
 
-        MultiReferenceFieldModel fieldModel = entityModel.getValue(FOLLOW_ITEMS_OWNER_FIELD);
         EntityModel updateEntityModel = new EntityModel();
-        updateEntityModel.setValue(fieldModel);
+        updateEntityModel.setValue(entityModel.getValue(FOLLOW_ITEMS_OWNER_FIELD));
+        updateEntityModel.setValue(entityModel.getValue(NEW_ITEMS_OWNER_FIELD));
         return updateEntityModel;
     }
 
