@@ -47,6 +47,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -141,6 +142,8 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
     public void setView(@Named("myWorkEntityTreeView") EntityTreeView entityTreeView) {
         this.entityTreeTableView = entityTreeView;
 
+        //eager init my work service support cache
+        Arrays.asList(Entity.values()).forEach(myWorkService::isFollowingEntitySupported);
         setContextMenuFactory(entityTreeView);
 
         //start presenting
@@ -283,7 +286,10 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
                                                 .filter(currentEntityModel -> !EntityUtil.areEqual(currentEntityModel, entityModel))
                                                 .collect(Collectors.toList());
 
-                                        SwingUtilities.invokeLater(() -> entityTreeView.setTreeModel(new EntityTreeModel(list)));
+                                        SwingUtilities.invokeLater(() -> {
+                                            entityTreeView.setTreeModel(new EntityTreeModel(list));
+                                            entityTreeView.expandAllNodes();
+                                        });
 
                                         //refresh();
                                         UiUtil.showWarningBalloon(null,

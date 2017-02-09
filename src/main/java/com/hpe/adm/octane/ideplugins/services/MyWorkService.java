@@ -47,6 +47,8 @@ public class MyWorkService {
      */
     public Collection<EntityModel> getMyWork(Map<Entity, Set<String>> fieldListMap) {
 
+        final Map<Entity, Set<String>> fieldListMapCopy = cloneFieldListMap(fieldListMap);
+
         Map<Entity, Query.QueryBuilder> filterCriteria = new HashMap<>();
 
         filterCriteria.put(GHERKIN_TEST,
@@ -118,9 +120,9 @@ public class MyWorkService {
                     }
 
                     filterCriteria.put(key, qb);
-                    if (fieldListMap != null && fieldListMap.containsKey(key)) {
-                        fieldListMap.get(key).add(FOLLOW_ITEMS_OWNER_FIELD);
-                        fieldListMap.get(key).add(NEW_ITEMS_OWNER_FIELD);
+                    if (fieldListMapCopy != null && fieldListMapCopy.containsKey(key)) {
+                        fieldListMapCopy.get(key).add(FOLLOW_ITEMS_OWNER_FIELD);
+                        fieldListMapCopy.get(key).add(NEW_ITEMS_OWNER_FIELD);
                     }
                 });
 
@@ -136,7 +138,7 @@ public class MyWorkService {
                                         entityService.findEntities(
                                                 entityType.getApiEntityName(),
                                                 filterCriteria.get(entityType),
-                                                fieldListMap.get(entityType)
+                                                fieldListMapCopy.get(entityType)
                                         )
                                 )
                 );
@@ -204,18 +206,13 @@ public class MyWorkService {
 
     private Map<Entity, Boolean> followingSupportEntityMap;
 
-    /**
-     * TODO This check is quite optimistic, only checks US
-     *
-     * @return fields exits
-     */
     public boolean isFollowingEntitySupported(Entity entityType) {
 
         //init cache map
         if (followingSupportEntityMap == null) {
             followingSupportEntityMap = new HashMap<>();
             //Clear on settings changed
-            connectionSettingsProvider.addChangeHandler(() -> followingSupportEntityMap.clear());
+            //connectionSettingsProvider.addChangeHandler(() -> followingSupportEntityMap.clear());
         }
 
         if (followingSupportEntityMap.containsKey(entityType)) {
@@ -334,5 +331,22 @@ public class MyWorkService {
         } catch (ServiceException e) {
             throw new ServiceRuntimeException(e);
         }
+    }
+
+    private Map<Entity, Set<String>> cloneFieldListMap(Map<Entity, Set<String>> fieldListMap){
+        Map<Entity, Set<String>> fieldListMapCopy = new HashMap<>();
+        if(fieldListMap == null){
+            fieldListMapCopy = null;
+        } else {
+            for(Entity key : fieldListMap.keySet()){
+                Set<String> value = fieldListMap.get(key);
+                if(value == null){
+                    fieldListMapCopy.put(key, null);
+                } else {
+                    fieldListMapCopy.put(key, new HashSet<>(value));
+                }
+            }
+        }
+        return fieldListMapCopy;
     }
 }
