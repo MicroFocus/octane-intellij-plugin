@@ -186,7 +186,7 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
                                     } else {
                                         //also show a notification with the exception
                                         UiUtil.showWarningBalloon(null,
-                                                "Item was not added, is already in \"My Work\"",
+                                                "Item was not added, it is already in \"My Work\"",
                                                 UiUtil.entityToString(entityModel),
                                                 NotificationType.WARNING);
                                     }
