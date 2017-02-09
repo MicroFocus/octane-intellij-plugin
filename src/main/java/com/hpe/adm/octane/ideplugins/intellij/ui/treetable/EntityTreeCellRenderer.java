@@ -184,9 +184,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
                     ownerText = "";
                 } else {
                     EntityModel ownerEntity = (EntityModel) entityModel.getValue("owner").getValue();
-                    if (!EntityUtil.areEqual(userService.getCurrentUser(), ownerEntity)) {
-                        ownerText = getUiDataFromModel(ownerEntity.getValue(FIELD_FULL_NAME));
-                    }
+                    ownerText = getUiDataFromModel(ownerEntity.getValue(FIELD_FULL_NAME));
                 }
             }
             if(ownerText != null) {
