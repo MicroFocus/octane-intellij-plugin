@@ -124,6 +124,14 @@ public enum Entity {
         }
     }
 
+    public String getEntityName() {
+        if (isSubtype()) {
+            return subtypeFieldValue;
+        } else {
+            return typeName;
+        }
+    }
+
     public String getApiEntityName() {
         return apiEntityName;
     }

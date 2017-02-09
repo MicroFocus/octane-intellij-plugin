@@ -220,7 +220,7 @@ public class MyWorkService {
         }
 
         Octane octane = octaneProvider.getOctane();
-        Collection<FieldMetadata> fields = octane.metadata().fields(entityType.getTypeName()).execute();
+        Collection<FieldMetadata> fields = octane.metadata().fields(entityType.getEntityName()).execute();
         boolean followFieldExits =
                 fields.stream().anyMatch(fieldMetadata -> FOLLOW_ITEMS_OWNER_FIELD.equals(fieldMetadata.getName()));
         boolean newFieldExits =

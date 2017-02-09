@@ -167,22 +167,24 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
                 popup.add(viewDetailMenuItem);
             }
 
-            JMenuItem addToMyWorkMenuItem = new JMenuItem("Add to \"My Work\"");
-            addToMyWorkMenuItem.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mousePressed(MouseEvent e) {
-                    ApplicationManager.getApplication().invokeLater(() -> {
-                        Task.Backgroundable backgroundTask = new Task.Backgroundable(null, "Adding item to to \"My Work\"", true) {
-                            public void run(@NotNull ProgressIndicator indicator) {
-                                myWorkService.addCurrentUserToFollowers(entityModel);
-                                eventBus.post(new RefreshMyWorkEvent());
-                            }
-                        };
-                        backgroundTask.queue();
-                    });
-                }
-            });
-            popup.add(addToMyWorkMenuItem);
+            if(myWorkService.isFollowingEntitySupported(entityType)) {
+                JMenuItem addToMyWorkMenuItem = new JMenuItem("Add to \"My Work\"");
+                addToMyWorkMenuItem.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mousePressed(MouseEvent e) {
+                        ApplicationManager.getApplication().invokeLater(() -> {
+                            Task.Backgroundable backgroundTask = new Task.Backgroundable(null, "Adding item to to \"My Work\"", true) {
+                                public void run(@NotNull ProgressIndicator indicator) {
+                                    myWorkService.addCurrentUserToFollowers(entityModel);
+                                    eventBus.post(new RefreshMyWorkEvent());
+                                }
+                            };
+                            backgroundTask.queue();
+                        });
+                    }
+                });
+                popup.add(addToMyWorkMenuItem);
+            }
 
             return popup;
         });
