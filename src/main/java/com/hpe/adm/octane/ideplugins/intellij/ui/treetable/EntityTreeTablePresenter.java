@@ -83,10 +83,8 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
     }
 
     public void refresh(){
-        SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
-
-            @Override
-            protected Void doInBackground() throws Exception {
+        Task.Backgroundable backgroundTask = new Task.Backgroundable(project, "Loading \"My Work\"", false) {
+            public void run(@NotNull ProgressIndicator indicator) {
                 try {
                     entityTreeTableView.setLoading(true);
                     Collection<EntityModel> myWork = myWorkService.getMyWork(EntityTreeCellRenderer.getEntityFieldMap());
@@ -96,7 +94,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
                         entityTreeTableView.expandAllNodes();
                         updateActiveItem(myWork);
                     });
-                    return null;
+
                 } catch (Exception ex) {
                     entityTreeTableView.setLoading(false);
                     String message;
@@ -106,11 +104,10 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
                         message = ex.getMessage();
                     }
                     entityTreeTableView.setErrorMessage("Failed to load \"My work\" <br>" + message);
-                    return null;
                 }
             }
         };
-        worker.execute();
+        backgroundTask.queue();
     }
 
     /**
