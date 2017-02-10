@@ -50,6 +50,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil.getUiDataFromModel;
@@ -119,16 +120,21 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
         PartialEntity activeItem = getActiveItemFromPersistentState();
         if(activeItem == null) return;
 
-        boolean clearActiveItem = false;
+        boolean clearActiveItem;
 
         if (myWork != null) {
-            boolean activeItemInMyWork = myWork
+            Optional<EntityModel> activeItemInMyWork = myWork
                     .stream()
-                    .anyMatch(entityModel ->  EntityUtil.areEqual(entityModel, activeItem));
+                    .filter(entityModel ->  EntityUtil.areEqual(entityModel, activeItem))
+                    .findFirst();
 
-            if(!activeItemInMyWork){
-                clearActiveItem = true;
-            }
+            activeItemInMyWork.ifPresent(entityModel -> {
+                //Refresh the name of the entity model, in case it has changed. The name is stored in the IntelliJ cache
+                activeItem.setEntityName(entityModel.getValue("name").getValue().toString());
+                persistentState.saveState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM, PartialEntity.toJsonObject(activeItem));
+            });
+
+            clearActiveItem = !activeItemInMyWork.isPresent();
         } else {
             clearActiveItem = true;
         }
