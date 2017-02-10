@@ -50,8 +50,9 @@ public class ToolbarActiveItem {
             } else {
                 if(partialEntity!=null) {
                     e.getPresentation().setVisible(true);
-                    e.getPresentation().setText("#" + partialEntity.getEntityId());
                     e.getPresentation().setDescription(partialEntity.getEntityName());
+                    e.getPresentation().setText("");
+                    e.getPresentation().setText("#" + partialEntity.getEntityId());
                     e.getPresentation().setIcon(new ImageIcon(entityIconFactory.getIconAsImage(partialEntity.getEntityType())));
                 } else {
                     e.getPresentation().setVisible(false);

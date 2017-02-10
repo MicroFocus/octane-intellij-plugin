@@ -4,12 +4,12 @@ import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.components.WelcomeViewComponent;
 import com.hpe.adm.octane.ideplugins.intellij.ui.main.MainPresenter;
+import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
 import com.hpe.adm.octane.ideplugins.services.TestService;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
 import com.hpe.adm.octane.ideplugins.services.nonentity.SharedSpaceLevelRequestService;
-import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
@@ -78,9 +78,10 @@ public class EntryPoint implements ToolWindowFactory {
                             "Please go to settings and test your connection to Octane");
 
                     //also show a notification with the exception
-                    showWarningBalloon(project,
+                    UiUtil.showWarningBalloon(project,
                             "Failed to connect to Octane",
-                            "Your previously saved connection settings do not seem to work <br> Error: " + ex.getMessage());
+                            "Your previously saved connection settings do not seem to work <br> Error: " + ex.getMessage(),
+                            NotificationType.WARNING);
                 } else {
                     //In this case (probably), the plugin was never configured on this project before
                     welcomeViewComponent = new WelcomeViewComponent(project);
@@ -96,13 +97,6 @@ public class EntryPoint implements ToolWindowFactory {
         //Run at the start of the application
         mainToolWindowContentControl.run();
         connectionSettingsProvider.addChangeHandler(mainToolWindowContentControl);
-    }
-
-    private void showWarningBalloon(Project project, String title, String htmlText){
-        Notification notification =
-                new Notification("Octane IntelliJ Plugin", title, htmlText, NotificationType.WARNING, null);
-
-        notification.notify(project);
     }
 
     private void setContent(ToolWindow toolWindow, HasComponent hasComponent, String workspaceName) {

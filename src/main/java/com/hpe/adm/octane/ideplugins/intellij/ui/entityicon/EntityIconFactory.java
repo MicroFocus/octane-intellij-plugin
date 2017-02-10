@@ -1,5 +1,6 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.entityicon;
 
+import com.hpe.adm.octane.ideplugins.intellij.util.Constants;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.intellij.util.ImageLoader;
 import org.jdesktop.swingx.JXLabel;
@@ -24,7 +25,7 @@ public class EntityIconFactory {
     private Color fontColor = new Color(255,255,255);
     private int fontSize = 15;
 
-    private static final Image runImage = ImageLoader.loadFromResource("/general/run@2x.png");
+    private static final Image activeImg = ImageLoader.loadFromResource(Constants.IMG_ACTIVE_ITEM);
    
     public EntityIconFactory(){	
     	init();
@@ -112,6 +113,11 @@ public class EntityIconFactory {
         } else {
             //Overlay the run image on top of the original entity icon component
             JComponent component = getIconAsComponent(entity);
+
+            if(component == null){
+                return new JLabel("N/A");
+            }
+
             component.setBounds(0,0,iconWidth,iconHeight);
 
             //Overlay an image on top of the component
@@ -119,14 +125,18 @@ public class EntityIconFactory {
                 @Override
                 public void paintComponent(Graphics g) {
                     super.paintComponent(g);
-                    g.drawImage(runImage, 0, 0, getWidth(), getHeight(), this);
+                    g.drawImage(activeImg, 0, 0, getWidth(), getHeight(), this);
                 }
             };
+
+            int xpercent = 60 * iconWidth / 100;
+            int ypercent = 60 * iconWidth / 100;
+
             runImagePanel.setBounds(
-                    iconWidth-iconWidth/2,
-                    iconHeight-iconHeight/2,
-                    iconWidth-(iconWidth-iconWidth/2) - 1,
-                    iconHeight-(iconHeight-iconHeight/2) - 1);
+                    xpercent,
+                    ypercent,
+                    iconWidth - xpercent,
+                    iconHeight - ypercent);
             runImagePanel.setOpaque(false);
 
             JPanel panel = new JPanel(null);

@@ -6,6 +6,7 @@ import com.google.inject.name.Named;
 import com.hpe.adm.nga.sdk.exception.OctaneException;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.eventbus.OpenDetailTabEvent;
+import com.hpe.adm.octane.ideplugins.intellij.eventbus.RefreshMyWorkEvent;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
@@ -14,22 +15,29 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
 import com.hpe.adm.octane.ideplugins.intellij.util.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
 import com.hpe.adm.octane.ideplugins.services.EntityService;
+import com.hpe.adm.octane.ideplugins.services.MyWorkService;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.nonentity.DownloadScriptService;
+import com.hpe.adm.octane.ideplugins.services.util.EntityUtil;
 import com.hpe.adm.octane.ideplugins.services.util.SdkUtil;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.actions.OpenProjectFileChooserDescriptor;
+import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vcs.VcsShowConfirmationOption;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ui.ConfirmationDialog;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
 
@@ -39,8 +47,10 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil.getUiDataFromModel;
@@ -50,6 +60,9 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
     private static final EntityIconFactory entityIconFactory = new EntityIconFactory(20, 20, 11, Color.WHITE);
 
     private EntityTreeView entityTreeTableView;
+
+    @Inject
+    private MyWorkService myWorkService;
 
     @Inject
     private EntityService entityService;
@@ -76,7 +89,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
             protected Void doInBackground() throws Exception {
                 try {
                     entityTreeTableView.setLoading(true);
-                    Collection<EntityModel> myWork = entityService.getMyWork(EntityTreeCellRenderer.getEntityFieldMap());
+                    Collection<EntityModel> myWork = myWorkService.getMyWork(EntityTreeCellRenderer.getEntityFieldMap());
                     SwingUtilities.invokeLater(() -> {
                         entityTreeTableView.setLoading(false);
                         entityTreeTableView.setTreeModel(new EntityTreeModel(myWork));
@@ -105,19 +118,37 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
      */
     private void updateActiveItem(Collection<EntityModel> myWork) {
         PartialEntity activeItem = getActiveItemFromPersistentState();
-        if (activeItem != null && myWork != null) {
-            List<EntityModel> matchedItems = myWork.stream()
-                    .filter(entityModel -> activeItem.getEntityId() == Long.parseLong(entityModel.getValue("id").getValue().toString())
-                            && activeItem.getEntityType() == Entity.getEntityType(entityModel))
-                    .collect(Collectors.toList());
-            if (!matchedItems.isEmpty()) {
-                activeItem.setEntityName(matchedItems.get(0).getValue("name").getValue().toString());
+        if(activeItem == null) return;
+
+        boolean clearActiveItem;
+
+        if (myWork != null) {
+            Optional<EntityModel> activeItemInMyWork = myWork
+                    .stream()
+                    .filter(entityModel ->  EntityUtil.areEqual(entityModel, activeItem))
+                    .findFirst();
+
+            activeItemInMyWork.ifPresent(entityModel -> {
+                //Refresh the name of the entity model, in case it has changed. The name is stored in the IntelliJ cache
+                activeItem.setEntityName(entityModel.getValue("name").getValue().toString());
                 persistentState.saveState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM, PartialEntity.toJsonObject(activeItem));
-            } else {
-                persistentState.clearState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM);
-            }
+            });
+
+            clearActiveItem = !activeItemInMyWork.isPresent();
         } else {
+            clearActiveItem = true;
+        }
+
+        if(clearActiveItem){
             persistentState.clearState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM);
+            UiUtil.showWarningBalloon(null,
+                    "Active item cleared, no longer part of \"My Work\"",
+                    "Active item: \""
+                            + activeItem.getEntityType().getEntityName()
+                            + " " + activeItem.getEntityId() + ": "
+                            + " " + activeItem.getEntityName()
+                            + "\" has been removed, it is no longer part of \"My Work\"",
+                    NotificationType.INFORMATION);
         }
     }
 
@@ -130,6 +161,8 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
     public void setView(@Named("myWorkEntityTreeView") EntityTreeView entityTreeView) {
         this.entityTreeTableView = entityTreeView;
 
+        //eager init my work service support cache
+        Arrays.asList(Entity.values()).forEach(myWorkService::isFollowingEntitySupported);
         setContextMenuFactory(entityTreeView);
 
         //start presenting
@@ -144,6 +177,10 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
         entityTreeTableView.addActionToToolbar(new EntityTreeView.ExpandNodesAction(entityTreeTableView));
         entityTreeTableView.addActionToToolbar(new EntityTreeView.CollapseNodesAction(entityTreeTableView));
         entityTreeTableView.addSeparatorToToolbar();
+
+        //Also register event handler
+        eventBus.register((RefreshMyWorkEvent.RefreshMyWorkEventListener) refreshMyWorkEvent -> refresh());
+
         refresh();
     }
 
@@ -242,6 +279,54 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
                     }
                 });
                 popup.add(activateItem);
+            }
+
+            if(myWorkService.isFollowingEntitySupported(entityType) && myWorkService.isCurrentUserFollowing(entityModel)) {
+
+                JMenuItem removeFromMyWorkMenuItem = new JMenuItem("Dismiss", AllIcons.General.Remove);
+                removeFromMyWorkMenuItem.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mousePressed(MouseEvent e) {
+                        ApplicationManager.getApplication().invokeLater(() -> {
+                            Task.Backgroundable backgroundTask =
+
+                                    new Task.Backgroundable(
+                                            null,
+                                            "Dismissing item from to \"My Work\"",
+                                            true) {
+
+                                public void run(@NotNull ProgressIndicator indicator) {
+                                    if(myWorkService.removeCurrentUserFromFollowers(entityModel)) {
+
+                                        List list = entityTreeView.getTreeModel().getGroupedEntities()
+                                                .values()
+                                                .stream()
+                                                .flatMap(Collection::stream)
+                                                .filter(currentEntityModel -> !EntityUtil.areEqual(currentEntityModel, entityModel))
+                                                .collect(Collectors.toList());
+
+                                        SwingUtilities.invokeLater(() -> {
+                                            updateActiveItem(list);
+                                            entityTreeView.setTreeModel(new EntityTreeModel(list));
+                                            entityTreeView.expandAllNodes();
+
+                                        });
+
+                                        //refresh();
+                                        UiUtil.showWarningBalloon(null,
+                                                "Item dismissed",
+                                                UiUtil.entityToString(entityModel),
+                                                NotificationType.INFORMATION);
+                                    }
+                                }
+
+                            };
+
+                            backgroundTask.queue();
+                        });
+                    }
+                });
+                popup.add(removeFromMyWorkMenuItem);
             }
 
             return popup;
