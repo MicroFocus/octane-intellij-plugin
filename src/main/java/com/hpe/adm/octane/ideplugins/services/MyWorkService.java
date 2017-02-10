@@ -104,7 +104,13 @@ public class MyWorkService {
 
         filterCriteria.put(COMMENT, createCurrentUserQuery("mention_user"));
 
+        Map<Entity, Collection<EntityModel>> defaultResult = concurrentFetch(filterCriteria, fieldListMapCopy);
+
         //In case it's supported, also get the work items you are following
+        //We care about the same entities as the prev call
+
+        Map<Entity, Query.QueryBuilder> followFilterCriteria = new HashMap<>();
+
         filterCriteria
                 .keySet()
                 .stream()
@@ -113,20 +119,40 @@ public class MyWorkService {
 
                     Query.QueryBuilder qb;
                     if (key.isSubtype()) {
-                        qb = key.createMatchSubtypeQueryBuilder().and(createCurrentUserQuery(FOLLOW_ITEMS_OWNER_FIELD))
-                                .or(filterCriteria.get(key));
+                        qb = key.createMatchSubtypeQueryBuilder().and(createCurrentUserQuery(FOLLOW_ITEMS_OWNER_FIELD));
                     } else {
-                        qb = createCurrentUserQuery(FOLLOW_ITEMS_OWNER_FIELD).or(filterCriteria.get(key));
+                        qb = createCurrentUserQuery(FOLLOW_ITEMS_OWNER_FIELD);
                     }
 
-                    filterCriteria.put(key, qb);
+                    followFilterCriteria.put(key, qb);
+
                     if (fieldListMapCopy != null && fieldListMapCopy.containsKey(key)) {
                         fieldListMapCopy.get(key).add(FOLLOW_ITEMS_OWNER_FIELD);
                         fieldListMapCopy.get(key).add(NEW_ITEMS_OWNER_FIELD);
                     }
                 });
 
-        Map<Entity, Collection> resultMap = new ConcurrentHashMap<>();
+        Map<Entity, Collection<EntityModel>> followResult = concurrentFetch(followFilterCriteria, fieldListMapCopy);
+
+        for(Entity entityType : followResult.keySet()){
+            for(EntityModel entityModel : followResult.get(entityType) ) {
+                if (!EntityUtil.containsEntityModel(defaultResult.get(entityType), entityModel)) {
+                    defaultResult.get(entityType).add(entityModel);
+                }
+            }
+        }
+
+        List<EntityModel> result = new ArrayList<>();
+
+        defaultResult
+                .values()
+                .forEach(result::addAll);
+
+        return result;
+    }
+
+    private Map<Entity, Collection<EntityModel>> concurrentFetch(Map<Entity, Query.QueryBuilder> filterCriteria, Map<Entity, Set<String>> fieldListMap) {
+        Map<Entity, Collection<EntityModel>> resultMap = new ConcurrentHashMap<>();
 
         //TODO, known subtypes should be under same rest call
         filterCriteria
@@ -138,21 +164,12 @@ public class MyWorkService {
                                         entityService.findEntities(
                                                 entityType.getApiEntityName(),
                                                 filterCriteria.get(entityType),
-                                                fieldListMapCopy.get(entityType)
+                                                fieldListMap.get(entityType)
                                         )
                                 )
                 );
 
-        List<EntityModel> result = new ArrayList<>();
-
-        resultMap
-                .keySet()
-                .stream()
-                .sorted(Comparator.comparing(Enum::name))
-                .map(resultMap::get)
-                .forEach(result::addAll);
-
-        return result;
+        return resultMap;
     }
 
     /**
@@ -231,10 +248,19 @@ public class MyWorkService {
     }
 
     public boolean isCurrentUserFollowing(EntityModel entityModel) {
+        return isCurrentUserFollowing(entityModel, false);
+    }
+
+    public boolean isCurrentUserFollowing(EntityModel entityModel, boolean fetchMissingFields) {
+
         if (entityModel.getValue(FOLLOW_ITEMS_OWNER_FIELD) == null ||
                 entityModel.getValue(FOLLOW_ITEMS_OWNER_FIELD).getValue() == null) {
 
-            entityModel = fetchEntityFields(entityModel, FOLLOW_ITEMS_OWNER_FIELD);
+            if(fetchMissingFields) {
+                entityModel = fetchEntityFields(entityModel, FOLLOW_ITEMS_OWNER_FIELD);
+            } else {
+                return false;
+            }
         }
 
         EntityModel currentUser = userService.getCurrentUser();
@@ -333,14 +359,14 @@ public class MyWorkService {
         }
     }
 
-    private Map<Entity, Set<String>> cloneFieldListMap(Map<Entity, Set<String>> fieldListMap){
+    private Map<Entity, Set<String>> cloneFieldListMap(Map<Entity, Set<String>> fieldListMap) {
         Map<Entity, Set<String>> fieldListMapCopy = new HashMap<>();
-        if(fieldListMap == null){
+        if (fieldListMap == null) {
             fieldListMapCopy = null;
         } else {
-            for(Entity key : fieldListMap.keySet()){
+            for (Entity key : fieldListMap.keySet()) {
                 Set<String> value = fieldListMap.get(key);
-                if(value == null){
+                if (value == null) {
                     fieldListMapCopy.put(key, null);
                 } else {
                     fieldListMapCopy.put(key, new HashSet<>(value));
