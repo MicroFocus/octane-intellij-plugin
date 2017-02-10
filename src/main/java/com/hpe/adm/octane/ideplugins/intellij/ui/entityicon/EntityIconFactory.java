@@ -128,11 +128,15 @@ public class EntityIconFactory {
                     g.drawImage(activeImg, 0, 0, getWidth(), getHeight(), this);
                 }
             };
+
+            int xpercent = 60 * iconWidth / 100;
+            int ypercent = 60 * iconWidth / 100;
+
             runImagePanel.setBounds(
-                    iconWidth-iconWidth/3,
-                    iconHeight-iconHeight/3,
-                    iconWidth-(iconWidth-iconWidth/3),
-                    iconHeight-(iconHeight-iconHeight/3));
+                    xpercent,
+                    ypercent,
+                    iconWidth - xpercent,
+                    iconHeight - ypercent);
             runImagePanel.setOpaque(false);
 
             JPanel panel = new JPanel(null);
