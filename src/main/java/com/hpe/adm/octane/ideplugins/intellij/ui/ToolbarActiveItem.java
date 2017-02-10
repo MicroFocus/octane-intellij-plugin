@@ -51,6 +51,7 @@ public class ToolbarActiveItem {
                 if(partialEntity!=null) {
                     e.getPresentation().setVisible(true);
                     e.getPresentation().setDescription(partialEntity.getEntityName());
+                    e.getPresentation().setText("");
                     e.getPresentation().setText("#" + partialEntity.getEntityId());
                     e.getPresentation().setIcon(new ImageIcon(entityIconFactory.getIconAsImage(partialEntity.getEntityType())));
                 } else {
