@@ -4,6 +4,7 @@ import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.nga.sdk.model.FieldModel;
 import com.hpe.adm.nga.sdk.model.MultiReferenceFieldModel;
 import com.hpe.adm.nga.sdk.model.ReferenceFieldModel;
+import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeCellRenderer;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
@@ -170,7 +171,7 @@ public class UiUtil {
         StringBuilder result = new StringBuilder();
 
         if(Entity.getEntityType(entityModel) != null){
-            result.append(Entity.getEntityType(entityModel).getEntityName());
+            result.append(EntityTreeCellRenderer.getSubtypeName(Entity.getEntityType(entityModel).getEntityName()));
             result.append(" ");
         }
 
