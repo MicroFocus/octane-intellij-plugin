@@ -47,7 +47,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -159,7 +158,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
         this.entityTreeTableView = entityTreeView;
 
         //eager init my work service support cache
-        Arrays.asList(Entity.values()).forEach(myWorkService::isFollowingEntitySupported);
+        //Arrays.asList(Entity.values()).forEach(myWorkService::isFollowingEntitySupported);
         setContextMenuFactory(entityTreeView);
 
         //start presenting

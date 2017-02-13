@@ -25,6 +25,7 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeTablePresen
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeView;
 import com.hpe.adm.octane.ideplugins.intellij.util.NotificationUtil;
 import com.hpe.adm.octane.ideplugins.services.EntityService;
+import com.hpe.adm.octane.ideplugins.services.MetadataService;
 import com.hpe.adm.octane.ideplugins.services.TestService;
 import com.hpe.adm.octane.ideplugins.services.UserService;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
@@ -113,6 +114,7 @@ public class PluginModule extends AbstractModule {
         });
 
         //Services
+        bind(MetadataService.class).asEagerSingleton();
         bind(TestService.class);
         bind(SharedSpaceLevelRequestService.class);
         bind(EntityService.class);

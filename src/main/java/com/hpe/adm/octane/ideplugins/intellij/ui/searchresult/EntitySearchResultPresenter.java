@@ -33,7 +33,6 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -120,7 +119,7 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
         this.entityTreeView.addSeparatorToToolbar();
 
         //eager init my work service support cache
-        Arrays.asList(Entity.values()).forEach(myWorkService::isFollowingEntitySupported);
+        //Arrays.asList(Entity.values()).forEach(myWorkService::isFollowingEntitySupported);
         setContextMenuFactory(this.entityTreeView);
 
         entityTreeView.setComponentWhenEmpty(() -> new NoSearchResultsPanel());

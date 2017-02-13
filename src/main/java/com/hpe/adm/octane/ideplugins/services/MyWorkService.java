@@ -3,10 +3,8 @@ package com.hpe.adm.octane.ideplugins.services;
 import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.Octane;
 import com.hpe.adm.nga.sdk.Query;
-import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.nga.sdk.model.MultiReferenceFieldModel;
-import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import com.hpe.adm.octane.ideplugins.services.connection.OctaneProvider;
 import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
 import com.hpe.adm.octane.ideplugins.services.exception.ServiceRuntimeException;
@@ -30,7 +28,7 @@ public class MyWorkService {
     private OctaneProvider octaneProvider;
 
     @Inject
-    private ConnectionSettingsProvider connectionSettingsProvider;
+    private MetadataService metadataService;
 
     public static final String FOLLOW_ITEMS_OWNER_FIELD = "my_follow_items_owner";
     public static final String NEW_ITEMS_OWNER_FIELD = "my_new_items_owner";
@@ -86,7 +84,6 @@ public class MyWorkService {
                 createCurrentUserQuery("owner")
                         .and(createPhaseQuery(TASK, "new", "inprogress"))
         );
-
 
         filterCriteria.put(MANUAL_TEST_RUN,
                 createCurrentUserQuery("run_by")
@@ -221,30 +218,8 @@ public class MyWorkService {
     }
 
 
-    private Map<Entity, Boolean> followingSupportEntityMap;
-
     public boolean isFollowingEntitySupported(Entity entityType) {
-
-        //init cache map
-        if (followingSupportEntityMap == null) {
-            followingSupportEntityMap = new HashMap<>();
-            //Clear on settings changed
-            //connectionSettingsProvider.addChangeHandler(() -> followingSupportEntityMap.clear());
-        }
-
-        if (followingSupportEntityMap.containsKey(entityType)) {
-            return followingSupportEntityMap.get(entityType);
-        }
-
-        Octane octane = octaneProvider.getOctane();
-        Collection<FieldMetadata> fields = octane.metadata().fields(entityType.getEntityName()).execute();
-        boolean followFieldExits =
-                fields.stream().anyMatch(fieldMetadata -> FOLLOW_ITEMS_OWNER_FIELD.equals(fieldMetadata.getName()));
-        boolean newFieldExits =
-                fields.stream().anyMatch(fieldMetadata -> NEW_ITEMS_OWNER_FIELD.equals(fieldMetadata.getName()));
-
-        followingSupportEntityMap.put(entityType, followFieldExits && newFieldExits);
-        return followFieldExits && newFieldExits;
+        return metadataService.hasFields(entityType, FOLLOW_ITEMS_OWNER_FIELD, NEW_ITEMS_OWNER_FIELD);
     }
 
     public boolean isCurrentUserFollowing(EntityModel entityModel) {
