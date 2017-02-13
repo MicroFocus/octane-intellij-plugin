@@ -54,7 +54,7 @@ public class EntryPoint implements ToolWindowFactory {
 
         Runnable mainToolWindowContentControl = () -> {
 
-            EntryPoint.this.setContent(toolWindow, () -> new LoadingWidget(), "Loading Workspace");
+            EntryPoint.this.setContent(toolWindow, () -> new LoadingWidget(), "");
 
             Task.Backgroundable backgroundTask = new Task.Backgroundable(project, "Loading Workspace", false) {
                 public void run(@NotNull ProgressIndicator indicator) {
@@ -79,7 +79,7 @@ public class EntryPoint implements ToolWindowFactory {
                         MetadataService metadataService = pluginModule.getInstance(MetadataService.class);
                         metadataService.eagerInit(Entity.values());
 
-                        SwingUtilities.invokeLater(() -> {
+                        SwingUtilities.invokeAndWait(() -> {
                             //Create the presenter hierarchy, DI will inject view instances
                             MainPresenter mainPresenter = pluginModule.getInstance(MainPresenter.class);
                             setContent(toolWindow, mainPresenter.getView(), workspaceDisplayName);
