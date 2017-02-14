@@ -1,7 +1,7 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.treetable;
 
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
-import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
+import com.hpe.adm.octane.services.filtering.Entity;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ui.UIUtil;
 import org.apache.commons.lang.StringUtils;

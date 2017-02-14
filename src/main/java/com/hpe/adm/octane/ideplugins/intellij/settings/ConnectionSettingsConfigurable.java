@@ -2,12 +2,12 @@ package com.hpe.adm.octane.ideplugins.intellij.settings;
 
 import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.ui.components.ConnectionSettingsComponent;
-import com.hpe.adm.octane.ideplugins.intellij.util.Constants;
-import com.hpe.adm.octane.ideplugins.services.TestService;
-import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
-import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
-import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
-import com.hpe.adm.octane.ideplugins.services.util.UrlParser;
+import com.hpe.adm.octane.services.util.Constants;
+import com.hpe.adm.octane.services.TestService;
+import com.hpe.adm.octane.services.connection.ConnectionSettings;
+import com.hpe.adm.octane.services.connection.ConnectionSettingsProvider;
+import com.hpe.adm.octane.services.exception.ServiceException;
+import com.hpe.adm.octane.services.util.UrlParser;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-import static com.hpe.adm.octane.ideplugins.services.util.UrlParser.resolveConnectionSettings;
+import static com.hpe.adm.octane.services.util.UrlParser.resolveConnectionSettings;
 
 public class ConnectionSettingsConfigurable implements SearchableConfigurable {
 

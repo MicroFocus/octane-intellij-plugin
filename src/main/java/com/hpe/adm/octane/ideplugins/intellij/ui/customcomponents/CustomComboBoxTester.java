@@ -2,10 +2,10 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents;
 
 import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.model.EntityModel;
-import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
-import com.hpe.adm.octane.ideplugins.services.EntityService;
-import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
-import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
+import com.hpe.adm.octane.services.util.Util;
+import com.hpe.adm.octane.services.EntityService;
+import com.hpe.adm.octane.services.exception.ServiceException;
+import com.hpe.adm.octane.services.filtering.Entity;
 
 import javax.swing.*;
 import java.awt.*;
@@ -28,7 +28,7 @@ public class CustomComboBoxTester extends JFrame {
         Collection<EntityModel> phaseList = null;
         try {
             EntityModel testEntityModel = entityService.findEntity(Entity.DEFECT, entityId);
-            Long currentPhaseId = Long.valueOf(UiUtil.getUiDataFromModel(testEntityModel.getValue("phase"), "id"));
+            Long currentPhaseId = Long.valueOf(Util.getUiDataFromModel(testEntityModel.getValue("phase"), "id"));
             phaseList = entityService.findPossibleTransitionFromCurrentPhase(Entity.DEFECT, currentPhaseId);
         } catch (ServiceException e) {
             e.printStackTrace();

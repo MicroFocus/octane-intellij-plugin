@@ -1,7 +1,7 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.searchresult;
 
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.nowork.NoWorkPanel;
-import com.hpe.adm.octane.ideplugins.intellij.util.Constants;
+import com.hpe.adm.octane.services.util.Constants;
 
 import javax.swing.*;
 import java.awt.*;

@@ -12,12 +12,13 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeView;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
-import com.hpe.adm.octane.ideplugins.intellij.util.Constants;
-import com.hpe.adm.octane.ideplugins.services.EntityService;
-import com.hpe.adm.octane.ideplugins.services.MyWorkService;
-import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
-import com.hpe.adm.octane.ideplugins.services.nonentity.EntitySearchService;
-import com.hpe.adm.octane.ideplugins.services.util.SdkUtil;
+import com.hpe.adm.octane.services.util.Util;
+import com.hpe.adm.octane.services.util.Constants;
+import com.hpe.adm.octane.services.EntityService;
+import com.hpe.adm.octane.services.MyWorkService;
+import com.hpe.adm.octane.services.filtering.Entity;
+import com.hpe.adm.octane.services.nonentity.EntitySearchService;
+import com.hpe.adm.octane.services.util.SdkUtil;
 import com.intellij.icons.AllIcons;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -36,7 +37,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil.getUiDataFromModel;
+import static com.hpe.adm.octane.services.util.Util.getUiDataFromModel;
 
 public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
 
@@ -142,7 +143,7 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
         entityTreeView.setEntityContextMenuFactory(entityModel -> {
 
             Entity entityType = Entity.getEntityType(entityModel);
-            String entityName = UiUtil.getUiDataFromModel(entityModel.getValue("name"));
+            String entityName = Util.getUiDataFromModel(entityModel.getValue("name"));
             Integer entityId = Integer.valueOf(getUiDataFromModel(entityModel.getValue("id")));
 
             JPopupMenu popup = new JPopupMenu();

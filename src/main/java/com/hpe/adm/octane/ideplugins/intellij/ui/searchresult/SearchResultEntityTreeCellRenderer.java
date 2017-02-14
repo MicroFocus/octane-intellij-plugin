@@ -2,8 +2,8 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.searchresult;
 
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeModel;
-import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
-import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
+import com.hpe.adm.octane.services.util.Util;
+import com.hpe.adm.octane.services.filtering.Entity;
 import com.intellij.ui.JBColor;
 import org.jdesktop.swingx.JXLabel;
 
@@ -41,7 +41,7 @@ public class SearchResultEntityTreeCellRenderer implements TreeCellRenderer {
         } else if (value instanceof EntityModel) {
 
             EntityModel entityModel = (EntityModel) value;
-            Long entityId = Long.valueOf(UiUtil.getUiDataFromModel(entityModel.getValue("id")));
+            Long entityId = Long.valueOf(Util.getUiDataFromModel(entityModel.getValue("id")));
 
             SearchEntityModelRow rowPanel;
 
@@ -54,20 +54,20 @@ public class SearchResultEntityTreeCellRenderer implements TreeCellRenderer {
             rowPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, JBColor.border()));
             rowPanel.setIcon(Entity.getEntityType(entityModel), false);
 
-            String name = UiUtil.getUiDataFromModel(entityModel.getValue("name"));
+            String name = Util.getUiDataFromModel(entityModel.getValue("name"));
             name = name.replace("<em>", "<b>");
             name = name.replace("</em>", "</b>");
             rowPanel.setEntityName(entityId + "", name);
 
-            String description = UiUtil.getUiDataFromModel(entityModel.getValue(FIELD_DESCRIPTION));
+            String description = Util.getUiDataFromModel(entityModel.getValue(FIELD_DESCRIPTION));
             //Remove html from description if it's not relevant to the search query
             if(description.contains("<em>")){
                 description = description.replace("<em>", "<b>");
                 description = description.replace("</em>", "</b>");
                 rowPanel.setEntityHtmlDescription(description);
             } else {
-                description = UiUtil.stripHtml(description);
-                description = UiUtil.ellipsisTrucate(description, 100); //magic!
+                description = Util.stripHtml(description);
+                description = Util.ellipsisTruncate(description, 100); //magic!
                 rowPanel.setEntityDescription(description);
             }
 

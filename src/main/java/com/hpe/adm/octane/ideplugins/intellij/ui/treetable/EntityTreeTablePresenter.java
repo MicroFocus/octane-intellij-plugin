@@ -10,16 +10,17 @@ import com.hpe.adm.octane.ideplugins.intellij.eventbus.RefreshMyWorkEvent;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
-import com.hpe.adm.octane.ideplugins.intellij.ui.util.PartialEntity;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
-import com.hpe.adm.octane.ideplugins.intellij.util.Constants;
+import com.hpe.adm.octane.services.util.PartialEntity;
+import com.hpe.adm.octane.services.util.Util;
+import com.hpe.adm.octane.services.util.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
-import com.hpe.adm.octane.ideplugins.services.EntityService;
-import com.hpe.adm.octane.ideplugins.services.MyWorkService;
-import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
-import com.hpe.adm.octane.ideplugins.services.nonentity.DownloadScriptService;
-import com.hpe.adm.octane.ideplugins.services.util.EntityUtil;
-import com.hpe.adm.octane.ideplugins.services.util.SdkUtil;
+import com.hpe.adm.octane.services.EntityService;
+import com.hpe.adm.octane.services.MyWorkService;
+import com.hpe.adm.octane.services.filtering.Entity;
+import com.hpe.adm.octane.services.nonentity.DownloadScriptService;
+import com.hpe.adm.octane.services.util.EntityUtil;
+import com.hpe.adm.octane.services.util.SdkUtil;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.actions.OpenProjectFileChooserDescriptor;
 import com.intellij.notification.NotificationType;
@@ -52,7 +53,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil.getUiDataFromModel;
+import static com.hpe.adm.octane.services.util.Util.getUiDataFromModel;
 
 public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
 
@@ -184,7 +185,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
         entityTreeView.setEntityContextMenuFactory(entityModel -> {
 
             Entity entityType = Entity.getEntityType(entityModel);
-            String entityName = UiUtil.getUiDataFromModel(entityModel.getValue("name"));
+            String entityName = Util.getUiDataFromModel(entityModel.getValue("name"));
             Integer entityId = Integer.valueOf(getUiDataFromModel(entityModel.getValue("id")));
 
             JPopupMenu popup = new JPopupMenu();
@@ -216,7 +217,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
                 if(entityType == Entity.TASK){
                     parentEntityModel = (EntityModel) entityModel.getValue("story").getValue();
                 } else {
-                    parentEntityModel = (EntityModel) UiUtil.getContainerItemForCommentModel(entityModel).getValue();
+                    parentEntityModel = (EntityModel) Util.getContainerItemForCommentModel(entityModel).getValue();
                 }
 
                 //Add option

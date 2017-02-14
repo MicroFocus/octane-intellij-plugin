@@ -2,8 +2,8 @@ package com.hpe.adm.octane.ideplugins.intellij.gitcommit;
 
 import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
-import com.hpe.adm.octane.ideplugins.services.EntityService;
-import com.hpe.adm.octane.ideplugins.services.nonentity.CommitMessageService;
+import com.hpe.adm.octane.services.EntityService;
+import com.hpe.adm.octane.services.nonentity.CommitMessageService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.CheckinProjectPanel;
 import com.intellij.openapi.vcs.changes.CommitContext;

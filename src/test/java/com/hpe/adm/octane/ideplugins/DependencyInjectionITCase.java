@@ -3,8 +3,8 @@ package com.hpe.adm.octane.ideplugins;
 import com.google.inject.Inject;
 import com.hpe.adm.octane.ideplugins.integrationtests.IntegrationTestBase;
 import com.hpe.adm.octane.ideplugins.integrationtests.util.ConfigurationUtil;
-import com.hpe.adm.octane.ideplugins.services.TestService;
-import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
+import com.hpe.adm.octane.services.TestService;
+import com.hpe.adm.octane.services.connection.ConnectionSettingsProvider;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

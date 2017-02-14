@@ -5,12 +5,12 @@ import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.nga.sdk.model.FieldModel;
 import com.hpe.adm.nga.sdk.model.MultiReferenceFieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
-import com.hpe.adm.octane.ideplugins.intellij.ui.util.EntityTypeIdPair;
-import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
-import com.hpe.adm.octane.ideplugins.services.MyWorkService;
-import com.hpe.adm.octane.ideplugins.services.UserService;
-import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
-import com.hpe.adm.octane.ideplugins.services.util.EntityUtil;
+import com.hpe.adm.octane.services.util.EntityTypeIdPair;
+import com.hpe.adm.octane.services.util.Util;
+import com.hpe.adm.octane.services.MyWorkService;
+import com.hpe.adm.octane.services.UserService;
+import com.hpe.adm.octane.services.filtering.Entity;
+import com.hpe.adm.octane.services.util.EntityUtil;
 import com.intellij.ui.JBColor;
 import org.jdesktop.swingx.JXLabel;
 
@@ -21,8 +21,8 @@ import java.util.*;
 
 import static com.hpe.adm.octane.ideplugins.intellij.ui.detail.DetailsViewDefaultFields.*;
 import static com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityModelRow.*;
-import static com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil.getContainerItemForCommentModel;
-import static com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil.getUiDataFromModel;
+import static com.hpe.adm.octane.services.util.Util.getContainerItemForCommentModel;
+import static com.hpe.adm.octane.services.util.Util.getUiDataFromModel;
 
 public class EntityTreeCellRenderer implements TreeCellRenderer {
 
@@ -297,7 +297,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
             } else if (Entity.COMMENT.equals(entityType)) {
 
                 String text = getUiDataFromModel(entityModel.getValue("text"));
-                text = " Comment: " + UiUtil.stripHtml(text);
+                text = " Comment: " + Util.stripHtml(text);
                 String author = getUiDataFromModel(entityModel.getValue(FIELD_AUTHOR), FIELD_FULL_NAME);
                 FieldModel owner = getContainerItemForCommentModel(entityModel);
                 String ownerId = getUiDataFromModel(owner, "id");

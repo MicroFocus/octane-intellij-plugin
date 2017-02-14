@@ -2,7 +2,7 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
-import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
+import com.hpe.adm.octane.services.filtering.Entity;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.ui.JBColor;
 import org.jdesktop.swingx.*;
@@ -15,9 +15,9 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.Collection;
 
-import static com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil.getUiDataFromModel;
-import static com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil.stripHtml;
-import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.*;
+import static com.hpe.adm.octane.services.util.Util.getUiDataFromModel;
+import static com.hpe.adm.octane.services.util.Util.stripHtml;
+import static com.hpe.adm.octane.services.filtering.Entity.*;
 
 public class GeneralEntityDetailsPanel extends JPanel {
 	private JXPanel entityDetailsPanel;

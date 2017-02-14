@@ -5,8 +5,8 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.hpe.adm.nga.sdk.Octane;
 import com.hpe.adm.nga.sdk.authorisation.UserAuthorisation;
-import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
-import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
+import com.hpe.adm.octane.services.connection.ConnectionSettings;
+import com.hpe.adm.octane.services.connection.ConnectionSettingsProvider;
 import org.junit.Before;
 
 /**

@@ -15,11 +15,11 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.detail.EntityDetailPresenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
 import com.hpe.adm.octane.ideplugins.intellij.ui.searchresult.EntitySearchResultPresenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeTablePresenter;
-import com.hpe.adm.octane.ideplugins.intellij.ui.util.PartialEntity;
-import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
-import com.hpe.adm.octane.ideplugins.intellij.util.Constants;
-import com.hpe.adm.octane.ideplugins.services.EntityService;
-import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
+import com.hpe.adm.octane.services.util.PartialEntity;
+import com.hpe.adm.octane.services.util.Util;
+import com.hpe.adm.octane.services.util.Constants;
+import com.hpe.adm.octane.services.EntityService;
+import com.hpe.adm.octane.services.filtering.Entity;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.project.Project;
@@ -35,7 +35,7 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.*;
+import static com.hpe.adm.octane.services.filtering.Entity.*;
 
 public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
 
@@ -254,7 +254,7 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
         //Special handling of comments
         if(Entity.COMMENT.equals(entityType)){
             //Convert to parent of comment and continue
-            model = (EntityModel) UiUtil.getContainerItemForCommentModel(model).getValue();
+            model = (EntityModel) Util.getContainerItemForCommentModel(model).getValue();
             entityType = Entity.getEntityType(model);
             entityId = Long.valueOf(model.getValue("id").getValue().toString());
         }

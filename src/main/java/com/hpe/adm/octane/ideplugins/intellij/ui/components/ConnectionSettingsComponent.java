@@ -1,10 +1,10 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.components;
 
 import com.hpe.adm.octane.ideplugins.intellij.ui.HasComponent;
-import com.hpe.adm.octane.ideplugins.intellij.util.Constants;
-import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
-import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
-import com.hpe.adm.octane.ideplugins.services.util.UrlParser;
+import com.hpe.adm.octane.services.util.Constants;
+import com.hpe.adm.octane.services.connection.ConnectionSettings;
+import com.hpe.adm.octane.services.exception.ServiceException;
+import com.hpe.adm.octane.services.util.UrlParser;
 import com.intellij.util.ui.UIUtil;
 import org.apache.commons.lang.StringUtils;
 

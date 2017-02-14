@@ -6,11 +6,11 @@ import com.hpe.adm.nga.sdk.exception.OctaneException;
 import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.nga.sdk.model.MultiReferenceFieldModel;
-import com.hpe.adm.octane.ideplugins.services.EntityService;
-import com.hpe.adm.octane.ideplugins.services.UserService;
-import com.hpe.adm.octane.ideplugins.services.connection.OctaneProvider;
-import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
-import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
+import com.hpe.adm.octane.services.EntityService;
+import com.hpe.adm.octane.services.UserService;
+import com.hpe.adm.octane.services.connection.OctaneProvider;
+import com.hpe.adm.octane.services.exception.ServiceException;
+import com.hpe.adm.octane.services.filtering.Entity;
 import hidden.edu.emory.mathcs.backport.java.util.Arrays;
 import org.junit.Test;
 

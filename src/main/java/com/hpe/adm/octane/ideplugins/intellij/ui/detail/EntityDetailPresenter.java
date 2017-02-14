@@ -4,23 +4,21 @@ import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.nga.sdk.model.ReferenceFieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
-import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
-import com.hpe.adm.octane.ideplugins.intellij.util.Constants;
+import com.hpe.adm.octane.services.util.Util;
+import com.hpe.adm.octane.services.util.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
-import com.hpe.adm.octane.ideplugins.services.CommentService;
-import com.hpe.adm.octane.ideplugins.services.EntityService;
-import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
-import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
+import com.hpe.adm.octane.services.CommentService;
+import com.hpe.adm.octane.services.EntityService;
+import com.hpe.adm.octane.services.exception.ServiceException;
+import com.hpe.adm.octane.services.filtering.Entity;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.util.IconLoader;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Collection;
 import java.util.HashSet;
 
-import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.*;
+import static com.hpe.adm.octane.services.filtering.Entity.*;
 
 public class EntityDetailPresenter implements Presenter<EntityDetailView> {
 
@@ -91,7 +89,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
     private void setPossibleTransitions(EntityModel entityModel) {
         Collection<EntityModel> result = new HashSet<>();
         RestUtil.runInBackground(() -> {
-            Long currentPhaseId = Long.valueOf(UiUtil.getUiDataFromModel(entityModel.getValue("phase"), "id"));
+            Long currentPhaseId = Long.valueOf(Util.getUiDataFromModel(entityModel.getValue("phase"), "id"));
             return entityService.findPossibleTransitionFromCurrentPhase(Entity.getEntityType(entityModel), currentPhaseId);
         }, (possibleTransitions) -> {
             if (possibleTransitions.isEmpty()) {

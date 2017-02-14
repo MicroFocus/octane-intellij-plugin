@@ -1,7 +1,7 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.searchresult;
 
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
-import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
+import com.hpe.adm.octane.services.filtering.Entity;
 import com.intellij.util.ui.UIUtil;
 import org.jdesktop.swingx.JXLabel;
 

@@ -1,7 +1,7 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents;
 
 import com.hpe.adm.nga.sdk.model.EntityModel;
-import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
+import com.hpe.adm.octane.services.util.Util;
 import com.intellij.util.ui.UIUtil;
 
 import javax.swing.*;
@@ -60,7 +60,7 @@ public class PhaseComboBox extends JComboBox {
             }
             EntityModel phaseItem = (EntityModel) item;
             selectedValue = phaseItem;
-            labelItem.setText(UiUtil.getUiDataFromModel(phaseItem.getValue("target_phase"), "name"));
+            labelItem.setText(Util.getUiDataFromModel(phaseItem.getValue("target_phase"), "name"));
         }
     }
 
@@ -79,7 +79,7 @@ public class PhaseComboBox extends JComboBox {
             labelItem.setBorder(labelBorder);
             labelItem.setHorizontalAlignment(JLabel.LEFT);
             labelItem.setVerticalAlignment(JLabel.CENTER);
-            labelItem.setText(UiUtil.getUiDataFromModel(phaseItem.getValue("target_phase"), "name"));
+            labelItem.setText(Util.getUiDataFromModel(phaseItem.getValue("target_phase"), "name"));
 
             if (isSelected) {
                 labelItem.setBackground(UIUtil.getListSelectionBackground());

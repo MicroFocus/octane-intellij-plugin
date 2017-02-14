@@ -1,9 +1,9 @@
 package com.hpe.adm.octane.ideplugins;
 
 
-import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
-import com.hpe.adm.octane.ideplugins.services.util.UrlParser;
-import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
+import com.hpe.adm.octane.services.exception.ServiceException;
+import com.hpe.adm.octane.services.util.UrlParser;
+import com.hpe.adm.octane.services.connection.ConnectionSettings;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
