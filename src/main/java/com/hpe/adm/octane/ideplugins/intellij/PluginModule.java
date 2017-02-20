@@ -141,7 +141,8 @@ public class PluginModule extends AbstractModule {
         bind(EntityTreeTablePresenter.class);
     }
 
-    private ConnectionSettings previousConnectionSettings = new ConnectionSettings();
+    private ConnectionSettings octaneProviderPreviousConnectionSettings = new ConnectionSettings();
+    private ConnectionSettings httpClientPreviousConnectionSettings = new ConnectionSettings();
     private Octane octane;
     private OctaneHttpClient octaneHttpClient;
 
@@ -181,7 +182,7 @@ public class PluginModule extends AbstractModule {
     OctaneProvider getOctane(){
         return () -> {
             ConnectionSettings currentConnectionSettings = getInstance(ConnectionSettingsProvider.class).getConnectionSettings();
-            if (!currentConnectionSettings.equals(previousConnectionSettings) || octane == null) {
+            if (!currentConnectionSettings.equals(octaneProviderPreviousConnectionSettings) || octane == null) {
                 octane = new Octane
                         .Builder(new SimpleUserAuthentication(currentConnectionSettings.getUserName(), currentConnectionSettings.getPassword(),HPE_MQM_UI.name()))
                         .Server(currentConnectionSettings.getBaseUrl())
@@ -189,7 +190,7 @@ public class PluginModule extends AbstractModule {
                         .workSpace(currentConnectionSettings.getWorkspaceId())
                         .build();
 
-                previousConnectionSettings = currentConnectionSettings;
+                octaneProviderPreviousConnectionSettings = currentConnectionSettings;
             }
             return octane;
         };
@@ -198,10 +199,9 @@ public class PluginModule extends AbstractModule {
     HttpClientProvider geOctaneHttpClient(){
         return ()->{
             ConnectionSettings currentConnectionSettings = getInstance(ConnectionSettingsProvider.class).getConnectionSettings();
-            if (!currentConnectionSettings.equals(previousConnectionSettings) || null == octaneHttpClient) {
-                previousConnectionSettings = currentConnectionSettings;
+            if (!currentConnectionSettings.equals(httpClientPreviousConnectionSettings) || null == octaneHttpClient) {
                 octaneHttpClient =  new GoogleHttpClient(currentConnectionSettings.getBaseUrl(), ClientType.HPE_MQM_UI.name());
-                previousConnectionSettings = currentConnectionSettings;
+                httpClientPreviousConnectionSettings = currentConnectionSettings;
             }
             SimpleUserAuthentication userAuthentication =  new SimpleUserAuthentication(currentConnectionSettings.getUserName(),currentConnectionSettings.getPassword(),ClientType.HPE_MQM_UI.name());
             octaneHttpClient.authenticate(userAuthentication);
