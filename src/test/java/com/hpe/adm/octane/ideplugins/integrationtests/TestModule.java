@@ -11,6 +11,7 @@ import com.hpe.adm.octane.services.connection.BasicConnectionSettingProvider;
 import com.hpe.adm.octane.services.connection.ConnectionSettings;
 import com.hpe.adm.octane.services.connection.ConnectionSettingsProvider;
 import com.hpe.adm.octane.services.connection.OctaneProvider;
+import com.hpe.adm.octane.services.util.ClientType;
 
 
 /**
@@ -60,7 +61,7 @@ class TestModule extends AbstractModule {
             ConnectionSettings currentConnectionSettings = getInstance(ConnectionSettingsProvider.class).getConnectionSettings();
             if (!currentConnectionSettings.equals(previousConnectionSettings) || octane == null) {
                 octane = new Octane
-                        .Builder(new SimpleUserAuthentication(currentConnectionSettings.getUserName(), currentConnectionSettings.getPassword()))
+                        .Builder(new SimpleUserAuthentication(currentConnectionSettings.getUserName(), currentConnectionSettings.getPassword(), ClientType.HPE_MQM_UI.name()))
                         .Server(currentConnectionSettings.getBaseUrl())
                         .sharedSpace(currentConnectionSettings.getSharedSpaceId())
                         .workSpace(currentConnectionSettings.getWorkspaceId())

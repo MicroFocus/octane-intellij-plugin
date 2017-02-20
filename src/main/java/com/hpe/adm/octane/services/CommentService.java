@@ -8,6 +8,7 @@ import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.EntityListService;
 import com.hpe.adm.nga.sdk.Octane;
 import com.hpe.adm.nga.sdk.Query;
+import com.hpe.adm.nga.sdk.QueryMethod;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.nga.sdk.model.FieldModel;
 import com.hpe.adm.nga.sdk.model.ReferenceFieldModel;
@@ -72,8 +73,8 @@ public class CommentService {
 
         EntityListService.Get get = octane.entityList(Entity.COMMENT.getApiEntityName()).get();
 
-        Query query = new Query.QueryBuilder(referenceFieldName, Query::equalTo,
-                new Query.QueryBuilder("id", Query::equalTo, id)).build();
+        Query query =  Query.statement(referenceFieldName, QueryMethod.EqualTo,
+                 Query.statement("id", QueryMethod.EqualTo, id)).build();
 
         return get.query(query)
                 .addOrderBy("creation_time",false)

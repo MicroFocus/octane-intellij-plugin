@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.EntityList;
 import com.hpe.adm.nga.sdk.Octane;
 import com.hpe.adm.nga.sdk.Query;
+import com.hpe.adm.nga.sdk.QueryMethod;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.services.connection.ConnectionSettings;
 import com.hpe.adm.octane.services.connection.ConnectionSettingsProvider;
@@ -33,7 +34,7 @@ public class UserService {
             EntityList entityList = octane.entityList(Entity.WORKSPACE_USER.getApiEntityName());
             Collection<EntityModel> entityModels =
                     entityList.get().query(
-                            new Query.QueryBuilder("name", Query::equalTo, currentUser).build())
+                             Query.statement("name", QueryMethod.EqualTo, currentUser).build())
                             .execute();
 
             if(entityModels.size()!=1){

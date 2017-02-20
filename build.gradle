@@ -14,7 +14,7 @@ repositories {
     mavenLocal()
     mavenCentral()
     maven { url 'http://dl.bintray.com/jetbrains/intellij-plugin-service' }
-    maven { url "http://mydtbld0051.hpeswlab.net:8081/nexus/content/groups/mqm-public" }
+//    maven { url "http://mydtbld0051.hpeswlab.net:8081/nexus/content/groups/mqm-public" }
 }
 
 sourceSets {
@@ -29,9 +29,8 @@ sourceSets {
 }
 
 dependencies {
-//    compile group: 'org.json', name: 'json', version: '20090211'
-//    compile group: 'commons-validator', name: 'commons-validator', version: '1.3.1'
-    compile group: 'com.hpe.adm.nga.sdk', name: 'sdk-src', version: '12.53.18-SNAPSHOT'
+//    compile group: 'com.hpe.adm.nga.sdk', name: 'sdk-src', version: '12.53.18-SNAPSHOT'
+    compile 'com.hpe.adm.nga.sdk:sdk-src:12.53.16'
     compile group: 'org.jsoup', name: 'jsoup', version: '1.8.3'
     compile('com.google.inject:guice:4.0') {
         exclude group: 'com.google.guava', module: 'guava'

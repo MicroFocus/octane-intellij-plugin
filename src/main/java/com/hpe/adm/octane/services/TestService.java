@@ -2,6 +2,7 @@ package com.hpe.adm.octane.services;
 
 import com.hpe.adm.nga.sdk.Octane;
 import com.hpe.adm.nga.sdk.Query;
+import com.hpe.adm.nga.sdk.QueryMethod;
 import com.hpe.adm.nga.sdk.authentication.SimpleUserAuthentication;
 import com.hpe.adm.nga.sdk.exception.OctaneException;
 import com.hpe.adm.octane.services.connection.ConnectionSettings;
@@ -51,7 +52,7 @@ public class TestService {
         testHttpConnection(connectionSettings);
 
         try{
-            Query query = new Query.QueryBuilder("subtype", Query::equalTo, Entity.WORK_ITEM_ROOT.getSubtypeName()).build();
+            Query query =  Query.statement("subtype", QueryMethod.EqualTo, Entity.WORK_ITEM_ROOT.getSubtypeName()).build();
             //Try to fetch the backlog root
             getOctane(connectionSettings).entityList(Entity.WORK_ITEM_ROOT.getApiEntityName()).get().query(query).execute();
         } catch (Exception ex){

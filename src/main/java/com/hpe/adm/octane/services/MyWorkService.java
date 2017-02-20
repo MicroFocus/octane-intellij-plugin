@@ -2,6 +2,7 @@ package com.hpe.adm.octane.services;
 import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.Octane;
 import com.hpe.adm.nga.sdk.Query;
+import com.hpe.adm.nga.sdk.QueryMethod;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.nga.sdk.model.MultiReferenceFieldModel;
 import com.hpe.adm.octane.services.connection.OctaneProvider;
@@ -87,7 +88,7 @@ public class MyWorkService {
         filterCriteria.put(MANUAL_TEST_RUN,
                 createCurrentUserQuery("run_by")
                         .and(MANUAL_TEST_RUN.createMatchSubtypeQueryBuilder())
-                        .and(new Query.QueryBuilder("parent_suite", Query::equalTo, null))
+                        .and( Query.statement("parent_suite", QueryMethod.EqualTo, null))
                         .and(createNativeStatusQuery("list_node.run_native_status.blocked", "list_node.run_native_status.not_completed"))
         );
 
@@ -95,7 +96,7 @@ public class MyWorkService {
                 createCurrentUserQuery("run_by")
                         .and(TEST_SUITE_RUN.createMatchSubtypeQueryBuilder())
                         .and(createNativeStatusQuery("list_node.run_native_status.blocked", "list_node.run_native_status.not_completed")
-                                .and(new Query.QueryBuilder("parent_suite", Query::equalTo, null)))
+                                .and( Query.statement("parent_suite", QueryMethod.EqualTo, null)))
         );
 
         filterCriteria.put(COMMENT, createCurrentUserQuery("mention_user"));
@@ -180,8 +181,8 @@ public class MyWorkService {
         for (String phaseName : phases) {
             String phaseLogicalName = "metaphase." + entity.getTypeName() + "." + phaseName;
             Query.QueryBuilder currentPhaseQueryBuilder =
-                    new Query.QueryBuilder("metaphase", Query::equalTo,
-                            new Query.QueryBuilder("logical_name", Query::equalTo, phaseLogicalName)
+                     Query.statement("metaphase", QueryMethod.EqualTo,
+                             Query.statement("logical_name", QueryMethod.EqualTo, phaseLogicalName)
                     );
             if (phaseQueryBuilder == null) {
                 phaseQueryBuilder = currentPhaseQueryBuilder;
@@ -190,7 +191,7 @@ public class MyWorkService {
             }
         }
 
-        return new Query.QueryBuilder("phase", Query::equalTo, phaseQueryBuilder);
+        return  Query.statement("phase", QueryMethod.EqualTo, phaseQueryBuilder);
     }
 
     /**
@@ -201,19 +202,19 @@ public class MyWorkService {
         Query.QueryBuilder nativeStatusQueryBuilder = null;
         for (String logicalName : logicalNames) {
             Query.QueryBuilder currentNativeStatusQueryBuilder =
-                    new Query.QueryBuilder("logical_name", Query::equalTo, logicalName);
+                     Query.statement("logical_name", QueryMethod.EqualTo, logicalName);
             if (nativeStatusQueryBuilder == null) {
                 nativeStatusQueryBuilder = currentNativeStatusQueryBuilder;
             } else {
                 nativeStatusQueryBuilder = nativeStatusQueryBuilder.or(currentNativeStatusQueryBuilder);
             }
         }
-        return new Query.QueryBuilder("native_status", Query::equalTo, nativeStatusQueryBuilder);
+        return  Query.statement("native_status", QueryMethod.EqualTo, nativeStatusQueryBuilder);
     }
 
     private Query.QueryBuilder createCurrentUserQuery(String fieldName) {
-        return new Query.QueryBuilder(fieldName, Query::equalTo,
-                new Query.QueryBuilder("id", Query::equalTo, userService.getCurrentUserId()));
+        return  Query.statement(fieldName, QueryMethod.EqualTo,
+                 Query.statement("id", QueryMethod.EqualTo, userService.getCurrentUserId()));
     }
 
 

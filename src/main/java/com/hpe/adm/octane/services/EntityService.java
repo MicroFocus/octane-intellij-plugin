@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.EntityList;
 import com.hpe.adm.nga.sdk.EntityListService;
 import com.hpe.adm.nga.sdk.Query;
+import com.hpe.adm.nga.sdk.QueryMethod;
 import com.hpe.adm.nga.sdk.exception.OctaneException;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.nga.sdk.model.FieldModel;
@@ -141,7 +142,7 @@ public class EntityService {
         }
         Collection<EntityModel>
                 transitions = findEntities(Entity.TRANSITION,
-                new Query.QueryBuilder("entity", Query::equalTo, entityName), fields);
+                Query.statement("entity", QueryMethod.EqualTo, entityName), fields);
 
         for (EntityModel transition : transitions) {
             Long tempPhase = Long.valueOf(Util.getUiDataFromModel(transition.getValue("source_phase"), "id"));

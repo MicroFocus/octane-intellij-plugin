@@ -1,12 +1,13 @@
 package com.hpe.adm.octane.ideplugins.intellij.gitcommit;
 
 import com.hpe.adm.nga.sdk.Query;
+import com.hpe.adm.nga.sdk.QueryMethod;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
-import com.hpe.adm.octane.services.util.PartialEntity;
 import com.hpe.adm.octane.services.EntityService;
 import com.hpe.adm.octane.services.filtering.Entity;
 import com.hpe.adm.octane.services.nonentity.CommitMessageService;
+import com.hpe.adm.octane.services.util.PartialEntity;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.ui.popup.Balloon;
@@ -112,7 +113,7 @@ public class OctaneCheckinHandler extends CheckinHandler {
 
                 if (activatedItem.getEntityType() == Entity.TASK) {
                     Set<String> storyField = new HashSet<>(Arrays.asList("story"));
-                    Query.QueryBuilder idQuery = new Query.QueryBuilder("id", Query::equalTo, activatedItem.getEntityId());
+                    Query.QueryBuilder idQuery = Query.statement("id", QueryMethod.EqualTo, activatedItem.getEntityId());
                     Collection<EntityModel> results = entityService.findEntities(Entity.TASK, idQuery, storyField);
                     if (!results.isEmpty()) {
                         parentStory = (EntityModel) results.iterator().next().getValue("story").getValue();

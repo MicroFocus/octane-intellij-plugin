@@ -1,6 +1,7 @@
 package com.hpe.adm.octane.services.filtering;
 
 import com.hpe.adm.nga.sdk.Query;
+import com.hpe.adm.nga.sdk.QueryMethod;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 
 import java.util.Collections;
@@ -138,7 +139,7 @@ public enum Entity {
 
     public Query.QueryBuilder createMatchSubtypeQueryBuilder() {
         if (isSubtype()) {
-            return new Query.QueryBuilder("subtype", Comparator.EQ.getFunction(), getSubtypeName());
+            return Query.statement("subtype", QueryMethod.EqualTo, getSubtypeName());
         }
         throw new RuntimeException("Entity " + apiEntityName + "is not a subtype");
     }
