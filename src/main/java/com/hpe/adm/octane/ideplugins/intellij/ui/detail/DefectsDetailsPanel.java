@@ -47,9 +47,9 @@ public class DefectsDetailsPanel extends JXPanel {
         detailsPanelLeft.setBorder(null);
         detailsPanelMain.add(detailsPanelLeft, BorderLayout.WEST);
         GridBagLayout gbl_detailsPanelLeft = new GridBagLayout();
-        gbl_detailsPanelLeft.columnWidths = new int[]{0, 0, 0, 0};
+        gbl_detailsPanelLeft.columnWidths = new int[]{0, 0};
         gbl_detailsPanelLeft.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-        gbl_detailsPanelLeft.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
+        gbl_detailsPanelLeft.columnWeights = new double[]{0.0, 1.0};
         gbl_detailsPanelLeft.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
         detailsPanelLeft.setLayout(gbl_detailsPanelLeft);
 
@@ -246,7 +246,6 @@ public class DefectsDetailsPanel extends JXPanel {
         GridBagConstraints gbc_lastModifiedDetails = new GridBagConstraints();
         gbc_lastModifiedDetails.anchor = GridBagConstraints.SOUTH;
         gbc_lastModifiedDetails.fill = GridBagConstraints.HORIZONTAL;
-        gbc_lastModifiedDetails.insets = new Insets(0, 0, 5, 0);
         gbc_lastModifiedDetails.gridx = 1;
         gbc_lastModifiedDetails.gridy = 8;
         detailsPanelLeft.add(lastModifiedDetails, gbc_lastModifiedDetails);
