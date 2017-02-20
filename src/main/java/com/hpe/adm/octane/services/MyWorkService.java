@@ -238,7 +238,7 @@ public class MyWorkService {
         }
 
         EntityModel currentUser = userService.getCurrentUser();
-        MultiReferenceFieldModel fieldModel = entityModel.getValue(FOLLOW_ITEMS_OWNER_FIELD);
+        MultiReferenceFieldModel fieldModel = (MultiReferenceFieldModel) entityModel.getValue(FOLLOW_ITEMS_OWNER_FIELD);
 
         return EntityUtil.containsEntityModel(fieldModel.getValue(), currentUser);
     }
@@ -247,8 +247,8 @@ public class MyWorkService {
         EntityModel updateEntityModel = createUpdateEntityModelForFollow(entityModel);
         EntityModel currentUser = userService.getCurrentUser();
 
-        MultiReferenceFieldModel fieldModelFollow = updateEntityModel.getValue(FOLLOW_ITEMS_OWNER_FIELD);
-        MultiReferenceFieldModel fieldModelNew = updateEntityModel.getValue(NEW_ITEMS_OWNER_FIELD);
+        MultiReferenceFieldModel fieldModelFollow = (MultiReferenceFieldModel) updateEntityModel.getValue(FOLLOW_ITEMS_OWNER_FIELD);
+        MultiReferenceFieldModel fieldModelNew = (MultiReferenceFieldModel) updateEntityModel.getValue(NEW_ITEMS_OWNER_FIELD);
 
         if (!EntityUtil.containsEntityModel(fieldModelFollow.getValue(), currentUser)) {
             fieldModelFollow.getValue().add(currentUser);
@@ -277,7 +277,7 @@ public class MyWorkService {
     public boolean removeCurrentUserFromFollowers(EntityModel entityModel) {
         EntityModel updateEntityModel = createUpdateEntityModelForFollow(entityModel);
         EntityModel currentUser = userService.getCurrentUser();
-        MultiReferenceFieldModel fieldModel = updateEntityModel.getValue(FOLLOW_ITEMS_OWNER_FIELD);
+        MultiReferenceFieldModel fieldModel = (MultiReferenceFieldModel) updateEntityModel.getValue(FOLLOW_ITEMS_OWNER_FIELD);
 
         if (EntityUtil.removeEntityModel(fieldModel.getValue(), currentUser)) {
             //Do update

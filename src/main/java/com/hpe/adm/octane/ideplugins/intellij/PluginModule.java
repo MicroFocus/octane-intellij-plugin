@@ -9,7 +9,7 @@ import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.name.Named;
 import com.hpe.adm.nga.sdk.Octane;
-import com.hpe.adm.nga.sdk.authorisation.UserAuthorisation;
+import com.hpe.adm.nga.sdk.authentication.SimpleUserAuthentication;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePersistentConnectionSettingsProvider;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.ToolbarActiveItem;
@@ -39,6 +39,8 @@ import com.intellij.openapi.project.Project;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.hpe.adm.octane.services.util.ClientType.HPE_MQM_UI;
 
 public class PluginModule extends AbstractModule {
 
@@ -176,7 +178,7 @@ public class PluginModule extends AbstractModule {
             ConnectionSettings currentConnectionSettings = getInstance(ConnectionSettingsProvider.class).getConnectionSettings();
             if (!currentConnectionSettings.equals(previousConnectionSettings) || octane == null) {
                 octane = new Octane
-                        .Builder(new UserAuthorisation(currentConnectionSettings.getUserName(), currentConnectionSettings.getPassword()))
+                        .Builder(new SimpleUserAuthentication(currentConnectionSettings.getUserName(), currentConnectionSettings.getPassword(),HPE_MQM_UI.name()))
                         .Server(currentConnectionSettings.getBaseUrl())
                         .sharedSpace(currentConnectionSettings.getSharedSpaceId())
                         .workSpace(currentConnectionSettings.getWorkspaceId())

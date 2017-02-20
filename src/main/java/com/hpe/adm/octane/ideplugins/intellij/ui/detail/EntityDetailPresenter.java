@@ -130,7 +130,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
         public void actionPerformed(AnActionEvent e) {
             RestUtil.runInBackground(() -> {
                 EntityModel selectedTransition = entityDetailView.getSelectedTransition();
-                ReferenceFieldModel nextPhase = selectedTransition.getValue("target_phase");
+                ReferenceFieldModel nextPhase = (ReferenceFieldModel) selectedTransition.getValue("target_phase");
                 return nextPhase;
             }, (nextPhase) -> {
                 entityService.updateEntityPhase(entityDetailView.getEntityModel(), nextPhase);

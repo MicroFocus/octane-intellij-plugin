@@ -198,7 +198,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
             if(entityModel.getValue(MyWorkService.FOLLOW_ITEMS_OWNER_FIELD) != null &&
                     entityModel.getValue(MyWorkService.FOLLOW_ITEMS_OWNER_FIELD) .getValue() != null) {
 
-                MultiReferenceFieldModel field = entityModel.getValue(MyWorkService.FOLLOW_ITEMS_OWNER_FIELD);
+                MultiReferenceFieldModel field = (MultiReferenceFieldModel) entityModel.getValue(MyWorkService.FOLLOW_ITEMS_OWNER_FIELD);
                 if(EntityUtil.containsEntityModel(field.getValue(), userService.getCurrentUser())){
                     rowPanel.addSimpleDetails("Dismissible", DetailsPosition.BOTTOM);
                 }

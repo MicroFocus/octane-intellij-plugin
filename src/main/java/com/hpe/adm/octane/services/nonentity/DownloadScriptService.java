@@ -1,37 +1,26 @@
 package com.hpe.adm.octane.services.nonentity;
 
 import com.google.gson.JsonParser;
-import com.hpe.adm.nga.sdk.network.HttpRequest;
-import com.hpe.adm.nga.sdk.network.HttpResponse;
+import com.hpe.adm.nga.sdk.network.OctaneHttpRequest;
+import com.hpe.adm.nga.sdk.network.OctaneHttpResponse;
+import com.hpe.adm.nga.sdk.network.google.GoogleHttpClient;
 import com.hpe.adm.octane.services.connection.ConnectionSettings;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.stream.Collectors;
+import static com.hpe.adm.octane.services.util.ClientType.HPE_MQM_UI;
 
-/**
- * Created by dulaut on 11/25/2016.
- */
+
 public class DownloadScriptService extends AuthenticationService {
 
     public String getGherkinTestScriptContent(long testId) {
         ConnectionSettings connectionSettings = connectionSettingsProvider.getConnectionSettings();
 
         if (authenticate()) {
-            try {
-                HttpRequest request = requestFactory.buildGetRequest(connectionSettings.getBaseUrl() + "/api/shared_spaces/" + connectionSettings.getSharedSpaceId() +
+                OctaneHttpRequest request = new OctaneHttpRequest.GetOctaneHttpRequest(connectionSettings.getBaseUrl() + "/api/shared_spaces/" + connectionSettings.getSharedSpaceId() +
                         "/workspaces/" + connectionSettings.getWorkspaceId() + "/tests/" + testId + "/script");
-                HttpResponse response = request.execute();
+                OctaneHttpResponse response = new GoogleHttpClient(connectionSettings.getBaseUrl(),HPE_MQM_UI.name()).execute(request);
+                String jsonString = response.getContent();
 
-                BufferedReader buffer = new BufferedReader(new InputStreamReader(response.getContent()));
-                String jsonString = buffer.lines().collect(Collectors.joining("\n"));
-
-                String script = new JsonParser().parse(jsonString).getAsJsonObject().get("script").getAsString();
-                return script;
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            return new JsonParser().parse(jsonString).getAsJsonObject().get("script").getAsString();
         }
         return null;
     }

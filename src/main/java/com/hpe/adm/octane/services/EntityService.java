@@ -8,6 +8,7 @@ import com.hpe.adm.nga.sdk.exception.OctaneException;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.nga.sdk.model.FieldModel;
 import com.hpe.adm.nga.sdk.model.ReferenceFieldModel;
+import com.hpe.adm.octane.ideplugins.intellij.ui.detail.DetailsViewDefaultFields;
 import com.hpe.adm.octane.services.util.Util;
 import com.hpe.adm.octane.services.connection.ConnectionSettingsProvider;
 import com.hpe.adm.octane.services.connection.OctaneProvider;
@@ -23,7 +24,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.hpe.adm.nga.sdk.utils.CommonUtils.getIdFromEntityModel;
 import static com.hpe.adm.octane.services.util.Util.getUiDataFromModel;
 
 
@@ -71,7 +71,6 @@ public class EntityService {
 
     public Collection<EntityModel> findEntities(String apiEntity, Query.QueryBuilder query, Set<String> fields) {
         EntityList entityList = octaneProvider.getOctane().entityList(apiEntity);
-
         EntityListService.Get getRequest = entityList.get();
         if (query != null) {
             getRequest = getRequest.query(query.build());
@@ -158,7 +157,7 @@ public class EntityService {
     }
 
     public void updateEntityPhase(EntityModel entityModel, ReferenceFieldModel nextPhase) {
-        int entityId = getIdFromEntityModel(entityModel);
+        int entityId = Integer.parseInt(getUiDataFromModel(entityModel.getValue("id")));
         Entity entityType = Entity.getEntityType(entityModel);
         EntityList entityList = octaneProvider.getOctane().entityList(entityType.getApiEntityName());
 

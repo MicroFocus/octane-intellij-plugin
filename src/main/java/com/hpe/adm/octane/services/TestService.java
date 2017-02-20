@@ -2,7 +2,7 @@ package com.hpe.adm.octane.services;
 
 import com.hpe.adm.nga.sdk.Octane;
 import com.hpe.adm.nga.sdk.Query;
-import com.hpe.adm.nga.sdk.authorisation.UserAuthorisation;
+import com.hpe.adm.nga.sdk.authentication.SimpleUserAuthentication;
 import com.hpe.adm.nga.sdk.exception.OctaneException;
 import com.hpe.adm.octane.services.connection.ConnectionSettings;
 import com.hpe.adm.octane.services.exception.ServiceException;
@@ -21,7 +21,7 @@ public class TestService {
 
     public Octane getOctane(ConnectionSettings connectionSettings){
         return new Octane
-                .Builder(new UserAuthorisation(connectionSettings.getUserName(), connectionSettings.getPassword()))
+                .Builder(new SimpleUserAuthentication(connectionSettings.getUserName(), connectionSettings.getPassword()))
                 .Server(connectionSettings.getBaseUrl())
                 .sharedSpace(connectionSettings.getSharedSpaceId())
                 .workSpace(connectionSettings.getWorkspaceId())

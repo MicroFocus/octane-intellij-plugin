@@ -1,13 +1,13 @@
 package com.hpe.adm.octane.services.nonentity;
 
 import com.google.inject.Inject;
-import com.hpe.adm.nga.sdk.authorisation.UserAuthorisation;
+import com.hpe.adm.nga.sdk.authentication.Authentication;
+import com.hpe.adm.nga.sdk.authentication.SimpleUserAuthentication;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.nga.sdk.model.StringFieldModel;
-import com.hpe.adm.nga.sdk.network.HttpClient;
-import com.hpe.adm.nga.sdk.network.HttpRequest;
-import com.hpe.adm.nga.sdk.network.HttpRequestFactory;
-import com.hpe.adm.nga.sdk.network.HttpResponse;
+import com.hpe.adm.nga.sdk.network.OctaneHttpRequest;
+import com.hpe.adm.nga.sdk.network.OctaneHttpResponse;
+import com.hpe.adm.nga.sdk.network.google.GoogleHttpClient;
 import com.hpe.adm.octane.services.connection.ConnectionSettings;
 import com.hpe.adm.octane.services.connection.ConnectionSettingsProvider;
 import com.hpe.adm.octane.services.exception.ServiceRuntimeException;
@@ -19,6 +19,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collection;
+
+import static com.hpe.adm.octane.services.util.ClientType.HPE_MQM_UI;
 
 public class EntitySearchService {
 
@@ -33,10 +35,9 @@ public class EntitySearchService {
         ConnectionSettings connectionSettings = connectionSettingsProvider.getConnectionSettings();
 
         //auth
-        UserAuthorisation auth = new UserAuthorisation(connectionSettings.getUserName(), connectionSettings.getPassword());
-        HttpClient httpClient = HttpClient.getInstance();
-        HttpRequestFactory requestFactory = httpClient.getRequestFactory(connectionSettings.getBaseUrl(), auth);
-        if(! httpClient.authenticate()){
+        Authentication auth = new SimpleUserAuthentication(connectionSettings.getUserName(), connectionSettings.getPassword());
+        GoogleHttpClient httpClient = new GoogleHttpClient(connectionSettings.getBaseUrl(),HPE_MQM_UI.name());
+        if(! httpClient.authenticate(auth)){
             throw new ServiceRuntimeException("Failed to authenticate with current connection settings");
         }
 
@@ -78,9 +79,9 @@ public class EntitySearchService {
         }
 
         try {
-            HttpRequest request = requestFactory.buildGetRequest( uriBuilder.build().toASCIIString());
-            HttpResponse response = request.execute();
-            String responseString = response.parseAsString();
+            OctaneHttpRequest request = new OctaneHttpRequest.GetOctaneHttpRequest( uriBuilder.build().toASCIIString());
+            OctaneHttpResponse response = new GoogleHttpClient(connectionSettings.getBaseUrl(),HPE_MQM_UI.name()).execute(request);
+            String responseString = response.getContent();
 
             if(response.isSuccessStatusCode() && StringUtils.isNotBlank(responseString)){
                 return searchResponseToEntityModels(responseString);

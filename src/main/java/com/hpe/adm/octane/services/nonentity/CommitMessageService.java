@@ -3,38 +3,29 @@ package com.hpe.adm.octane.services.nonentity;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import com.hpe.adm.nga.sdk.network.HttpRequest;
-import com.hpe.adm.nga.sdk.network.HttpResponse;
+import com.hpe.adm.nga.sdk.network.OctaneHttpRequest;
+import com.hpe.adm.nga.sdk.network.OctaneHttpResponse;
+import com.hpe.adm.nga.sdk.network.google.GoogleHttpClient;
 import com.hpe.adm.octane.services.connection.ConnectionSettings;
 import com.hpe.adm.octane.services.filtering.Entity;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
-/**
- * Created by dulaut on 12/14/2016.
- */
+import static com.hpe.adm.octane.services.util.ClientType.HPE_MQM_UI;
+
 public class CommitMessageService extends AuthenticationService {
 
     public boolean validateCommitMessage(String commitMessage, Entity entityType, long entityId) {
         if (authenticate()) {
             try {
                 ConnectionSettings connectionSettings = connectionSettingsProvider.getConnectionSettings();
-                HttpRequest request = requestFactory.buildGetRequest(connectionSettings.getBaseUrl() + "/internal-api/shared_spaces/" +
-                        connectionSettings.getSharedSpaceId() + "/workspaces/" + connectionSettings.getWorkspaceId() +
-                        "/ali/validateCommitPattern?comment=" + URLEncoder.encode(commitMessage, "UTF-8"));
-
-                System.out.println(request.getUrl().toString());
-
-                HttpResponse response = request.execute();
-
-                BufferedReader buffer = new BufferedReader(new InputStreamReader(response.getContent()));
-                String jsonString = buffer.lines().collect(Collectors.joining("\n"));
+                OctaneHttpRequest request = new OctaneHttpRequest.GetOctaneHttpRequest(
+                        connectionSettings.getBaseUrl() + "/internal-api/shared_spaces/" + connectionSettings.getSharedSpaceId() + "/workspaces/" + connectionSettings.getWorkspaceId() + "/ali/validateCommitPattern?comment=" + URLEncoder.encode(commitMessage, "UTF-8"));
+                OctaneHttpResponse response = new GoogleHttpClient(connectionSettings.getBaseUrl(),HPE_MQM_UI.name()).execute(request);
+                String jsonString = response.getContent();
 
                 JsonArray matchedIdsArray = new JsonParser().parse(jsonString).getAsJsonObject().get(entityType.getSubtypeName())
                         .getAsJsonArray();
@@ -68,14 +59,11 @@ public class CommitMessageService extends AuthenticationService {
 
         List<String> commitPatterns = new ArrayList<>();
         if (authenticate()) {
-            try {
                 ConnectionSettings connectionSettings = connectionSettingsProvider.getConnectionSettings();
-                HttpRequest request = requestFactory.buildGetRequest(connectionSettings.getBaseUrl() + "/api/shared_spaces/" + connectionSettings.getSharedSpaceId() +
+                OctaneHttpRequest request = new OctaneHttpRequest.GetOctaneHttpRequest(connectionSettings.getBaseUrl() + "/api/shared_spaces/" + connectionSettings.getSharedSpaceId() +
                         "/workspaces/" + connectionSettings.getWorkspaceId() + "/scm_commit_patterns");
-                HttpResponse response = request.execute();
-
-                BufferedReader buffer = new BufferedReader(new InputStreamReader(response.getContent()));
-                String jsonString = buffer.lines().collect(Collectors.joining("\n"));
+                OctaneHttpResponse response = new GoogleHttpClient(connectionSettings.getBaseUrl(),HPE_MQM_UI.name()).execute(request);
+                String jsonString = response.getContent();
 
                 JsonArray dataArray = new JsonParser().parse(jsonString).getAsJsonObject().get("data").getAsJsonArray();
                 for (JsonElement elem : dataArray) {
@@ -85,9 +73,6 @@ public class CommitMessageService extends AuthenticationService {
                     }
                 }
                 return commitPatterns;
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
         return null;
     }

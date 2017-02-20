@@ -4,7 +4,7 @@ import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.inject.*;
 import com.hpe.adm.nga.sdk.Octane;
-import com.hpe.adm.nga.sdk.authorisation.UserAuthorisation;
+import com.hpe.adm.nga.sdk.authentication.SimpleUserAuthentication;
 import com.hpe.adm.octane.ideplugins.integrationtests.util.ConfigurationUtil;
 import com.hpe.adm.octane.services.TestService;
 import com.hpe.adm.octane.services.connection.BasicConnectionSettingProvider;
@@ -60,7 +60,7 @@ class TestModule extends AbstractModule {
             ConnectionSettings currentConnectionSettings = getInstance(ConnectionSettingsProvider.class).getConnectionSettings();
             if (!currentConnectionSettings.equals(previousConnectionSettings) || octane == null) {
                 octane = new Octane
-                        .Builder(new UserAuthorisation(currentConnectionSettings.getUserName(), currentConnectionSettings.getPassword()))
+                        .Builder(new SimpleUserAuthentication(currentConnectionSettings.getUserName(), currentConnectionSettings.getPassword()))
                         .Server(currentConnectionSettings.getBaseUrl())
                         .sharedSpace(currentConnectionSettings.getSharedSpaceId())
                         .workSpace(currentConnectionSettings.getWorkspaceId())
