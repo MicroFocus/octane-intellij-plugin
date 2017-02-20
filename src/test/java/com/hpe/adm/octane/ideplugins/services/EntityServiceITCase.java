@@ -30,8 +30,7 @@ public class EntityServiceITCase extends IntegrationTestBase {
     @Test
     public void testEntityConstants() {
 
-        Collection<EntityModel> entities;
-        entities = entityService.findEntities(Entity.MANUAL_TEST);
+        Collection<EntityModel> entities = entityService.findEntities(Entity.MANUAL_TEST);
 
         if (entities.size() > 0) {
             EntityModel firstEntity = entities.iterator().next();

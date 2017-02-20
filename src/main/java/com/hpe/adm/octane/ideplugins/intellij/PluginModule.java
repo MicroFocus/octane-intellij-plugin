@@ -10,6 +10,8 @@ import com.google.inject.Provides;
 import com.google.inject.name.Named;
 import com.hpe.adm.nga.sdk.Octane;
 import com.hpe.adm.nga.sdk.authentication.SimpleUserAuthentication;
+import com.hpe.adm.nga.sdk.network.OctaneHttpClient;
+import com.hpe.adm.nga.sdk.network.google.GoogleHttpClient;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePersistentConnectionSettingsProvider;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.ToolbarActiveItem;
@@ -30,8 +32,10 @@ import com.hpe.adm.octane.services.TestService;
 import com.hpe.adm.octane.services.UserService;
 import com.hpe.adm.octane.services.connection.ConnectionSettings;
 import com.hpe.adm.octane.services.connection.ConnectionSettingsProvider;
+import com.hpe.adm.octane.services.connection.HttpClientProvider;
 import com.hpe.adm.octane.services.connection.OctaneProvider;
 import com.hpe.adm.octane.services.nonentity.SharedSpaceLevelRequestService;
+import com.hpe.adm.octane.services.util.ClientType;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
@@ -139,6 +143,7 @@ public class PluginModule extends AbstractModule {
 
     private ConnectionSettings previousConnectionSettings = new ConnectionSettings();
     private Octane octane;
+    private OctaneHttpClient octaneHttpClient;
 
     @Provides
     @Named("searchEntityTreeView")
@@ -187,6 +192,21 @@ public class PluginModule extends AbstractModule {
                 previousConnectionSettings = currentConnectionSettings;
             }
             return octane;
+        };
+    }
+    @Provides
+    HttpClientProvider geOctaneHttpClient(){
+        return ()->{
+            ConnectionSettings currentConnectionSettings = getInstance(ConnectionSettingsProvider.class).getConnectionSettings();
+            if (!currentConnectionSettings.equals(previousConnectionSettings) || null == octaneHttpClient) {
+                previousConnectionSettings = currentConnectionSettings;
+                octaneHttpClient =  new GoogleHttpClient(currentConnectionSettings.getBaseUrl(), ClientType.HPE_MQM_UI.name());
+                previousConnectionSettings = currentConnectionSettings;
+            }
+            SimpleUserAuthentication userAuthentication =  new SimpleUserAuthentication(currentConnectionSettings.getUserName(),currentConnectionSettings.getPassword(),ClientType.HPE_MQM_UI.name());
+            octaneHttpClient.authenticate(userAuthentication);
+
+            return octaneHttpClient;
         };
     }
 

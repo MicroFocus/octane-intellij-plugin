@@ -3,10 +3,13 @@ package com.hpe.adm.octane.services.nonentity;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import com.google.inject.Inject;
+import com.hpe.adm.nga.sdk.network.OctaneHttpClient;
 import com.hpe.adm.nga.sdk.network.OctaneHttpRequest;
 import com.hpe.adm.nga.sdk.network.OctaneHttpResponse;
-import com.hpe.adm.nga.sdk.network.google.GoogleHttpClient;
 import com.hpe.adm.octane.services.connection.ConnectionSettings;
+import com.hpe.adm.octane.services.connection.ConnectionSettingsProvider;
+import com.hpe.adm.octane.services.connection.HttpClientProvider;
 import com.hpe.adm.octane.services.filtering.Entity;
 
 import java.io.IOException;
@@ -14,17 +17,21 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.hpe.adm.octane.services.util.ClientType.HPE_MQM_UI;
-
-public class CommitMessageService extends AuthenticationService {
+public class CommitMessageService {
+    @Inject
+    protected ConnectionSettingsProvider connectionSettingsProvider;
+    @Inject
+    protected HttpClientProvider httpClientProvider;
 
     public boolean validateCommitMessage(String commitMessage, Entity entityType, long entityId) {
-        if (authenticate()) {
+        ConnectionSettings connectionSettings = connectionSettingsProvider.getConnectionSettings();
+        OctaneHttpClient httpClient = httpClientProvider.geOctaneHttpClient();
+        if (null != httpClient) {
             try {
-                ConnectionSettings connectionSettings = connectionSettingsProvider.getConnectionSettings();
+
                 OctaneHttpRequest request = new OctaneHttpRequest.GetOctaneHttpRequest(
                         connectionSettings.getBaseUrl() + "/internal-api/shared_spaces/" + connectionSettings.getSharedSpaceId() + "/workspaces/" + connectionSettings.getWorkspaceId() + "/ali/validateCommitPattern?comment=" + URLEncoder.encode(commitMessage, "UTF-8"));
-                OctaneHttpResponse response = new GoogleHttpClient(connectionSettings.getBaseUrl(),HPE_MQM_UI.name()).execute(request);
+                OctaneHttpResponse response = httpClient.execute(request);
                 String jsonString = response.getContent();
 
                 JsonArray matchedIdsArray = new JsonParser().parse(jsonString).getAsJsonObject().get(entityType.getSubtypeName())
@@ -58,11 +65,12 @@ public class CommitMessageService extends AuthenticationService {
         }
 
         List<String> commitPatterns = new ArrayList<>();
-        if (authenticate()) {
-                ConnectionSettings connectionSettings = connectionSettingsProvider.getConnectionSettings();
+        ConnectionSettings connectionSettings = connectionSettingsProvider.getConnectionSettings();
+        OctaneHttpClient httpClient = httpClientProvider.geOctaneHttpClient();
+        if (null != httpClient) {
                 OctaneHttpRequest request = new OctaneHttpRequest.GetOctaneHttpRequest(connectionSettings.getBaseUrl() + "/api/shared_spaces/" + connectionSettings.getSharedSpaceId() +
                         "/workspaces/" + connectionSettings.getWorkspaceId() + "/scm_commit_patterns");
-                OctaneHttpResponse response = new GoogleHttpClient(connectionSettings.getBaseUrl(),HPE_MQM_UI.name()).execute(request);
+                OctaneHttpResponse response = httpClient.execute(request);
                 String jsonString = response.getContent();
 
                 JsonArray dataArray = new JsonParser().parse(jsonString).getAsJsonObject().get("data").getAsJsonArray();

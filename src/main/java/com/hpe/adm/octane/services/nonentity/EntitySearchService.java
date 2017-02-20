@@ -5,11 +5,13 @@ import com.hpe.adm.nga.sdk.authentication.Authentication;
 import com.hpe.adm.nga.sdk.authentication.SimpleUserAuthentication;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.nga.sdk.model.StringFieldModel;
+import com.hpe.adm.nga.sdk.network.OctaneHttpClient;
 import com.hpe.adm.nga.sdk.network.OctaneHttpRequest;
 import com.hpe.adm.nga.sdk.network.OctaneHttpResponse;
 import com.hpe.adm.nga.sdk.network.google.GoogleHttpClient;
 import com.hpe.adm.octane.services.connection.ConnectionSettings;
 import com.hpe.adm.octane.services.connection.ConnectionSettingsProvider;
+import com.hpe.adm.octane.services.connection.HttpClientProvider;
 import com.hpe.adm.octane.services.exception.ServiceRuntimeException;
 import com.hpe.adm.octane.services.filtering.Entity;
 import org.apache.commons.lang.StringUtils;
@@ -29,15 +31,15 @@ public class EntitySearchService {
 
     @Inject
     protected ConnectionSettingsProvider connectionSettingsProvider;
+    @Inject
+    protected HttpClientProvider httpClientProvider;
 
     public Collection<EntityModel> searchGlobal(String queryString, Entity entity) {
 
         ConnectionSettings connectionSettings = connectionSettingsProvider.getConnectionSettings();
-
         //auth
-        Authentication auth = new SimpleUserAuthentication(connectionSettings.getUserName(), connectionSettings.getPassword());
-        GoogleHttpClient httpClient = new GoogleHttpClient(connectionSettings.getBaseUrl(),HPE_MQM_UI.name());
-        if(! httpClient.authenticate(auth)){
+        OctaneHttpClient httpClient = httpClientProvider.geOctaneHttpClient();
+        if(null == httpClient){
             throw new ServiceRuntimeException("Failed to authenticate with current connection settings");
         }
 
@@ -80,7 +82,7 @@ public class EntitySearchService {
 
         try {
             OctaneHttpRequest request = new OctaneHttpRequest.GetOctaneHttpRequest( uriBuilder.build().toASCIIString());
-            OctaneHttpResponse response = new GoogleHttpClient(connectionSettings.getBaseUrl(),HPE_MQM_UI.name()).execute(request);
+            OctaneHttpResponse response = httpClient.execute(request);
             String responseString = response.getContent();
 
             if(response.isSuccessStatusCode() && StringUtils.isNotBlank(responseString)){
