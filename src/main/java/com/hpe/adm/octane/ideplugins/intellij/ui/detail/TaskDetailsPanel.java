@@ -48,13 +48,14 @@ public class TaskDetailsPanel extends JXPanel {
         storyLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
         storyLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
         GridBagConstraints gbc_storyLabel = new GridBagConstraints();
-        gbc_storyLabel.anchor = GridBagConstraints.WEST;
+        gbc_storyLabel.anchor = GridBagConstraints.SOUTHWEST;
         gbc_storyLabel.insets = new Insets(0, 0, 5, 5);
         gbc_storyLabel.gridx = 0;
         gbc_storyLabel.gridy = 0;
         detailsPanelLeft.add(storyLabel, gbc_storyLabel);
 
         storyDetails = new JXLabel();
+        storyDetails.setFont(new Font("Tahoma", Font.PLAIN, 11));
         storyDetails.setText("                                          ");
         storyDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_storyDetails = new GridBagConstraints();
@@ -70,13 +71,14 @@ public class TaskDetailsPanel extends JXPanel {
         authorLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
         authorLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
         GridBagConstraints gbc_authorLabel = new GridBagConstraints();
-        gbc_authorLabel.anchor = GridBagConstraints.WEST;
+        gbc_authorLabel.anchor = GridBagConstraints.SOUTHWEST;
         gbc_authorLabel.insets = new Insets(0, 0, 5, 5);
         gbc_authorLabel.gridx = 0;
         gbc_authorLabel.gridy = 1;
         detailsPanelLeft.add(authorLabel, gbc_authorLabel);
 
         authorDetails = new JXLabel();
+        authorDetails.setFont(new Font("Tahoma", Font.PLAIN, 11));
         authorDetails.setText(" ");
         authorDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_authorDetails = new GridBagConstraints();
@@ -89,7 +91,7 @@ public class TaskDetailsPanel extends JXPanel {
 
         JXLabel ownerLabel = new JXLabel();
         GridBagConstraints gbc_ownerLabel = new GridBagConstraints();
-        gbc_ownerLabel.anchor = GridBagConstraints.WEST;
+        gbc_ownerLabel.anchor = GridBagConstraints.SOUTHWEST;
         gbc_ownerLabel.insets = new Insets(0, 0, 5, 5);
         gbc_ownerLabel.gridx = 0;
         gbc_ownerLabel.gridy = 2;
@@ -99,6 +101,7 @@ public class TaskDetailsPanel extends JXPanel {
         ownerLabel.setText("Owner");
 
         ownerDetails = new JXLabel();
+        ownerDetails.setFont(new Font("Tahoma", Font.PLAIN, 11));
         GridBagConstraints gbc_ownerDetails = new GridBagConstraints();
         gbc_ownerDetails.anchor = GridBagConstraints.SOUTH;
         gbc_ownerDetails.fill = GridBagConstraints.HORIZONTAL;
@@ -114,13 +117,14 @@ public class TaskDetailsPanel extends JXPanel {
         creationTimeLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
         creationTimeLabel.setText("Creation time");
         GridBagConstraints gbc_creationTimeLabel = new GridBagConstraints();
-        gbc_creationTimeLabel.anchor = GridBagConstraints.WEST;
+        gbc_creationTimeLabel.anchor = GridBagConstraints.SOUTHWEST;
         gbc_creationTimeLabel.insets = new Insets(0, 0, 5, 5);
         gbc_creationTimeLabel.gridx = 0;
         gbc_creationTimeLabel.gridy = 3;
         detailsPanelLeft.add(creationTimeLabel, gbc_creationTimeLabel);
 
         creationTimeDetails = new JXLabel();
+        creationTimeDetails.setFont(new Font("Tahoma", Font.PLAIN, 11));
         creationTimeDetails.setText(" ");
         creationTimeDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_creationTimeDetails = new GridBagConstraints();
@@ -136,13 +140,14 @@ public class TaskDetailsPanel extends JXPanel {
         lastModifiedLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
         lastModifiedLabel.setText("Last modified");
         GridBagConstraints gbc_lastModifiedLabel = new GridBagConstraints();
-        gbc_lastModifiedLabel.anchor = GridBagConstraints.WEST;
+        gbc_lastModifiedLabel.anchor = GridBagConstraints.SOUTHWEST;
         gbc_lastModifiedLabel.insets = new Insets(0, 0, 0, 5);
         gbc_lastModifiedLabel.gridx = 0;
         gbc_lastModifiedLabel.gridy = 4;
         detailsPanelLeft.add(lastModifiedLabel, gbc_lastModifiedLabel);
 
         lastModifiedDetails = new JXLabel();
+        lastModifiedDetails.setFont(new Font("Tahoma", Font.PLAIN, 11));
         lastModifiedDetails.setText(" ");
         lastModifiedDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_lastModifiedDetails = new GridBagConstraints();
@@ -167,13 +172,14 @@ public class TaskDetailsPanel extends JXPanel {
         taskTypeLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
         taskTypeLabel.setText("Type");
         GridBagConstraints gbc_taskTypeLabel = new GridBagConstraints();
-        gbc_taskTypeLabel.anchor = GridBagConstraints.WEST;
+        gbc_taskTypeLabel.anchor = GridBagConstraints.SOUTHWEST;
         gbc_taskTypeLabel.insets = new Insets(0, 0, 5, 5);
         gbc_taskTypeLabel.gridx = 0;
         gbc_taskTypeLabel.gridy = 0;
         detailsPanelRight.add(taskTypeLabel, gbc_taskTypeLabel);
 
         taskTypeDetails = new JXLabel();
+        taskTypeDetails.setFont(new Font("Tahoma", Font.PLAIN, 11));
         taskTypeDetails.setText(" ");
         taskTypeDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_taskTypeDetails = new GridBagConstraints();
@@ -186,7 +192,7 @@ public class TaskDetailsPanel extends JXPanel {
 
         JXLabel remainingHoursLabel = new JXLabel();
         GridBagConstraints gbc_remainingHoursLabel = new GridBagConstraints();
-        gbc_remainingHoursLabel.anchor = GridBagConstraints.WEST;
+        gbc_remainingHoursLabel.anchor = GridBagConstraints.SOUTHWEST;
         gbc_remainingHoursLabel.insets = new Insets(0, 0, 5, 5);
         gbc_remainingHoursLabel.gridx = 0;
         gbc_remainingHoursLabel.gridy = 1;
@@ -196,6 +202,7 @@ public class TaskDetailsPanel extends JXPanel {
         remainingHoursLabel.setBorder(new EmptyBorder(0, 30, 0, 10));
 
         remainingHoursDetails = new JXLabel();
+        remainingHoursDetails.setFont(new Font("Tahoma", Font.PLAIN, 11));
         GridBagConstraints gbc_remainingHoursDetails = new GridBagConstraints();
         gbc_remainingHoursDetails.anchor = GridBagConstraints.SOUTH;
         gbc_remainingHoursDetails.fill = GridBagConstraints.HORIZONTAL;
@@ -211,13 +218,14 @@ public class TaskDetailsPanel extends JXPanel {
         estimatedHoursLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
         estimatedHoursLabel.setText("Estimated hours");
         GridBagConstraints gbc_estimatedHoursLabel = new GridBagConstraints();
-        gbc_estimatedHoursLabel.anchor = GridBagConstraints.WEST;
+        gbc_estimatedHoursLabel.anchor = GridBagConstraints.SOUTHWEST;
         gbc_estimatedHoursLabel.insets = new Insets(0, 0, 5, 5);
         gbc_estimatedHoursLabel.gridx = 0;
         gbc_estimatedHoursLabel.gridy = 2;
         detailsPanelRight.add(estimatedHoursLabel, gbc_estimatedHoursLabel);
 
         estimatedHoursDetails = new JXLabel();
+        estimatedHoursDetails.setFont(new Font("Tahoma", Font.PLAIN, 11));
         estimatedHoursDetails.setText(" ");
         estimatedHoursDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_estimatedHoursDetails = new GridBagConstraints();
@@ -233,13 +241,14 @@ public class TaskDetailsPanel extends JXPanel {
         investedHoursLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
         investedHoursLabel.setText("Invested hours");
         GridBagConstraints gbc_investedHoursLabel = new GridBagConstraints();
-        gbc_investedHoursLabel.anchor = GridBagConstraints.WEST;
+        gbc_investedHoursLabel.anchor = GridBagConstraints.SOUTHWEST;
         gbc_investedHoursLabel.insets = new Insets(0, 0, 0, 5);
         gbc_investedHoursLabel.gridx = 0;
         gbc_investedHoursLabel.gridy = 3;
         detailsPanelRight.add(investedHoursLabel, gbc_investedHoursLabel);
 
         investedHoursDetails = new JXLabel();
+        investedHoursDetails.setFont(new Font("Tahoma", Font.PLAIN, 11));
         investedHoursDetails.setText(" ");
         investedHoursDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_investedHoursDetails = new GridBagConstraints();

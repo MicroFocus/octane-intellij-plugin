@@ -399,9 +399,9 @@ public class GeneralEntityDetailsPanel extends JPanel {
     }
 
     private JXPanel updateUiWithUserStoryDetails(EntityModel entityModel) {
-        UserStoryDetailsPanel userStoryDetailsPanel = new UserStoryDetailsPanel();
+    	StoryDetailsPanel userStoryDetailsPanel = new StoryDetailsPanel(true);
         updateUiWithStoryDetails(userStoryDetailsPanel, entityModel);
-        userStoryDetailsPanel.setLastRunsDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_LAST_RUNS)));
+        userStoryDetailsPanel.setVarItemValue(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_LAST_RUNS)));
         return userStoryDetailsPanel;
     }
 
@@ -409,9 +409,9 @@ public class GeneralEntityDetailsPanel extends JPanel {
 		headerPanel.setPossiblePhasesForEntity(phasesList);
 	}
     private JXPanel updateUiWithQualityStoryDetails(EntityModel entityModel) {
-        QualityStoryDetailsPanel qualityStoryDetailsPanel = new QualityStoryDetailsPanel();
+        StoryDetailsPanel qualityStoryDetailsPanel = new StoryDetailsPanel(false);
         updateUiWithStoryDetails(qualityStoryDetailsPanel, entityModel);
-        qualityStoryDetailsPanel.setQualityStoryTypeDetails(
+        qualityStoryDetailsPanel.setVarItemValue(
                 getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_QUALITY_STORY_TYPE)));
         return qualityStoryDetailsPanel;
     }
