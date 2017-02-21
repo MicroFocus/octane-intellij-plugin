@@ -5,12 +5,11 @@ import com.google.common.base.Suppliers;
 import com.google.inject.*;
 import com.hpe.adm.nga.sdk.Octane;
 import com.hpe.adm.nga.sdk.authentication.SimpleUserAuthentication;
+import com.hpe.adm.nga.sdk.network.OctaneHttpClient;
+import com.hpe.adm.nga.sdk.network.google.GoogleHttpClient;
 import com.hpe.adm.octane.ideplugins.integrationtests.util.ConfigurationUtil;
 import com.hpe.adm.octane.services.TestService;
-import com.hpe.adm.octane.services.connection.BasicConnectionSettingProvider;
-import com.hpe.adm.octane.services.connection.ConnectionSettings;
-import com.hpe.adm.octane.services.connection.ConnectionSettingsProvider;
-import com.hpe.adm.octane.services.connection.OctaneProvider;
+import com.hpe.adm.octane.services.connection.*;
 import com.hpe.adm.octane.services.util.ClientType;
 
 
@@ -49,8 +48,12 @@ class TestModule extends AbstractModule {
 
     }
 
-    private ConnectionSettings previousConnectionSettings = new ConnectionSettings();
+
+    private ConnectionSettings octaneProviderPreviousConnectionSettings = new ConnectionSettings();
+    private ConnectionSettings httpClientPreviousConnectionSettings = new ConnectionSettings();
     private Octane octane;
+    private OctaneHttpClient octaneHttpClient;
+
 
     /**
      * @return authenticated instance of Octane, with current connection settings
@@ -59,7 +62,7 @@ class TestModule extends AbstractModule {
     OctaneProvider getOctane(){
         return () -> {
             ConnectionSettings currentConnectionSettings = getInstance(ConnectionSettingsProvider.class).getConnectionSettings();
-            if (!currentConnectionSettings.equals(previousConnectionSettings) || octane == null) {
+            if (!currentConnectionSettings.equals(octaneProviderPreviousConnectionSettings) || octane == null) {
                 octane = new Octane
                         .Builder(new SimpleUserAuthentication(currentConnectionSettings.getUserName(), currentConnectionSettings.getPassword(), ClientType.HPE_MQM_UI.name()))
                         .Server(currentConnectionSettings.getBaseUrl())
@@ -67,9 +70,23 @@ class TestModule extends AbstractModule {
                         .workSpace(currentConnectionSettings.getWorkspaceId())
                         .build();
 
-                previousConnectionSettings = currentConnectionSettings;
+                octaneProviderPreviousConnectionSettings = currentConnectionSettings;
             }
             return octane;
+        };
+    }
+    @Provides
+    HttpClientProvider geOctaneHttpClient(){
+        return ()->{
+            ConnectionSettings currentConnectionSettings = getInstance(ConnectionSettingsProvider.class).getConnectionSettings();
+            if (!currentConnectionSettings.equals(httpClientPreviousConnectionSettings) || null == octaneHttpClient) {
+                octaneHttpClient =  new GoogleHttpClient(currentConnectionSettings.getBaseUrl(), ClientType.HPE_MQM_UI.name());
+                httpClientPreviousConnectionSettings = currentConnectionSettings;
+            }
+            SimpleUserAuthentication userAuthentication =  new SimpleUserAuthentication(currentConnectionSettings.getUserName(),currentConnectionSettings.getPassword(),ClientType.HPE_MQM_UI.name());
+            octaneHttpClient.authenticate(userAuthentication);
+
+            return octaneHttpClient;
         };
     }
 
