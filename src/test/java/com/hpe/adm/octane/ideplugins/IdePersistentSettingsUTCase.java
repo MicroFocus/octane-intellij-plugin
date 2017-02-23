@@ -1,4 +1,4 @@
-package com.hpe.adm.octane.ideplugins.settings;
+package com.hpe.adm.octane.ideplugins;
 
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import org.jdom.output.XMLOutputter;
