@@ -46,19 +46,20 @@ public class TestDetailsPanel extends JXPanel {
         detailsPanelLeft.setLayout(gbl_detailsPanelLeft);
 
         JXLabel testTypeLabel = new JXLabel();
-        testTypeLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
+        testTypeLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
         testTypeLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
         testTypeLabel.setText("Test type");
         GridBagConstraints gbc_testTypeLabel = new GridBagConstraints();
-        gbc_testTypeLabel.anchor = GridBagConstraints.WEST;
+        gbc_testTypeLabel.anchor = GridBagConstraints.SOUTHWEST;
         gbc_testTypeLabel.insets = new Insets(0, 0, 5, 5);
         gbc_testTypeLabel.gridx = 0;
         gbc_testTypeLabel.gridy = 0;
         detailsPanelLeft.add(testTypeLabel, gbc_testTypeLabel);
 
         testTypeDetails = new JXLabel();
+        testTypeDetails.setFont(new Font("Tahoma", Font.PLAIN, 12));
         testTypeDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
-        testTypeDetails.setText("                              ");
+        testTypeDetails.setText("                            ");
         GridBagConstraints gbc_testTypeDetails = new GridBagConstraints();
         gbc_testTypeDetails.anchor = GridBagConstraints.SOUTH;
         gbc_testTypeDetails.insets = new Insets(0, 0, 5, 0);
@@ -68,19 +69,20 @@ public class TestDetailsPanel extends JXPanel {
         detailsPanelLeft.add(testTypeDetails, gbc_testTypeDetails);
 
         JXLabel testToolTypeLabel = new JXLabel();
-        testToolTypeLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
+        testToolTypeLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
         testToolTypeLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
         testToolTypeLabel.setText("Test tool type");
         GridBagConstraints gbc_testToolTypeLabel = new GridBagConstraints();
-        gbc_testToolTypeLabel.anchor = GridBagConstraints.WEST;
+        gbc_testToolTypeLabel.anchor = GridBagConstraints.SOUTHWEST;
         gbc_testToolTypeLabel.insets = new Insets(0, 0, 5, 5);
         gbc_testToolTypeLabel.gridx = 0;
         gbc_testToolTypeLabel.gridy = 1;
         detailsPanelLeft.add(testToolTypeLabel, gbc_testToolTypeLabel);
 
         testToolTypeDetails = new JXLabel();
+        testToolTypeDetails.setFont(new Font("Tahoma", Font.PLAIN, 12));
         testToolTypeDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
-        testToolTypeDetails.setText(" ");
+        testToolTypeDetails.setText("                            ");
         GridBagConstraints gbc_testToolTypeDetails = new GridBagConstraints();
         gbc_testToolTypeDetails.anchor = GridBagConstraints.SOUTH;
         gbc_testToolTypeDetails.fill = GridBagConstraints.HORIZONTAL;
@@ -90,17 +92,19 @@ public class TestDetailsPanel extends JXPanel {
         detailsPanelLeft.add(testToolTypeDetails, gbc_testToolTypeDetails);
 
         JXLabel estimatedDurationLabel = new JXLabel();
-        estimatedDurationLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
+        estimatedDurationLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
         estimatedDurationLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
         estimatedDurationLabel.setText("Estimated duration");
         GridBagConstraints gbc_estimatedDurationLabel = new GridBagConstraints();
-        gbc_estimatedDurationLabel.anchor = GridBagConstraints.WEST;
+        gbc_estimatedDurationLabel.anchor = GridBagConstraints.SOUTHWEST;
         gbc_estimatedDurationLabel.insets = new Insets(0, 0, 5, 5);
         gbc_estimatedDurationLabel.gridx = 0;
         gbc_estimatedDurationLabel.gridy = 2;
         detailsPanelLeft.add(estimatedDurationLabel, gbc_estimatedDurationLabel);
 
         estimatedDurationDetails = new JXLabel();
+        estimatedDurationDetails.setText("                            ");
+        estimatedDurationDetails.setFont(new Font("Tahoma", Font.PLAIN, 12));
         estimatedDurationDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_estimatedDurationDetails = new GridBagConstraints();
         gbc_estimatedDurationDetails.anchor = GridBagConstraints.SOUTH;
@@ -111,17 +115,19 @@ public class TestDetailsPanel extends JXPanel {
         detailsPanelLeft.add(estimatedDurationDetails, gbc_estimatedDurationDetails);
 
         JXLabel coveredContentLabel = new JXLabel();
-        coveredContentLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
+        coveredContentLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
         coveredContentLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
         coveredContentLabel.setText("Covered content");
         GridBagConstraints gbc_coveredContentLabel = new GridBagConstraints();
-        gbc_coveredContentLabel.anchor = GridBagConstraints.WEST;
+        gbc_coveredContentLabel.anchor = GridBagConstraints.SOUTHWEST;
         gbc_coveredContentLabel.insets = new Insets(0, 0, 5, 5);
         gbc_coveredContentLabel.gridx = 0;
         gbc_coveredContentLabel.gridy = 3;
         detailsPanelLeft.add(coveredContentLabel, gbc_coveredContentLabel);
 
         coveredContentDetails = new JXLabel();
+        coveredContentDetails.setText("                            ");
+        coveredContentDetails.setFont(new Font("Tahoma", Font.PLAIN, 12));
         coveredContentDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_coveredContentDetails = new GridBagConstraints();
         gbc_coveredContentDetails.anchor = GridBagConstraints.SOUTH;
@@ -132,16 +138,19 @@ public class TestDetailsPanel extends JXPanel {
         detailsPanelLeft.add(coveredContentDetails, gbc_coveredContentDetails);
 
         JXLabel applicationModulesLabel = new JXLabel();
-        applicationModulesLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
+        applicationModulesLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
         applicationModulesLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
         applicationModulesLabel.setText("Application modules");
         GridBagConstraints gbc_applicationModulesLabel = new GridBagConstraints();
+        gbc_applicationModulesLabel.anchor = GridBagConstraints.SOUTHWEST;
         gbc_applicationModulesLabel.insets = new Insets(0, 0, 0, 5);
         gbc_applicationModulesLabel.gridx = 0;
         gbc_applicationModulesLabel.gridy = 4;
         detailsPanelLeft.add(applicationModulesLabel, gbc_applicationModulesLabel);
 
         applicationModulesDetails = new JXLabel();
+        applicationModulesDetails.setText("                            ");
+        applicationModulesDetails.setFont(new Font("Tahoma", Font.PLAIN, 12));
         applicationModulesDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_applicationModulesDetails = new GridBagConstraints();
         gbc_applicationModulesDetails.anchor = GridBagConstraints.SOUTH;
@@ -161,19 +170,20 @@ public class TestDetailsPanel extends JXPanel {
         detailsPanelRight.setLayout(gbl_detailsPanelRight);
 
         JXLabel ownerLabel = new JXLabel();
-        ownerLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
+        ownerLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
         ownerLabel.setBorder(new EmptyBorder(0, 30, 0, 10));
         ownerLabel.setText("Owner");
         GridBagConstraints gbc_ownerLabel = new GridBagConstraints();
-        gbc_ownerLabel.anchor = GridBagConstraints.WEST;
+        gbc_ownerLabel.anchor = GridBagConstraints.SOUTHWEST;
         gbc_ownerLabel.insets = new Insets(0, 0, 5, 5);
         gbc_ownerLabel.gridx = 0;
         gbc_ownerLabel.gridy = 0;
         detailsPanelRight.add(ownerLabel, gbc_ownerLabel);
 
         ownerDetails = new JXLabel();
+        ownerDetails.setFont(new Font("Tahoma", Font.PLAIN, 12));
         ownerDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
-        ownerDetails.setText(" ");
+        ownerDetails.setText("                        ");
         GridBagConstraints gbc_ownerDetails = new GridBagConstraints();
         gbc_ownerDetails.fill = GridBagConstraints.HORIZONTAL;
         gbc_ownerDetails.anchor = GridBagConstraints.SOUTH;
@@ -183,17 +193,19 @@ public class TestDetailsPanel extends JXPanel {
         detailsPanelRight.add(ownerDetails, gbc_ownerDetails);
 
         JXLabel designerLabel = new JXLabel();
-        designerLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
+        designerLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
         designerLabel.setBorder(new EmptyBorder(0, 30, 0, 10));
         designerLabel.setText("Designer");
         GridBagConstraints gbc_designerLabel = new GridBagConstraints();
-        gbc_designerLabel.anchor = GridBagConstraints.WEST;
+        gbc_designerLabel.anchor = GridBagConstraints.SOUTHWEST;
         gbc_designerLabel.insets = new Insets(0, 0, 5, 5);
         gbc_designerLabel.gridx = 0;
         gbc_designerLabel.gridy = 1;
         detailsPanelRight.add(designerLabel, gbc_designerLabel);
 
         designerDetails = new JXLabel();
+        designerDetails.setFont(new Font("Tahoma", Font.PLAIN, 12));
+        designerDetails.setText("                        ");
         designerDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_designerDetails = new GridBagConstraints();
         gbc_designerDetails.fill = GridBagConstraints.HORIZONTAL;
@@ -204,17 +216,19 @@ public class TestDetailsPanel extends JXPanel {
         detailsPanelRight.add(designerDetails, gbc_designerDetails);
 
         JXLabel createdLabel = new JXLabel();
-        createdLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
+        createdLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
         createdLabel.setBorder(new EmptyBorder(0, 30, 0, 10));
         createdLabel.setText("Created");
         GridBagConstraints gbc_createdLabel = new GridBagConstraints();
-        gbc_createdLabel.anchor = GridBagConstraints.WEST;
+        gbc_createdLabel.anchor = GridBagConstraints.SOUTHWEST;
         gbc_createdLabel.insets = new Insets(0, 0, 5, 5);
         gbc_createdLabel.gridx = 0;
         gbc_createdLabel.gridy = 2;
         detailsPanelRight.add(createdLabel, gbc_createdLabel);
 
         createdDetails = new JXLabel();
+        createdDetails.setFont(new Font("Tahoma", Font.PLAIN, 12));
+        createdDetails.setText("                        ");
         createdDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_createdDetails = new GridBagConstraints();
         gbc_createdDetails.fill = GridBagConstraints.HORIZONTAL;
@@ -225,17 +239,19 @@ public class TestDetailsPanel extends JXPanel {
         detailsPanelRight.add(createdDetails, gbc_createdDetails);
 
         JXLabel lastModifiedLabel = new JXLabel();
-        lastModifiedLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
+        lastModifiedLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
         lastModifiedLabel.setBorder(new EmptyBorder(0, 30, 0, 10));
         lastModifiedLabel.setText("Last modified");
         GridBagConstraints gbc_lastModifiedLabel = new GridBagConstraints();
-        gbc_lastModifiedLabel.anchor = GridBagConstraints.WEST;
+        gbc_lastModifiedLabel.anchor = GridBagConstraints.SOUTHWEST;
         gbc_lastModifiedLabel.insets = new Insets(0, 0, 5, 5);
         gbc_lastModifiedLabel.gridx = 0;
         gbc_lastModifiedLabel.gridy = 3;
         detailsPanelRight.add(lastModifiedLabel, gbc_lastModifiedLabel);
 
         lastModifiedDetails = new JXLabel();
+        lastModifiedDetails.setFont(new Font("Tahoma", Font.PLAIN, 12));
+        lastModifiedDetails.setText("                        ");
         lastModifiedDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_lastModifiedDetails = new GridBagConstraints();
         gbc_lastModifiedDetails.insets = new Insets(0, 0, 5, 0);
@@ -247,15 +263,18 @@ public class TestDetailsPanel extends JXPanel {
         
         automationStatusLabel = new JXLabel();
         automationStatusLabel.setText("Automation status");
-        automationStatusLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
+        automationStatusLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
         automationStatusLabel.setBorder(new EmptyBorder(0, 30, 0, 10));
         GridBagConstraints gbc_automationStatusLabel = new GridBagConstraints();
+        gbc_automationStatusLabel.anchor = GridBagConstraints.SOUTHWEST;
         gbc_automationStatusLabel.insets = new Insets(0, 0, 0, 5);
         gbc_automationStatusLabel.gridx = 0;
         gbc_automationStatusLabel.gridy = 4;
         detailsPanelRight.add(automationStatusLabel, gbc_automationStatusLabel);
         
         automationStatusDetails = new JXLabel();
+        automationStatusDetails.setFont(new Font("Tahoma", Font.PLAIN, 12));
+        automationStatusDetails.setText("                        ");
         automationStatusDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_automationStatusDetails = new GridBagConstraints();
         gbc_automationStatusDetails.anchor = GridBagConstraints.SOUTH;

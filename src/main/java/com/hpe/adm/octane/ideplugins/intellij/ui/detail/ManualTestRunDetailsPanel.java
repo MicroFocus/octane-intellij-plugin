@@ -49,17 +49,18 @@ public class ManualTestRunDetailsPanel extends JXPanel {
 
         JXLabel testNameLabel = new JXLabel();
         testNameLabel.setText("Test Name");
-        testNameLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
+        testNameLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
         testNameLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
         GridBagConstraints gbc_testNameLabel = new GridBagConstraints();
-        gbc_testNameLabel.anchor = GridBagConstraints.WEST;
+        gbc_testNameLabel.anchor = GridBagConstraints.SOUTHWEST;
         gbc_testNameLabel.insets = new Insets(0, 0, 5, 5);
         gbc_testNameLabel.gridx = 0;
         gbc_testNameLabel.gridy = 0;
         detailsPanelLeft.add(testNameLabel, gbc_testNameLabel);
 
         testNameDetails = new JXLabel();
-        testNameDetails.setText("                                          ");
+        testNameDetails.setFont(new Font("Tahoma", Font.PLAIN, 12));
+        testNameDetails.setText("               ");
         testNameDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_testNameDetails = new GridBagConstraints();
         gbc_testNameDetails.anchor = GridBagConstraints.SOUTH;
@@ -71,17 +72,18 @@ public class ManualTestRunDetailsPanel extends JXPanel {
 
         JXLabel runByLabel = new JXLabel();
         runByLabel.setText("Run by");
-        runByLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
+        runByLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
         runByLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
         GridBagConstraints gbc_runByLabel = new GridBagConstraints();
-        gbc_runByLabel.anchor = GridBagConstraints.WEST;
+        gbc_runByLabel.anchor = GridBagConstraints.SOUTHWEST;
         gbc_runByLabel.insets = new Insets(0, 0, 5, 5);
         gbc_runByLabel.gridx = 0;
         gbc_runByLabel.gridy = 1;
         detailsPanelLeft.add(runByLabel, gbc_runByLabel);
 
         runByDetails = new JXLabel();
-        runByDetails.setText(" ");
+        runByDetails.setFont(new Font("Tahoma", Font.PLAIN, 12));
+        runByDetails.setText("               ");
         runByDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_runByDetails = new GridBagConstraints();
         gbc_runByDetails.anchor = GridBagConstraints.SOUTH;
@@ -93,16 +95,17 @@ public class ManualTestRunDetailsPanel extends JXPanel {
 
         JXLabel startedDateLabel = new JXLabel();
         GridBagConstraints gbc_startedDateLabel = new GridBagConstraints();
-        gbc_startedDateLabel.anchor = GridBagConstraints.WEST;
+        gbc_startedDateLabel.anchor = GridBagConstraints.SOUTHWEST;
         gbc_startedDateLabel.insets = new Insets(0, 0, 5, 5);
         gbc_startedDateLabel.gridx = 0;
         gbc_startedDateLabel.gridy = 2;
         detailsPanelLeft.add(startedDateLabel, gbc_startedDateLabel);
-        startedDateLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
+        startedDateLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
         startedDateLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
         startedDateLabel.setText("Started");
 
         startedTimeDetails = new JXLabel();
+        startedTimeDetails.setFont(new Font("Tahoma", Font.PLAIN, 12));
         GridBagConstraints gbc_startedTimeDetails = new GridBagConstraints();
         gbc_startedTimeDetails.anchor = GridBagConstraints.SOUTH;
         gbc_startedTimeDetails.fill = GridBagConstraints.HORIZONTAL;
@@ -111,21 +114,22 @@ public class ManualTestRunDetailsPanel extends JXPanel {
         gbc_startedTimeDetails.gridy = 2;
         detailsPanelLeft.add(startedTimeDetails, gbc_startedTimeDetails);
         startedTimeDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
-        startedTimeDetails.setText(" ");
+        startedTimeDetails.setText("               ");
 
         JXLabel contentLabel = new JXLabel();
-        contentLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
+        contentLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
         contentLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
         contentLabel.setText("Content");
         GridBagConstraints gbc_contentLabel = new GridBagConstraints();
-        gbc_contentLabel.anchor = GridBagConstraints.WEST;
+        gbc_contentLabel.anchor = GridBagConstraints.SOUTHWEST;
         gbc_contentLabel.insets = new Insets(0, 0, 5, 5);
         gbc_contentLabel.gridx = 0;
         gbc_contentLabel.gridy = 3;
         detailsPanelLeft.add(contentLabel, gbc_contentLabel);
 
         contentDetails = new JXLabel();
-        contentDetails.setText(" ");
+        contentDetails.setFont(new Font("Tahoma", Font.PLAIN, 12));
+        contentDetails.setText("               ");
         contentDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_contentDetails = new GridBagConstraints();
         gbc_contentDetails.anchor = GridBagConstraints.SOUTH;
@@ -136,18 +140,19 @@ public class ManualTestRunDetailsPanel extends JXPanel {
         detailsPanelLeft.add(contentDetails, gbc_contentDetails);
 
         JXLabel releaseLabel = new JXLabel();
-        releaseLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
+        releaseLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
         releaseLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
         releaseLabel.setText("Release");
         GridBagConstraints gbc_releaseLabel = new GridBagConstraints();
-        gbc_releaseLabel.anchor = GridBagConstraints.WEST;
+        gbc_releaseLabel.anchor = GridBagConstraints.SOUTHWEST;
         gbc_releaseLabel.insets = new Insets(0, 0, 5, 5);
         gbc_releaseLabel.gridx = 0;
         gbc_releaseLabel.gridy = 4;
         detailsPanelLeft.add(releaseLabel, gbc_releaseLabel);
 
         releaseDetails = new JXLabel();
-        releaseDetails.setText(" ");
+        releaseDetails.setFont(new Font("Tahoma", Font.PLAIN, 12));
+        releaseDetails.setText("               ");
         releaseDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_releaseDetails = new GridBagConstraints();
         gbc_releaseDetails.insets = new Insets(0, 0, 5, 0);
@@ -159,17 +164,18 @@ public class ManualTestRunDetailsPanel extends JXPanel {
         
         JXLabel environmentLabel = new JXLabel();
         environmentLabel.setText("Environment");
-        environmentLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
+        environmentLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
         environmentLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
         GridBagConstraints gbc_environmentLabel = new GridBagConstraints();
-        gbc_environmentLabel.anchor = GridBagConstraints.WEST;
+        gbc_environmentLabel.anchor = GridBagConstraints.SOUTHWEST;
         gbc_environmentLabel.insets = new Insets(0, 0, 0, 5);
         gbc_environmentLabel.gridx = 0;
         gbc_environmentLabel.gridy = 5;
         detailsPanelLeft.add(environmentLabel, gbc_environmentLabel);
         
         environmentDetails = new JXLabel();
-        environmentDetails.setText(" ");
+        environmentDetails.setFont(new Font("Tahoma", Font.PLAIN, 12));
+        environmentDetails.setText("               ");
         environmentDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_environmentDetails = new GridBagConstraints();
         gbc_environmentDetails.anchor = GridBagConstraints.SOUTH;
@@ -190,17 +196,18 @@ public class ManualTestRunDetailsPanel extends JXPanel {
 
         JXLabel nativeStatusLabel = new JXLabel();
         nativeStatusLabel.setBorder(new EmptyBorder(0, 30, 0, 10));
-        nativeStatusLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
+        nativeStatusLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
         nativeStatusLabel.setText("Native status");
         GridBagConstraints gbc_nativeStatusLabel = new GridBagConstraints();
-        gbc_nativeStatusLabel.anchor = GridBagConstraints.WEST;
+        gbc_nativeStatusLabel.anchor = GridBagConstraints.SOUTHWEST;
         gbc_nativeStatusLabel.insets = new Insets(0, 0, 5, 5);
         gbc_nativeStatusLabel.gridx = 0;
         gbc_nativeStatusLabel.gridy = 0;
         detailsPanelRight.add(nativeStatusLabel, gbc_nativeStatusLabel);
 
         nativeStatusDetails = new JXLabel();
-        nativeStatusDetails.setText(" ");
+        nativeStatusDetails.setFont(new Font("Tahoma", Font.PLAIN, 12));
+        nativeStatusDetails.setText("               ");
         nativeStatusDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_nativeStatusDetails = new GridBagConstraints();
         gbc_nativeStatusDetails.anchor = GridBagConstraints.SOUTH;
@@ -212,16 +219,17 @@ public class ManualTestRunDetailsPanel extends JXPanel {
 
         JXLabel authorLabel = new JXLabel();
         GridBagConstraints gbc_authorLabel = new GridBagConstraints();
-        gbc_authorLabel.anchor = GridBagConstraints.WEST;
+        gbc_authorLabel.anchor = GridBagConstraints.SOUTHWEST;
         gbc_authorLabel.insets = new Insets(0, 0, 5, 5);
         gbc_authorLabel.gridx = 0;
         gbc_authorLabel.gridy = 1;
         detailsPanelRight.add(authorLabel, gbc_authorLabel);
         authorLabel.setText("Author");
-        authorLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
+        authorLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
         authorLabel.setBorder(new EmptyBorder(0, 30, 0, 10));
 
         authorDetails = new JXLabel();
+        authorDetails.setFont(new Font("Tahoma", Font.PLAIN, 12));
         GridBagConstraints gbc_authorDetails = new GridBagConstraints();
         gbc_authorDetails.anchor = GridBagConstraints.SOUTH;
         gbc_authorDetails.fill = GridBagConstraints.HORIZONTAL;
@@ -229,22 +237,23 @@ public class ManualTestRunDetailsPanel extends JXPanel {
         gbc_authorDetails.gridx = 1;
         gbc_authorDetails.gridy = 1;
         detailsPanelRight.add(authorDetails, gbc_authorDetails);
-        authorDetails.setText(" ");
+        authorDetails.setText("               ");
         authorDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
 
         JXLabel durationLabel = new JXLabel();
         durationLabel.setBorder(new EmptyBorder(0, 30, 0, 10));
-        durationLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
+        durationLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
         durationLabel.setText("Duration");
         GridBagConstraints gbc_durationLabel = new GridBagConstraints();
-        gbc_durationLabel.anchor = GridBagConstraints.WEST;
+        gbc_durationLabel.anchor = GridBagConstraints.SOUTHWEST;
         gbc_durationLabel.insets = new Insets(0, 0, 5, 5);
         gbc_durationLabel.gridx = 0;
         gbc_durationLabel.gridy = 2;
         detailsPanelRight.add(durationLabel, gbc_durationLabel);
 
         durationDetails = new JXLabel();
-        durationDetails.setText(" ");
+        durationDetails.setFont(new Font("Tahoma", Font.PLAIN, 12));
+        durationDetails.setText("               ");
         durationDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_durationDetails = new GridBagConstraints();
         gbc_durationDetails.anchor = GridBagConstraints.SOUTH;
@@ -256,17 +265,18 @@ public class ManualTestRunDetailsPanel extends JXPanel {
 
         JXLabel draftRunLabel = new JXLabel();
         draftRunLabel.setBorder(new EmptyBorder(0, 30, 0, 10));
-        draftRunLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
+        draftRunLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
         draftRunLabel.setText("Draft run");
         GridBagConstraints gbc_draftRunLabel = new GridBagConstraints();
-        gbc_draftRunLabel.anchor = GridBagConstraints.WEST;
+        gbc_draftRunLabel.anchor = GridBagConstraints.SOUTHWEST;
         gbc_draftRunLabel.insets = new Insets(0, 0, 5, 5);
         gbc_draftRunLabel.gridx = 0;
         gbc_draftRunLabel.gridy = 3;
         detailsPanelRight.add(draftRunLabel, gbc_draftRunLabel);
 
         draftRunDetails = new JXLabel();
-        draftRunDetails.setText(" ");
+        draftRunDetails.setFont(new Font("Tahoma", Font.PLAIN, 12));
+        draftRunDetails.setText("               ");
         draftRunDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_draftRunDetails = new GridBagConstraints();
         gbc_draftRunDetails.insets = new Insets(0, 0, 5, 0);
@@ -278,17 +288,18 @@ public class ManualTestRunDetailsPanel extends JXPanel {
         
         JXLabel versionFromReleaseLabel = new JXLabel();
         versionFromReleaseLabel.setText("Version from release");
-        versionFromReleaseLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
+        versionFromReleaseLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
         versionFromReleaseLabel.setBorder(new EmptyBorder(0, 30, 0, 10));
         GridBagConstraints gbc_versionFromReleaseLabel = new GridBagConstraints();
-        gbc_versionFromReleaseLabel.anchor = GridBagConstraints.WEST;
+        gbc_versionFromReleaseLabel.anchor = GridBagConstraints.SOUTHWEST;
         gbc_versionFromReleaseLabel.insets = new Insets(0, 0, 5, 5);
         gbc_versionFromReleaseLabel.gridx = 0;
         gbc_versionFromReleaseLabel.gridy = 4;
         detailsPanelRight.add(versionFromReleaseLabel, gbc_versionFromReleaseLabel);
         
         versionFromReleaseDescription = new JXLabel();
-        versionFromReleaseDescription.setText(" ");
+        versionFromReleaseDescription.setFont(new Font("Tahoma", Font.PLAIN, 12));
+        versionFromReleaseDescription.setText("               ");
         versionFromReleaseDescription.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_versionFromReleaseDescription = new GridBagConstraints();
         gbc_versionFromReleaseDescription.anchor = GridBagConstraints.SOUTH;
@@ -300,17 +311,18 @@ public class ManualTestRunDetailsPanel extends JXPanel {
         
         JXLabel lastModifiedLabel = new JXLabel();
         lastModifiedLabel.setText("Last modified");
-        lastModifiedLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
+        lastModifiedLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
         lastModifiedLabel.setBorder(new EmptyBorder(0, 30, 0, 10));
         GridBagConstraints gbc_lastModifiedLabel = new GridBagConstraints();
-        gbc_lastModifiedLabel.anchor = GridBagConstraints.WEST;
+        gbc_lastModifiedLabel.anchor = GridBagConstraints.SOUTHWEST;
         gbc_lastModifiedLabel.insets = new Insets(0, 0, 0, 5);
         gbc_lastModifiedLabel.gridx = 0;
         gbc_lastModifiedLabel.gridy = 5;
         detailsPanelRight.add(lastModifiedLabel, gbc_lastModifiedLabel);
         
         lastModifiedDetails = new JXLabel();
-        lastModifiedDetails.setText(" ");
+        lastModifiedDetails.setFont(new Font("Tahoma", Font.PLAIN, 12));
+        lastModifiedDetails.setText("               ");
         lastModifiedDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_lastModifiedDetails = new GridBagConstraints();
         gbc_lastModifiedDetails.anchor = GridBagConstraints.SOUTH;
