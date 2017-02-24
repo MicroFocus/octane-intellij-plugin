@@ -3,7 +3,7 @@ plugins {
 }
 
 group 'com.hpe.adm.octane'
-version '1.0-SNAPSHOT'
+version '2016.2-12.53.20.1'
 
 apply plugin: 'java'
 apply plugin: 'groovy'
@@ -28,8 +28,7 @@ sourceSets {
 }
 
 dependencies {
-//    compile group: 'com.hpe.adm.nga.sdk', name: 'sdk-src', version: '12.53.18-SNAPSHOT'
-    compile 'com.hpe.adm.plugins:octane-plugin-common:1.0-SNAPSHOT'
+    compile 'com.hpe.adm.plugins:octane-plugin-common:1.0'
     compile group: 'org.jsoup', name: 'jsoup', version: '1.8.3'
     compile('com.google.inject:guice:4.0') {
         exclude group: 'com.google.guava', module: 'guava'
