@@ -12,6 +12,7 @@ import com.hpe.adm.octane.services.UserService;
 import com.hpe.adm.octane.services.filtering.Entity;
 import com.hpe.adm.octane.services.util.EntityUtil;
 import com.intellij.ui.JBColor;
+import org.apache.commons.lang.StringUtils;
 import org.jdesktop.swingx.JXLabel;
 
 import javax.swing.*;
@@ -92,6 +93,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
         entityFields.get(Entity.MANUAL_TEST).add(FIELD_AUTHOR);
         entityFields.get(Entity.MANUAL_TEST).add(FIELD_OWNER);
         entityFields.get(Entity.MANUAL_TEST).add("steps_num");
+        entityFields.get(Entity.MANUAL_TEST).add("automation_status");
 
         //MANUAL TEST RUNS
         entityFields.put(Entity.MANUAL_TEST_RUN, new HashSet<>());
@@ -293,7 +295,10 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
 
                 addAuthor(rowPanel, entityModel);
                 rowPanel.addDetails("Steps", getUiDataFromModel(entityModel.getValue("steps_num")), DetailsPosition.BOTTOM);
-
+                String automationStatus = getUiDataFromModel(entityModel.getValue("automation_status"));
+                if (StringUtils.isNotEmpty(automationStatus)) {
+                    rowPanel.addDetails("Automation status", automationStatus, DetailsPosition.BOTTOM);
+                }
             } else if (Entity.COMMENT.equals(entityType)) {
 
                 String text = getUiDataFromModel(entityModel.getValue("text"));

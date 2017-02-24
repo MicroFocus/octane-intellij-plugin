@@ -1,10 +1,12 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
 import com.hpe.adm.nga.sdk.model.EntityModel;
+import com.hpe.adm.nga.sdk.model.FieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
 import com.hpe.adm.octane.services.filtering.Entity;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.ui.JBColor;
+import org.apache.commons.lang.StringUtils;
 import org.jdesktop.swingx.*;
 import org.jdesktop.swingx.JXCollapsiblePane.Direction;
 
@@ -309,9 +311,10 @@ public class GeneralEntityDetailsPanel extends JPanel {
 				getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_LAST_MODIFIED)));
 		testDetailsPanel.setCoveredContentDetails(
 				getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_COVERED_CONTENT)));
-		if (isGherkin) {
-			testDetailsPanel.setAutomationStatusDetails(
-					getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_AUTOMATION_STATUS)));
+		FieldModel automationStatus = entityModel.getValue(DetailsViewDefaultFields.FIELD_AUTOMATION_STATUS);
+		String automationStatusValue = getUiDataFromModel(automationStatus);
+		if (StringUtils.isNotEmpty(automationStatusValue)) {
+			testDetailsPanel.setAutomationStatusDetails(automationStatusValue);
 		}
 		return testDetailsPanel;
 	}
