@@ -2,6 +2,7 @@ package com.hpe.adm.octane.ideplugins.intellij.settings;
 
 import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.ui.components.ConnectionSettingsComponent;
+import com.hpe.adm.octane.services.nonentity.OctaneVersionService;
 import com.hpe.adm.octane.services.util.Constants;
 import com.hpe.adm.octane.services.TestService;
 import com.hpe.adm.octane.services.connection.ConnectionSettings;
@@ -11,6 +12,12 @@ import com.hpe.adm.octane.services.util.UrlParser;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.MessageType;
+import com.intellij.openapi.ui.popup.Balloon;
+import com.intellij.openapi.ui.popup.JBPopupFactory;
+import com.intellij.openapi.wm.StatusBar;
+import com.intellij.openapi.wm.WindowManager;
+import com.intellij.ui.awt.RelativePoint;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -23,11 +30,14 @@ import static com.hpe.adm.octane.services.util.UrlParser.resolveConnectionSettin
 public class ConnectionSettingsConfigurable implements SearchableConfigurable {
 
     private static final String NAME = "Octane";
+    private static final String DYNAMO_VERSION = "12.53.20";
+    private Project currentProject = null;
 
     //@Inject is not supported here, this class is instantiated by intellij
     private ConnectionSettingsProvider connectionSettingsProvider;
     private TestService testService;
     private IdePluginPersistentState idePluginPersistentState;
+    private OctaneVersionService versionService;
 
     private ConnectionSettingsComponent connectionSettingsView = new ConnectionSettingsComponent();
 
@@ -60,6 +70,8 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
         connectionSettingsProvider = module.getInstance(ConnectionSettingsProvider.class);
         testService = module.getInstance(TestService.class);
         idePluginPersistentState = module.getInstance(IdePluginPersistentState.class);
+        versionService = module.getInstance(OctaneVersionService.class);
+        this.currentProject = currentProject;
     }
 
     @Nullable
@@ -83,7 +95,6 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
                 }
             }.execute();
         });
-
         return connectionSettingsView.getComponent();
     }
 
@@ -129,8 +140,24 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
             connectionSettingsView.setServerUrl(UrlParser.createUrlFromConnectionSettings(newConnectionSettings));
             connectionSettingsView.setConnectionStatusSuccess();
         }
+        if (versionService.getOctaneVersion().compareTo(DYNAMO_VERSION) < 0) {
+           showWarningBalloon();
+        }
     }
 
+    private void showWarningBalloon() {
+
+        StatusBar statusBar = WindowManager.getInstance().getStatusBar(currentProject);
+
+
+        String message = "Octane version not supported. This plugin works with Octane versions starting " + DYNAMO_VERSION;
+        Balloon balloon = JBPopupFactory.getInstance().createHtmlTextBalloonBuilder(message,
+                MessageType.WARNING, null)
+                .setCloseButtonEnabled(true)
+                .createBalloon();
+
+        balloon.show(RelativePoint.getCenterOf(statusBar.getComponent()), Balloon.Position.atRight);
+    }
     /**
      * Test the connection with the given info from the view, sets error labels
      * @return ConnectionSettings if valid, null otherwise
