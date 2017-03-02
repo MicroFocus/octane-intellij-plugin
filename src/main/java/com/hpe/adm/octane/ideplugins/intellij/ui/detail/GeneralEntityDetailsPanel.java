@@ -23,7 +23,7 @@ import static com.hpe.adm.octane.services.filtering.Entity.*;
 
 public class GeneralEntityDetailsPanel extends JPanel {
 	private JXPanel entityDetailsPanel;
-	private JXTextArea descriptionDetails;
+	private JTextPane descriptionDetails;
 	private boolean hasAttachment = false;
 	private HeaderPanel headerPanel;
 	private CommentsConversationPanel commentsListPanel;
@@ -88,9 +88,8 @@ public class GeneralEntityDetailsPanel extends JPanel {
 		gbc_lblDescription.gridy = 0;
 		descriptionPanel.add(lblDescription, gbc_lblDescription);
 
-		descriptionDetails = new JXTextArea();
-		descriptionDetails.setLineWrap(true);
-		descriptionDetails.setWrapStyleWord(true);
+		descriptionDetails = new JTextPane();
+		descriptionDetails.setContentType("text/html");
 		descriptionDetails.setEditable(false);
 		descriptionDetails.setOpaque(false);
 		descriptionDetails.setEditable(false);
@@ -158,7 +157,7 @@ public class GeneralEntityDetailsPanel extends JPanel {
 
 	private void drawGeneralDetailsForEntity(EntityModel entityModel) {
 		headerPanel.setPhaseDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_PHASE)));
-		this.descriptionDetails.setText(stripHtml(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_DESCRIPTION))));
+		this.descriptionDetails.setText(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_DESCRIPTION)));
 	}
 
 	public void setEntityNameClickHandler(Runnable runnable) {
