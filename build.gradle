@@ -28,7 +28,7 @@ sourceSets {
 }
 
 dependencies {
-    compile 'com.hpe.adm.plugins:octane-plugin-common:1.1'
+    compile 'com.hpe.adm.plugins:octane-plugin-common:1.0'
     compile group: 'org.jsoup', name: 'jsoup', version: '1.8.3'
     compile('com.google.inject:guice:4.0') {
         exclude group: 'com.google.guava', module: 'guava'
