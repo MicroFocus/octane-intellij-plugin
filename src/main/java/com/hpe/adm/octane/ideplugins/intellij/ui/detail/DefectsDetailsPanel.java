@@ -55,7 +55,7 @@ public class DefectsDetailsPanel extends JXPanel {
 
         JXLabel featureLabel = new JXLabel();
         featureLabel.setText("Feature");
-        featureLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
+        featureLabel.setFont(new Font("Arial", Font.BOLD, 12));
         featureLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
         GridBagConstraints gbc_featureLabel = new GridBagConstraints();
         gbc_featureLabel.anchor = GridBagConstraints.SOUTHWEST;
@@ -65,7 +65,7 @@ public class DefectsDetailsPanel extends JXPanel {
         detailsPanelLeft.add(featureLabel, gbc_featureLabel);
 
         featureDetails = new JXLabel();
-        featureDetails.setFont(new Font("Tahoma", Font.PLAIN, 12));
+        featureDetails.setFont(new Font("Arial", Font.PLAIN, 12));
         featureDetails.setText("        ");
         featureDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_featureDetails = new GridBagConstraints();
@@ -78,7 +78,7 @@ public class DefectsDetailsPanel extends JXPanel {
 
         JXLabel severityLabel = new JXLabel();
         severityLabel.setText("Severity");
-        severityLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
+        severityLabel.setFont(new Font("Arial", Font.BOLD, 12));
         severityLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
         GridBagConstraints gbc_severityLabel = new GridBagConstraints();
         gbc_severityLabel.anchor = GridBagConstraints.SOUTHWEST;
@@ -88,7 +88,7 @@ public class DefectsDetailsPanel extends JXPanel {
         detailsPanelLeft.add(severityLabel, gbc_severityLabel);
 
         severityDetails = new JXLabel();
-        severityDetails.setFont(new Font("Tahoma", Font.PLAIN, 12));
+        severityDetails.setFont(new Font("Arial", Font.PLAIN, 12));
         severityDetails.setText("        ");
         severityDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_severityDetails = new GridBagConstraints();
@@ -101,7 +101,7 @@ public class DefectsDetailsPanel extends JXPanel {
 
         JXLabel sprintLabel = new JXLabel();
         sprintLabel.setText("Sprint");
-        sprintLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
+        sprintLabel.setFont(new Font("Arial", Font.BOLD, 12));
         sprintLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
         GridBagConstraints gbc_sprintLabel = new GridBagConstraints();
         gbc_sprintLabel.anchor = GridBagConstraints.SOUTHWEST;
@@ -111,7 +111,7 @@ public class DefectsDetailsPanel extends JXPanel {
         detailsPanelLeft.add(sprintLabel, gbc_sprintLabel);
 
         sprintDetails = new JXLabel();
-        sprintDetails.setFont(new Font("Tahoma", Font.PLAIN, 12));
+        sprintDetails.setFont(new Font("Arial", Font.PLAIN, 12));
         sprintDetails.setText("        ");
         sprintDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_sprintDetails = new GridBagConstraints();
@@ -124,7 +124,7 @@ public class DefectsDetailsPanel extends JXPanel {
 
         JXLabel storyPointsLabel = new JXLabel();
         storyPointsLabel.setText("Story points");
-        storyPointsLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
+        storyPointsLabel.setFont(new Font("Arial", Font.BOLD, 12));
         storyPointsLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
         GridBagConstraints gbc_storyPointsLabel = new GridBagConstraints();
         gbc_storyPointsLabel.anchor = GridBagConstraints.SOUTHWEST;
@@ -134,7 +134,7 @@ public class DefectsDetailsPanel extends JXPanel {
         detailsPanelLeft.add(storyPointsLabel, gbc_storyPointsLabel);
 
         storyPointsDetails = new JXLabel();
-        storyPointsDetails.setFont(new Font("Tahoma", Font.PLAIN, 12));
+        storyPointsDetails.setFont(new Font("Arial", Font.PLAIN, 12));
         storyPointsDetails.setText("        ");
         storyPointsDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_storyPointsDetails = new GridBagConstraints();
@@ -153,11 +153,11 @@ public class DefectsDetailsPanel extends JXPanel {
         gbc_blockedLabel.gridy = 4;
         detailsPanelLeft.add(blockedLabel, gbc_blockedLabel);
         blockedLabel.setText("Blocked");
-        blockedLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
+        blockedLabel.setFont(new Font("Arial", Font.BOLD, 12));
         blockedLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
 
         blockedDetails = new JXLabel();
-        blockedDetails.setFont(new Font("Tahoma", Font.PLAIN, 12));
+        blockedDetails.setFont(new Font("Arial", Font.PLAIN, 12));
         blockedDetails.setText("        ");
         blockedDetails.setBorder(new MatteBorder(0, 0, 1, 0, (JBColor.border())));
         GridBagConstraints gbc_blockedDetails = new GridBagConstraints();
@@ -170,7 +170,7 @@ public class DefectsDetailsPanel extends JXPanel {
 
         JXLabel enviromentLabel = new JXLabel();
         enviromentLabel.setText("Environment");
-        enviromentLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
+        enviromentLabel.setFont(new Font("Arial", Font.BOLD, 12));
         enviromentLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
         GridBagConstraints gbc_enviromentLabel = new GridBagConstraints();
         gbc_enviromentLabel.anchor = GridBagConstraints.SOUTHWEST;
@@ -180,7 +180,7 @@ public class DefectsDetailsPanel extends JXPanel {
         detailsPanelLeft.add(enviromentLabel, gbc_enviromentLabel);
 
         enviromentDetails = new JXLabel();
-        enviromentDetails.setFont(new Font("Tahoma", Font.PLAIN, 12));
+        enviromentDetails.setFont(new Font("Arial", Font.PLAIN, 12));
         enviromentDetails.setText("        ");
         enviromentDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_enviromentDetails = new GridBagConstraints();
@@ -193,7 +193,7 @@ public class DefectsDetailsPanel extends JXPanel {
 
         JXLabel releaseLabel = new JXLabel();
         releaseLabel.setText("Release");
-        releaseLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
+        releaseLabel.setFont(new Font("Arial", Font.BOLD, 12));
         releaseLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
         GridBagConstraints gbc_releaseLabel = new GridBagConstraints();
         gbc_releaseLabel.anchor = GridBagConstraints.SOUTHWEST;
@@ -203,7 +203,7 @@ public class DefectsDetailsPanel extends JXPanel {
         detailsPanelLeft.add(releaseLabel, gbc_releaseLabel);
 
         releaseDetails = new JXLabel();
-        releaseDetails.setFont(new Font("Tahoma", Font.PLAIN, 12));
+        releaseDetails.setFont(new Font("Arial", Font.PLAIN, 12));
         releaseDetails.setText("        ");
         releaseDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_releaseDetails = new GridBagConstraints();
@@ -216,7 +216,7 @@ public class DefectsDetailsPanel extends JXPanel {
 
         JXLabel defectTypeLabel = new JXLabel();
         defectTypeLabel.setText("Defect type");
-        defectTypeLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
+        defectTypeLabel.setFont(new Font("Arial", Font.BOLD, 12));
         defectTypeLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
         GridBagConstraints gbc_defectTypeLabel = new GridBagConstraints();
         gbc_defectTypeLabel.anchor = GridBagConstraints.SOUTHWEST;
@@ -226,7 +226,7 @@ public class DefectsDetailsPanel extends JXPanel {
         detailsPanelLeft.add(defectTypeLabel, gbc_defectTypeLabel);
 
         defectTypeDetails = new JXLabel();
-        defectTypeDetails.setFont(new Font("Tahoma", Font.PLAIN, 12));
+        defectTypeDetails.setFont(new Font("Arial", Font.PLAIN, 12));
         defectTypeDetails.setText("        ");
         defectTypeDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_defectTypeDetails = new GridBagConstraints();
@@ -239,7 +239,7 @@ public class DefectsDetailsPanel extends JXPanel {
 
         JXLabel lastModifiedLabel = new JXLabel();
         lastModifiedLabel.setText("Last modified");
-        lastModifiedLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
+        lastModifiedLabel.setFont(new Font("Arial", Font.BOLD, 12));
         lastModifiedLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
         GridBagConstraints gbc_lastModifiedLabel = new GridBagConstraints();
         gbc_lastModifiedLabel.anchor = GridBagConstraints.SOUTHWEST;
@@ -249,7 +249,7 @@ public class DefectsDetailsPanel extends JXPanel {
         detailsPanelLeft.add(lastModifiedLabel, gbc_lastModifiedLabel);
 
         lastModifiedDetails = new JXLabel();
-        lastModifiedDetails.setFont(new Font("Tahoma", Font.PLAIN, 12));
+        lastModifiedDetails.setFont(new Font("Arial", Font.PLAIN, 12));
         lastModifiedDetails.setText("        ");
         lastModifiedDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_lastModifiedDetails = new GridBagConstraints();
@@ -270,7 +270,7 @@ public class DefectsDetailsPanel extends JXPanel {
         detailsPanelRight.setLayout(gbl_detailsPanelRight);
 
         JXLabel ownerLabel = new JXLabel();
-        ownerLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
+        ownerLabel.setFont(new Font("Arial", Font.BOLD, 12));
         GridBagConstraints gbc_ownerLabel = new GridBagConstraints();
         gbc_ownerLabel.anchor = GridBagConstraints.SOUTHWEST;
         gbc_ownerLabel.insets = new Insets(0, 0, 5, 5);
@@ -281,7 +281,7 @@ public class DefectsDetailsPanel extends JXPanel {
         ownerLabel.setText("Owner");
 
         ownerDetails = new JXLabel();
-        ownerDetails.setFont(new Font("Tahoma", Font.PLAIN, 12));
+        ownerDetails.setFont(new Font("Arial", Font.PLAIN, 12));
         GridBagConstraints gbc_ownerDetails = new GridBagConstraints();
         gbc_ownerDetails.anchor = GridBagConstraints.SOUTH;
         gbc_ownerDetails.fill = GridBagConstraints.HORIZONTAL;
@@ -294,7 +294,7 @@ public class DefectsDetailsPanel extends JXPanel {
 
         JXLabel detectedByLabel = new JXLabel();
         detectedByLabel.setText("Detected by");
-        detectedByLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
+        detectedByLabel.setFont(new Font("Arial", Font.BOLD, 12));
         detectedByLabel.setBorder(new EmptyBorder(0, 30, 0, 10));
         GridBagConstraints gbc_detectedByLabel = new GridBagConstraints();
         gbc_detectedByLabel.anchor = GridBagConstraints.SOUTHWEST;
@@ -304,7 +304,7 @@ public class DefectsDetailsPanel extends JXPanel {
         detailsPanelRight.add(detectedByLabel, gbc_detectedByLabel);
 
         detectedByDetails = new JXLabel();
-        detectedByDetails.setFont(new Font("Tahoma", Font.PLAIN, 12));
+        detectedByDetails.setFont(new Font("Arial", Font.PLAIN, 12));
         detectedByDetails.setText("        ");
         detectedByDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_detectedByDetails = new GridBagConstraints();
@@ -317,7 +317,7 @@ public class DefectsDetailsPanel extends JXPanel {
 
         JXLabel teamLabel = new JXLabel();
         teamLabel.setText("Team");
-        teamLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
+        teamLabel.setFont(new Font("Arial", Font.BOLD, 12));
         teamLabel.setBorder(new EmptyBorder(0, 30, 0, 10));
         GridBagConstraints gbc_teamLabel = new GridBagConstraints();
         gbc_teamLabel.anchor = GridBagConstraints.SOUTHWEST;
@@ -327,7 +327,7 @@ public class DefectsDetailsPanel extends JXPanel {
         detailsPanelRight.add(teamLabel, gbc_teamLabel);
 
         teamDetails = new JXLabel();
-        teamDetails.setFont(new Font("Tahoma", Font.PLAIN, 12));
+        teamDetails.setFont(new Font("Arial", Font.PLAIN, 12));
         teamDetails.setText("        ");
         teamDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_teamDetails = new GridBagConstraints();
@@ -340,7 +340,7 @@ public class DefectsDetailsPanel extends JXPanel {
 
         JXLabel priorityLabel = new JXLabel();
         priorityLabel.setText("Priority");
-        priorityLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
+        priorityLabel.setFont(new Font("Arial", Font.BOLD, 12));
         priorityLabel.setBorder(new EmptyBorder(0, 30, 0, 10));
         GridBagConstraints gbc_priorityLabel = new GridBagConstraints();
         gbc_priorityLabel.anchor = GridBagConstraints.SOUTHWEST;
@@ -350,7 +350,7 @@ public class DefectsDetailsPanel extends JXPanel {
         detailsPanelRight.add(priorityLabel, gbc_priorityLabel);
 
         priorityDetails = new JXLabel();
-        priorityDetails.setFont(new Font("Tahoma", Font.PLAIN, 12));
+        priorityDetails.setFont(new Font("Arial", Font.PLAIN, 12));
         priorityDetails.setText("        ");
         priorityDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_priorityDetails = new GridBagConstraints();
@@ -363,7 +363,7 @@ public class DefectsDetailsPanel extends JXPanel {
 
         JXLabel blockedReasonLabel = new JXLabel();
         blockedReasonLabel.setText("Blocked reason");
-        blockedReasonLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
+        blockedReasonLabel.setFont(new Font("Arial", Font.BOLD, 12));
         blockedReasonLabel.setBorder(new EmptyBorder(0, 30, 0, 10));
         GridBagConstraints gbc_blockedReasonLabel = new GridBagConstraints();
         gbc_blockedReasonLabel.anchor = GridBagConstraints.SOUTHWEST;
@@ -373,7 +373,7 @@ public class DefectsDetailsPanel extends JXPanel {
         detailsPanelRight.add(blockedReasonLabel, gbc_blockedReasonLabel);
 
         blockedReasonDetails = new JXLabel();
-        blockedReasonDetails.setFont(new Font("Tahoma", Font.PLAIN, 12));
+        blockedReasonDetails.setFont(new Font("Arial", Font.PLAIN, 12));
         blockedReasonDetails.setText("        ");
         blockedReasonDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_blockedReasonDetails = new GridBagConstraints();
@@ -386,7 +386,7 @@ public class DefectsDetailsPanel extends JXPanel {
 
         JXLabel appModulesLabel = new JXLabel();
         appModulesLabel.setText("Application module");
-        appModulesLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
+        appModulesLabel.setFont(new Font("Arial", Font.BOLD, 12));
         appModulesLabel.setBorder(new EmptyBorder(0, 30, 0, 10));
         GridBagConstraints gbc_appModulesLabel = new GridBagConstraints();
         gbc_appModulesLabel.anchor = GridBagConstraints.SOUTHWEST;
@@ -396,7 +396,7 @@ public class DefectsDetailsPanel extends JXPanel {
         detailsPanelRight.add(appModulesLabel, gbc_appModulesLabel);
 
         appModuleDetails = new JXLabel();
-        appModuleDetails.setFont(new Font("Tahoma", Font.PLAIN, 12));
+        appModuleDetails.setFont(new Font("Arial", Font.PLAIN, 12));
         appModuleDetails.setText("        ");
         appModuleDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_appModuleDetails = new GridBagConstraints();
@@ -409,7 +409,7 @@ public class DefectsDetailsPanel extends JXPanel {
 
         JXLabel detectedInReleaseLabel = new JXLabel();
         detectedInReleaseLabel.setText("Detected in release");
-        detectedInReleaseLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
+        detectedInReleaseLabel.setFont(new Font("Arial", Font.BOLD, 12));
         detectedInReleaseLabel.setBorder(new EmptyBorder(0, 30, 0, 10));
         GridBagConstraints gbc_detectedInReleaseLabel = new GridBagConstraints();
         gbc_detectedInReleaseLabel.anchor = GridBagConstraints.SOUTHWEST;
@@ -419,7 +419,7 @@ public class DefectsDetailsPanel extends JXPanel {
         detailsPanelRight.add(detectedInReleaseLabel, gbc_detectedInReleaseLabel);
 
         detectedInReleaseDetails = new JXLabel();
-        detectedInReleaseDetails.setFont(new Font("Tahoma", Font.PLAIN, 12));
+        detectedInReleaseDetails.setFont(new Font("Arial", Font.PLAIN, 12));
         detectedInReleaseDetails.setText("        ");
         detectedInReleaseDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_detectedInReleaseDetails = new GridBagConstraints();
@@ -432,7 +432,7 @@ public class DefectsDetailsPanel extends JXPanel {
 
         JXLabel creationTimeLabel = new JXLabel();
         creationTimeLabel.setText("Creation time");
-        creationTimeLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
+        creationTimeLabel.setFont(new Font("Arial", Font.BOLD, 12));
         creationTimeLabel.setBorder(new EmptyBorder(0, 30, 0, 10));
         GridBagConstraints gbc_creationTimeLabel = new GridBagConstraints();
         gbc_creationTimeLabel.anchor = GridBagConstraints.SOUTHWEST;
@@ -442,7 +442,7 @@ public class DefectsDetailsPanel extends JXPanel {
         detailsPanelRight.add(creationTimeLabel, gbc_creationTimeLabel);
 
         creationTimeDetails = new JXLabel();
-        creationTimeDetails.setFont(new Font("Tahoma", Font.PLAIN, 12));
+        creationTimeDetails.setFont(new Font("Arial", Font.PLAIN, 12));
         creationTimeDetails.setText("        ");
         creationTimeDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_creationTimeDetails = new GridBagConstraints();
@@ -455,7 +455,7 @@ public class DefectsDetailsPanel extends JXPanel {
 
         JXLabel closedOnLabel = new JXLabel();
         closedOnLabel.setText("Closed on");
-        closedOnLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
+        closedOnLabel.setFont(new Font("Arial", Font.BOLD, 12));
         closedOnLabel.setBorder(new EmptyBorder(0, 30, 0, 10));
         GridBagConstraints gbc_closedOnLabel = new GridBagConstraints();
         gbc_closedOnLabel.anchor = GridBagConstraints.SOUTHWEST;
@@ -465,7 +465,7 @@ public class DefectsDetailsPanel extends JXPanel {
         detailsPanelRight.add(closedOnLabel, gbc_closedOnLabel);
 
         closedOnDetails = new JXLabel();
-        closedOnDetails.setFont(new Font("Tahoma", Font.PLAIN, 12));
+        closedOnDetails.setFont(new Font("Arial", Font.PLAIN, 12));
         closedOnDetails.setText("        ");
         closedOnDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_closedOnDetails = new GridBagConstraints();

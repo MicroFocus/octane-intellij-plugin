@@ -79,7 +79,7 @@ public class GeneralEntityDetailsPanel extends JPanel {
 		descriptionPanel.setLayout(gbl_descriptionPanel);
 
 		JXLabel lblDescription = new JXLabel();
-		lblDescription.setFont(new Font("Tahoma", Font.BOLD, 11));
+		lblDescription.setFont(new Font("Arial", Font.BOLD, 11));
 		lblDescription.setText("Description");
 		GridBagConstraints gbc_lblDescription = new GridBagConstraints();
 		gbc_lblDescription.anchor = GridBagConstraints.WEST;
@@ -94,7 +94,7 @@ public class GeneralEntityDetailsPanel extends JPanel {
 		descriptionDetails.setOpaque(false);
 		descriptionDetails.setEditable(false);
 		descriptionDetails.setBorder(new EmptyBorder(0, 0, 0, 5));
-		descriptionDetails.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		descriptionDetails.setFont(new Font("Arial", Font.PLAIN, 11));
 		descriptionDetails.setBackground(JBColor.background());
 
 		GridBagConstraints gbc_descriptionDetails = new GridBagConstraints();

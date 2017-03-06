@@ -60,7 +60,7 @@ public class OneCommetFatLine extends JPanel {
 		textField.setOpaque(false);
 		textField.setEditable(false);
 		textField.setBorder(null);
-		textField.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		textField.setFont(new Font("Arial", Font.PLAIN, 11));
 		
 		GridBagConstraints gbc_textField = new GridBagConstraints();
 		gbc_textField.gridwidth = 2;
