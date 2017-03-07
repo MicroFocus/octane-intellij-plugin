@@ -7,7 +7,6 @@ import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.ui.JBColor;
-import org.jdesktop.swingx.JXHyperlink;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
 
@@ -21,7 +20,7 @@ import java.util.Collection;
 public class HeaderPanel extends JPanel {
 
     private JLabel entityIconLabel;
-    private JXHyperlink entityLinkToBrowser;
+    private JXLabel entityLinkToBrowser;
     
     private JXPanel phasePanel;
     
@@ -51,12 +50,9 @@ public class HeaderPanel extends JPanel {
         gridBagLayout.rowWeights = new double[]{0.0, Double.MIN_VALUE};
         setLayout(gridBagLayout);
 
-        entityLinkToBrowser = new JXHyperlink();
-        entityLinkToBrowser.setFont(new Font("Tahoma", Font.PLAIN, 13));
+        entityLinkToBrowser = new JXLabel();
+        entityLinkToBrowser.setFont(new Font("Arial", Font.PLAIN, 13));
         entityLinkToBrowser.setBorder(new EmptyBorder(0, 5, 0, 0));
-        entityLinkToBrowser.setUnclickedColor(JBColor.foreground());
-        entityLinkToBrowser.setClickedColor(JBColor.foreground());
-        entityLinkToBrowser.setBorderPainted(false);
         entityLinkToBrowser.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
@@ -103,7 +99,7 @@ public class HeaderPanel extends JPanel {
         
         currentPhaseLabel = new JXLabel();
         currentPhaseLabel.setText("Current phase:");
-        currentPhaseLabel.setFont(new Font("Tahoma", Font.BOLD, 13));
+        currentPhaseLabel.setFont(new Font("Arial", Font.BOLD, 13));
         currentPhaseLabel.setBorder(new EmptyBorder(0, 0, 0, 5));
         GridBagConstraints gbc_currentPhaseLabel = new GridBagConstraints();
         gbc_currentPhaseLabel.anchor = GridBagConstraints.WEST;
@@ -114,7 +110,7 @@ public class HeaderPanel extends JPanel {
         
         phaseDetails = new JXLabel();
         phaseDetails.setText("phase");
-        phaseDetails.setFont(new Font("Tahoma", Font.PLAIN, 13));
+        phaseDetails.setFont(new Font("Arial", Font.PLAIN, 13));
         phaseDetails.setBorder(new EmptyBorder(0, 0, 0, 10));
         GridBagConstraints gbc_phaseDetails = new GridBagConstraints();
         gbc_phaseDetails.anchor = GridBagConstraints.WEST;
@@ -125,7 +121,7 @@ public class HeaderPanel extends JPanel {
         
         moveToLabel = new JXLabel();
         moveToLabel.setText("Move to:");
-        moveToLabel.setFont(new Font("Tahoma", Font.BOLD, 13));
+        moveToLabel.setFont(new Font("Arial", Font.BOLD, 13));
         moveToLabel.setBorder(new EmptyBorder(0, 0, 0, 5));
         GridBagConstraints gbc_moveToLabel = new GridBagConstraints();
         gbc_moveToLabel.anchor = GridBagConstraints.WEST;
@@ -150,7 +146,7 @@ public class HeaderPanel extends JPanel {
     }
 
     public void setNameDetails(String nameDetails) {
-        this.entityLinkToBrowser.setText(nameDetails);
+        this.entityLinkToBrowser.setText("<html><body><span style=\"font-family:'arial unicode ms'\">"+nameDetails+"</body></html>");
     }
 
     public void setPhaseDetails(String phaseDetails) {

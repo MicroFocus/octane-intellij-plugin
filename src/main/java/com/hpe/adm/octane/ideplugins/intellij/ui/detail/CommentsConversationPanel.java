@@ -23,7 +23,7 @@ public class CommentsConversationPanel extends JPanel {
 		southPanel.setLayout(new GridBagLayout());
 
 		messageBox = new JTextField(30);
-		messageBox.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		messageBox.setFont(new Font("Arial", Font.PLAIN, 11));
 		messageBox.setOpaque(false);
 		messageBox.requestFocusInWindow();
 		messageBox.setOpaque(true);
@@ -46,7 +46,7 @@ public class CommentsConversationPanel extends JPanel {
 		chatBox.setEditable(false);
 		chatBox.setOpaque(false);
 		chatBox.setBorder(null);
-		chatBox.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		chatBox.setFont(new Font("Arial", Font.PLAIN, 11));
         chatBox.addHyperlinkListener(e -> {
             if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
                 try {

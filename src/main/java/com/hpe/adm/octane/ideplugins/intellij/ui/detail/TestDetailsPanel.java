@@ -46,7 +46,7 @@ public class TestDetailsPanel extends JXPanel {
         detailsPanelLeft.setLayout(gbl_detailsPanelLeft);
 
         JXLabel testTypeLabel = new JXLabel();
-        testTypeLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
+        testTypeLabel.setFont(new Font("Arial", Font.BOLD, 12));
         testTypeLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
         testTypeLabel.setText("Test type");
         GridBagConstraints gbc_testTypeLabel = new GridBagConstraints();
@@ -57,7 +57,7 @@ public class TestDetailsPanel extends JXPanel {
         detailsPanelLeft.add(testTypeLabel, gbc_testTypeLabel);
 
         testTypeDetails = new JXLabel();
-        testTypeDetails.setFont(new Font("Tahoma", Font.PLAIN, 12));
+        testTypeDetails.setFont(new Font("Arial", Font.PLAIN, 12));
         testTypeDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         testTypeDetails.setText("                            ");
         GridBagConstraints gbc_testTypeDetails = new GridBagConstraints();
@@ -69,7 +69,7 @@ public class TestDetailsPanel extends JXPanel {
         detailsPanelLeft.add(testTypeDetails, gbc_testTypeDetails);
 
         JXLabel testToolTypeLabel = new JXLabel();
-        testToolTypeLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
+        testToolTypeLabel.setFont(new Font("Arial", Font.BOLD, 12));
         testToolTypeLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
         testToolTypeLabel.setText("Test tool type");
         GridBagConstraints gbc_testToolTypeLabel = new GridBagConstraints();
@@ -80,7 +80,7 @@ public class TestDetailsPanel extends JXPanel {
         detailsPanelLeft.add(testToolTypeLabel, gbc_testToolTypeLabel);
 
         testToolTypeDetails = new JXLabel();
-        testToolTypeDetails.setFont(new Font("Tahoma", Font.PLAIN, 12));
+        testToolTypeDetails.setFont(new Font("Arial", Font.PLAIN, 12));
         testToolTypeDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         testToolTypeDetails.setText("                            ");
         GridBagConstraints gbc_testToolTypeDetails = new GridBagConstraints();
@@ -92,7 +92,7 @@ public class TestDetailsPanel extends JXPanel {
         detailsPanelLeft.add(testToolTypeDetails, gbc_testToolTypeDetails);
 
         JXLabel estimatedDurationLabel = new JXLabel();
-        estimatedDurationLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
+        estimatedDurationLabel.setFont(new Font("Arial", Font.BOLD, 12));
         estimatedDurationLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
         estimatedDurationLabel.setText("Estimated duration");
         GridBagConstraints gbc_estimatedDurationLabel = new GridBagConstraints();
@@ -104,7 +104,7 @@ public class TestDetailsPanel extends JXPanel {
 
         estimatedDurationDetails = new JXLabel();
         estimatedDurationDetails.setText("                            ");
-        estimatedDurationDetails.setFont(new Font("Tahoma", Font.PLAIN, 12));
+        estimatedDurationDetails.setFont(new Font("Arial", Font.PLAIN, 12));
         estimatedDurationDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_estimatedDurationDetails = new GridBagConstraints();
         gbc_estimatedDurationDetails.anchor = GridBagConstraints.SOUTH;
@@ -115,7 +115,7 @@ public class TestDetailsPanel extends JXPanel {
         detailsPanelLeft.add(estimatedDurationDetails, gbc_estimatedDurationDetails);
 
         JXLabel coveredContentLabel = new JXLabel();
-        coveredContentLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
+        coveredContentLabel.setFont(new Font("Arial", Font.BOLD, 12));
         coveredContentLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
         coveredContentLabel.setText("Covered content");
         GridBagConstraints gbc_coveredContentLabel = new GridBagConstraints();
@@ -127,7 +127,7 @@ public class TestDetailsPanel extends JXPanel {
 
         coveredContentDetails = new JXLabel();
         coveredContentDetails.setText("                            ");
-        coveredContentDetails.setFont(new Font("Tahoma", Font.PLAIN, 12));
+        coveredContentDetails.setFont(new Font("Arial", Font.PLAIN, 12));
         coveredContentDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_coveredContentDetails = new GridBagConstraints();
         gbc_coveredContentDetails.anchor = GridBagConstraints.SOUTH;
@@ -138,7 +138,7 @@ public class TestDetailsPanel extends JXPanel {
         detailsPanelLeft.add(coveredContentDetails, gbc_coveredContentDetails);
 
         JXLabel applicationModulesLabel = new JXLabel();
-        applicationModulesLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
+        applicationModulesLabel.setFont(new Font("Arial", Font.BOLD, 12));
         applicationModulesLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
         applicationModulesLabel.setText("Application modules");
         GridBagConstraints gbc_applicationModulesLabel = new GridBagConstraints();
@@ -150,7 +150,7 @@ public class TestDetailsPanel extends JXPanel {
 
         applicationModulesDetails = new JXLabel();
         applicationModulesDetails.setText("                            ");
-        applicationModulesDetails.setFont(new Font("Tahoma", Font.PLAIN, 12));
+        applicationModulesDetails.setFont(new Font("Arial", Font.PLAIN, 12));
         applicationModulesDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_applicationModulesDetails = new GridBagConstraints();
         gbc_applicationModulesDetails.anchor = GridBagConstraints.SOUTH;
@@ -170,7 +170,7 @@ public class TestDetailsPanel extends JXPanel {
         detailsPanelRight.setLayout(gbl_detailsPanelRight);
 
         JXLabel ownerLabel = new JXLabel();
-        ownerLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
+        ownerLabel.setFont(new Font("Arial", Font.BOLD, 12));
         ownerLabel.setBorder(new EmptyBorder(0, 30, 0, 10));
         ownerLabel.setText("Owner");
         GridBagConstraints gbc_ownerLabel = new GridBagConstraints();
@@ -181,7 +181,7 @@ public class TestDetailsPanel extends JXPanel {
         detailsPanelRight.add(ownerLabel, gbc_ownerLabel);
 
         ownerDetails = new JXLabel();
-        ownerDetails.setFont(new Font("Tahoma", Font.PLAIN, 12));
+        ownerDetails.setFont(new Font("Arial", Font.PLAIN, 12));
         ownerDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         ownerDetails.setText("                        ");
         GridBagConstraints gbc_ownerDetails = new GridBagConstraints();
@@ -193,7 +193,7 @@ public class TestDetailsPanel extends JXPanel {
         detailsPanelRight.add(ownerDetails, gbc_ownerDetails);
 
         JXLabel designerLabel = new JXLabel();
-        designerLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
+        designerLabel.setFont(new Font("Arial", Font.BOLD, 12));
         designerLabel.setBorder(new EmptyBorder(0, 30, 0, 10));
         designerLabel.setText("Designer");
         GridBagConstraints gbc_designerLabel = new GridBagConstraints();
@@ -204,7 +204,7 @@ public class TestDetailsPanel extends JXPanel {
         detailsPanelRight.add(designerLabel, gbc_designerLabel);
 
         designerDetails = new JXLabel();
-        designerDetails.setFont(new Font("Tahoma", Font.PLAIN, 12));
+        designerDetails.setFont(new Font("Arial", Font.PLAIN, 12));
         designerDetails.setText("                        ");
         designerDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_designerDetails = new GridBagConstraints();
@@ -216,7 +216,7 @@ public class TestDetailsPanel extends JXPanel {
         detailsPanelRight.add(designerDetails, gbc_designerDetails);
 
         JXLabel createdLabel = new JXLabel();
-        createdLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
+        createdLabel.setFont(new Font("Arial", Font.BOLD, 12));
         createdLabel.setBorder(new EmptyBorder(0, 30, 0, 10));
         createdLabel.setText("Created");
         GridBagConstraints gbc_createdLabel = new GridBagConstraints();
@@ -227,7 +227,7 @@ public class TestDetailsPanel extends JXPanel {
         detailsPanelRight.add(createdLabel, gbc_createdLabel);
 
         createdDetails = new JXLabel();
-        createdDetails.setFont(new Font("Tahoma", Font.PLAIN, 12));
+        createdDetails.setFont(new Font("Arial", Font.PLAIN, 12));
         createdDetails.setText("                        ");
         createdDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_createdDetails = new GridBagConstraints();
@@ -239,7 +239,7 @@ public class TestDetailsPanel extends JXPanel {
         detailsPanelRight.add(createdDetails, gbc_createdDetails);
 
         JXLabel lastModifiedLabel = new JXLabel();
-        lastModifiedLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
+        lastModifiedLabel.setFont(new Font("Arial", Font.BOLD, 12));
         lastModifiedLabel.setBorder(new EmptyBorder(0, 30, 0, 10));
         lastModifiedLabel.setText("Last modified");
         GridBagConstraints gbc_lastModifiedLabel = new GridBagConstraints();
@@ -250,7 +250,7 @@ public class TestDetailsPanel extends JXPanel {
         detailsPanelRight.add(lastModifiedLabel, gbc_lastModifiedLabel);
 
         lastModifiedDetails = new JXLabel();
-        lastModifiedDetails.setFont(new Font("Tahoma", Font.PLAIN, 12));
+        lastModifiedDetails.setFont(new Font("Arial", Font.PLAIN, 12));
         lastModifiedDetails.setText("                        ");
         lastModifiedDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_lastModifiedDetails = new GridBagConstraints();
@@ -263,7 +263,7 @@ public class TestDetailsPanel extends JXPanel {
         
         automationStatusLabel = new JXLabel();
         automationStatusLabel.setText("Automation status");
-        automationStatusLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
+        automationStatusLabel.setFont(new Font("Arial", Font.BOLD, 12));
         automationStatusLabel.setBorder(new EmptyBorder(0, 30, 0, 10));
         GridBagConstraints gbc_automationStatusLabel = new GridBagConstraints();
         gbc_automationStatusLabel.anchor = GridBagConstraints.SOUTHWEST;
@@ -273,7 +273,7 @@ public class TestDetailsPanel extends JXPanel {
         detailsPanelRight.add(automationStatusLabel, gbc_automationStatusLabel);
         
         automationStatusDetails = new JXLabel();
-        automationStatusDetails.setFont(new Font("Tahoma", Font.PLAIN, 12));
+        automationStatusDetails.setFont(new Font("Arial", Font.PLAIN, 12));
         automationStatusDetails.setText("                        ");
         automationStatusDetails.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
         GridBagConstraints gbc_automationStatusDetails = new GridBagConstraints();

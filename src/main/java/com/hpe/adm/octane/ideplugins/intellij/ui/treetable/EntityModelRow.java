@@ -67,18 +67,14 @@ public class EntityModelRow extends JPanel {
 		gbl_panelEntityTitle.rowWeights = new double[]{1.0, 1.0, Double.MIN_VALUE};
 		panelEntityTitle.setLayout(gbl_panelEntityTitle);
 		
-		lblEntityId = new JXLabel();
-		lblEntityId.setForeground(fontColor);
-		lblEntityId.setText("ID");
+		lblEntityId = createLabel("");
 		GridBagConstraints gbc_lblEntityId = new GridBagConstraints();
 		gbc_lblEntityId.insets = new Insets(5, 0, 3, 5);
 		gbc_lblEntityId.gridx = 0;
 		gbc_lblEntityId.gridy = 0;
 		panelEntityTitle.add(lblEntityId, gbc_lblEntityId);
 		
-		lblTitle = new JXLabel();
-		lblTitle.setForeground(fontColor);
-		lblTitle.setText("NAME");
+		lblTitle = createLabel("");
 		GridBagConstraints gbc_lblTitle = new GridBagConstraints();
 		gbc_lblTitle.insets = new Insets(5, 0, 3, 0);
 		gbc_lblTitle.fill = GridBagConstraints.HORIZONTAL;
@@ -86,9 +82,7 @@ public class EntityModelRow extends JPanel {
 		gbc_lblTitle.gridy = 0;
 		panelEntityTitle.add(lblTitle, gbc_lblTitle);
 		
-		lblSubtitle = new JXLabel();
-		lblSubtitle.setForeground(fontColor);
-		lblSubtitle.setText("SUBTITLE");
+		lblSubtitle = createLabel("");
 		GridBagConstraints gbc_lblSubtitle = new GridBagConstraints();
 		gbc_lblSubtitle.insets = new Insets(0, 0, 5, 0);
 		gbc_lblSubtitle.fill = GridBagConstraints.HORIZONTAL;
@@ -144,7 +138,7 @@ public class EntityModelRow extends JPanel {
 
     public void setEntityName(String id, String name){
     	lblEntityId.setText(id);
-    	lblTitle.setText(name);
+    	lblTitle.setText("<html><body><span style=\"font-family:'arial unicode ms' , sans-serif\">"+name+"</body></html>");
     }
 
     public void setEntitySubTitle(String subTitle, String defaultText){
@@ -188,10 +182,10 @@ public class EntityModelRow extends JPanel {
         }
     }
 
-
     private JXLabel createLabel(String text){
         JXLabel lbl = new JXLabel(text);
         lbl.setForeground(fontColor);
+        lbl.setFont(new Font("Arial",Font.PLAIN,12));
         return lbl;
     }
 
