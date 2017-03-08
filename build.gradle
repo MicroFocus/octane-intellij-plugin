@@ -16,6 +16,10 @@ repositories {
     maven { url 'http://dl.bintray.com/jetbrains/intellij-plugin-service' }
 }
 
+clean.doLast {
+    file('.sandbox').deleteDir()
+}
+
 sourceSets {
     main {
         java.srcDir 'src/main/java'
