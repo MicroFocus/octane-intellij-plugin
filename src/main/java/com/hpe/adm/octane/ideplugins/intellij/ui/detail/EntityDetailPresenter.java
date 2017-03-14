@@ -1,6 +1,9 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.google.inject.Inject;
+import com.hpe.adm.nga.sdk.exception.OctaneException;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.nga.sdk.model.ReferenceFieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
@@ -14,6 +17,9 @@ import com.hpe.adm.octane.services.filtering.Entity;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.util.IconLoader;
+import com.intellij.openapi.vcs.VcsShowConfirmationOption;
+import com.intellij.util.ui.ConfirmationDialog;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -29,6 +35,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
     private CommentService commentService;
     private Entity entityType;
     private Long entityId;
+    private EntityModel entityModel;
 
 
     public EntityDetailPresenter() {
@@ -59,6 +66,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                 },
                 (entityModel) -> {
                     if (entityModel != null) {
+                        this.entityModel = entityModel;
                         entityDetailView.setEntityModel(entityModel);
                         entityDetailView.setSaveSelectedPhaseButton(new SaveSelectedPhaseAction());
                         entityDetailView.setRefreshEntityButton(new EntityRefreshAction());
@@ -133,7 +141,25 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                 ReferenceFieldModel nextPhase = (ReferenceFieldModel) selectedTransition.getValue("target_phase");
                 return nextPhase;
             }, (nextPhase) -> {
-                entityService.updateEntityPhase(entityDetailView.getEntityModel(), nextPhase);
+                try {
+                    entityService.updateEntityPhase(entityDetailView.getEntityModel(), nextPhase);
+                }catch (OctaneException ex){
+                    JsonParser jsonParser =  new JsonParser();
+                    JsonObject jsonObject = (JsonObject) jsonParser.parse(ex.getMessage().substring(ex.getMessage().indexOf("{")));
+                    String errorMessage =  jsonObject.get("description_translated").getAsString();
+                    ConfirmationDialog dialog = new ConfirmationDialog(null, "Server message: "+errorMessage +"\nThe plugin does not support editing.\n" +
+                            "You can edit it in the browser. Do you what to do this now?", "Business rule violation",
+                            null, VcsShowConfirmationOption.STATIC_SHOW_CONFIRMATION) {
+                        @Override
+                        public void setDoNotAskOption(@Nullable DoNotAskOption doNotAsk) {
+                            super.setDoNotAskOption(null);
+                        }
+                    };
+                    boolean goToBrowser = dialog.showAndGet();
+                    if(goToBrowser){
+                        entityService.openInBrowser(entityModel);
+                    }
+                }
                 entityDetailView.doRefresh();
                 setEntity(entityType, entityId);
             }, null, "Failed to move to next phase", "Moving to next phase");
