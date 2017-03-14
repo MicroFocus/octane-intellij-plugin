@@ -118,11 +118,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
 
     private void setComments(EntityModel entityModel) {
         Collection<EntityModel> result = new HashSet<>();
-        RestUtil.runInBackground(() -> {
-            return commentService.getComments(entityModel);
-        }, (comments) -> {
-            entityDetailView.setComments(comments);
-        }, null, "Failed to get possible comments", "fetching comments");
+        RestUtil.runInBackground(() -> commentService.getComments(entityModel), (comments) -> entityDetailView.setComments(comments), null, "Failed to get possible comments", "fetching comments");
     }
 
     private final class EntityRefreshAction extends AnAction {
@@ -143,32 +139,33 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
         public void actionPerformed(AnActionEvent e) {
             RestUtil.runInBackground(() -> {
                 EntityModel selectedTransition = entityDetailView.getSelectedTransition();
-                ReferenceFieldModel nextPhase = (ReferenceFieldModel) selectedTransition.getValue("target_phase");
-                return nextPhase;
+                return (ReferenceFieldModel) selectedTransition.getValue("target_phase");
             }, (nextPhase) -> {
                 try {
                     entityService.updateEntityPhase(entityDetailView.getEntityModel(), nextPhase);
                 }catch (OctaneException ex){
-                    String errorMessage ="Failed to change phase";
-                    try {
-                        JsonParser jsonParser = new JsonParser();
-                        JsonObject jsonObject = (JsonObject) jsonParser.parse(ex.getMessage().substring(ex.getMessage().indexOf("{")));
-                        errorMessage = jsonObject.get("description_translated").getAsString();
-                    }catch (Exception e1){
-                        logger.debug("Failed to get JSON message from Octane Server"+e1.getMessage());
-                    }
-                    ConfirmationDialog dialog = new ConfirmationDialog(
-                            project,
-                            "Server message: "+errorMessage + "\nThe plugin does not support editing.\n" + "You can edit it in the browser. Do you what to do this now?",
-                            "Business rule violation",
-                            null, VcsShowConfirmationOption.STATIC_SHOW_CONFIRMATION) {
-                        @Override
-                        public void setDoNotAskOption(@Nullable DoNotAskOption doNotAsk) {
-                            super.setDoNotAskOption(null);
+                    if(ex.getMessage().contains("400")) {
+                        String errorMessage = "Failed to change phase";
+                        try {
+                            JsonParser jsonParser = new JsonParser();
+                            JsonObject jsonObject = (JsonObject) jsonParser.parse(ex.getMessage().substring(ex.getMessage().indexOf("{")));
+                            errorMessage = jsonObject.get("description_translated").getAsString();
+                        } catch (Exception e1) {
+                            logger.debug("Failed to get JSON message from Octane Server" + e1.getMessage());
                         }
-                    };
-                    if(dialog.showAndGet()){
-                        entityService.openInBrowser(entityModel);
+                        ConfirmationDialog dialog = new ConfirmationDialog(
+                                project,
+                                "Server message: " + errorMessage + "\nThe plugin does not support editing.\n" + "You can edit it in the browser. Do you what to do this now?",
+                                "Business rule violation",
+                                null, VcsShowConfirmationOption.STATIC_SHOW_CONFIRMATION) {
+                            @Override
+                            public void setDoNotAskOption(@Nullable DoNotAskOption doNotAsk) {
+                                super.setDoNotAskOption(null);
+                            }
+                        };
+                        if (dialog.showAndGet()) {
+                            entityService.openInBrowser(entityModel);
+                        }
                     }
                 }
                 entityDetailView.doRefresh();
