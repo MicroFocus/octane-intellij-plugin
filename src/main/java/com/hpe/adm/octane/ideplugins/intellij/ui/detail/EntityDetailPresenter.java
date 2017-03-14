@@ -16,6 +16,7 @@ import com.hpe.adm.octane.services.exception.ServiceException;
 import com.hpe.adm.octane.services.filtering.Entity;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vcs.VcsShowConfirmationOption;
 import com.intellij.util.ui.ConfirmationDialog;
@@ -28,11 +29,14 @@ import static com.hpe.adm.octane.services.filtering.Entity.*;
 
 public class EntityDetailPresenter implements Presenter<EntityDetailView> {
 
-    private EntityDetailView entityDetailView;
     @Inject
     private EntityService entityService;
     @Inject
     private CommentService commentService;
+    @Inject
+    private Project project;
+
+    private EntityDetailView entityDetailView;
     private Entity entityType;
     private Long entityId;
     private EntityModel entityModel;
@@ -134,7 +138,6 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
         public SaveSelectedPhaseAction() {
             super("Save selected phase", "this will save the new phase entity", IconLoader.findIcon("/actions/menu-saveall.png"));
         }
-
         public void actionPerformed(AnActionEvent e) {
             RestUtil.runInBackground(() -> {
                 EntityModel selectedTransition = entityDetailView.getSelectedTransition();
@@ -147,16 +150,17 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                     JsonParser jsonParser =  new JsonParser();
                     JsonObject jsonObject = (JsonObject) jsonParser.parse(ex.getMessage().substring(ex.getMessage().indexOf("{")));
                     String errorMessage =  jsonObject.get("description_translated").getAsString();
-                    ConfirmationDialog dialog = new ConfirmationDialog(null, "Server message: "+errorMessage +"\nThe plugin does not support editing.\n" +
-                            "You can edit it in the browser. Do you what to do this now?", "Business rule violation",
+                    ConfirmationDialog dialog = new ConfirmationDialog(
+                            project,
+                            "Server message: "+errorMessage + "\nThe plugin does not support editing.\n" + "You can edit it in the browser. Do you what to do this now?",
+                            "Business rule violation",
                             null, VcsShowConfirmationOption.STATIC_SHOW_CONFIRMATION) {
                         @Override
                         public void setDoNotAskOption(@Nullable DoNotAskOption doNotAsk) {
                             super.setDoNotAskOption(null);
                         }
                     };
-                    boolean goToBrowser = dialog.showAndGet();
-                    if(goToBrowser){
+                    if(dialog.showAndGet()){
                         entityService.openInBrowser(entityModel);
                     }
                 }
