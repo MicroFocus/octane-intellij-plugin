@@ -16,6 +16,7 @@ import com.hpe.adm.octane.services.exception.ServiceException;
 import com.hpe.adm.octane.services.filtering.Entity;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vcs.VcsShowConfirmationOption;
@@ -40,6 +41,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
     private Entity entityType;
     private Long entityId;
     private EntityModel entityModel;
+    private Logger logger = Logger.getInstance("EntityDetailPresenter");
 
 
     public EntityDetailPresenter() {
@@ -147,9 +149,14 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                 try {
                     entityService.updateEntityPhase(entityDetailView.getEntityModel(), nextPhase);
                 }catch (OctaneException ex){
-                    JsonParser jsonParser =  new JsonParser();
-                    JsonObject jsonObject = (JsonObject) jsonParser.parse(ex.getMessage().substring(ex.getMessage().indexOf("{")));
-                    String errorMessage =  jsonObject.get("description_translated").getAsString();
+                    String errorMessage ="Failed to change phase";
+                    try {
+                        JsonParser jsonParser = new JsonParser();
+                        JsonObject jsonObject = (JsonObject) jsonParser.parse(ex.getMessage().substring(ex.getMessage().indexOf("{")));
+                        errorMessage = jsonObject.get("description_translated").getAsString();
+                    }catch (Exception e1){
+                        logger.debug("Failed to get JSON message from Octane Server"+e1.getMessage());
+                    }
                     ConfirmationDialog dialog = new ConfirmationDialog(
                             project,
                             "Server message: "+errorMessage + "\nThe plugin does not support editing.\n" + "You can edit it in the browser. Do you what to do this now?",
