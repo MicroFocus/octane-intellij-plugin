@@ -42,7 +42,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
     private Long entityId;
     private EntityModel entityModel;
     private Logger logger = Logger.getInstance("EntityDetailPresenter");
-    private final String GO_TO_BROWSER_DIALOG_MESSAGE = "\nThe plugin does not support editing.\n" + "You can edit the field in the browser. Do you what to do this now?";
+    private final String GO_TO_BROWSER_DIALOG_MESSAGE = "\nYou can only provide a value for this field using ALM Octane in a browser." + "\nDo you want to do this now? ";
 
 
     public EntityDetailPresenter() {
