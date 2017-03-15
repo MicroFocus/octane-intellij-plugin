@@ -42,6 +42,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
     private Long entityId;
     private EntityModel entityModel;
     private Logger logger = Logger.getInstance("EntityDetailPresenter");
+    private final String GO_TO_BROWSER_DIALOG_MESSAGE = "\nThe plugin does not support editing.\n" + "You can edit the field in the browser. Do you what to do this now?";
 
 
     public EntityDetailPresenter() {
@@ -156,7 +157,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                         }
                         ConfirmationDialog dialog = new ConfirmationDialog(
                                 project,
-                                "Server message: " + errorMessage + "\nThe plugin does not support editing.\n" + "You can edit it in the browser. Do you what to do this now?",
+                                "Server message: " + errorMessage + GO_TO_BROWSER_DIALOG_MESSAGE,
                                 "Business rule violation",
                                 null, VcsShowConfirmationOption.STATIC_SHOW_CONFIRMATION) {
                             @Override
