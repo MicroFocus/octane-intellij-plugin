@@ -136,6 +136,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
         public SaveSelectedPhaseAction() {
             super("Save selected phase", "this will save the new phase entity", IconLoader.findIcon("/actions/menu-saveall.png"));
         }
+
         public void actionPerformed(AnActionEvent e) {
             RestUtil.runInBackground(() -> {
                 EntityModel selectedTransition = entityDetailView.getSelectedTransition();
@@ -143,8 +144,8 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
             }, (nextPhase) -> {
                 try {
                     entityService.updateEntityPhase(entityDetailView.getEntityModel(), nextPhase);
-                }catch (OctaneException ex){
-                    if(ex.getMessage().contains("400")) {
+                } catch (OctaneException ex) {
+                    if (ex.getMessage().contains("400")) {
                         String errorMessage = "Failed to change phase";
                         try {
                             JsonParser jsonParser = new JsonParser();
