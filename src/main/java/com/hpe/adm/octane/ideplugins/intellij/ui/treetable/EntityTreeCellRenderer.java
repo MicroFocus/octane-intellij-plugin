@@ -5,12 +5,12 @@ import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.nga.sdk.model.FieldModel;
 import com.hpe.adm.nga.sdk.model.MultiReferenceFieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
-import com.hpe.adm.octane.services.util.EntityTypeIdPair;
-import com.hpe.adm.octane.services.util.Util;
-import com.hpe.adm.octane.services.MyWorkService;
+import com.hpe.adm.octane.services.FollowEntityService;
 import com.hpe.adm.octane.services.UserService;
 import com.hpe.adm.octane.services.filtering.Entity;
+import com.hpe.adm.octane.services.util.EntityTypeIdPair;
 import com.hpe.adm.octane.services.util.EntityUtil;
+import com.hpe.adm.octane.services.util.Util;
 import com.intellij.ui.JBColor;
 import org.apache.commons.lang.StringUtils;
 import org.jdesktop.swingx.JXLabel;
@@ -21,7 +21,7 @@ import java.awt.*;
 import java.util.*;
 
 import static com.hpe.adm.octane.ideplugins.intellij.ui.detail.DetailsViewDefaultFields.*;
-import static com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityModelRow.*;
+import static com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityModelRow.DetailsPosition;
 import static com.hpe.adm.octane.services.util.Util.getContainerItemForCommentModel;
 import static com.hpe.adm.octane.services.util.Util.getUiDataFromModel;
 
@@ -197,10 +197,10 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
             }
 
             //Check if the item is dismissible or not
-            if(entityModel.getValue(MyWorkService.FOLLOW_ITEMS_OWNER_FIELD) != null &&
-                    entityModel.getValue(MyWorkService.FOLLOW_ITEMS_OWNER_FIELD) .getValue() != null) {
+            if(entityModel.getValue(FollowEntityService.getFollowItemsOwnerField()) != null &&
+                    entityModel.getValue(FollowEntityService.getFollowItemsOwnerField()) .getValue() != null) {
 
-                MultiReferenceFieldModel field = (MultiReferenceFieldModel) entityModel.getValue(MyWorkService.FOLLOW_ITEMS_OWNER_FIELD);
+                MultiReferenceFieldModel field = (MultiReferenceFieldModel) entityModel.getValue(FollowEntityService.getFollowItemsOwnerField());
                 if(EntityUtil.containsEntityModel(field.getValue(), userService.getCurrentUser())){
                     rowPanel.addSimpleDetails("Dismissible", DetailsPosition.BOTTOM);
                 }

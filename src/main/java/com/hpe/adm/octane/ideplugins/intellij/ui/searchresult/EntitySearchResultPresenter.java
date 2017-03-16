@@ -12,13 +12,13 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeView;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
-import com.hpe.adm.octane.services.util.Util;
-import com.hpe.adm.octane.services.util.Constants;
 import com.hpe.adm.octane.services.EntityService;
-import com.hpe.adm.octane.services.MyWorkService;
+import com.hpe.adm.octane.services.FollowEntityService;
 import com.hpe.adm.octane.services.filtering.Entity;
 import com.hpe.adm.octane.services.nonentity.EntitySearchService;
+import com.hpe.adm.octane.services.util.Constants;
 import com.hpe.adm.octane.services.util.SdkUtil;
+import com.hpe.adm.octane.services.util.Util;
 import com.intellij.icons.AllIcons;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -49,7 +49,7 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
     private EntitySearchService entitySearchService;
 
     @Inject
-    private MyWorkService myWorkService;
+    private FollowEntityService followEntityService;
 
     @Inject
     private EventBus eventBus;
@@ -169,7 +169,7 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
                 popup.add(viewDetailMenuItem);
             }
 
-            if(myWorkService.isFollowingEntitySupported(entityType)) {
+            if(followEntityService.isFollowingEntitySupported(entityType)) {
                 JMenuItem addToMyWorkMenuItem = new JMenuItem("Add to \"My Work\"", AllIcons.General.Add);
                 addToMyWorkMenuItem.addMouseListener(new MouseAdapter() {
                     @Override
@@ -177,7 +177,7 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
                         ApplicationManager.getApplication().invokeLater(() -> {
                             Task.Backgroundable backgroundTask = new Task.Backgroundable(null, "Adding item to to \"My Work\"", true) {
                                 public void run(@NotNull ProgressIndicator indicator) {
-                                    if(myWorkService.addCurrentUserToFollowers(entityModel)) {
+                                    if(followEntityService.addCurrentUserToFollowers(entityModel)) {
                                         eventBus.post(new RefreshMyWorkEvent());
                                         UiUtil.showWarningBalloon(null,
                                                 "Item added",

@@ -11,6 +11,7 @@ import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
+import com.hpe.adm.octane.services.FollowEntityService;
 import com.hpe.adm.octane.services.util.PartialEntity;
 import com.hpe.adm.octane.services.util.Util;
 import com.hpe.adm.octane.services.util.Constants;
@@ -63,6 +64,9 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
 
     @Inject
     private MyWorkService myWorkService;
+
+    @Inject
+    private FollowEntityService followEntityService;
 
     @Inject
     private EntityService entityService;
@@ -278,7 +282,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
                 popup.add(activateItem);
             }
 
-            if(myWorkService.isFollowingEntitySupported(entityType) && myWorkService.isCurrentUserFollowing(entityModel)) {
+            if(followEntityService.isFollowingEntitySupported(entityType) && followEntityService.isCurrentUserFollowing(entityModel)) {
 
                 JMenuItem removeFromMyWorkMenuItem = new JMenuItem("Dismiss", AllIcons.General.Remove);
                 removeFromMyWorkMenuItem.addMouseListener(new MouseAdapter() {
@@ -293,7 +297,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
                                             true) {
 
                                 public void run(@NotNull ProgressIndicator indicator) {
-                                    if(myWorkService.removeCurrentUserFromFollowers(entityModel)) {
+                                    if(followEntityService.removeCurrentUserFromFollowers(entityModel)) {
 
                                         List list = entityTreeView.getTreeModel().getGroupedEntities()
                                                 .values()
