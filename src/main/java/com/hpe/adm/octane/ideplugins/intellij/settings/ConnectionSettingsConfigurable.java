@@ -2,12 +2,12 @@ package com.hpe.adm.octane.ideplugins.intellij.settings;
 
 import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.ui.components.ConnectionSettingsComponent;
-import com.hpe.adm.octane.services.nonentity.OctaneVersionService;
-import com.hpe.adm.octane.services.util.Constants;
 import com.hpe.adm.octane.services.TestService;
 import com.hpe.adm.octane.services.connection.ConnectionSettings;
 import com.hpe.adm.octane.services.connection.ConnectionSettingsProvider;
 import com.hpe.adm.octane.services.exception.ServiceException;
+import com.hpe.adm.octane.services.nonentity.OctaneVersionService;
+import com.hpe.adm.octane.services.util.Constants;
 import com.hpe.adm.octane.services.util.UrlParser;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
@@ -25,8 +25,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-import static com.hpe.adm.octane.services.util.UrlParser.resolveConnectionSettings;
-
 public class ConnectionSettingsConfigurable implements SearchableConfigurable {
 
     private static final String NAME = "Octane";
@@ -38,8 +36,8 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
     private TestService testService;
     private IdePluginPersistentState idePluginPersistentState;
     private OctaneVersionService versionService;
-
     private ConnectionSettingsComponent connectionSettingsView = new ConnectionSettingsComponent();
+    private boolean pinMessage = false;
 
     @NotNull
     @Override
@@ -100,17 +98,24 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
 
     @Override
     public boolean isModified() {
+        //If it's empty and different allow apply
+        if(isViewConnectionSettingsEmpty() && !connectionSettingsProvider.getConnectionSettings().isEmpty()) {
+            return true;
+        } else if (isViewConnectionSettingsEmpty()){
+            return false;
+        }
+
+        if(!pinMessage) {
+            connectionSettingsView.setConnectionStatusLabelVisible(false);
+        }
 
         ConnectionSettings currentConnectionSettings = connectionSettingsProvider.getConnectionSettings();
-
         ConnectionSettings viewConnectionSettings;
         try {
-            viewConnectionSettings = resolveConnectionSettings(
-                    connectionSettingsView.getServerUrl(),
-                    connectionSettingsView.getUserName(),
-                    connectionSettingsView.getPassword());
-        } catch (ServiceException e) {
-            viewConnectionSettings = new ConnectionSettings();
+            viewConnectionSettings = validateClientSide();
+        } catch (ServiceException ex) {
+            pinMessage = false;
+            return false;
         }
 
         return !viewConnectionSettings.equals(currentConnectionSettings);
@@ -139,16 +144,15 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
             //remove the hash and remove extra stuff if successful
             connectionSettingsView.setServerUrl(UrlParser.createUrlFromConnectionSettings(newConnectionSettings));
             connectionSettingsView.setConnectionStatusSuccess();
-        }
-        if (versionService.getOctaneVersion().compareTo(DYNAMO_VERSION) < 0) {
-           showWarningBalloon();
+
+            if (versionService.getOctaneVersion().compareTo(DYNAMO_VERSION) < 0) {
+                showWarningBalloon();
+            }
         }
     }
 
     private void showWarningBalloon() {
-
         StatusBar statusBar = WindowManager.getInstance().getStatusBar(currentProject);
-
 
         String message = "Octane version not supported. This plugin works with Octane versions starting " + DYNAMO_VERSION;
         Balloon balloon = JBPopupFactory.getInstance().createHtmlTextBalloonBuilder(message,
@@ -163,41 +167,24 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
      * @return ConnectionSettings if valid, null otherwise
      */
     private ConnectionSettings testConnection(){
+
+        connectionSettingsView.setConnectionStatusLoading();
+
         ConnectionSettings newConnectionSettings;
-
-        // Validation that does not require connection to the server,
-        // only this one shows and example for a correct message
         try {
-            newConnectionSettings = getConnectionSettingsFromView();
-        } catch (ServiceException ex){
-
-            final StringBuilder errorMessageBuilder = new StringBuilder();
-
-            errorMessageBuilder.append(ex.getMessage());
-            errorMessageBuilder.append("<br>");
-            errorMessageBuilder.append(Constants.CORRECT_URL_FORMAT_MESSAGE);
-
-            SwingUtilities.invokeLater(() ->  connectionSettingsView.setConnectionStatusError(errorMessageBuilder.toString()));
-
-            return null;
-        }
-
-        //Validation of username and password
-        try {
-            validateUsernameAndPassword();
+            newConnectionSettings = validateClientSide();
         } catch (ServiceException ex) {
-            SwingUtilities.invokeLater(() ->  connectionSettingsView.setConnectionStatusError(ex.getMessage()));
-
             return null;
         }
+
+        pinMessage = true;
 
         //This will attempt a connection
         try {
             testService.testConnection(newConnectionSettings);
             SwingUtilities.invokeLater(connectionSettingsView::setConnectionStatusSuccess);
         } catch (ServiceException ex){
-            SwingUtilities.invokeLater(() ->  connectionSettingsView.setConnectionStatusError(ex.getMessage()));
-
+            SwingUtilities.invokeLater(() -> connectionSettingsView.setConnectionStatusError(ex.getMessage()));
             return null;
         }
 
@@ -208,12 +195,10 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
 
     private ConnectionSettings getConnectionSettingsFromView() throws ServiceException{
         //Parse server url
-        ConnectionSettings connectionSettings = UrlParser.resolveConnectionSettings(
+        return UrlParser.resolveConnectionSettings(
                 connectionSettingsView.getServerUrl(),
                 connectionSettingsView.getUserName(),
                 connectionSettingsView.getPassword());
-
-        return connectionSettings;
     }
 
     private boolean isViewConnectionSettingsEmpty(){
@@ -237,6 +222,36 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
         if(errorMessageBuilder.length() != 0){
             throw new ServiceException(errorMessageBuilder.toString());
         }
+    }
+
+    private ConnectionSettings validateClientSide() throws ServiceException{
+        ConnectionSettings newConnectionSettings;
+
+        // Validation that does not require connection to the server,
+        // only this one shows and example for a correct message
+        try {
+            newConnectionSettings = getConnectionSettingsFromView();
+        } catch (ServiceException ex){
+
+            final StringBuilder errorMessageBuilder = new StringBuilder();
+
+            errorMessageBuilder.append(ex.getMessage());
+            errorMessageBuilder.append("<br>");
+            errorMessageBuilder.append(Constants.CORRECT_URL_FORMAT_MESSAGE);
+
+            SwingUtilities.invokeLater(() ->  connectionSettingsView.setConnectionStatusError(errorMessageBuilder.toString()));
+            throw ex;
+        }
+
+        //Validation of username and password
+        try {
+            validateUsernameAndPassword();
+        } catch (ServiceException ex) {
+            SwingUtilities.invokeLater(() ->  connectionSettingsView.setConnectionStatusError(ex.getMessage()));
+            throw ex;
+        }
+
+        return newConnectionSettings;
     }
 
     @Override
