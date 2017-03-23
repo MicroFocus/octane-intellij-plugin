@@ -33,6 +33,7 @@ public class OctaneCheckinHandler extends CheckinHandler {
     private IdePluginPersistentState idePluginPersistentState;
     private PartialEntity activatedItem;
     private EntityModel parentStory;
+    private String originalCommitMessage = "";
 
     public OctaneCheckinHandler(
             IdePluginPersistentState idePluginPersistentState,
@@ -44,8 +45,7 @@ public class OctaneCheckinHandler extends CheckinHandler {
         this.project = panel.getProject();
         this.commitMessageService = commitMessageService;
         this.entityService = entityService;
-
-        panel.setCommitMessage("");
+        this.originalCommitMessage = panel.getCommitMessage();
     }
 
     private String getMessageForActivatedItem() {
@@ -182,9 +182,9 @@ public class OctaneCheckinHandler extends CheckinHandler {
 
         if (activatedItem != null) {
             validate(
-                    () -> panel.setCommitMessage(getMessageForActivatedItem()),
+                    () -> panel.setCommitMessage(getMessageForActivatedItem() + "\n" + originalCommitMessage),
                     () -> {
-                        panel.setCommitMessage("");
+                        panel.setCommitMessage(originalCommitMessage);
                         Entity type = activatedItem.getEntityType() == Entity.TASK ? Entity.getEntityType(parentStory)
                                 : activatedItem.getEntityType();
                         showCommitPatterns(type);
