@@ -8,6 +8,7 @@ import com.hpe.adm.octane.services.TestService;
 import com.hpe.adm.octane.services.connection.ConnectionSettings;
 import com.hpe.adm.octane.services.connection.ConnectionSettingsProvider;
 import com.hpe.adm.octane.services.exception.ServiceException;
+import com.hpe.adm.octane.services.util.OctaneVersion;
 import com.hpe.adm.octane.services.util.UrlParser;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
@@ -140,7 +141,10 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
             connectionSettingsView.setServerUrl(UrlParser.createUrlFromConnectionSettings(newConnectionSettings));
             connectionSettingsView.setConnectionStatusSuccess();
         }
-        if (versionService.getOctaneVersion().compareTo(DYNAMO_VERSION) < 0) {
+
+        OctaneVersion version = versionService.getOctaneVersion();
+        version.discardBuildNumber();
+        if (version.compareTo(OctaneVersion.DYNAMO)<0) {
            showWarningBalloon();
         }
     }

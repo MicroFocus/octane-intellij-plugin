@@ -3,13 +3,10 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.treetable;
 import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.nga.sdk.model.FieldModel;
-import com.hpe.adm.nga.sdk.model.MultiReferenceFieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
-import com.hpe.adm.octane.services.FollowEntityService;
 import com.hpe.adm.octane.services.UserService;
 import com.hpe.adm.octane.services.filtering.Entity;
 import com.hpe.adm.octane.services.util.EntityTypeIdPair;
-import com.hpe.adm.octane.services.util.EntityUtil;
 import com.hpe.adm.octane.services.util.Util;
 import com.intellij.ui.JBColor;
 import org.apache.commons.lang.StringUtils;
@@ -181,7 +178,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
             String ownerText = null;
 
             //check who the entity belongs too if the owner field exits
-            if(entityModel.getValue("owner") != null) {
+            if (entityModel.getValue("owner") != null) {
                 if (entityModel.getValue("owner").getValue() == null) {
                     ownerText = "";
                 } else {
@@ -189,7 +186,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
                     ownerText = getUiDataFromModel(ownerEntity.getValue(FIELD_FULL_NAME));
                 }
             }
-            if(ownerText != null) {
+            if (ownerText != null) {
                 rowPanel.addDetails(
                         "Owner",
                         ownerText,
@@ -197,14 +194,15 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
             }
 
             //Check if the item is dismissible or not
-            if(entityModel.getValue(FollowEntityService.getFollowItemsOwnerField()) != null &&
-                    entityModel.getValue(FollowEntityService.getFollowItemsOwnerField()) .getValue() != null) {
-
-                MultiReferenceFieldModel field = (MultiReferenceFieldModel) entityModel.getValue(FollowEntityService.getFollowItemsOwnerField());
-                if(EntityUtil.containsEntityModel(field.getValue(), userService.getCurrentUser())){
-                    rowPanel.addSimpleDetails("Dismissible", DetailsPosition.BOTTOM);
-                }
-            }
+            //TODO: DISMISSABLE DISABLED
+//            if(entityModel.getValue(FollowEntityService.getFollowItemsOwnerField()) != null &&
+//                    entityModel.getValue(FollowEntityService.getFollowItemsOwnerField()) .getValue() != null) {
+//
+//                MultiReferenceFieldModel field = (MultiReferenceFieldModel) entityModel.getValue(FollowEntityService.getFollowItemsOwnerField());
+//                if(EntityUtil.containsEntityModel(field.getValue(), userService.getCurrentUser())){
+//                    rowPanel.addSimpleDetails("Dismissible", DetailsPosition.BOTTOM);
+//                }
+//            }
 
             //Check if the rendered item is the active item or not
             EntityTypeIdPair entityTypeIdPair =

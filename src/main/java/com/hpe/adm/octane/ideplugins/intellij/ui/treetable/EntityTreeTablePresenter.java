@@ -11,13 +11,12 @@ import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
-import com.hpe.adm.octane.services.FollowEntityService;
 import com.hpe.adm.octane.services.util.PartialEntity;
 import com.hpe.adm.octane.services.util.Util;
 import com.hpe.adm.octane.services.util.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
 import com.hpe.adm.octane.services.EntityService;
-import com.hpe.adm.octane.services.MyWorkService;
+import com.hpe.adm.octane.services.mywork.MyWorkService;
 import com.hpe.adm.octane.services.filtering.Entity;
 import com.hpe.adm.octane.services.nonentity.DownloadScriptService;
 import com.hpe.adm.octane.services.util.EntityUtil;
@@ -64,9 +63,6 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
 
     @Inject
     private MyWorkService myWorkService;
-
-    @Inject
-    private FollowEntityService followEntityService;
 
     @Inject
     private EntityService entityService;
@@ -282,7 +278,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
                 popup.add(activateItem);
             }
 
-            if(followEntityService.isFollowingEntitySupported(entityType) && followEntityService.isCurrentUserFollowing(entityModel)) {
+            if(myWorkService.isAddingToMyWorkSupported(entityType) && myWorkService.isInMyWork(entityModel)) {
 
                 JMenuItem removeFromMyWorkMenuItem = new JMenuItem("Dismiss", AllIcons.General.Remove);
                 removeFromMyWorkMenuItem.addMouseListener(new MouseAdapter() {
@@ -297,7 +293,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
                                             true) {
 
                                 public void run(@NotNull ProgressIndicator indicator) {
-                                    if(followEntityService.removeCurrentUserFromFollowers(entityModel)) {
+                                    if(myWorkService.removeFromMyWork(entityModel)) {
 
                                         List list = entityTreeView.getTreeModel().getGroupedEntities()
                                                 .values()
