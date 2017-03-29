@@ -236,7 +236,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
                         "No environment");
 
                 addStoryPoints(rowPanel, entityModel);
-                rowPanel.addDetails("Detected by", getUiDataFromModel(entityModel.getValue(FIELD_DETECTEDBY)), DetailsPosition.TOP);
+                rowPanel.addDetails("Detected by", getUiDataFromModel(entityModel.getValue(FIELD_DETECTEDBY), FIELD_FULL_NAME), DetailsPosition.TOP);
                 rowPanel.addDetails("Severity", getUiDataFromModel(entityModel.getValue(FIELD_SEVERITY)), DetailsPosition.TOP);
                 addProgress(rowPanel, entityModel);
 
@@ -301,7 +301,6 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
 
                 String text = getUiDataFromModel(entityModel.getValue("text"));
                 text = " Comment: " + Util.stripHtml(text);
-                String author = getUiDataFromModel(entityModel.getValue(FIELD_AUTHOR), FIELD_FULL_NAME);
                 FieldModel owner = getContainerItemForCommentModel(entityModel);
                 String ownerId = getUiDataFromModel(owner, "id");
                 String ownerName = getUiDataFromModel(owner, "name");
@@ -311,7 +310,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
 
                 rowPanel.setEntityName("", entityName);
                 rowPanel.setEntitySubTitle(text, "");
-                rowPanel.addDetails("Author", author, DetailsPosition.TOP);
+                addAuthor(rowPanel, entityModel);
 
             } else if (Entity.MANUAL_TEST_RUN.equals(entityType)) {
                 rowPanel.setEntitySubTitle(
@@ -324,7 +323,8 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
                 rowPanel.setEntitySubTitle(
                         getUiDataFromModel(entityModel.getValue(FIELD_ENVIROMENT)),
                         "No environment");
-                rowPanel.addDetails("Author", getUiDataFromModel(entityModel.getValue(FIELD_AUTHOR), FIELD_FULL_NAME), DetailsPosition.TOP);
+
+                addAuthor(rowPanel, entityModel);
                 rowPanel.addDetails("Started", getUiDataFromModel(entityModel.getValue(FIELD_TEST_RUN_STARTED_DATE)), DetailsPosition.BOTTOM);
             }
 
@@ -346,7 +346,8 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
     }
 
     private void addAuthor(EntityModelRow entityModelRow, EntityModel entityModel) {
-        String storyPoints = getUiDataFromModel(entityModel.getValue(FIELD_AUTHOR));
+        EntityModel authorEntity = (EntityModel) entityModel.getValue(FIELD_AUTHOR).getValue();
+        String storyPoints = getUiDataFromModel(authorEntity.getValue(FIELD_FULL_NAME));
         entityModelRow.addDetails("Author", storyPoints, DetailsPosition.TOP);
     }
 
