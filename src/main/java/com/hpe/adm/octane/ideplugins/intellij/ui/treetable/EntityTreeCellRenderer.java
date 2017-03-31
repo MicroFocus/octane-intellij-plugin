@@ -197,15 +197,10 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
             }
 
             //Check if the item is dismissible or not
-            //TODO: DISMISSABLE DISABLED
-//            if(entityModel.getValue(FollowEntityService.getFollowItemsOwnerField()) != null &&
-//                    entityModel.getValue(FollowEntityService.getFollowItemsOwnerField()) .getValue() != null) {
-//
-//                MultiReferenceFieldModel field = (MultiReferenceFieldModel) entityModel.getValue(FollowEntityService.getFollowItemsOwnerField());
-//                if(EntityUtil.containsEntityModel(field.getValue(), userService.getCurrentUser())){
-//                    rowPanel.addSimpleDetails("Dismissible", DetailsPosition.BOTTOM);
-//                }
-//            }
+            boolean dismissible = userItem.getValue("origin").getValue().equals(1L);
+            if(dismissible){
+                rowPanel.addSimpleDetails("Dismissible", DetailsPosition.BOTTOM);
+            }
 
             //Check if the rendered item is the active item or not
             EntityTypeIdPair entityTypeIdPair =
