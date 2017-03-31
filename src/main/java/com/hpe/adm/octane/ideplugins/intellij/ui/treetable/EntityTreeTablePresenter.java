@@ -113,9 +113,14 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
     }
 
     /**
+     * Careful, this method works with the work items directly, not with user items
      * Clear active item if it's not in my work
      */
     private void updateActiveItem(Collection<EntityModel> myWork) {
+
+        //Convert to normal entities
+        myWork = MyWorkUtil.getEntityModelsFromUserItems(myWork);
+
         PartialEntity activeItem = getActiveItemFromPersistentState();
         if(activeItem == null) return;
 
@@ -300,16 +305,18 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
                                 public void run(@NotNull ProgressIndicator indicator) {
                                     if(myWorkService.removeFromMyWork(entityModel)) {
 
+                                        //Remove dismissed item if successful
                                         List list = entityTreeView.getTreeModel().getGroupedEntities()
                                                 .values()
                                                 .stream()
                                                 .flatMap(Collection::stream)
-                                                .filter(currentEntityModel -> !EntityUtil.areEqual(currentEntityModel, entityModel))
+                                                .filter(currentEntityModel ->
+                                                        !EntityUtil.areEqual(MyWorkUtil.getEntityModelFromUserItem(currentEntityModel), entityModel))
                                                 .collect(Collectors.toList());
 
                                         SwingUtilities.invokeLater(() -> {
                                             updateActiveItem(list);
-                                            entityTreeView.setTreeModel(new EntityTreeModel(list));
+                                            entityTreeView.setTreeModel(createEntityTreeModel(list));
                                             entityTreeView.expandAllNodes();
 
                                         });
