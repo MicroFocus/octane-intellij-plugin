@@ -209,6 +209,9 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
 
             if (new EntityTypeIdPair(entityId, entityType).equals(entityTypeIdPair)) {
                 rowPanel.setIcon(Entity.getEntityType(entityModel), true);
+            } else if(entityType == Entity.COMMENT) {
+                EntityModel innerEntity = (EntityModel) getContainerItemForCommentModel(entityModel).getValue();
+                rowPanel.setIcon(Entity.getEntityType(innerEntity), false);
             } else {
                 rowPanel.setIcon(Entity.getEntityType(entityModel), false);
             }
