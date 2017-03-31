@@ -1,6 +1,9 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.google.inject.Inject;
+import com.hpe.adm.nga.sdk.exception.OctaneException;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.nga.sdk.model.ReferenceFieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
@@ -13,7 +16,12 @@ import com.hpe.adm.octane.services.exception.ServiceException;
 import com.hpe.adm.octane.services.filtering.Entity;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
+import com.intellij.openapi.vcs.VcsShowConfirmationOption;
+import com.intellij.util.ui.ConfirmationDialog;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -22,13 +30,19 @@ import static com.hpe.adm.octane.services.filtering.Entity.*;
 
 public class EntityDetailPresenter implements Presenter<EntityDetailView> {
 
-    private EntityDetailView entityDetailView;
     @Inject
     private EntityService entityService;
     @Inject
     private CommentService commentService;
+    @Inject
+    private Project project;
+
+    private EntityDetailView entityDetailView;
     private Entity entityType;
     private Long entityId;
+    private EntityModel entityModel;
+    private Logger logger = Logger.getInstance("EntityDetailPresenter");
+    private final String GO_TO_BROWSER_DIALOG_MESSAGE = "\nYou can only provide a value for this field using ALM Octane in a browser." + "\nDo you want to do this now? ";
 
 
     public EntityDetailPresenter() {
@@ -59,6 +73,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                 },
                 (entityModel) -> {
                     if (entityModel != null) {
+                        this.entityModel = entityModel;
                         entityDetailView.setEntityModel(entityModel);
                         entityDetailView.setSaveSelectedPhaseButton(new SaveSelectedPhaseAction());
                         entityDetailView.setRefreshEntityButton(new EntityRefreshAction());
@@ -104,11 +119,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
 
     private void setComments(EntityModel entityModel) {
         Collection<EntityModel> result = new HashSet<>();
-        RestUtil.runInBackground(() -> {
-            return commentService.getComments(entityModel);
-        }, (comments) -> {
-            entityDetailView.setComments(comments);
-        }, null, "Failed to get possible comments", "fetching comments");
+        RestUtil.runInBackground(() -> commentService.getComments(entityModel), (comments) -> entityDetailView.setComments(comments), null, "Failed to get possible comments", "fetching comments");
     }
 
     private final class EntityRefreshAction extends AnAction {
@@ -130,10 +141,35 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
         public void actionPerformed(AnActionEvent e) {
             RestUtil.runInBackground(() -> {
                 EntityModel selectedTransition = entityDetailView.getSelectedTransition();
-                ReferenceFieldModel nextPhase = (ReferenceFieldModel) selectedTransition.getValue("target_phase");
-                return nextPhase;
+                return (ReferenceFieldModel) selectedTransition.getValue("target_phase");
             }, (nextPhase) -> {
-                entityService.updateEntityPhase(entityDetailView.getEntityModel(), nextPhase);
+                try {
+                    entityService.updateEntityPhase(entityDetailView.getEntityModel(), nextPhase);
+                } catch (OctaneException ex) {
+                    if (ex.getMessage().contains("400")) {
+                        String errorMessage = "Failed to change phase";
+                        try {
+                            JsonParser jsonParser = new JsonParser();
+                            JsonObject jsonObject = (JsonObject) jsonParser.parse(ex.getMessage().substring(ex.getMessage().indexOf("{")));
+                            errorMessage = jsonObject.get("description_translated").getAsString();
+                        } catch (Exception e1) {
+                            logger.debug("Failed to get JSON message from Octane Server" + e1.getMessage());
+                        }
+                        ConfirmationDialog dialog = new ConfirmationDialog(
+                                project,
+                                "Server message: " + errorMessage + GO_TO_BROWSER_DIALOG_MESSAGE,
+                                "Business rule violation",
+                                null, VcsShowConfirmationOption.STATIC_SHOW_CONFIRMATION) {
+                            @Override
+                            public void setDoNotAskOption(@Nullable DoNotAskOption doNotAsk) {
+                                super.setDoNotAskOption(null);
+                            }
+                        };
+                        if (dialog.showAndGet()) {
+                            entityService.openInBrowser(entityModel);
+                        }
+                    }
+                }
                 entityDetailView.doRefresh();
                 setEntity(entityType, entityId);
             }, null, "Failed to move to next phase", "Moving to next phase");

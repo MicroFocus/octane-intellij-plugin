@@ -182,10 +182,12 @@ public class ConnectionSettingsComponent implements HasComponent {
     }
 
     public void setTestConnectionButtonEnabled(boolean isEnabled){
-        if(btnTest.isEnabled()!=isEnabled) {
-            btnTest.setEnabled(isEnabled);
-            btnTest.requestFocus();
-        }
+        SwingUtilities.invokeLater(() -> {
+            if (btnTest.isEnabled() != isEnabled) {
+                btnTest.setEnabled(isEnabled);
+                btnTest.requestFocus();
+            }
+        });
     }
 
 }
