@@ -9,6 +9,7 @@ import com.hpe.adm.octane.ideplugins.intellij.eventbus.OpenDetailTabEvent;
 import com.hpe.adm.octane.ideplugins.intellij.eventbus.RefreshMyWorkEvent;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
+import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityCategory;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeView;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
@@ -127,11 +128,11 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
     }
 
     private EntityTreeModel createEmptyEntityTreeModel(Collection<EntityModel> entityModels){
-        List<EntityTreeModel.EntityCategory> entityCategories = new ArrayList<>();
-        entityCategories.add(new EntityTreeModel.EntityCategory("Backlog", Entity.USER_STORY, Entity.EPIC, Entity.FEATURE));
-        entityCategories.add(new EntityTreeModel.EntityCategory("Defects", Entity.DEFECT));
-        entityCategories.add(new EntityTreeModel.EntityCategory("Tasks", Entity.TASK));
-        entityCategories.add(new EntityTreeModel.EntityCategory("Tests", Entity.GHERKIN_TEST, Entity.MANUAL_TEST));
+        List<EntityCategory> entityCategories = new ArrayList<>();
+        entityCategories.add(new SearchEntityCategory("Backlog", Entity.USER_STORY, Entity.EPIC, Entity.FEATURE));
+        entityCategories.add(new SearchEntityCategory("Defects", Entity.DEFECT));
+        entityCategories.add(new SearchEntityCategory("Tasks", Entity.TASK));
+        entityCategories.add(new SearchEntityCategory("Tests", Entity.GHERKIN_TEST, Entity.MANUAL_TEST));
         EntityTreeModel model = new EntityTreeModel(entityCategories, entityModels);
         return model;
     }
@@ -202,4 +203,6 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
             return popup;
         });
     }
+
+
 }

@@ -15,6 +15,7 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.detail.EntityDetailPresenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
 import com.hpe.adm.octane.ideplugins.intellij.ui.searchresult.EntitySearchResultPresenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeTablePresenter;
+import com.hpe.adm.octane.services.mywork.MyWorkUtil;
 import com.hpe.adm.octane.services.util.PartialEntity;
 import com.hpe.adm.octane.services.util.Util;
 import com.hpe.adm.octane.services.util.Constants;
@@ -251,6 +252,14 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
      * Handle key and mouse events
      */
     private void onEntityAction(Entity entityType, Long entityId, EntityModel model, boolean selectNewTab){
+
+        //Convert if needed
+        if(entityType == USER_ITEM) {
+            model = MyWorkUtil.getEntityModelFromUserItem(model);
+            entityType = Entity.getEntityType(model);
+            entityId = Long.valueOf(model.getValue("id").getValue().toString());
+        }
+
         //Special handling of comments
         if(Entity.COMMENT.equals(entityType)){
             //Convert to parent of comment and continue

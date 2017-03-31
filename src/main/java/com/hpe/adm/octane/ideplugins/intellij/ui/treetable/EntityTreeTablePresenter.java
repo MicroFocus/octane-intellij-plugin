@@ -11,6 +11,7 @@ import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
+import com.hpe.adm.octane.services.mywork.MyWorkUtil;
 import com.hpe.adm.octane.services.util.PartialEntity;
 import com.hpe.adm.octane.services.util.Util;
 import com.hpe.adm.octane.services.util.Constants;
@@ -48,6 +49,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -90,7 +92,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
                     Collection<EntityModel> myWork = myWorkService.getMyWork(EntityTreeCellRenderer.getEntityFieldMap());
                     SwingUtilities.invokeLater(() -> {
                         entityTreeTableView.setLoading(false);
-                        entityTreeTableView.setTreeModel(new EntityTreeModel(myWork));
+                        entityTreeTableView.setTreeModel(createEntityTreeModel(myWork));
                         entityTreeTableView.expandAllNodes();
                         updateActiveItem(myWork);
                     });
@@ -182,8 +184,9 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
     }
 
     private void setContextMenuFactory(EntityTreeView entityTreeView) {
-        entityTreeView.setEntityContextMenuFactory(entityModel -> {
+        entityTreeView.setEntityContextMenuFactory(userItem -> {
 
+            EntityModel entityModel = MyWorkUtil.getEntityModelFromUserItem(userItem);
             Entity entityType = Entity.getEntityType(entityModel);
             String entityName = Util.getUiDataFromModel(entityModel.getValue("name"));
             Integer entityId = Integer.valueOf(getUiDataFromModel(entityModel.getValue("id")));
@@ -278,7 +281,9 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
                 popup.add(activateItem);
             }
 
-            if(myWorkService.isAddingToMyWorkSupported(entityType) && myWorkService.isInMyWork(entityModel)) {
+            boolean dismissible = userItem.getValue("origin").getValue().equals(1L);
+
+            if(myWorkService.isAddingToMyWorkSupported(entityType) && dismissible) {
 
                 JMenuItem removeFromMyWorkMenuItem = new JMenuItem("Dismiss", AllIcons.General.Remove);
                 removeFromMyWorkMenuItem.addMouseListener(new MouseAdapter() {
@@ -419,5 +424,17 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
 
     public void addEntityKeyHandler(EntityTreeView.TreeViewKeyHandler handler) {
         getView().addEntityKeyHandler(handler);
+    }
+
+    private static EntityTreeModel createEntityTreeModel(Collection<EntityModel> entityModels){
+        List<EntityCategory> entityCategories = new ArrayList<>();
+        entityCategories.add(new UserItemEntityCategory("Backlog", Entity.USER_STORY, Entity.DEFECT, Entity.QUALITY_STORY,
+                Entity.EPIC, Entity.FEATURE));
+        entityCategories.add(new UserItemEntityCategory("Tasks", Entity.TASK));
+        entityCategories.add(new UserItemEntityCategory("Tests", Entity.GHERKIN_TEST, Entity.MANUAL_TEST));
+        entityCategories.add(new UserItemEntityCategory("Mention in comments", Entity.COMMENT));
+        entityCategories.add(new UserItemEntityCategory("Runs", Entity.MANUAL_TEST_RUN , Entity.TEST_SUITE_RUN));
+        EntityTreeModel model = new EntityTreeModel(entityCategories, entityModels);
+        return model;
     }
 }

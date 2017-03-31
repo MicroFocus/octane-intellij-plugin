@@ -6,6 +6,7 @@ import com.hpe.adm.nga.sdk.model.FieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.services.UserService;
 import com.hpe.adm.octane.services.filtering.Entity;
+import com.hpe.adm.octane.services.mywork.MyWorkUtil;
 import com.hpe.adm.octane.services.util.EntityTypeIdPair;
 import com.hpe.adm.octane.services.util.Util;
 import com.intellij.ui.JBColor;
@@ -146,9 +147,9 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
         //Root
         if (value instanceof String) {
             return new JLabel((String) value);
-        } else if (value instanceof EntityTreeModel.EntityCategory) {
+        } else if (value instanceof EntityCategory) {
             EntityTreeModel model = (EntityTreeModel) tree.getModel();
-            EntityTreeModel.EntityCategory category = (EntityTreeModel.EntityCategory) value;
+            EntityCategory category = (EntityCategory) value;
             int count = model.getChildCount(value);
             String labelText = category.getName() + " (" + count + ")";
             JXLabel lbl = new JXLabel(labelText);
@@ -161,7 +162,9 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
 
         } else if (value instanceof EntityModel) {
 
-            EntityModel entityModel = (EntityModel) value;
+            //Base data
+            EntityModel userItem = (EntityModel) value;
+            EntityModel entityModel = MyWorkUtil.getEntityModelFromUserItem(userItem);
             Entity entityType = Entity.getEntityType(entityModel);
             Long entityId = Long.valueOf(getUiDataFromModel(entityModel.getValue("id")));
 

@@ -1,9 +1,10 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.searchresult;
 
 import com.hpe.adm.nga.sdk.model.EntityModel;
+import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityCategory;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeModel;
-import com.hpe.adm.octane.services.util.Util;
 import com.hpe.adm.octane.services.filtering.Entity;
+import com.hpe.adm.octane.services.util.Util;
 import com.intellij.ui.JBColor;
 import org.jdesktop.swingx.JXLabel;
 
@@ -22,10 +23,10 @@ public class SearchResultEntityTreeCellRenderer implements TreeCellRenderer {
         if (value instanceof String) {
             return new JLabel((String) value);
 
-        } else if (value instanceof EntityTreeModel.EntityCategory) {
+        } else if (value instanceof EntityCategory) {
 
             EntityTreeModel model = (EntityTreeModel) tree.getModel();
-            EntityTreeModel.EntityCategory category = (EntityTreeModel.EntityCategory) value;
+            EntityCategory category = (EntityCategory) value;
             int count = model.getChildCount(value);
             String labelText = category.getName() + " (" + count + ")";
 

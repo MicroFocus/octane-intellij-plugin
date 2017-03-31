@@ -1,7 +1,6 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.treetable;
 
 import com.hpe.adm.nga.sdk.model.EntityModel;
-import com.hpe.adm.octane.services.filtering.Entity;
 import com.intellij.util.ui.tree.AbstractTreeModel;
 
 import javax.swing.tree.TreePath;
@@ -14,7 +13,7 @@ public class EntityTreeModel extends AbstractTreeModel {
     private Map<EntityCategory, List<EntityModel>> groupedEntities = new LinkedHashMap<>();
 
     //Describes the top level
-    private List<EntityCategory> entityCategories = getDefaultEntityCategories();
+    private List<EntityCategory> entityCategories = new ArrayList<>();
 
     public EntityTreeModel() {}
 
@@ -46,17 +45,6 @@ public class EntityTreeModel extends AbstractTreeModel {
                     .collect(Collectors.toList());
 
         emptyCategories.forEach(emptyCategory -> groupedEntities.remove(emptyCategory));
-    }
-
-    public static List<EntityCategory> getDefaultEntityCategories(){
-        List<EntityCategory> entityCategories = new ArrayList<>();
-        entityCategories.add(new EntityCategory("Backlog", Entity.USER_STORY, Entity.DEFECT, Entity.QUALITY_STORY,
-                Entity.EPIC, Entity.FEATURE));
-        entityCategories.add(new EntityCategory("Tasks", Entity.TASK));
-        entityCategories.add(new EntityCategory("Tests", Entity.GHERKIN_TEST, Entity.MANUAL_TEST));
-        entityCategories.add(new EntityCategory("Mention in comments", Entity.COMMENT));
-        entityCategories.add(new EntityCategory("Runs", Entity.MANUAL_TEST_RUN , Entity.TEST_SUITE_RUN));
-        return entityCategories;
     }
 
     public int size() {
@@ -125,33 +113,7 @@ public class EntityTreeModel extends AbstractTreeModel {
         return 0;
     }
 
-    public static class EntityCategory {
 
-        private String name = "";
-        private List<Entity> entityTypes = new ArrayList<>();
-
-        public EntityCategory(String name, Entity... entityTypes) {
-            this.name = name;
-            this.entityTypes = Arrays.asList(entityTypes);
-        }
-
-        public static EntityCategory getCategory(EntityModel entity, List<EntityCategory> entityCategories) {
-            for (EntityCategory category : entityCategories) {
-                if (category.getEntityTypes().contains(Entity.getEntityType(entity))) {
-                    return category;
-                }
-            }
-            return null;
-        }
-
-        public List<Entity> getEntityTypes() {
-            return entityTypes;
-        }
-
-        public String getName() {
-            return name;
-        }
-    }
 
     public List<EntityCategory> getEntityCategories() {
         return entityCategories;
