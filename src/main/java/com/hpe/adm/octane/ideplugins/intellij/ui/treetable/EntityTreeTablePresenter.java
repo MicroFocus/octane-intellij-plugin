@@ -286,9 +286,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
                 popup.add(activateItem);
             }
 
-            boolean dismissible = userItem.getValue("origin").getValue().equals(1L);
-
-            if(myWorkService.isAddingToMyWorkSupported(entityType) && dismissible) {
+            if(myWorkService.isAddingToMyWorkSupported(entityType) && MyWorkUtil.isUserItemDismissible(userItem)) {
 
                 JMenuItem removeFromMyWorkMenuItem = new JMenuItem("Dismiss", AllIcons.General.Remove);
                 removeFromMyWorkMenuItem.addMouseListener(new MouseAdapter() {

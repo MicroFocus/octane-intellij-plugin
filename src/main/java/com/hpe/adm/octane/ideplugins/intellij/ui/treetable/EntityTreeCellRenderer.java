@@ -197,8 +197,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
             }
 
             //Check if the item is dismissible or not
-            boolean dismissible = userItem.getValue("origin").getValue().equals(1L);
-            if(dismissible){
+            if(MyWorkUtil.isUserItemDismissible(userItem)){
                 rowPanel.addSimpleDetails("Dismissible", DetailsPosition.BOTTOM);
             }
 
