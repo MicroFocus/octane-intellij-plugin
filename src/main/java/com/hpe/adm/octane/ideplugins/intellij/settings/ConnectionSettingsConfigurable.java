@@ -64,7 +64,7 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
         return "settings.octane";
     }
 
-    public ConnectionSettingsConfigurable(@NotNull final Project currentProject){
+    public ConnectionSettingsConfigurable(@NotNull final Project currentProject) {
         PluginModule module = PluginModule.getPluginModuleForProject(currentProject);
         connectionSettingsProvider = module.getInstance(ConnectionSettingsProvider.class);
         testService = module.getInstance(TestService.class);
@@ -100,13 +100,13 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
     @Override
     public boolean isModified() {
         //If it's empty and different allow apply
-        if(isViewConnectionSettingsEmpty() && !connectionSettingsProvider.getConnectionSettings().isEmpty()) {
+        if (isViewConnectionSettingsEmpty() && !connectionSettingsProvider.getConnectionSettings().isEmpty()) {
             return true;
-        } else if (isViewConnectionSettingsEmpty()){
+        } else if (isViewConnectionSettingsEmpty()) {
             return false;
         }
 
-        if(!pinMessage) {
+        if (!pinMessage) {
             connectionSettingsView.setConnectionStatusLabelVisible(false);
         }
 
@@ -125,17 +125,17 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
     @Override
     public void apply() throws ConfigurationException {
         //If the connection settings are empty then save them, only way to clear and save
-        if(isViewConnectionSettingsEmpty()){
+        if (isViewConnectionSettingsEmpty()) {
             connectionSettingsProvider.setConnectionSettings(new ConnectionSettings());
             return;
         }
 
         ConnectionSettings newConnectionSettings = testConnection();
         //apply if valid
-        if(newConnectionSettings != null){
+        if (newConnectionSettings != null) {
 
             //If anything other than the password was changed, wipe open tabs and active tab item
-            if(!newConnectionSettings.equalsExceptPassword(connectionSettingsProvider.getConnectionSettings())){
+            if (!newConnectionSettings.equalsExceptPassword(connectionSettingsProvider.getConnectionSettings())) {
                 idePluginPersistentState.clearState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM);
                 idePluginPersistentState.clearState(IdePluginPersistentState.Key.SELECTED_TAB);
                 idePluginPersistentState.clearState(IdePluginPersistentState.Key.OPEN_TABS);
@@ -149,8 +149,8 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
 
         OctaneVersion version = versionService.getOctaneVersion();
         version.discardBuildNumber();
-        if (version.compareTo(OctaneVersion.DYNAMO)<0) {
-           showWarningBalloon();
+        if (version.compareTo(OctaneVersion.DYNAMO) < 0) {
+            showWarningBalloon();
         }
     }
 
@@ -165,11 +165,13 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
 
         balloon.show(RelativePoint.getCenterOf(statusBar.getComponent()), Balloon.Position.atRight);
     }
+
     /**
      * Test the connection with the given info from the view, sets error labels
+     *
      * @return ConnectionSettings if valid, null otherwise
      */
-    private ConnectionSettings testConnection(){
+    private ConnectionSettings testConnection() {
 
         connectionSettingsView.setConnectionStatusLoading();
 
@@ -186,7 +188,7 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
         try {
             testService.testConnection(newConnectionSettings);
             SwingUtilities.invokeLater(connectionSettingsView::setConnectionStatusSuccess);
-        } catch (ServiceException ex){
+        } catch (ServiceException ex) {
             SwingUtilities.invokeLater(() -> connectionSettingsView.setConnectionStatusError(ex.getMessage()));
             return null;
         }
@@ -196,7 +198,7 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
     }
 
 
-    private ConnectionSettings getConnectionSettingsFromView() throws ServiceException{
+    private ConnectionSettings getConnectionSettingsFromView() throws ServiceException {
         //Parse server url
         return UrlParser.resolveConnectionSettings(
                 connectionSettingsView.getServerUrl(),
@@ -204,7 +206,7 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
                 connectionSettingsView.getPassword());
     }
 
-    private boolean isViewConnectionSettingsEmpty(){
+    private boolean isViewConnectionSettingsEmpty() {
         return StringUtils.isEmpty(connectionSettingsView.getServerUrl()) &&
                 StringUtils.isEmpty(connectionSettingsView.getUserName()) &&
                 StringUtils.isEmpty(connectionSettingsView.getPassword());
@@ -212,29 +214,29 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
 
     private void validateUsernameAndPassword() throws ServiceException {
         StringBuilder errorMessageBuilder = new StringBuilder();
-        if(StringUtils.isEmpty(connectionSettingsView.getUserName())){
+        if (StringUtils.isEmpty(connectionSettingsView.getUserName())) {
             errorMessageBuilder.append("Username cannot be blank.");
         }
-        if(errorMessageBuilder.length() != 0){
+        if (errorMessageBuilder.length() != 0) {
             errorMessageBuilder.append(" ");
         }
-        if(StringUtils.isEmpty(connectionSettingsView.getPassword())){
+        if (StringUtils.isEmpty(connectionSettingsView.getPassword())) {
             errorMessageBuilder.append("Password cannot be blank.");
         }
 
-        if(errorMessageBuilder.length() != 0){
+        if (errorMessageBuilder.length() != 0) {
             throw new ServiceException(errorMessageBuilder.toString());
         }
     }
 
-    private ConnectionSettings validateClientSide() throws ServiceException{
+    private ConnectionSettings validateClientSide() throws ServiceException {
         ConnectionSettings newConnectionSettings;
 
         // Validation that does not require connection to the server,
         // only this one shows and example for a correct message
         try {
             newConnectionSettings = getConnectionSettingsFromView();
-        } catch (ServiceException ex){
+        } catch (ServiceException ex) {
 
             final StringBuilder errorMessageBuilder = new StringBuilder();
 
@@ -242,7 +244,7 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
             errorMessageBuilder.append("<br>");
             errorMessageBuilder.append(Constants.CORRECT_URL_FORMAT_MESSAGE);
 
-            SwingUtilities.invokeLater(() ->  connectionSettingsView.setConnectionStatusError(errorMessageBuilder.toString()));
+            SwingUtilities.invokeLater(() -> connectionSettingsView.setConnectionStatusError(errorMessageBuilder.toString()));
             throw ex;
         }
 
@@ -250,7 +252,7 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
         try {
             validateUsernameAndPassword();
         } catch (ServiceException ex) {
-            SwingUtilities.invokeLater(() ->  connectionSettingsView.setConnectionStatusError(ex.getMessage()));
+            SwingUtilities.invokeLater(() -> connectionSettingsView.setConnectionStatusError(ex.getMessage()));
             throw ex;
         }
 
