@@ -15,7 +15,7 @@
 
     <change-notes><![CDATA[
 
-      <b>2016.2-12.53.21.3</b>
+      <b>2016.2-12.53.21.1</b>
       <ul>
         <li>Implemented compatibility with ALM Octane 12.53.21 (backwards compatible with 12.53.20)</li>
         <li>Fixed bug involving certain character sets</li>
@@ -26,11 +26,6 @@
       <ul>
         <li>Adjusted plugin name</li>
         <li>Minor bug fixes</li>
-      </ul>
-
-      <b>2016.2-12.53.20.1</b>
-      <ul>
-        <li>First version of the plugin</li>
       </ul>
     ]]>
     </change-notes>
