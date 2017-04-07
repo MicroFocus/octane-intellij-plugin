@@ -4,7 +4,6 @@ import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.nga.sdk.model.FieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
-import com.hpe.adm.octane.services.UserService;
 import com.hpe.adm.octane.services.filtering.Entity;
 import com.hpe.adm.octane.services.mywork.MyWorkUtil;
 import com.hpe.adm.octane.services.util.EntityTypeIdPair;
@@ -124,9 +123,6 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
         subtypeNames.put("run_suite", "Run Suite");
     }
 
-    @Inject
-    private UserService userService;
-
     /**
      * Returns a map of fields that this cell will display for each entity type, needed for making the request
      *
@@ -197,7 +193,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
             }
 
             //Check if the item is dismissible or not
-            if(MyWorkUtil.isUserItemDismissible(userItem)){
+            if (MyWorkUtil.isUserItemDismissible(userItem)) {
                 rowPanel.addSimpleDetails("Dismissible", DetailsPosition.BOTTOM);
             }
 
@@ -208,7 +204,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
 
             if (new EntityTypeIdPair(entityId, entityType).equals(entityTypeIdPair)) {
                 rowPanel.setIcon(Entity.getEntityType(entityModel), true);
-            } else if(entityType == Entity.COMMENT) {
+            } else if (entityType == Entity.COMMENT) {
                 EntityModel innerEntity = (EntityModel) getContainerItemForCommentModel(entityModel).getValue();
                 rowPanel.setIcon(Entity.getEntityType(innerEntity), false);
             } else {
@@ -236,7 +232,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
                         "No environment");
 
                 addStoryPoints(rowPanel, entityModel);
-                rowPanel.addDetails("Detected by", getUiDataFromModel(entityModel.getValue(FIELD_DETECTEDBY), FIELD_FULL_NAME), DetailsPosition.TOP);
+                addRelationFieldDetails(rowPanel, entityModel, FIELD_DETECTEDBY, FIELD_FULL_NAME, "Detected by", DetailsPosition.TOP);
                 rowPanel.addDetails("Severity", getUiDataFromModel(entityModel.getValue(FIELD_SEVERITY)), DetailsPosition.TOP);
                 addProgress(rowPanel, entityModel);
 
@@ -246,7 +242,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
                         "No release");
 
                 addStoryPoints(rowPanel, entityModel);
-                addAuthor(rowPanel, entityModel);
+                addRelationFieldDetails(rowPanel, entityModel, FIELD_AUTHOR, FIELD_FULL_NAME, "Author", DetailsPosition.TOP);
                 addProgress(rowPanel, entityModel);
 
             } else if (Entity.TASK.equals(entityType)) {
@@ -270,7 +266,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
                 parentInfoSb.append("</html>");
                 rowPanel.setEntitySubTitle(parentInfoSb.toString(), "no parent");
 
-                addAuthor(rowPanel, entityModel);
+                addRelationFieldDetails(rowPanel, entityModel, FIELD_AUTHOR, FIELD_FULL_NAME, "Author", DetailsPosition.TOP);
                 addProgress(rowPanel, entityModel);
 
             } else if (Entity.GHERKIN_TEST.equals(entityType)) {
@@ -278,7 +274,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
                 rowPanel.setEntitySubTitle(
                         getUiDataFromModel(entityModel.getValue(FIELD_TEST_TYPE)),
                         "");
-                addAuthor(rowPanel, entityModel);
+                addRelationFieldDetails(rowPanel, entityModel, FIELD_AUTHOR, FIELD_FULL_NAME, "Author", DetailsPosition.TOP);
                 rowPanel.addDetails("Automation status",
                         getUiDataFromModel(entityModel.getValue("automation_status")),
                         DetailsPosition.BOTTOM);
@@ -291,7 +287,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
                         getUiDataFromModel(entityModel.getValue(FIELD_TEST_TYPE)),
                         "");
 
-                addAuthor(rowPanel, entityModel);
+                addRelationFieldDetails(rowPanel, entityModel, FIELD_AUTHOR, FIELD_FULL_NAME, "Author", DetailsPosition.TOP);
                 rowPanel.addDetails("Steps", getUiDataFromModel(entityModel.getValue("steps_num")), DetailsPosition.BOTTOM);
                 String automationStatus = getUiDataFromModel(entityModel.getValue("automation_status"));
                 if (StringUtils.isNotEmpty(automationStatus)) {
@@ -310,21 +306,20 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
 
                 rowPanel.setEntityName("", entityName);
                 rowPanel.setEntitySubTitle(text, "");
-                addAuthor(rowPanel, entityModel);
+                addRelationFieldDetails(rowPanel, entityModel, FIELD_AUTHOR, FIELD_FULL_NAME, "Author", DetailsPosition.TOP);
 
             } else if (Entity.MANUAL_TEST_RUN.equals(entityType)) {
                 rowPanel.setEntitySubTitle(
                         getUiDataFromModel(entityModel.getValue(FIELD_ENVIROMENT)),
                         "No environment");
-                addAuthor(rowPanel, entityModel);
+                addRelationFieldDetails(rowPanel, entityModel, FIELD_AUTHOR, FIELD_FULL_NAME, "Author", DetailsPosition.TOP);
                 rowPanel.addDetails("Started", getUiDataFromModel(entityModel.getValue(FIELD_TEST_RUN_STARTED_DATE)), DetailsPosition.BOTTOM);
 
             } else if (Entity.TEST_SUITE_RUN.equals(entityType)) {
                 rowPanel.setEntitySubTitle(
                         getUiDataFromModel(entityModel.getValue(FIELD_ENVIROMENT)),
                         "No environment");
-
-                addAuthor(rowPanel, entityModel);
+                addRelationFieldDetails(rowPanel, entityModel, FIELD_AUTHOR, FIELD_FULL_NAME, "Author", DetailsPosition.TOP);
                 rowPanel.addDetails("Started", getUiDataFromModel(entityModel.getValue(FIELD_TEST_RUN_STARTED_DATE)), DetailsPosition.BOTTOM);
             }
 
@@ -345,10 +340,31 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
         entityModelRow.addDetails("SP", storyPoints, DetailsPosition.TOP);
     }
 
-    private void addAuthor(EntityModelRow entityModelRow, EntityModel entityModel) {
-        EntityModel authorEntity = (EntityModel) entityModel.getValue(FIELD_AUTHOR).getValue();
-        String storyPoints = getUiDataFromModel(authorEntity.getValue(FIELD_FULL_NAME));
-        entityModelRow.addDetails("Author", storyPoints, DetailsPosition.TOP);
+    /**
+     * Add a relation entity model to the row
+     * @param entityModelRow UI object
+     * @param entityModel parent entity
+     * @param relationFieldName field of the related entity
+     * @param relationLabelValue field displayed from the related entity
+     * @param displayLabel label of the displayed field
+     * @param displayPosition position of the displayed field
+     */
+    private void addRelationFieldDetails(
+            EntityModelRow entityModelRow,
+            EntityModel entityModel,
+            String relationFieldName,
+            String relationLabelValue,
+            String displayLabel,
+            DetailsPosition displayPosition) {
+
+        if (entityModel.getValue(relationFieldName) == null ||
+                entityModel.getValue(relationFieldName).getValue() == null) {
+            return;
+        }
+
+        EntityModel relatedEntity = (EntityModel) entityModel.getValue(relationFieldName).getValue();
+        String storyPoints = getUiDataFromModel(relatedEntity.getValue(relationLabelValue));
+        entityModelRow.addDetails(displayLabel, storyPoints, displayPosition);
     }
 
     private static String wrapHtml(String string) {
