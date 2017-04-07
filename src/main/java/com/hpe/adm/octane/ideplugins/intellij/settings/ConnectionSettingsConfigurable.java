@@ -6,9 +6,10 @@ import com.hpe.adm.octane.services.TestService;
 import com.hpe.adm.octane.services.connection.ConnectionSettings;
 import com.hpe.adm.octane.services.connection.ConnectionSettingsProvider;
 import com.hpe.adm.octane.services.exception.ServiceException;
-import com.hpe.adm.octane.services.util.OctaneVersion;
+import com.hpe.adm.octane.services.exception.ServiceRuntimeException;
 import com.hpe.adm.octane.services.nonentity.OctaneVersionService;
 import com.hpe.adm.octane.services.util.Constants;
+import com.hpe.adm.octane.services.util.OctaneVersion;
 import com.hpe.adm.octane.services.util.UrlParser;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
@@ -131,6 +132,7 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
         }
 
         ConnectionSettings newConnectionSettings = testConnection();
+
         //apply if valid
         if (newConnectionSettings != null) {
 
@@ -146,24 +148,20 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
             connectionSettingsView.setServerUrl(UrlParser.createUrlFromConnectionSettings(newConnectionSettings));
             connectionSettingsView.setConnectionStatusSuccess();
         }
-
-        OctaneVersion version = versionService.getOctaneVersion();
-        version.discardBuildNumber();
-        if (version.compareTo(OctaneVersion.DYNAMO) < 0) {
-            showWarningBalloon();
-        }
     }
 
-    private void showWarningBalloon() {
-        StatusBar statusBar = WindowManager.getInstance().getStatusBar(currentProject);
-
-        String message = "Octane version not supported. This plugin works with Octane versions starting " + DYNAMO_VERSION;
-        Balloon balloon = JBPopupFactory.getInstance().createHtmlTextBalloonBuilder(message,
-                MessageType.WARNING, null)
-                .setCloseButtonEnabled(true)
-                .createBalloon();
-
-        balloon.show(RelativePoint.getCenterOf(statusBar.getComponent()), Balloon.Position.atRight);
+    private void testOctaneVersion(ConnectionSettings connectionSettings) {
+        OctaneVersion version = OctaneVersionService.getOctaneVersion(connectionSettings);
+        version.discardBuildNumber();
+        if (version.compareTo(OctaneVersion.DYNAMO) < 0) {
+            StatusBar statusBar = WindowManager.getInstance().getStatusBar(currentProject);
+            String message = "Octane version not supported. This plugin works with Octane versions starting " + DYNAMO_VERSION;
+            Balloon balloon = JBPopupFactory.getInstance().createHtmlTextBalloonBuilder(message,
+                    MessageType.WARNING, null)
+                    .setCloseButtonEnabled(true)
+                    .createBalloon();
+            balloon.show(RelativePoint.getCenterOf(statusBar.getComponent()), Balloon.Position.atRight);
+        }
     }
 
     /**
@@ -187,13 +185,13 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
         //This will attempt a connection
         try {
             testService.testConnection(newConnectionSettings);
+            testOctaneVersion(newConnectionSettings);
             SwingUtilities.invokeLater(connectionSettingsView::setConnectionStatusSuccess);
-        } catch (ServiceException ex) {
+        } catch (ServiceException | ServiceRuntimeException ex) {
             SwingUtilities.invokeLater(() -> connectionSettingsView.setConnectionStatusError(ex.getMessage()));
             return null;
         }
 
-        //it's valid! yay
         return newConnectionSettings;
     }
 
