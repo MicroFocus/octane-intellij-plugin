@@ -30,7 +30,8 @@ public class IdePluginPersistentState implements PersistentStateComponent<Elemen
         ACTIVE_WORK_ITEM,
         OPEN_TABS,
         SELECTED_TAB,
-        SEARCH_HISTORY
+        SEARCH_HISTORY,
+        EXPECTED_COMMIT_MESSAGE
     }
 
     public void saveState(Key key, JSONObject value){

@@ -18,9 +18,13 @@ import com.intellij.openapi.vcs.ui.RefreshableOnComponent;
 import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.ui.awt.RelativePoint;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.Nullable;
+import org.json.JSONObject;
 
 import javax.swing.*;
+import java.awt.event.ContainerEvent;
+import java.awt.event.ContainerListener;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -173,16 +177,61 @@ public class OctaneCheckinHandler extends CheckinHandler {
         fetchPatternsWorker.execute();
     }
 
+    private void setExpectedCommitMessage(String message) {
+        String source = "{\"value\": \"" + message.replaceAll("\\n", "") + "\"}";
+        JSONObject json = new JSONObject(source);
+        idePluginPersistentState.saveState(IdePluginPersistentState.Key.EXPECTED_COMMIT_MESSAGE, json);
+    }
+
+    private String getExpectedCommitMessage() {
+        JSONObject json = idePluginPersistentState.loadState(IdePluginPersistentState.Key.EXPECTED_COMMIT_MESSAGE);
+        if (json == null)
+            return null;
+        return json.getString("value");
+    }
+
     @Nullable
     @Override
     public RefreshableOnComponent getBeforeCheckinConfigurationPanel() {
+
+        panel.getPreferredFocusedComponent().addContainerListener(new ContainerListener() {
+            @Override
+            public void componentAdded(ContainerEvent e) {
+            }
+
+            @Override
+            public void componentRemoved(ContainerEvent e) {
+                setExpectedCommitMessage(panel.getCommitMessage());
+            }
+        });
 
         activatedItem = PartialEntity.fromJsonObject(
                 idePluginPersistentState.loadState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM));
 
         if (activatedItem != null) {
+
             validate(
-                    () -> panel.setCommitMessage(getMessageForActivatedItem() + "\n" + originalCommitMessage),
+                    () -> {
+
+                        // test somehow if the commit message is generated from VCS (like when merging branches) ...
+                        boolean shouldAppend = false;
+                        String expectedCommitMessage = getExpectedCommitMessage();
+
+                        if (expectedCommitMessage == null || StringUtils.isEmpty(expectedCommitMessage.trim())) {
+                            // if there's no expected commit message we will append the original message if it starts with "merge"
+                            if (originalCommitMessage.toLowerCase().startsWith("merge")) {
+                                shouldAppend = true;
+                            }
+                        } else if (!originalCommitMessage.replaceAll("\\n", "").equals(expectedCommitMessage)) {
+                            // if the original commmit message is not the expected one we assume it is from VCS and append it
+                            shouldAppend = true;
+                        }
+
+                        if (shouldAppend)
+                            panel.setCommitMessage(getMessageForActivatedItem() + "\n" + originalCommitMessage);
+                        else
+                            panel.setCommitMessage(getMessageForActivatedItem());
+                    },
                     () -> {
                         panel.setCommitMessage(originalCommitMessage);
                         Entity type = activatedItem.getEntityType() == Entity.TASK ? Entity.getEntityType(parentStory)
