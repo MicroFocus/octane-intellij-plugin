@@ -94,17 +94,23 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
     }
 
     public void openSearchTab(String searchQuery) {
+        String tabTitle = searchQuery;
+        if(tabTitle.length() > 25){
+            tabTitle = Util.ellipsisTruncate(tabTitle, 25);
+        }
+        tabTitle = "\"" + tabTitle + "\"";
+
         //Only open one search tab
         if(searchTab==null) {
             searchTab = tabbedPaneView.addTab(
-                    "\"" + searchQuery + "\"",
+                    tabTitle,
                     null,
                     searchIcon,
                     entitySearchResultPresenter.getView().getComponent());
 
             tabbedPaneView.selectTabWithTabInfo(searchTab, true);
         } else {
-            searchTab.setText("\"" + searchQuery + "\"");
+            searchTab.setText(tabTitle);
             tabbedPaneView.selectTabWithTabInfo(searchTab, true);
         }
 
