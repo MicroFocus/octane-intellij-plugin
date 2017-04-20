@@ -30,7 +30,6 @@ import javax.swing.*;
 public class ConnectionSettingsConfigurable implements SearchableConfigurable {
 
     private static final String NAME = "Octane";
-    private static final String DYNAMO_VERSION = "12.53.20";
     private Project currentProject = null;
 
     //@Inject is not supported here, this class is instantiated by intellij
@@ -154,14 +153,20 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
         OctaneVersion version = OctaneVersionService.getOctaneVersion(connectionSettings);
         version.discardBuildNumber();
         if (version.compareTo(OctaneVersion.DYNAMO) < 0) {
-            StatusBar statusBar = WindowManager.getInstance().getStatusBar(currentProject);
-            String message = "Octane version not supported. This plugin works with Octane versions starting " + DYNAMO_VERSION;
-            Balloon balloon = JBPopupFactory.getInstance().createHtmlTextBalloonBuilder(message,
-                    MessageType.WARNING, null)
-                    .setCloseButtonEnabled(true)
-                    .createBalloon();
-            balloon.show(RelativePoint.getCenterOf(statusBar.getComponent()), Balloon.Position.atRight);
+            showWarningBallon("Octane version not supported. This plugin works with Octane versions starting " + OctaneVersion.DYNAMO.getVersionString());
         }
+        else if (version.compareTo(OctaneVersion.EVERTON_P1) > 0) {
+            showWarningBallon("Octane version not supported. This plugin works with Octane versions up until " + OctaneVersion.EVERTON_P1.getVersionString());
+        }
+    }
+
+    private void showWarningBallon(String message){
+        StatusBar statusBar = WindowManager.getInstance().getStatusBar(currentProject);
+        Balloon balloon = JBPopupFactory.getInstance().createHtmlTextBalloonBuilder(message,
+                MessageType.WARNING, null)
+                .setCloseButtonEnabled(true)
+                .createBalloon();
+        balloon.show(RelativePoint.getCenterOf(statusBar.getComponent()), Balloon.Position.atRight);
     }
 
     /**
