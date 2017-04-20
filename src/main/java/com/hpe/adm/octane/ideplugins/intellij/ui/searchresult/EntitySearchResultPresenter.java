@@ -44,6 +44,16 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
 
     private static final EntityIconFactory entityIconFactory = new EntityIconFactory(20, 20, 11, Color.WHITE);
 
+    private static final Entity[] searchEntityTypes = new Entity[]{
+            Entity.EPIC,
+            Entity.FEATURE,
+            Entity.USER_STORY,
+            Entity.DEFECT,
+            Entity.TASK,
+            Entity.MANUAL_TEST,
+            Entity.AUTOMATED_TEST,
+            Entity.GHERKIN_TEST};
+
     protected EntityTreeView entityTreeView;
 
     @Inject
@@ -72,12 +82,7 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
 
             public void run(@NotNull ProgressIndicator indicator) {
                 entityTreeView.setLoading(true);
-
-                //TODO: add supported entities when stories are completed
-                searchResults = entitySearchService.searchGlobal(query, Entity.WORK_ITEM);
-                //searchResults.addAll(entitySearchService.searchGlobal(query, Entity.DEFECT));
-                searchResults.addAll(entitySearchService.searchGlobal(query, Entity.TASK));
-                searchResults.addAll(entitySearchService.searchGlobal(query, Entity.TEST));
+                searchResults = entitySearchService.searchGlobal(query, 20, searchEntityTypes);
             }
 
             public void onSuccess() {
@@ -132,7 +137,7 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
         entityCategories.add(new SearchEntityCategory("Backlog", Entity.USER_STORY, Entity.EPIC, Entity.FEATURE));
         entityCategories.add(new SearchEntityCategory("Defects", Entity.DEFECT));
         entityCategories.add(new SearchEntityCategory("Tasks", Entity.TASK));
-        entityCategories.add(new SearchEntityCategory("Tests", Entity.GHERKIN_TEST, Entity.MANUAL_TEST));
+        entityCategories.add(new SearchEntityCategory("Tests", Entity.MANUAL_TEST, Entity.AUTOMATED_TEST, Entity.GHERKIN_TEST));
         EntityTreeModel model = new EntityTreeModel(entityCategories, entityModels);
         return model;
     }
