@@ -283,7 +283,7 @@ public class GeneralEntityDetailsPanel extends JPanel {
 		manualTestRunDetailsPanel.setDraftRunDetails(
 				getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEST_RUN_DRAFT_RUN)));
 		manualTestRunDetailsPanel.setVersionFromReleaseDescription(
-				getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEST_RUN_VERSION)));
+				getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEST_RUN_PREVIOUS_RELEASE)));
 		manualTestRunDetailsPanel.setLastModifiedDetails(
 				getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_LAST_MODIFIED)));
 		return manualTestRunDetailsPanel;
