@@ -155,9 +155,6 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
         if (version.compareTo(OctaneVersion.DYNAMO) < 0) {
             showWarningBallon("Octane version not supported. This plugin works with Octane versions starting " + OctaneVersion.DYNAMO.getVersionString());
         }
-        else if (version.compareTo(OctaneVersion.EVERTON_P1) > 0) {
-            showWarningBallon("Octane version not supported. This plugin works with Octane versions up until " + OctaneVersion.EVERTON_P1.getVersionString());
-        }
     }
 
     private void showWarningBallon(String message){
