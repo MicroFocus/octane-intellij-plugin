@@ -18,7 +18,6 @@ import java.awt.event.ActionListener;
 import java.util.Collection;
 
 import static com.hpe.adm.octane.services.util.Util.getUiDataFromModel;
-import static com.hpe.adm.octane.services.util.Util.stripHtml;
 import static com.hpe.adm.octane.services.filtering.Entity.*;
 
 public class GeneralEntityDetailsPanel extends JPanel {
@@ -420,13 +419,16 @@ public class GeneralEntityDetailsPanel extends JPanel {
 
 	public void setComments(Collection<EntityModel> comments) {
 		commentsListPanel.clearCurrentComments();
+
 		for(EntityModel comment: comments){
 			String commentsPostTime = getUiDataFromModel(comment.getValue(DetailsViewDefaultFields.FIELD_CREATION_TIME));
 			String userName = getUiDataFromModel(comment.getValue(DetailsViewDefaultFields.FIELD_AUTHOR),"full_name");
 			String commentLine = getUiDataFromModel(comment.getValue(DetailsViewDefaultFields.FIELD_COMMENT_TEXT));
+
 			commentsListPanel.addExistingComment(commentsPostTime,userName,commentLine);
 		}
-		commentsListPanel.scrollCommentListToTop();
+
+		commentsListPanel.setChatBoxScene();
 	}
 	public void addSendNewCommentAction(ActionListener actionListener) {
 		commentsListPanel.addSendNewCommentAction(actionListener);
