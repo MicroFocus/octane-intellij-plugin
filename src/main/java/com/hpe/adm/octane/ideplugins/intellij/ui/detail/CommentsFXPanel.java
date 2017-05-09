@@ -1,5 +1,6 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
+import com.intellij.openapi.diagnostic.Logger;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.web.WebView;
@@ -16,14 +17,15 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-public class CommentsFX extends JFXPanel {
+public class CommentsFXPanel extends JFXPanel {
+    private static final Logger log = Logger.getInstance(CommentsFXPanel.class);
     private static final String EVENT_TYPE_CLICK = "click";
     private static final String EVENT_TYPE_MOUSEOVER = "mouseover";
     private static final String EVENT_TYPE_MOUSEOUT = "mouseclick";
     private static final String HYPERLINK_TAG = "a";
     private WebView webView;
 
-    CommentsFX() {
+    CommentsFXPanel() {
         Platform.runLater(this::initFX);
     }
 
@@ -48,6 +50,15 @@ public class CommentsFX extends JFXPanel {
         }
     }
 
+    /**
+     * Initialization of the FX component. Gets a webview if one exists or creates a new one.
+     * From the webview object, the page engine is fetched together with it's worker(object
+     * which keeps track of the progress of a task (FAILED, RUNNING, SUCCEEDED). A hyperlink
+     * listener is then added to SUCCEEDED state property.
+     *
+     * When a new state was succesfully transitioned to, mouse events are caught and handled accordingly.
+     * P.S. For this use case mouseover and mouseout event were not required to be handled.
+     */
     void initFX() {
         webView = getWebView();
 
@@ -121,7 +132,7 @@ public class CommentsFX extends JFXPanel {
                     //To be implemented if needed
                 }
             } catch (URISyntaxException | IOException e) {
-                e.printStackTrace();
+                log.error("URL parsing exception ", e);
             }
         });
     }

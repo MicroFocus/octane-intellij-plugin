@@ -17,7 +17,7 @@ import java.awt.event.ActionListener;
 public class CommentsConversationPanel extends JPanel {
     private JButton sendMessageButton;
     private JTextField messageBox;
-    private CommentsFX chatBox;
+    private CommentsFXPanel chatBox;
     private String commentContent = "";
 
     public CommentsConversationPanel() {
@@ -47,7 +47,7 @@ public class CommentsConversationPanel extends JPanel {
         });
         sendMessageButton = new JButton("Add");
 
-        chatBox = new CommentsFX();
+        chatBox = new CommentsFXPanel();
         chatBox.setOpaque(false);
         chatBox.setBorder(null);
         chatBox.setFont(new Font("Arial", Font.PLAIN, 11));
@@ -82,7 +82,7 @@ public class CommentsConversationPanel extends JPanel {
         commentContent += commentPostDate + " <b>" + username + ":</b> <br>" + strippedMessage + "<hr>";
     }
 
-    public void setChatBoxScene() {
+    void setChatBoxScene() {
         Platform.setImplicitExit(false);
 
         Platform.runLater(() -> { // FX components need to be managed by JavaFX
