@@ -64,6 +64,7 @@ public class DetailsViewDefaultFields {
     public static final String FIELD_TEST_RUN_DRAFT_RUN = "draft_run";
     public static final String FIELD_TEST_RUN_DURATION = "duration";
     public static final String FIELD_TEST_RUN_VERSION = "test_version";
+    public static final String FIELD_TEST_RUN_PREVIOUS_RELEASE = "previous_release";
 
     //COMMENTS
     public static final String FIELD_COMMENT_TEXT="text";
