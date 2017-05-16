@@ -2,6 +2,7 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.nga.sdk.model.FieldModel;
+import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entity.*;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
 import com.hpe.adm.octane.services.filtering.Entity;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -29,30 +30,20 @@ public class GeneralEntityDetailsPanel extends JPanel {
     private boolean hasAttachment = false;
     private HeaderPanel headerPanel;
     private CommentsConversationPanel commentsListPanel;
+    private JXLabel label;
 
     public GeneralEntityDetailsPanel(EntityModel entityModel) {
-        setBorder(null);
-        setBounds(100, 100, 900, 350);
-        GridBagLayout gridBagLayout = new GridBagLayout();
-        gridBagLayout.columnWidths = new int[]{0, 0};
-        gridBagLayout.rowHeights = new int[]{0, 0};
-        gridBagLayout.columnWeights = new double[]{1.0, Double.MIN_VALUE};
-        gridBagLayout.rowWeights = new double[]{1.0, Double.MIN_VALUE};
-        this.setLayout(gridBagLayout);
+        setLayout(new BorderLayout(0, 0));
 
         JPanel rootPanel = new JPanel();
-        rootPanel.setBorder(new EmptyBorder(10, 10, 30, 10));
-        GridBagConstraints gbc_rootPanel = new GridBagConstraints();
-        gbc_rootPanel.insets = new Insets(0, 0, 5, 0);
-        gbc_rootPanel.fill = GridBagConstraints.BOTH;
-        gbc_rootPanel.gridx = 0;
-        gbc_rootPanel.gridy = 0;
-        add(rootPanel, gbc_rootPanel);
+        rootPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+        
+        add(rootPanel, BorderLayout.CENTER);
         GridBagLayout gbl_rootPanel = new GridBagLayout();
-        gbl_rootPanel.columnWidths = new int[]{0, 0, 0};
-        gbl_rootPanel.rowHeights = new int[]{0, 0, 0, 0, 0};
-        gbl_rootPanel.columnWeights = new double[]{1.0, Double.MIN_VALUE, Double.MIN_VALUE};
-        gbl_rootPanel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+        gbl_rootPanel.columnWidths = new int[]{0, 0};
+        gbl_rootPanel.rowHeights = new int[]{0, 0, 0, 0};
+        gbl_rootPanel.columnWeights = new double[]{1.0, Double.MIN_VALUE};
+        gbl_rootPanel.rowWeights = new double[]{0.0, 0.0, 0.0, 1.0};
         rootPanel.setLayout(gbl_rootPanel);
 
         headerPanel = new HeaderPanel();
@@ -61,7 +52,7 @@ public class GeneralEntityDetailsPanel extends JPanel {
         gbc_headerPanel.insets = new Insets(0, 0, 5, 0);
         gbc_headerPanel.fill = GridBagConstraints.HORIZONTAL;
         gbc_headerPanel.gridx = 0;
-        gbc_headerPanel.gridy = 1;
+        gbc_headerPanel.gridy = 0;
         rootPanel.add(headerPanel, gbc_headerPanel);
 
 
@@ -77,7 +68,7 @@ public class GeneralEntityDetailsPanel extends JPanel {
         gbc_entityDetailsAndCommentsPanel.insets = new Insets(0, 0, 5, 0);
         gbc_entityDetailsAndCommentsPanel.fill = GridBagConstraints.BOTH;
         gbc_entityDetailsAndCommentsPanel.gridx = 0;
-        gbc_entityDetailsAndCommentsPanel.gridy = 2;
+        gbc_entityDetailsAndCommentsPanel.gridy = 1;
         rootPanel.add(entityDetailsAndCommentsPanel, gbc_entityDetailsAndCommentsPanel);
         GridBagLayout gbl_entityDetailsAndCommentsPanel = new GridBagLayout();
         gbl_entityDetailsAndCommentsPanel.columnWidths = new int[]{0, 0, 0};
@@ -109,71 +100,28 @@ public class GeneralEntityDetailsPanel extends JPanel {
         gbc_commentsPanel.gridx = 1;
         gbc_commentsPanel.gridy = 0;
         entityDetailsAndCommentsPanel.add(commentsDetails, gbc_commentsPanel);
-        JPanel descriptionPanel = new JPanel();
-        descriptionPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 80));
-        GridBagConstraints gbc_descriptionPanel = new GridBagConstraints();
-        gbc_descriptionPanel.anchor = GridBagConstraints.NORTH;
-        gbc_descriptionPanel.fill = GridBagConstraints.BOTH;
-        gbc_descriptionPanel.gridx = 0;
-        gbc_descriptionPanel.gridy = 3;
-        rootPanel.add(descriptionPanel, gbc_descriptionPanel);
-        GridBagLayout gbl_descriptionPanel = new GridBagLayout();
-        gbl_descriptionPanel.columnWidths = new int[] {30};
-        gbl_descriptionPanel.rowHeights = new int[] {0};
-        gbl_descriptionPanel.columnWeights = new double[]{1.0};
-        gbl_descriptionPanel.rowWeights = new double[]{0.0, 0.0};
-        descriptionPanel.setLayout(gbl_descriptionPanel);
-
-        JXLabel lblDescription = new JXLabel();
-        lblDescription.setFont(new Font("Arial", Font.BOLD, 11));
-        lblDescription.setText("Description");
-        GridBagConstraints gbc_lblDescription = new GridBagConstraints();
-        gbc_lblDescription.anchor = GridBagConstraints.WEST;
-        gbc_lblDescription.insets = new Insets(0, 0, 5, 5);
-        gbc_lblDescription.gridx = 0;
-        gbc_lblDescription.gridy = 0;
-        descriptionPanel.add(lblDescription, gbc_lblDescription);
+        
+        label = new JXLabel();
+        label.setText("Description");
+        label.setFont(new Font("Arial", Font.BOLD, 11));
+        GridBagConstraints gbc_label = new GridBagConstraints();
+        gbc_label.fill = GridBagConstraints.HORIZONTAL;
+        gbc_label.insets = new Insets(0, 0, 5, 0);
+        gbc_label.gridx = 0;
+        gbc_label.gridy = 2;
+        rootPanel.add(label, gbc_label);
 
         //ScrollPane scrollPane = new ScrollPane();
         descriptionDetails = new HTMLPresenterFXPanel();
-        descriptionDetails.setPreferredSize(new Dimension(400, 120));
-        descriptionDetails.setOpaque(false);
-        descriptionDetails.setBorder(new EmptyBorder(0, 0, 0, 5));
-        descriptionDetails.setFont(new Font("Arial", Font.PLAIN, 11));
-        descriptionDetails.addEventActions();
-        //scrollPane.add(descriptionDetails);
-        //descriptionDetails.setMaximumSize(new Dimension(400, 120));
-//        GridBagConstraints gbc_descriptionDetails_2 = new GridBagConstraints();
-//        gbc_descriptionDetails_2.fill = GridBagConstraints.BOTH;
-//        gbc_descriptionDetails_2.gridwidth = 2;
-//        gbc_descriptionDetails_2.gridx = 0;
-//        gbc_descriptionDetails_2.gridy = 1;
-//        drawGeneralDetailsForEntity(entityModel);
-//        descriptionPanel.add(descriptionDetails, gbc_descriptionDetails_2);
-        JPanel test = new JPanel();
-        //test.setPreferredSize(new Dimension(400, 120));
-        GridBagLayout gblay = new GridBagLayout();
-        gblay.columnWidths = new int[]{0, 0, 0};
-        gblay.rowHeights = new int[]{0, 0, 0};
-        gblay.columnWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};
-        gblay.rowWeights = new double[]{0.0, Double.MIN_VALUE};
-        GridBagConstraints gbc_descriptionDetails_2 = new GridBagConstraints();
-        gbc_descriptionDetails_2.fill = GridBagConstraints.BOTH;
-        gbc_descriptionDetails_2.gridwidth = 2;
-        gbc_descriptionDetails_2.gridx = 0;
-        gbc_descriptionDetails_2.gridy = 4;
-
-//        test.setLayout(gblay);
-//
-//        test.add(descriptionDetails);
-        //test.setPreferredSize(new Dimension(400, 120));
-        descriptionDetails.setLayout(gblay);
+        descriptionDetails.setPreferredSize(new Dimension(0,120));
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 4;
         gbc.fill = GridBagConstraints.BOTH;
+        gbc.gridx = 0;
+        gbc.gridy = 3;
         rootPanel.add(descriptionDetails, gbc);
+        
         drawGeneralDetailsForEntity(entityModel);
+        descriptionDetails.addEventActions();
     }
 
     private void drawGeneralDetailsForEntity(EntityModel entityModel) {

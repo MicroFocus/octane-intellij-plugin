@@ -35,7 +35,6 @@ public class HTMLPresenterFXPanel extends JFXPanel {
     private String commentContent;
 
     HTMLPresenterFXPanel() {
-        setMinimumSize(new Dimension(0, 0));
         UIManager.addPropertyChangeListener(evt -> {
             if ("lookAndFeel".equals(evt.getPropertyName())) {
                 Platform.runLater(() -> setContent(getCommentContent()));
@@ -117,7 +116,6 @@ public class HTMLPresenterFXPanel extends JFXPanel {
                 }
             }
         });
-
     }
 
     public void setContent(final String commentContent) {
