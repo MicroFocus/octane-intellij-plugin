@@ -2,14 +2,13 @@ package com.hpe.adm.octane.ideplugins.intellij.settings;
 
 import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.ui.components.ConnectionSettingsComponent;
-import com.hpe.adm.octane.ideplugins.intellij.ui.detail.TestFrameExample;
 import com.hpe.adm.octane.services.TestService;
 import com.hpe.adm.octane.services.connection.ConnectionSettings;
 import com.hpe.adm.octane.services.connection.ConnectionSettingsProvider;
 import com.hpe.adm.octane.services.exception.ServiceException;
 import com.hpe.adm.octane.services.exception.ServiceRuntimeException;
 import com.hpe.adm.octane.services.nonentity.OctaneVersionService;
-import com.hpe.adm.octane.services.util.Constants;
+import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.services.util.OctaneVersion;
 import com.hpe.adm.octane.services.util.UrlParser;
 import com.intellij.openapi.options.ConfigurationException;
@@ -37,8 +36,7 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
     private ConnectionSettingsProvider connectionSettingsProvider;
     private TestService testService;
     private IdePluginPersistentState idePluginPersistentState;
-    private OctaneVersionService versionService;
-    private TestFrameExample connectionSettingsView = new TestFrameExample();
+    private ConnectionSettingsComponent connectionSettingsView = new ConnectionSettingsComponent();
     private boolean pinMessage = false;
 
     @NotNull
@@ -70,7 +68,6 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
         connectionSettingsProvider = module.getInstance(ConnectionSettingsProvider.class);
         testService = module.getInstance(TestService.class);
         idePluginPersistentState = module.getInstance(IdePluginPersistentState.class);
-        versionService = module.getInstance(OctaneVersionService.class);
         this.currentProject = currentProject;
     }
 
@@ -95,6 +92,7 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
                 }
             }.execute();
         });
+
         return connectionSettingsView.getComponent();
     }
 
