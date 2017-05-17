@@ -123,7 +123,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
 
     private final class EntityRefreshAction extends AnAction {
         public EntityRefreshAction() {
-            super("Refresh current entity", "this will refresh the current entity", IconLoader.findIcon(Constants.IMG_REFRESH_ICON));
+            super("Refresh current entity", "This will refresh the current entity.", IconLoader.findIcon(Constants.IMG_REFRESH_ICON));
         }
 
         public void actionPerformed(AnActionEvent e) {
@@ -134,7 +134,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
 
     private final class EntityCommentsAction extends AnAction {
         public EntityCommentsAction() {
-            super("Show comments for current entity", "this will show comments for current entity", IconLoader.findIcon(Constants.IMG_COMMENTS_ICON));
+            super("Show comments for current entity", "This will show comments for current entity.", IconLoader.findIcon(Constants.IMG_COMMENTS_ICON));
         }
 
         public void actionPerformed(AnActionEvent e) {
