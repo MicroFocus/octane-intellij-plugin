@@ -2,6 +2,7 @@ package com.hpe.adm.octane.ideplugins.intellij.settings;
 
 import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.ui.components.ConnectionSettingsComponent;
+import com.hpe.adm.octane.ideplugins.intellij.ui.detail.TestFrameExample;
 import com.hpe.adm.octane.services.TestService;
 import com.hpe.adm.octane.services.connection.ConnectionSettings;
 import com.hpe.adm.octane.services.connection.ConnectionSettingsProvider;
@@ -37,7 +38,7 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
     private TestService testService;
     private IdePluginPersistentState idePluginPersistentState;
     private OctaneVersionService versionService;
-    private ConnectionSettingsComponent connectionSettingsView = new ConnectionSettingsComponent();
+    private TestFrameExample connectionSettingsView = new TestFrameExample();
     private boolean pinMessage = false;
 
     @NotNull
