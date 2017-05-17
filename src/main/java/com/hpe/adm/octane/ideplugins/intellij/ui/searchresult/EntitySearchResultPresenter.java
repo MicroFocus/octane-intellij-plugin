@@ -17,7 +17,7 @@ import com.hpe.adm.octane.services.EntityService;
 import com.hpe.adm.octane.services.filtering.Entity;
 import com.hpe.adm.octane.services.mywork.MyWorkService;
 import com.hpe.adm.octane.services.nonentity.EntitySearchService;
-import com.hpe.adm.octane.services.util.Constants;
+import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.services.util.SdkUtil;
 import com.hpe.adm.octane.services.util.Util;
 import com.intellij.icons.AllIcons;

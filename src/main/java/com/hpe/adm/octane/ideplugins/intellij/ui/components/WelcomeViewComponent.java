@@ -1,24 +1,17 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.components;
 
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-
 import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.settings.ConnectionSettingsConfigurable;
+import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.HasComponent;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.nowork.NoWorkPanel;
 import com.hpe.adm.octane.services.connection.ConnectionSettingsProvider;
-import com.hpe.adm.octane.services.util.Constants;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
-
-import java.awt.GridBagLayout;
-import javax.swing.JLabel;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
-
 import org.jdesktop.swingx.JXHyperlink;
+
+import javax.swing.*;
+import java.awt.*;
 
 public class WelcomeViewComponent extends JPanel implements HasComponent {
 

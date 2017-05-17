@@ -1,6 +1,6 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents;
 
-import com.hpe.adm.octane.services.util.Constants;
+import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.intellij.ui.JBColor;
 
 import javax.swing.*;

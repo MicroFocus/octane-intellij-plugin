@@ -14,7 +14,7 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
 import com.hpe.adm.octane.services.mywork.MyWorkUtil;
 import com.hpe.adm.octane.services.util.PartialEntity;
 import com.hpe.adm.octane.services.util.Util;
-import com.hpe.adm.octane.services.util.Constants;
+import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
 import com.hpe.adm.octane.services.EntityService;
 import com.hpe.adm.octane.services.mywork.MyWorkService;
