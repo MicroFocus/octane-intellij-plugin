@@ -59,12 +59,16 @@ public class EntityDetailView implements View {
     public void setRefreshEntityButton(AnAction refreshAction) {
         entityDetailsPanel.setRefreshButton(refreshAction);
     }
+    public void setCommentsEntityButton(AnAction commentsAction) {
+        entityDetailsPanel.setCommentsButton(commentsAction);
+    }
     public void setSaveSelectedPhaseButton(AnAction saveSelectedPhaseAction){
         entityDetailsPanel.setSaveSelectedPhaseButton(saveSelectedPhaseAction);
     }
     public void removeSaveSelectedPhaseButton(){
         entityDetailsPanel.removeSaveSelectedPhaseButton();
     }
+
     public void setPhaseInHeader(boolean showPhase){
         entityDetailsPanel.setPhaseInHeader(showPhase);
     }
@@ -100,7 +104,8 @@ public class EntityDetailView implements View {
     public String getCommentMessageBoxText() {
         return entityDetailsPanel.getCommentMessageBoxText();
     }
-    public void removeToggleOnButtonForComments(){
-        entityDetailsPanel.removeToggleOnButtonForComments();
+
+    public GeneralEntityDetailsPanel getEntityDetailsPanel() {
+        return entityDetailsPanel;
     }
 }

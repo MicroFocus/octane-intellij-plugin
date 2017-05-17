@@ -1,32 +1,46 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
+import com.hpe.adm.octane.ideplugins.intellij.util.HtmlTextEditor;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.ui.JBColor;
+import com.intellij.util.ui.UIUtil;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
+import javafx.scene.Scene;
+import javafx.scene.layout.StackPane;
+import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.concurrent.Worker.State;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.events.EventListener;
 import org.w3c.dom.events.EventTarget;
+
+import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import java.awt.*;
+import java.awt.Color;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-public class CommentsFXPanel extends JFXPanel {
-    private static final Logger log = Logger.getInstance(CommentsFXPanel.class);
+public class HTMLPresenterFXPanel extends JFXPanel {
+    private static final Logger log = Logger.getInstance(HTMLPresenterFXPanel.class);
     private static final String EVENT_TYPE_CLICK = "click";
     private static final String EVENT_TYPE_MOUSEOVER = "mouseover";
     private static final String EVENT_TYPE_MOUSEOUT = "mouseclick";
     private static final String HYPERLINK_TAG = "a";
     private WebView webView;
+    private String commentContent;
 
-    CommentsFXPanel() {
-        Platform.runLater(this::initFX);
+    HTMLPresenterFXPanel() {
+        UIManager.addPropertyChangeListener(evt -> {
+            if ("lookAndFeel".equals(evt.getPropertyName())) {
+                Platform.runLater(() -> setContent(getCommentContent()));
+            }
+        });
     }
 
     private void addHyperlinkListener(HyperlinkListener listener) {
@@ -38,6 +52,7 @@ public class CommentsFXPanel extends JFXPanel {
     }
 
     private void fireHyperlinkUpdate(HyperlinkEvent.EventType eventType, String desc) {
+
         HyperlinkEvent event = new HyperlinkEvent(this, eventType, null, desc);
         // Guaranteed to return a non-null array
         Object[] listeners = listenerList.getListenerList();
@@ -60,6 +75,7 @@ public class CommentsFXPanel extends JFXPanel {
      * P.S. For this use case mouseover and mouseout event were not required to be handled.
      */
     void initFX() {
+
         webView = getWebView();
 
         webView.getEngine().getLoadWorker().stateProperty().addListener((ov, oldState, newState) -> {
@@ -92,10 +108,8 @@ public class CommentsFXPanel extends JFXPanel {
                     }
 
                 };
-
                 final Document doc = webView.getEngine().getDocument();
                 final NodeList nodeList = doc.getElementsByTagName(HYPERLINK_TAG);
-
                 //Foreach not applicable for NodeList class
                 for (int i = 0; i < nodeList.getLength(); i++) {
                     EventTarget eventTarget = (EventTarget) nodeList.item(i);
@@ -103,23 +117,38 @@ public class CommentsFXPanel extends JFXPanel {
                 }
             }
         });
-
     }
 
-    private void addEventListeners(EventTarget eventTarget, EventListener listener){
+    public void setContent(final String commentContent) {
+        final String strippedContent = HtmlTextEditor.removeHtmlStructure(commentContent);
+        final StackPane root = new StackPane();
+        final Scene scene = new Scene(root);
+        final WebView webView = getWebView();
+        final WebEngine webEngine = webView.getEngine();
+        final String coloredHtmlCode = HtmlTextEditor.getColoredHTML(strippedContent);
+
+        setCommentContent(strippedContent);
+        root.getChildren().add(webView);
+        webEngine.loadContent(coloredHtmlCode);
+        this.setWebView(webView);
+        this.setScene(scene);
+        Platform.setImplicitExit(false);
+    }
+
+    private void addEventListeners(EventTarget eventTarget, EventListener listener) {
         eventTarget.addEventListener(EVENT_TYPE_CLICK, listener, false);
         eventTarget.addEventListener(EVENT_TYPE_MOUSEOVER, listener, false);
         eventTarget.addEventListener(EVENT_TYPE_MOUSEOUT, listener, false);
     }
 
+
     public void addEventActions() {
         this.addHyperlinkListener(evt -> {
-            HyperlinkEvent.EventType eventType = evt.getEventType();
-
-            String href = evt.getDescription();
-
+            final String href = evt.getDescription();
             URL targetUrl;
             URI targetUri;
+
+            HyperlinkEvent.EventType eventType = evt.getEventType();
 
             try {
                 targetUrl = new URL(href);
@@ -148,4 +177,14 @@ public class CommentsFXPanel extends JFXPanel {
     void setWebView(WebView webView) {
         this.webView = webView;
     }
+
+    private String getCommentContent() {
+        return commentContent;
+    }
+
+    private void setCommentContent(String commentContent) {
+        this.commentContent = commentContent;
+    }
+
+
 }

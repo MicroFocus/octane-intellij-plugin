@@ -77,18 +77,17 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                         entityDetailView.setEntityModel(entityModel);
                         entityDetailView.setSaveSelectedPhaseButton(new SaveSelectedPhaseAction());
                         entityDetailView.setRefreshEntityButton(new EntityRefreshAction());
+                        if (entityType!= TASK) {
+                            entityDetailView.setCommentsEntityButton(new EntityCommentsAction());
+                            setComments(entityModel);
+                            addSendNewCommentAction(entityModel);
+                        }
                         if (entityType != MANUAL_TEST_RUN && entityType != TEST_SUITE_RUN) {
                             setPossibleTransitions(entityModel);
                             entityDetailView.setPhaseInHeader(true);
                         } else {
                             entityDetailView.removeSaveSelectedPhaseButton();
                             entityDetailView.setPhaseInHeader(false);
-                        }
-                        if (entityType.getSubtypeOf() == WORK_ITEM || entityType.getSubtypeOf() == TEST) {
-                            setComments(entityModel);
-                            addSendNewCommentAction(entityModel);
-                        } else {
-                            entityDetailView.removeToggleOnButtonForComments();
                         }
                         //Title goes to browser
                         entityDetailView.setEntityNameClickHandler(() -> entityService.openInBrowser(entityModel));
@@ -124,12 +123,24 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
 
     private final class EntityRefreshAction extends AnAction {
         public EntityRefreshAction() {
-            super("Refresh current entity", "this will refresh the current entity", IconLoader.findIcon(Constants.IMG_REFRESH_ICON));
+            super("Refresh current entity", "This will refresh the current entity.", IconLoader.findIcon(Constants.IMG_REFRESH_ICON));
         }
 
         public void actionPerformed(AnActionEvent e) {
             entityDetailView.doRefresh();
             setEntity(entityType, entityId);
+        }
+    }
+
+    private final class EntityCommentsAction extends AnAction {
+        public EntityCommentsAction() {
+            super("Show comments for current entity", "This will show comments for current entity.", IconLoader.findIcon(Constants.IMG_COMMENTS_ICON));
+        }
+
+        public void actionPerformed(AnActionEvent e) {
+            //GeneralEntityDetailsPanel.getCommetsDetails().getActionMap().get(JXCollapsiblePane.TOGGLE_ACTION);
+            //setComments(entityModel);
+            entityDetailView.getEntityDetailsPanel().activateCollapsible();
         }
     }
 

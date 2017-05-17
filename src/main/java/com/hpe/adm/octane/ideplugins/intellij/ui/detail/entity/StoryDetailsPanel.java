@@ -1,4 +1,4 @@
-package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
+package com.hpe.adm.octane.ideplugins.intellij.ui.detail.entity;
 
 import com.intellij.ui.JBColor;
 import org.jdesktop.swingx.JXLabel;

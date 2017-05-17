@@ -2,9 +2,6 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
 import com.intellij.util.ui.UIUtil;
 import javafx.application.Platform;
-import javafx.scene.Scene;
-import javafx.scene.web.WebEngine;
-import javafx.scene.web.WebView;
 import org.apache.commons.lang.StringUtils;
 
 import javax.swing.*;
@@ -17,7 +14,7 @@ import java.awt.event.ActionListener;
 public class CommentsConversationPanel extends JPanel {
     private JButton sendMessageButton;
     private JTextField messageBox;
-    private CommentsFXPanel chatBox;
+    private HTMLPresenterFXPanel chatBox;
     private String commentContent = "";
 
     public CommentsConversationPanel() {
@@ -47,7 +44,7 @@ public class CommentsConversationPanel extends JPanel {
         });
         sendMessageButton = new JButton("Add");
 
-        chatBox = new CommentsFXPanel();
+        chatBox = new HTMLPresenterFXPanel();
         chatBox.setOpaque(false);
         chatBox.setBorder(null);
         chatBox.setFont(new Font("Arial", Font.PLAIN, 11));
@@ -71,40 +68,17 @@ public class CommentsConversationPanel extends JPanel {
         southPanel.setBorder(new EmptyBorder(0, 5, 0, 5));
 
         add(BorderLayout.NORTH, southPanel);
-        JScrollPane scrollChatBox = new JScrollPane(chatBox);
-        scrollChatBox.setBorder(new EmptyBorder(0, 5, 0, 5));
-        add(scrollChatBox, BorderLayout.CENTER);
+        add(chatBox, BorderLayout.CENTER);
         enableButton();
     }
 
-    public void addExistingComment(String commentPostDate, String username, String message) {
-        String strippedMessage = removeHtmlStructure(message);
-        commentContent += commentPostDate + " <b>" + username + ":</b> <br>" + strippedMessage + "<hr>";
+    void addExistingComment(String commentPostDate, String username, String message) {
+        commentContent += commentPostDate + " <b>" + username + ":</b> <br>" + message + "<hr>";
     }
 
     void setChatBoxScene() {
-        Platform.setImplicitExit(false);
-
-        Platform.runLater(() -> { // FX components need to be managed by JavaFX
-            WebView webView = new WebView();
-            WebEngine webEngine = webView.getEngine();
-
-            webEngine.loadContent(commentContent);
-            chatBox.setWebView(webView);
-            chatBox.setScene(new Scene(webView));
-        });
-
+        Platform.runLater(() -> chatBox.setContent(commentContent));
         Platform.runLater(() -> chatBox.initFX());
-    }
-
-    private String removeHtmlStructure(String htmlString) {
-        htmlString = htmlString.replace("<html>", "");
-        htmlString = htmlString.replace("</html>", "");
-        htmlString = htmlString.replace("<body>", "");
-        htmlString = htmlString.replace("</body>", "");
-        htmlString = htmlString.replace("<head>", "");
-        htmlString = htmlString.replace("</head>", "");
-        return htmlString;
     }
 
 
