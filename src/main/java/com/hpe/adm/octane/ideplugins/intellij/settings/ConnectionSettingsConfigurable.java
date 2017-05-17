@@ -1,6 +1,7 @@
 package com.hpe.adm.octane.ideplugins.intellij.settings;
 
 import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
+import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.components.ConnectionSettingsComponent;
 import com.hpe.adm.octane.services.TestService;
 import com.hpe.adm.octane.services.connection.ConnectionSettings;
@@ -8,9 +9,9 @@ import com.hpe.adm.octane.services.connection.ConnectionSettingsProvider;
 import com.hpe.adm.octane.services.exception.ServiceException;
 import com.hpe.adm.octane.services.exception.ServiceRuntimeException;
 import com.hpe.adm.octane.services.nonentity.OctaneVersionService;
-import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.services.util.OctaneVersion;
 import com.hpe.adm.octane.services.util.UrlParser;
+import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
@@ -27,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public class ConnectionSettingsConfigurable implements SearchableConfigurable {
+public class ConnectionSettingsConfigurable implements SearchableConfigurable, Configurable.NoScroll {
 
     private static final String NAME = "Octane";
     private Project currentProject = null;
@@ -84,7 +85,7 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
         connectionSettingsView.setTestConnectionActionListener(event -> {
             //Clear previous message
             connectionSettingsView.setConnectionStatusLoading();
-            new SwingWorker() {
+            new SwingWorker<Void, Void>() {
                 @Override
                 protected Void doInBackground() throws Exception {
                     testConnection();
@@ -236,13 +237,9 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable {
         try {
             newConnectionSettings = getConnectionSettingsFromView();
         } catch (ServiceException ex) {
-
             final StringBuilder errorMessageBuilder = new StringBuilder();
-
             errorMessageBuilder.append(ex.getMessage());
-            errorMessageBuilder.append("<br>");
             errorMessageBuilder.append(Constants.CORRECT_URL_FORMAT_MESSAGE);
-
             SwingUtilities.invokeLater(() -> connectionSettingsView.setConnectionStatusError(errorMessageBuilder.toString()));
             throw ex;
         }
