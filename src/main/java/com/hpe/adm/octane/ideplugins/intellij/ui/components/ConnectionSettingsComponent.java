@@ -213,7 +213,7 @@ public class ConnectionSettingsComponent implements HasComponent {
 
             @Override
             public void focusLost(FocusEvent e) {
-                if (txtFieldServerUrl.getText().trim().length() == 0) {
+                if (0 == txtFieldServerUrl.getText().trim().length()) {
                     txtFieldServerUrl.setText(EMPTY_SERVER_URL_TEXT);
                 }
             }
@@ -225,7 +225,6 @@ public class ConnectionSettingsComponent implements HasComponent {
             passField.setText("");
             lblConnectionStatus.setText("");
         });
-
 
         rootPanel.setVisible(true);
     }
@@ -334,6 +333,7 @@ public class ConnectionSettingsComponent implements HasComponent {
         SwingUtilities.invokeLater(() -> {
             if (btnTest.isEnabled() != isEnabled) {
                 btnTest.setEnabled(isEnabled);
+                btnTest.requestFocus();
             }
         });
     }
