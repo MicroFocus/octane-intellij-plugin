@@ -1,8 +1,9 @@
 package com.hpe.adm.octane.ideplugins.intellij.gitcommit;
 
-import com.hpe.adm.nga.sdk.Query;
-import com.hpe.adm.nga.sdk.QueryMethod;
+
 import com.hpe.adm.nga.sdk.model.EntityModel;
+import com.hpe.adm.nga.sdk.query.Query;
+import com.hpe.adm.nga.sdk.query.QueryMethod;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.services.EntityService;
 import com.hpe.adm.octane.services.filtering.Entity;
