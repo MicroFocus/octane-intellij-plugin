@@ -20,6 +20,6 @@ public class Constants {
     public static final String CORRECT_URL_FORMAT_MESSAGE = "Example: (http|https)://{serverurl[:port]}/?p={sharedspaceId}/{workspaceId}";
 
     //Tabs title
-    public static final String TAB_MY_WORK_TITLE = "MY WORK";
+    public static final String TAB_MY_WORK_TITLE = "My work";
 
 }
