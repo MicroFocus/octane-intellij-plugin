@@ -60,7 +60,6 @@ public class EntityIconFactory {
 
         iconDetailMap.put(Entity.MANUAL_TEST_RUN, new IconDetail(new Color(133,169,188), "MR"));
         iconDetailMap.put(Entity.TEST_SUITE_RUN, new IconDetail(new Color(133,169,188), "SR"));
-        iconDetailMap.put(Entity.TEST_SUITE_RUN, new IconDetail(new Color(133,169,188), "AT"));
         iconDetailMap.put(Entity.AUTOMATED_TEST, new IconDetail(new Color(135,123,117), "AT"));
 
         iconDetailMap.put(Entity.COMMENT, new IconDetail(new Color(234, 179, 124), "C"));
