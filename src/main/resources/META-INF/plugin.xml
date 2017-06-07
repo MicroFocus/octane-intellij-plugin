@@ -28,6 +28,12 @@
 
     <change-notes><![CDATA[
 
+      <b>2016.2-12.53.22.2</b>
+      <ul>
+        <li>Fixed bug involving Gherkin script download</li>
+        <li>Fixed bug involving search</li>
+      </ul>
+
       <b>2016.2-12.53.22.1</b>
       <ul>
         <li>Implemented compatibility with ALM Octane 12.53.22 (backwards compatible with 12.53.20 and 12.53.21)</li>
