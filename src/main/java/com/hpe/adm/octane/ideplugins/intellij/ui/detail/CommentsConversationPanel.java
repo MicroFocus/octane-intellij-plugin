@@ -23,12 +23,15 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class CommentsConversationPanel extends JPanel {
     private JButton sendMessageButton;
     private JTextField messageBox;
     private HTMLPresenterFXPanel chatBox;
     private String commentContent = "";
+    private ActionListener addCommentActionListener;
 
     public CommentsConversationPanel() {
         setLayout(new BorderLayout());
@@ -55,7 +58,19 @@ public class CommentsConversationPanel extends JPanel {
                 enableButton();
             }
         });
+        messageBox.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if(e.getKeyCode() == KeyEvent.VK_ENTER &&
+                        addCommentActionListener != null &&
+                        sendMessageButton.isEnabled()){
+                    addCommentActionListener.actionPerformed(null);
+                }
+            }
+        });
         sendMessageButton = new JButton("Add");
+
+
 
         chatBox = new HTMLPresenterFXPanel();
         chatBox.setOpaque(false);
@@ -96,6 +111,7 @@ public class CommentsConversationPanel extends JPanel {
 
 
     public void addSendNewCommentAction(ActionListener actionListener) {
+        this.addCommentActionListener = actionListener;
         sendMessageButton.addActionListener(actionListener);
     }
 
