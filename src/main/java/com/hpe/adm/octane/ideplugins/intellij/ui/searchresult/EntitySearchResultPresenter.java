@@ -63,6 +63,7 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
             Entity.USER_STORY,
             Entity.DEFECT,
             Entity.TASK,
+            Entity.TEST_SUITE,
             Entity.MANUAL_TEST,
             Entity.AUTOMATED_TEST,
             Entity.GHERKIN_TEST};
@@ -150,7 +151,7 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
         entityCategories.add(new SearchEntityCategory("Backlog", Entity.USER_STORY, Entity.EPIC, Entity.FEATURE));
         entityCategories.add(new SearchEntityCategory("Defects", Entity.DEFECT));
         entityCategories.add(new SearchEntityCategory("Tasks", Entity.TASK));
-        entityCategories.add(new SearchEntityCategory("Tests", Entity.MANUAL_TEST, Entity.AUTOMATED_TEST, Entity.GHERKIN_TEST));
+        entityCategories.add(new SearchEntityCategory("Tests", Entity.TEST_SUITE, Entity.MANUAL_TEST, Entity.AUTOMATED_TEST, Entity.GHERKIN_TEST));
         EntityTreeModel model = new EntityTreeModel(entityCategories, entityModels);
         return model;
     }

@@ -71,6 +71,7 @@ public class EntityIconFactory {
         iconDetailMap.put(Entity.MANUAL_TEST, new IconDetail(new Color(96,121,141), "MT"));
         iconDetailMap.put(Entity.GHERKIN_TEST, new IconDetail(new Color(120,196,192), "GT"));
 
+        iconDetailMap.put(Entity.TEST_SUITE, new IconDetail(new Color(133,114,147), "TS"));
         iconDetailMap.put(Entity.MANUAL_TEST_RUN, new IconDetail(new Color(133,169,188), "MR"));
         iconDetailMap.put(Entity.TEST_SUITE_RUN, new IconDetail(new Color(133,169,188), "SR"));
         iconDetailMap.put(Entity.AUTOMATED_TEST, new IconDetail(new Color(135,123,117), "AT"));
