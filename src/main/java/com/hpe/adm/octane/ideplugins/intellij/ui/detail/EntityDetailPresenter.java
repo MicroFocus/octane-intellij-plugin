@@ -116,7 +116,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
     private void setPossibleTransitions(EntityModel entityModel) {
         Collection<EntityModel> result = new HashSet<>();
         RestUtil.runInBackground(() -> {
-            Long currentPhaseId = Long.valueOf(Util.getUiDataFromModel(entityModel.getValue("phase"), "id"));
+            String currentPhaseId = Util.getUiDataFromModel(entityModel.getValue("phase"), "id");
             return entityService.findPossibleTransitionFromCurrentPhase(Entity.getEntityType(entityModel), currentPhaseId);
         }, (possibleTransitions) -> {
             if (possibleTransitions.isEmpty()) {
