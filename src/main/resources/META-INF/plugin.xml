@@ -28,6 +28,11 @@
 
     <change-notes><![CDATA[
 
+      <b>2016.2-12.55.4.1</b>
+      <ul>
+        <li>Added support for changes made in 12.55.4</li>
+      </ul>
+
       <b>2016.2-12.53.22.2</b>
       <ul>
         <li>Fixed bug involving Gherkin script download</li>

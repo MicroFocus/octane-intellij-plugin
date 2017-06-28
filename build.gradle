@@ -16,7 +16,7 @@ plugins {
 }
 
 group 'com.hpe.adm.octane'
-version '2016.2-12.53.22.2'
+version '2016.2-12.55.4.1'
 
 apply plugin: 'java'
 apply plugin: 'groovy'
