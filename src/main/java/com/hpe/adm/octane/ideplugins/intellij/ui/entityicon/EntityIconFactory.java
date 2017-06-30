@@ -14,7 +14,7 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.entityicon;
 
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
-import com.hpe.adm.octane.services.filtering.Entity;
+import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.intellij.util.ImageLoader;
 import org.jdesktop.swingx.JXLabel;
 

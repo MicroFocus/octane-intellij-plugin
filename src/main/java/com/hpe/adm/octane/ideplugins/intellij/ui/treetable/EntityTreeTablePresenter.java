@@ -24,17 +24,17 @@ import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
-import com.hpe.adm.octane.services.mywork.MyWorkUtil;
-import com.hpe.adm.octane.services.util.PartialEntity;
-import com.hpe.adm.octane.services.util.Util;
+import com.hpe.adm.octane.ideplugins.services.mywork.MyWorkUtil;
+import com.hpe.adm.octane.ideplugins.services.util.PartialEntity;
+import com.hpe.adm.octane.ideplugins.services.util.Util;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
-import com.hpe.adm.octane.services.EntityService;
-import com.hpe.adm.octane.services.mywork.MyWorkService;
-import com.hpe.adm.octane.services.filtering.Entity;
-import com.hpe.adm.octane.services.nonentity.DownloadScriptService;
-import com.hpe.adm.octane.services.util.EntityUtil;
-import com.hpe.adm.octane.services.util.SdkUtil;
+import com.hpe.adm.octane.ideplugins.services.EntityService;
+import com.hpe.adm.octane.ideplugins.services.mywork.MyWorkService;
+import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
+import com.hpe.adm.octane.ideplugins.services.nonentity.DownloadScriptService;
+import com.hpe.adm.octane.ideplugins.services.util.EntityUtil;
+import com.hpe.adm.octane.ideplugins.services.util.SdkUtil;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.actions.OpenProjectFileChooserDescriptor;
 import com.intellij.notification.NotificationType;
@@ -68,7 +68,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.hpe.adm.octane.services.util.Util.getUiDataFromModel;
+import static com.hpe.adm.octane.ideplugins.services.util.Util.getUiDataFromModel;
 
 public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
 

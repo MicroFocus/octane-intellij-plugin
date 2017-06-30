@@ -16,7 +16,7 @@ package com.hpe.adm.octane.ideplugins.intellij.ui;
 import com.google.inject.Inject;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
-import com.hpe.adm.octane.services.util.PartialEntity;
+import com.hpe.adm.octane.ideplugins.services.util.PartialEntity;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;

@@ -15,7 +15,7 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.util;
 
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeCellRenderer;
-import com.hpe.adm.octane.services.filtering.Entity;
+import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.project.Project;

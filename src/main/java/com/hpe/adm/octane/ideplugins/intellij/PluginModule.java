@@ -27,8 +27,8 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.ToolbarActiveItem;
 import com.hpe.adm.octane.ideplugins.intellij.ui.searchresult.SearchResultEntityTreeCellRenderer;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeCellRenderer;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeView;
-import com.hpe.adm.octane.services.di.ServiceModule;
-import com.hpe.adm.octane.services.connection.ConnectionSettingsProvider;
+import com.hpe.adm.octane.ideplugins.services.di.ServiceModule;
+import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 

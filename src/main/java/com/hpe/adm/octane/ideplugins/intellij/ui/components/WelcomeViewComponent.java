@@ -18,7 +18,7 @@ import com.hpe.adm.octane.ideplugins.intellij.settings.ConnectionSettingsConfigu
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.HasComponent;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.nowork.NoWorkPanel;
-import com.hpe.adm.octane.services.connection.ConnectionSettingsProvider;
+import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 import org.jdesktop.swingx.JXHyperlink;

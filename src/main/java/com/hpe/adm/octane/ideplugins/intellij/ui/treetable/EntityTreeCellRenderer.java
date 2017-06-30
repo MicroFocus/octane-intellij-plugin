@@ -17,10 +17,10 @@ import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.nga.sdk.model.FieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
-import com.hpe.adm.octane.services.filtering.Entity;
-import com.hpe.adm.octane.services.mywork.MyWorkUtil;
-import com.hpe.adm.octane.services.util.EntityTypeIdPair;
-import com.hpe.adm.octane.services.util.Util;
+import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
+import com.hpe.adm.octane.ideplugins.services.mywork.MyWorkUtil;
+import com.hpe.adm.octane.ideplugins.services.util.EntityTypeIdPair;
+import com.hpe.adm.octane.ideplugins.services.util.Util;
 import com.intellij.ui.JBColor;
 import org.apache.commons.lang.StringUtils;
 import org.jdesktop.swingx.JXLabel;
@@ -32,8 +32,8 @@ import java.util.*;
 
 import static com.hpe.adm.octane.ideplugins.intellij.ui.detail.DetailsViewDefaultFields.*;
 import static com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityModelRow.DetailsPosition;
-import static com.hpe.adm.octane.services.util.Util.getContainerItemForCommentModel;
-import static com.hpe.adm.octane.services.util.Util.getUiDataFromModel;
+import static com.hpe.adm.octane.ideplugins.services.util.Util.getContainerItemForCommentModel;
+import static com.hpe.adm.octane.ideplugins.services.util.Util.getUiDataFromModel;
 
 public class EntityTreeCellRenderer implements TreeCellRenderer {
 

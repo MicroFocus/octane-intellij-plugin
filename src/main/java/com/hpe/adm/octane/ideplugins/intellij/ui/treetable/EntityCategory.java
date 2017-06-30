@@ -14,7 +14,7 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.treetable;
 
 import com.hpe.adm.nga.sdk.model.EntityModel;
-import com.hpe.adm.octane.services.filtering.Entity;
+import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 
 import java.util.List;
 

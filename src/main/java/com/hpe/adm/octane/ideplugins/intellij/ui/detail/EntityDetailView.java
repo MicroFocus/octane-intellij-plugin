@@ -17,7 +17,7 @@ import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.View;
 import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.LoadingWidget;
-import com.hpe.adm.octane.services.connection.ConnectionSettingsProvider;
+import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.ui.components.JBScrollPane;
 

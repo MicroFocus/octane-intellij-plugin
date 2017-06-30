@@ -15,7 +15,7 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.searchresult;
 
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityCategory;
-import com.hpe.adm.octane.services.filtering.Entity;
+import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 
 import java.util.ArrayList;
 import java.util.Arrays;

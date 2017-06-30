@@ -26,13 +26,13 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityCategory;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeView;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
-import com.hpe.adm.octane.services.EntityService;
-import com.hpe.adm.octane.services.filtering.Entity;
-import com.hpe.adm.octane.services.mywork.MyWorkService;
-import com.hpe.adm.octane.services.nonentity.EntitySearchService;
+import com.hpe.adm.octane.ideplugins.services.EntityService;
+import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
+import com.hpe.adm.octane.ideplugins.services.mywork.MyWorkService;
+import com.hpe.adm.octane.ideplugins.services.nonentity.EntitySearchService;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
-import com.hpe.adm.octane.services.util.SdkUtil;
-import com.hpe.adm.octane.services.util.Util;
+import com.hpe.adm.octane.ideplugins.services.util.SdkUtil;
+import com.hpe.adm.octane.ideplugins.services.util.Util;
 import com.intellij.icons.AllIcons;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -51,7 +51,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static com.hpe.adm.octane.services.util.Util.getUiDataFromModel;
+import static com.hpe.adm.octane.ideplugins.services.util.Util.getUiDataFromModel;
 
 public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
 

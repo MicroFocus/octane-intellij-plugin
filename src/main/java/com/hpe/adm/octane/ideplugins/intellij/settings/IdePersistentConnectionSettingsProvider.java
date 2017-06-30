@@ -13,8 +13,8 @@
 
 package com.hpe.adm.octane.ideplugins.intellij.settings;
 
-import com.hpe.adm.octane.services.connection.BasicConnectionSettingProvider;
-import com.hpe.adm.octane.services.connection.ConnectionSettings;
+import com.hpe.adm.octane.ideplugins.services.connection.BasicConnectionSettingProvider;
+import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
 import com.intellij.ide.passwordSafe.PasswordSafe;
 import com.intellij.ide.passwordSafe.PasswordSafeException;
 import com.intellij.openapi.components.PersistentStateComponent;

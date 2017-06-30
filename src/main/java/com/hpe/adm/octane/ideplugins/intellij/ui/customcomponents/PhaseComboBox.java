@@ -14,7 +14,7 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents;
 
 import com.hpe.adm.nga.sdk.model.EntityModel;
-import com.hpe.adm.octane.services.util.Util;
+import com.hpe.adm.octane.ideplugins.services.util.Util;
 import com.intellij.util.ui.UIUtil;
 
 import javax.swing.*;
