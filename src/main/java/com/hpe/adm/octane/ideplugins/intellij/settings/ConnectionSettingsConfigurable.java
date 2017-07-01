@@ -163,10 +163,24 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
     }
 
     private void testOctaneVersion(ConnectionSettings connectionSettings) {
-        OctaneVersion version = OctaneVersionService.getOctaneVersion(connectionSettings);
-        version.discardBuildNumber();
-        if (version.compareTo(OctaneVersion.DYNAMO) < 0) {
-            showWarningBallon("Octane version not supported. This plugin works with Octane versions starting " + OctaneVersion.DYNAMO.getVersionString());
+        OctaneVersion version;
+        try {
+            version = OctaneVersionService.getOctaneVersion(connectionSettings);
+            version.discardBuildNumber();
+            if (version.compareTo(OctaneVersion.DYNAMO) < 0) {
+                showWarningBallon("Octane version not supported. This plugin works with Octane versions starting " + OctaneVersion.DYNAMO.getVersionString());
+            }
+        } catch (Exception ex) {
+            version = OctaneVersionService.fallbackVersion;
+
+            StringBuilder message = new StringBuilder();
+
+            message.append("Failed to determine Octane server version, http call to ")
+                    .append(OctaneVersionService.getServerVersionUrl(connectionSettings))
+                    .append(" failed. Assuming server version is higher or equal to: ")
+                    .append(version.getVersionString());
+
+            showWarningBallon(message.toString());
         }
     }
 
