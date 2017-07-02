@@ -1,7 +1,7 @@
 # octane-intellij-plugin
-## IntelliJ IDEA IDE Plugin for ALM Octane
+## IntelliJ IDEA IDE Integration for ALM Octane
 
-The plugin shares a common service layer with: https://github.com/HPSoftware/octane-intellij-plugin <br>
+The plugin shares a common service layer with: https://github.com/HPSoftware/octane-eclipse-plugin <br>
 Common: https://github.com/HPSoftware/octane-plugin-common <br>
 
 Connection to the server is done using the REST SDK for ALM Octane, see: <br>
