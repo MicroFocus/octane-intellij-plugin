@@ -1,8 +1,15 @@
 # octane-intellij-plugin
-For developers, by developers! This plugin is built with gradle and uses the latest public SDK of ALM Octane
+## IntelliJ IDEA IDE Plugin for ALM Octane
 
-###How to build:
-We are building the octane plugin with gradle, using the https://github.com/JetBrains/gradle-intellij-plugin
+The plugin shares a common service layer with: https://github.com/HPSoftware/octane-intellij-plugin <br>
+Common: https://github.com/HPSoftware/octane-plugin-common <br>
+
+Connection to the server is done using the REST SDK for ALM Octane, see: <br>
+* https://github.com/HPSoftware/sdk-extension
+* https://github.com/HPSoftware/ALMOctaneJavaRESTSDK
+
+### How to build:
+The plugin is build using gradle, with the https://github.com/JetBrains/gradle-intellij-plugin
 
 Go to the project main folder and run: 
 ```
@@ -13,4 +20,4 @@ gradle buildPlugin
 ```
 gradle runIdea
 ```
-If you want to use breakpoints I recommend importing the code into Intellij and running the runIdea gradle task with debug.
+You can run this gradle task from IntelliJ in debug mode.
