@@ -310,7 +310,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
 
                                     new Task.Backgroundable(
                                             null,
-                                            "Dismissing item from to \"My Work\"",
+                                            "Dismissing item from \"My Work\"",
                                             true) {
 
                                 public void run(@NotNull ProgressIndicator indicator) {
@@ -322,14 +322,13 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
                                                 .stream()
                                                 .flatMap(Collection::stream)
                                                 .filter(currentEntityModel ->
-                                                        !EntityUtil.areEqual(MyWorkUtil.getEntityModelFromUserItem(currentEntityModel), entityModel))
+                                                        !EntityUtil.areEqual(currentEntityModel, userItem))
                                                 .collect(Collectors.toList());
 
                                         SwingUtilities.invokeLater(() -> {
                                             updateActiveItem(list);
                                             entityTreeView.setTreeModel(createEntityTreeModel(list));
                                             entityTreeView.expandAllNodes();
-
                                         });
 
                                         //refresh();
