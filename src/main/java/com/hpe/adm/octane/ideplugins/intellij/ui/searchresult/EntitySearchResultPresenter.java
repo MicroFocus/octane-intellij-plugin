@@ -66,7 +66,8 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
             Entity.TEST_SUITE,
             Entity.MANUAL_TEST,
             Entity.AUTOMATED_TEST,
-            Entity.GHERKIN_TEST};
+            Entity.GHERKIN_TEST,
+            Entity.REQUIREMENT};
 
     protected EntityTreeView entityTreeView;
 
