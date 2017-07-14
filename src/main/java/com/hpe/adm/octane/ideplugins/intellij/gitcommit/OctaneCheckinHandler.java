@@ -192,7 +192,7 @@ public class OctaneCheckinHandler extends CheckinHandler {
     }
 
     private void setExpectedCommitMessage(String message) {
-        String source = "{\"value\": \"" + message.replaceAll("\\n", "") + "\"}";
+        String source = "{\"value\": \"" + message.replaceAll("\"", "\\\\\"").replaceAll("\\n", "") + "\"}";
         JSONObject json = new JSONObject(source);
         idePluginPersistentState.saveState(IdePluginPersistentState.Key.EXPECTED_COMMIT_MESSAGE, json);
     }
