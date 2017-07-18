@@ -77,6 +77,7 @@ public class EntityIconFactory {
         iconDetailMap.put(Entity.AUTOMATED_TEST, new IconDetail(new Color(135,123,117), "AT"));
 
         iconDetailMap.put(Entity.COMMENT, new IconDetail(new Color(234, 179, 124), "C"));
+        iconDetailMap.put(Entity.REQUIREMENT, new IconDetail(new Color(215, 194, 56), "R"));
 
         iconDetailMap.keySet().forEach(entity -> iconComponentMap.put(entity, createIconAsComponent(entity)));
     }

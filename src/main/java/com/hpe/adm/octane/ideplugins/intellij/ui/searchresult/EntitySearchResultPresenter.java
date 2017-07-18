@@ -149,7 +149,7 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
 
     private EntityTreeModel createEmptyEntityTreeModel(Collection<EntityModel> entityModels){
         List<EntityCategory> entityCategories = new ArrayList<>();
-        entityCategories.add(new SearchEntityCategory("Backlog", Entity.USER_STORY, Entity.EPIC, Entity.FEATURE));
+        entityCategories.add(new SearchEntityCategory("Backlog", Entity.USER_STORY, Entity.EPIC, Entity.FEATURE, Entity.REQUIREMENT));
         entityCategories.add(new SearchEntityCategory("Defects", Entity.DEFECT));
         entityCategories.add(new SearchEntityCategory("Tasks", Entity.TASK));
         entityCategories.add(new SearchEntityCategory("Tests", Entity.TEST_SUITE, Entity.MANUAL_TEST, Entity.AUTOMATED_TEST, Entity.GHERKIN_TEST));
