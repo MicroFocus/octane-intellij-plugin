@@ -124,6 +124,14 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
         entityFields.get(Entity.COMMENT).add("owner_test");
         entityFields.get(Entity.COMMENT).add("owner_run");
 
+        //REQUIREMENTS
+        entityFields.put(Entity.REQUIREMENT, new HashSet<>());
+        Collections.addAll(entityFields.get(Entity.REQUIREMENT), commonFields);
+        entityFields.get(Entity.REQUIREMENT).add(FIELD_AUTHOR);
+        entityFields.get(Entity.REQUIREMENT).add(FIELD_OWNER);
+        entityFields.get(Entity.REQUIREMENT).add(FIELD_RELEASE);
+        entityFields.get(Entity.REQUIREMENT).add("subtype");
+
         subtypeNames.put("story", "User Story");
         subtypeNames.put("defect", "Defect");
         subtypeNames.put("quality_story", "Quality Story");
@@ -134,6 +142,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
         subtypeNames.put("run_manual", "Manual Run");
         subtypeNames.put("test_suite", "Test Suite");
         subtypeNames.put("run_suite", "Run Suite");
+        subtypeNames.put("requirement_document", "Requirement");
     }
 
     /**
@@ -142,7 +151,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
      * @return
      */
     public static Map<Entity, Set<String>> getEntityFieldMap() {
-        return Collections.unmodifiableMap(entityFields);
+        return Collections.unmodifiableMap(entityFields); //ok
     }
 
     public static String getSubtypeName(String subtype) {

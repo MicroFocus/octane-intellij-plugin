@@ -447,6 +447,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
         List<EntityCategory> entityCategories = new ArrayList<>();
         entityCategories.add(new UserItemEntityCategory("Backlog", Entity.USER_STORY, Entity.DEFECT, Entity.QUALITY_STORY,
                 Entity.EPIC, Entity.FEATURE));
+        entityCategories.add(new UserItemEntityCategory("Requirements", Entity.REQUIREMENT));
         entityCategories.add(new UserItemEntityCategory("Tasks", Entity.TASK));
         entityCategories.add(new UserItemEntityCategory("Tests", Entity.GHERKIN_TEST, Entity.MANUAL_TEST));
         entityCategories.add(new UserItemEntityCategory("Mention in comments", Entity.COMMENT));
