@@ -59,7 +59,9 @@
     ]]>
     </change-notes>
 
-    <idea-version since-build="162"/>
+    <idea-version since-build="IU-162"/>
+    <idea-version since-build="IC-162"/>
+    <idea-version since-build="PY-141"/>
 
     <extensions defaultExtensionNs="com.intellij">
         <toolWindow factoryClass="com.hpe.adm.octane.ideplugins.intellij.ui.EntryPoint" anchor="bottom"
