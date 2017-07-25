@@ -91,10 +91,8 @@ public class OctaneCheckinHandler extends CheckinHandler {
             messageBuilder.append(parentStory.getValue("id").getValue() + ": ");
             messageBuilder.append(parentStory.getValue("name").getValue());
             messageBuilder.append("\ntask #");
-            messageBuilder.append(activatedItem.getEntityId() + ": ");
-        } else {
-            messageBuilder.append(activatedItem.getEntityId() + ": ");
         }
+        messageBuilder.append(activatedItem.getEntityId() + ": ");
 
         return messageBuilder.toString();
     }
