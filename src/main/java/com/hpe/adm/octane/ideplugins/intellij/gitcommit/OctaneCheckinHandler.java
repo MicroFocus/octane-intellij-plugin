@@ -88,8 +88,7 @@ public class OctaneCheckinHandler extends CheckinHandler {
             return null;
         }
         if (activatedItem.getEntityType() == Entity.TASK) {
-            messageBuilder.append(parentStory.getValue("id").getValue() + ": ");
-            messageBuilder.append(parentStory.getValue("name").getValue());
+            messageBuilder.append(parentStory.getValue("id").getValue());
             messageBuilder.append("\ntask #");
         }
         messageBuilder.append(activatedItem.getEntityId() + ": ");

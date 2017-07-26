@@ -28,6 +28,11 @@
 
     <change-notes><![CDATA[
 
+      <b>2016.2-12.55.6.1</b>
+      <ul>
+        <li>Added support for requirements and updated the commit message functionality</li>
+      </ul>
+
       <b>2016.2-12.55.4.1</b>
       <ul>
         <li>Added support for changes made in 12.55.4</li>
