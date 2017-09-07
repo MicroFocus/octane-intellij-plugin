@@ -50,7 +50,7 @@ public class GeneralEntityDetailsPanel extends JPanel {
 
         JPanel rootPanel = new JPanel();
         rootPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-        
+
         add(rootPanel, BorderLayout.CENTER);
         GridBagLayout gbl_rootPanel = new GridBagLayout();
         gbl_rootPanel.columnWidths = new int[]{0, 0};
@@ -113,7 +113,7 @@ public class GeneralEntityDetailsPanel extends JPanel {
         gbc_commentsPanel.gridx = 1;
         gbc_commentsPanel.gridy = 0;
         entityDetailsAndCommentsPanel.add(commentsDetails, gbc_commentsPanel);
-        
+
         label = new JXLabel();
         label.setText("Description");
         label.setFont(new Font("Arial", Font.BOLD, 11));
@@ -126,13 +126,13 @@ public class GeneralEntityDetailsPanel extends JPanel {
 
         //ScrollPane scrollPane = new ScrollPane();
         descriptionDetails = new HTMLPresenterFXPanel();
-        descriptionDetails.setPreferredSize(new Dimension(0,120));
+        descriptionDetails.setPreferredSize(new Dimension(0, 120));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.BOTH;
         gbc.gridx = 0;
         gbc.gridy = 3;
         rootPanel.add(descriptionDetails, gbc);
-        
+
         drawGeneralDetailsForEntity(entityModel);
         descriptionDetails.addEventActions();
     }
@@ -226,6 +226,12 @@ public class GeneralEntityDetailsPanel extends JPanel {
                 headerPanel.setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(MANUAL_TEST_RUN)));
                 headerPanel.setNameDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEST_RUN_NAME)));
                 ret = updateUiWithManualTestRunDetails(entityModel);
+                hasAttachment = false;
+                break;
+            case REQUIREMENT:
+                headerPanel.setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(REQUIREMENT)));
+                headerPanel.setNameDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_NAME)));
+                ret = updateUiWithRequirementDetails(entityModel);
                 hasAttachment = false;
                 break;
         }
@@ -377,6 +383,16 @@ public class GeneralEntityDetailsPanel extends JPanel {
         return taskDetailsPanel;
     }
 
+    private JXPanel updateUiWithRequirementDetails(EntityModel entityModel){
+        RequirementsDetailsPanel taskDetailsPanel = new RequirementsDetailsPanel();
+        taskDetailsPanel.setCreationTimeDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_CREATION_TIME)));
+        taskDetailsPanel.setLastModifiedDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_LAST_MODIFIED)));
+        taskDetailsPanel.setReleaseDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_RELEASE)));
+        taskDetailsPanel.setOwnerDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_OWNER)));
+        taskDetailsPanel.setAuthorDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_AUTHOR)));
+        return taskDetailsPanel;
+    }
+
     private void updateUiWithStoryDetails(StoryDetailsPanel userStoryDetailsPanel, EntityModel entityModel) {
         userStoryDetailsPanel.setOwnerDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_OWNER)));
         userStoryDetailsPanel.setFeatureDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_FEATURE)));
@@ -437,7 +453,7 @@ public class GeneralEntityDetailsPanel extends JPanel {
         return commentsListPanel.getCommentMessageBoxText();
     }
 
-    public void activateCollapsible(){
+    public void activateCollapsible() {
         commentsDetails.setCollapsed(!commentsDetails.isCollapsed());
     }
 

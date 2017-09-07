@@ -64,7 +64,8 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
                 GHERKIN_TEST,
                 MANUAL_TEST,
                 MANUAL_TEST_RUN,
-                TEST_SUITE_RUN
+                TEST_SUITE_RUN,
+                REQUIREMENT
         });
     }
 
