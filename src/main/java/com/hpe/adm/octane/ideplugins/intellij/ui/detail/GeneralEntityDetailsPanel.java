@@ -309,11 +309,8 @@ public class GeneralEntityDetailsPanel extends JPanel {
                 getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_ESTIMATED_DURATTION)));
         testDetailsPanel.setLastModifiedDetails(
                 getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_LAST_MODIFIED)));
-        String coveredContent = new String();
-        for(EntityModel entityModel1 : ((ArrayList<EntityModel>) entityModel.getValue("covered_content").getValue())){
-            coveredContent += entityModel1.getValue("name").getValue() + "; ";
-        }
-        testDetailsPanel.setCoveredContentDetails(coveredContent);
+        testDetailsPanel
+                .setCoveredContentDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_COVERED_CONTENT)));
         FieldModel automationStatus = entityModel.getValue(DetailsViewDefaultFields.FIELD_AUTOMATION_STATUS);
         String automationStatusValue = getUiDataFromModel(automationStatus);
         if (StringUtils.isNotEmpty(automationStatusValue)) {
