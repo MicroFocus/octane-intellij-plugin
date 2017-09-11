@@ -30,6 +30,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import static com.hpe.adm.octane.ideplugins.services.util.Util.getUiDataFromModel;
@@ -286,6 +287,7 @@ public class GeneralEntityDetailsPanel extends JPanel {
                 getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEST_RUN_VERSION)));
         manualTestRunDetailsPanel.setLastModifiedDetails(
                 getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_LAST_MODIFIED)));
+
         return manualTestRunDetailsPanel;
     }
 
@@ -307,8 +309,11 @@ public class GeneralEntityDetailsPanel extends JPanel {
                 getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_ESTIMATED_DURATTION)));
         testDetailsPanel.setLastModifiedDetails(
                 getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_LAST_MODIFIED)));
-        testDetailsPanel.setCoveredContentDetails(
-                getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_COVERED_CONTENT)));
+        String coveredContent = new String();
+        for(EntityModel entityModel1 : ((ArrayList<EntityModel>) entityModel.getValue("covered_content").getValue())){
+            coveredContent += entityModel1.getValue("name").getValue() + "; ";
+        }
+        testDetailsPanel.setCoveredContentDetails(coveredContent);
         FieldModel automationStatus = entityModel.getValue(DetailsViewDefaultFields.FIELD_AUTOMATION_STATUS);
         String automationStatusValue = getUiDataFromModel(automationStatus);
         if (StringUtils.isNotEmpty(automationStatusValue)) {

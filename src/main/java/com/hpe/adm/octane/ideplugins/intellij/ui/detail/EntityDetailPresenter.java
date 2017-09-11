@@ -17,8 +17,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.exception.OctaneException;
-import com.hpe.adm.nga.sdk.model.EntityModel;
-import com.hpe.adm.nga.sdk.model.ReferenceFieldModel;
+import com.hpe.adm.nga.sdk.model.*;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
@@ -38,6 +37,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.*;
 
@@ -78,7 +79,11 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
         RestUtil.runInBackground(
                 () -> {
                     try {
-                        return entityService.findEntity(entityType, entityId);
+                        EntityModel entityModel = entityService.findEntity(entityType, entityId);
+                        EntityModel coveredContent = entityService.findEntity(entityType, entityId,Stream.of("covered_content").collect(Collectors.toSet()));
+                        MultiReferenceFieldModel multiReferenceFieldModel = (MultiReferenceFieldModel) coveredContent.getValue("covered_content");
+                        entityModel.setValue(new MultiReferenceFieldModel("covered_content",multiReferenceFieldModel.getValue()));
+                        return entityModel;
                     } catch (ServiceException ex) {
                         entityDetailView.setErrorMessage(ex.getMessage());
                         return null;
