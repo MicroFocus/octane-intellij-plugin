@@ -19,11 +19,13 @@ import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.exception.OctaneException;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.nga.sdk.model.ReferenceFieldModel;
+import com.hpe.adm.nga.sdk.model.StringFieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
 import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
 import com.hpe.adm.octane.ideplugins.services.CommentService;
 import com.hpe.adm.octane.ideplugins.services.EntityService;
+import com.hpe.adm.octane.ideplugins.services.MetadataService;
 import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.nonentity.OctaneVersionService;
@@ -56,8 +58,8 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
     @Inject
     private Project project;
     @Inject
-    private OctaneVersionService versionService;
-    private OctaneVersion version;
+    private MetadataService metadataService;
+
 
     private EntityDetailView entityDetailView;
     private Entity entityType;
@@ -65,8 +67,6 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
     private EntityModel entityModel;
     private Logger logger = Logger.getInstance("EntityDetailPresenter");
     private final String GO_TO_BROWSER_DIALOG_MESSAGE = "\nYou can only provide a value for this field using ALM Octane in a browser." + "\nDo you want to do this now? ";
-
-    private FormLayout octaneEntityForm;
 
     public EntityDetailPresenter() {
     }
@@ -81,17 +81,6 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
         this.entityDetailView = entityDetailView;
     }
 
-    private FormLayout getSystemDefinedFormsForEntity(Entity entityType) {
-        Map<Entity, FormLayout> formsMap;
-        version = versionService.getOctaneVersion();
-        List<FormLayout> formList = Util.parseJsonWithFormLayoutData(OctaneSystemDefaultForms.ALL,version);
-        formsMap = formList
-                .stream()
-                .filter((form) -> { return form.getDefaultField().equals("EDIT") ? true : false;})
-                .collect(Collectors.toMap(FormLayout::getEntity, Function.identity()));
-        return formsMap.get(entityType);
-    }
-
     public void setEntity(Entity entityType, Long entityId) {
         this.entityType = entityType;
         this.entityId = entityId;
@@ -99,15 +88,8 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
         RestUtil.runInBackground(
                 () -> {
                     try {
-
-                        octaneEntityForm = getSystemDefinedFormsForEntity(this.entityType);
-                        List<FormField> formFields = octaneEntityForm.getFormLayoutSections().stream().collect(Collectors.toList()).get(0).getFields();
-                        Set<String> fields = formFields.stream().map(FormField::getName).collect(Collectors.toSet());
-                        entityModel = entityService.findEntity(this.entityType, this.entityId,fields);
-//                        EntityModel entityModel = entityService.findEntity(entityType, entityId);
-//                        EntityModel coveredContent = entityService.findEntity(entityType, entityId,Stream.of("covered_content").collect(Collectors.toSet()));
-//                        MultiReferenceFieldModel multiReferenceFieldModel = (MultiReferenceFieldModel) coveredContent.getValue("covered_content");
-//                        entityModel.setValue(new MultiReferenceFieldModel("covered_content",multiReferenceFieldModel.getValue()));
+                        entityModel = entityService.findEntity(this.entityType, this.entityId,metadataService.getFields(entityType));
+                        entityModel.setValue(new StringFieldModel("type",entityType.getSubtypeName()));
                         return entityModel;
                     } catch (ServiceException ex) {
                         entityDetailView.setErrorMessage(ex.getMessage());
