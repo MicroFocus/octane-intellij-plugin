@@ -78,6 +78,7 @@ public class GeneralEntityDetailsPanel extends JPanel {
         gbc_entityDetailsPanel.gridy = 0;
 
         JXPanel entityDetailsAndCommentsPanel = new JXPanel();
+        entityDetailsAndCommentsPanel.setPreferredSize(new Dimension((int) entityDetailsPanel.getPreferredSize().getWidth(),(int) entityDetailsPanel.getPreferredSize().getHeight()+50));
         GridBagConstraints gbc_entityDetailsAndCommentsPanel = new GridBagConstraints();
         gbc_entityDetailsAndCommentsPanel.insets = new Insets(0, 0, 5, 0);
         gbc_entityDetailsAndCommentsPanel.fill = GridBagConstraints.BOTH;
@@ -104,7 +105,7 @@ public class GeneralEntityDetailsPanel extends JPanel {
         commentsDetails.setLayout(new BorderLayout());
 
         commentsListPanel = new CommentsConversationPanel();
-        commentsListPanel.setPreferredSize(new Dimension(400, 200));
+        commentsListPanel.setPreferredSize(new Dimension(400, (int) entityDetailsPanel.getPreferredSize().getHeight() + 50));
         commentsListPanel.setMaximumSize(new Dimension(400, 200));
         commentsListPanel.setBorder(new MatteBorder(1, 1, 1, 1, JBColor.border()));
         commentsDetails.getContentPane().add(commentsListPanel);
