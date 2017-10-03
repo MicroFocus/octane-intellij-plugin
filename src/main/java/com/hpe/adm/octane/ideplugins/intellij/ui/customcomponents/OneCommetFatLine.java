@@ -13,21 +13,14 @@
 
 package com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents;
 
-import javax.swing.JPanel;
-import java.awt.GridBagLayout;
+import com.intellij.ui.JBColor;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXTextArea;
 
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
-import org.jdesktop.swingx.JXTextField;
-
-import com.intellij.ui.JBColor;
-
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
-import java.awt.Color;
-import java.awt.Font;
+import java.awt.*;
 
 public class OneCommetFatLine extends JPanel {
 	private JXLabel userNameLabel;

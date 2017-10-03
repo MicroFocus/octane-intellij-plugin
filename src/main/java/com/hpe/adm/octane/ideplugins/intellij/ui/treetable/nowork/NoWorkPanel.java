@@ -13,8 +13,8 @@
 
 package com.hpe.adm.octane.ideplugins.intellij.ui.treetable.nowork;
 
-import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.nowork.snake.SnakeGame;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
+import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.nowork.snake.SnakeGame;
 import com.intellij.util.ui.UIUtil;
 import org.jdesktop.swingx.JXHyperlink;
 

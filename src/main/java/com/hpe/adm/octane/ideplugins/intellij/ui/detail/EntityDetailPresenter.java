@@ -28,11 +28,6 @@ import com.hpe.adm.octane.ideplugins.services.EntityService;
 import com.hpe.adm.octane.ideplugins.services.MetadataService;
 import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
-import com.hpe.adm.octane.ideplugins.services.nonentity.OctaneVersionService;
-import com.hpe.adm.octane.ideplugins.services.ui.FormField;
-import com.hpe.adm.octane.ideplugins.services.ui.FormLayout;
-import com.hpe.adm.octane.ideplugins.services.util.OctaneSystemDefaultForms;
-import com.hpe.adm.octane.ideplugins.services.util.OctaneVersion;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -43,9 +38,8 @@ import com.intellij.openapi.vcs.VcsShowConfirmationOption;
 import com.intellij.util.ui.ConfirmationDialog;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import java.util.Collection;
+import java.util.HashSet;
 
 import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.*;
 

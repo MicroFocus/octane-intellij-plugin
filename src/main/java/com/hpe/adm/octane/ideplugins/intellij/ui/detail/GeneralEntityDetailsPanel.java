@@ -22,19 +22,20 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.ui.JBColor;
 import javafx.application.Platform;
 import org.apache.commons.lang.StringUtils;
-import org.jdesktop.swingx.*;
+import org.jdesktop.swingx.JXCollapsiblePane;
 import org.jdesktop.swingx.JXCollapsiblePane.Direction;
+import org.jdesktop.swingx.JXLabel;
+import org.jdesktop.swingx.JXPanel;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.Collection;
 
-import static com.hpe.adm.octane.ideplugins.services.util.Util.getUiDataFromModel;
 import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.*;
+import static com.hpe.adm.octane.ideplugins.services.util.Util.getUiDataFromModel;
 
 public class GeneralEntityDetailsPanel extends JPanel {
     private JXPanel entityDetailsPanel;
