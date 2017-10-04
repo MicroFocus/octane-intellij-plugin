@@ -22,8 +22,10 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.ui.JBColor;
 import javafx.application.Platform;
 import org.apache.commons.lang.StringUtils;
-import org.jdesktop.swingx.*;
+import org.jdesktop.swingx.JXCollapsiblePane;
 import org.jdesktop.swingx.JXCollapsiblePane.Direction;
+import org.jdesktop.swingx.JXLabel;
+import org.jdesktop.swingx.JXPanel;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -32,8 +34,8 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.Collection;
 
-import static com.hpe.adm.octane.ideplugins.services.util.Util.getUiDataFromModel;
 import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.*;
+import static com.hpe.adm.octane.ideplugins.services.util.Util.getUiDataFromModel;
 
 public class GeneralEntityDetailsPanel extends JPanel {
     private JXPanel entityDetailsPanel;
@@ -77,6 +79,7 @@ public class GeneralEntityDetailsPanel extends JPanel {
         gbc_entityDetailsPanel.gridy = 0;
 
         JXPanel entityDetailsAndCommentsPanel = new JXPanel();
+        entityDetailsAndCommentsPanel.setPreferredSize(new Dimension((int) entityDetailsPanel.getPreferredSize().getWidth(),(int) entityDetailsPanel.getPreferredSize().getHeight()+50));
         GridBagConstraints gbc_entityDetailsAndCommentsPanel = new GridBagConstraints();
         gbc_entityDetailsAndCommentsPanel.insets = new Insets(0, 0, 5, 0);
         gbc_entityDetailsAndCommentsPanel.fill = GridBagConstraints.BOTH;
@@ -103,7 +106,7 @@ public class GeneralEntityDetailsPanel extends JPanel {
         commentsDetails.setLayout(new BorderLayout());
 
         commentsListPanel = new CommentsConversationPanel();
-        commentsListPanel.setPreferredSize(new Dimension(400, 200));
+        commentsListPanel.setPreferredSize(new Dimension(400, (int) entityDetailsPanel.getPreferredSize().getHeight() + 50));
         commentsListPanel.setMaximumSize(new Dimension(400, 200));
         commentsListPanel.setBorder(new MatteBorder(1, 1, 1, 1, JBColor.border()));
         commentsDetails.getContentPane().add(commentsListPanel);
@@ -286,6 +289,7 @@ public class GeneralEntityDetailsPanel extends JPanel {
                 getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEST_RUN_VERSION)));
         manualTestRunDetailsPanel.setLastModifiedDetails(
                 getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_LAST_MODIFIED)));
+
         return manualTestRunDetailsPanel;
     }
 
@@ -307,8 +311,8 @@ public class GeneralEntityDetailsPanel extends JPanel {
                 getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_ESTIMATED_DURATTION)));
         testDetailsPanel.setLastModifiedDetails(
                 getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_LAST_MODIFIED)));
-        testDetailsPanel.setCoveredContentDetails(
-                getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_COVERED_CONTENT)));
+        testDetailsPanel
+                .setCoveredContentDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_COVERED_CONTENT)));
         FieldModel automationStatus = entityModel.getValue(DetailsViewDefaultFields.FIELD_AUTOMATION_STATUS);
         String automationStatusValue = getUiDataFromModel(automationStatus);
         if (StringUtils.isNotEmpty(automationStatusValue)) {

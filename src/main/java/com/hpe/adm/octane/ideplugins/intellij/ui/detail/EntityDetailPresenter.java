@@ -19,14 +19,16 @@ import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.exception.OctaneException;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.nga.sdk.model.ReferenceFieldModel;
-import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
-import com.hpe.adm.octane.ideplugins.services.util.Util;
+import com.hpe.adm.nga.sdk.model.StringFieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
+import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
 import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
 import com.hpe.adm.octane.ideplugins.services.CommentService;
 import com.hpe.adm.octane.ideplugins.services.EntityService;
+import com.hpe.adm.octane.ideplugins.services.MetadataService;
 import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
+import com.hpe.adm.octane.ideplugins.services.util.Util;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.diagnostic.Logger;
@@ -49,6 +51,9 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
     private CommentService commentService;
     @Inject
     private Project project;
+    @Inject
+    private MetadataService metadataService;
+
 
     private EntityDetailView entityDetailView;
     private Entity entityType;
@@ -56,7 +61,6 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
     private EntityModel entityModel;
     private Logger logger = Logger.getInstance("EntityDetailPresenter");
     private final String GO_TO_BROWSER_DIALOG_MESSAGE = "\nYou can only provide a value for this field using ALM Octane in a browser." + "\nDo you want to do this now? ";
-
 
     public EntityDetailPresenter() {
     }
@@ -78,7 +82,9 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
         RestUtil.runInBackground(
                 () -> {
                     try {
-                        return entityService.findEntity(entityType, entityId);
+                        entityModel = entityService.findEntity(this.entityType, this.entityId,metadataService.getFields(entityType));
+                        entityModel.setValue(new StringFieldModel("type",entityType.getSubtypeName()));
+                        return entityModel;
                     } catch (ServiceException ex) {
                         entityDetailView.setErrorMessage(ex.getMessage());
                         return null;

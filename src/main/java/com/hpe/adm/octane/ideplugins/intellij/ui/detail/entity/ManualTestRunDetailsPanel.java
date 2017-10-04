@@ -22,7 +22,6 @@ import javax.swing.border.MatteBorder;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import org.jdesktop.swingx.JXLabel.TextAlignment;
 
 public class ManualTestRunDetailsPanel extends JXPanel {
     private static final long serialVersionUID = -7172388625845199450L;
