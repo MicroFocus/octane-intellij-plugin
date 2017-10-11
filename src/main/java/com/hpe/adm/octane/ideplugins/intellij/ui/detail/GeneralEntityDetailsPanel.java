@@ -13,11 +13,17 @@
 
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
+import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.nga.sdk.model.FieldModel;
+import com.hpe.adm.nga.sdk.model.MultiReferenceFieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entity.*;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
+import com.hpe.adm.octane.ideplugins.services.MetadataService;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
+import com.hpe.adm.octane.ideplugins.services.ui.FormField;
+import com.hpe.adm.octane.ideplugins.services.ui.FormLayout;
+import com.hpe.adm.octane.ideplugins.services.ui.FormLayoutSection;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.ui.JBColor;
 import javafx.application.Platform;
@@ -32,7 +38,10 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.util.Collection;
+import java.util.List;
 
 import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.*;
 import static com.hpe.adm.octane.ideplugins.services.util.Util.getUiDataFromModel;
@@ -47,8 +56,12 @@ public class GeneralEntityDetailsPanel extends JPanel {
     private CommentsConversationPanel commentsListPanel;
     private JXLabel label;
 
-    public GeneralEntityDetailsPanel(EntityModel entityModel) {
+    private FormLayout octaneEntityForm;
+
+    public GeneralEntityDetailsPanel(FormLayout octaneFormLayout, EntityModel entityModel) {
         setLayout(new BorderLayout(0, 0));
+
+        octaneEntityForm = octaneFormLayout;
 
         JPanel rootPanel = new JPanel();
         rootPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -79,7 +92,7 @@ public class GeneralEntityDetailsPanel extends JPanel {
         gbc_entityDetailsPanel.gridy = 0;
 
         JXPanel entityDetailsAndCommentsPanel = new JXPanel();
-        entityDetailsAndCommentsPanel.setPreferredSize(new Dimension((int) entityDetailsPanel.getPreferredSize().getWidth(),(int) entityDetailsPanel.getPreferredSize().getHeight()+50));
+        entityDetailsAndCommentsPanel.setPreferredSize(new Dimension((int) entityDetailsPanel.getPreferredSize().getWidth(), (int) entityDetailsPanel.getPreferredSize().getHeight() + 50));
         GridBagConstraints gbc_entityDetailsAndCommentsPanel = new GridBagConstraints();
         gbc_entityDetailsAndCommentsPanel.insets = new Insets(0, 0, 5, 0);
         gbc_entityDetailsAndCommentsPanel.fill = GridBagConstraints.BOTH;
@@ -182,254 +195,20 @@ public class GeneralEntityDetailsPanel extends JPanel {
     private JXPanel drawSpecificDetailsForEntity(EntityModel entityModel) {
         JXPanel ret = null;
         EntityIconFactory entityIconFactory = new EntityIconFactory(26, 26, 12);
-        switch (Entity.getEntityType(entityModel)) {
-            case DEFECT:
-                headerPanel.setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(DEFECT)));
-                headerPanel.setNameDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_NAME)));
-                hasAttachment = false;
-                ret = updateUiWithDefectDetails(entityModel);
-                break;
-            case GHERKIN_TEST:
-                headerPanel.setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(GHERKIN_TEST)));
-                headerPanel.setNameDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_NAME)));
-                hasAttachment = false;
-                ret = updateUiWithTestsDetails(entityModel, true);
-                break;
-            case MANUAL_TEST:
-                headerPanel.setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(MANUAL_TEST)));
-                headerPanel.setNameDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_NAME)));
-                hasAttachment = false;
-                ret = updateUiWithTestsDetails(entityModel, false);
-                break;
-            case USER_STORY:
-                headerPanel.setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(USER_STORY)));
-                headerPanel.setNameDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_NAME)));
-                hasAttachment = false;
-                ret = updateUiWithUserStoryDetails(entityModel);
-                break;
-            case QUALITY_STORY:
-                headerPanel.setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(QUALITY_STORY)));
-                headerPanel.setNameDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_NAME)));
-                hasAttachment = false;
-                ret = updateUiWithQualityStoryDetails(entityModel);
-                break;
-            case TASK:
-                headerPanel.setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(TASK)));
-                headerPanel.setNameDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_NAME)));
-                ret = updateUiWithTaskDetails(entityModel);
-                hasAttachment = false;
-                break;
-            case TEST_SUITE_RUN:
-                headerPanel.setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(TEST_SUITE_RUN)));
-                headerPanel.setNameDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEST_RUN_NAME)));
-                ret = updateUiWithTestSuiteRunDetails(entityModel);
-                hasAttachment = false;
-                break;
-            case MANUAL_TEST_RUN:
-                headerPanel.setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(MANUAL_TEST_RUN)));
-                headerPanel.setNameDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEST_RUN_NAME)));
-                ret = updateUiWithManualTestRunDetails(entityModel);
-                hasAttachment = false;
-                break;
-            case REQUIREMENT:
-                headerPanel.setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(REQUIREMENT)));
-                headerPanel.setNameDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_NAME)));
-                ret = updateUiWithRequirementDetails(entityModel);
-                hasAttachment = false;
-                break;
+        headerPanel.setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(DEFECT)));
+        headerPanel.setNameDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_NAME)));
+        hasAttachment = false;
+        ret = createMainPanel();
+        int sections = 0;
+        for (FormLayoutSection formLayoutSection : octaneEntityForm.getFormLayoutSections()) {
+            createSectionWithEntityDetails(sections++, ret, entityModel, formLayoutSection);
         }
         return ret;
     }
 
-    private JXPanel updateUiWithTestSuiteRunDetails(EntityModel entityModel) {
-        SuiteTestRunDetailsPanel suiteTestRunDetailsPanel = new SuiteTestRunDetailsPanel();
-        suiteTestRunDetailsPanel.setSuiteTestNameDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEST_RUN_NAME)));
-        suiteTestRunDetailsPanel.setDefaultRunByDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEST_RUN_RUN_BY)));
-        suiteTestRunDetailsPanel.setStartedTimeDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEST_RUN_STARTED_TIME)));
-        suiteTestRunDetailsPanel.setContentDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEST_RUN_CONTENT)));
-        suiteTestRunDetailsPanel.setReleaseDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_RELEASE)));
-
-        suiteTestRunDetailsPanel.setNativeStatusDetails(
-                getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEST_RUN_NATIVE_STATUS)));
-        suiteTestRunDetailsPanel
-                .setAuthorDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_AUTHOR)));
-        suiteTestRunDetailsPanel.setDraftRunDetails(
-                getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEST_RUN_DRAFT_RUN)));
-        suiteTestRunDetailsPanel.setLastModifiedDetails(
-                getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_LAST_MODIFIED)));
-        suiteTestRunDetailsPanel.setEnvironmentDetails(
-                getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_ENVIROMENT)));
-        return suiteTestRunDetailsPanel;
-    }
-
-    private JXPanel updateUiWithManualTestRunDetails(EntityModel entityModel) {
-        ManualTestRunDetailsPanel manualTestRunDetailsPanel = new ManualTestRunDetailsPanel();
-        manualTestRunDetailsPanel.setTestNameDetails(
-                getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEST_RUN_NAME)));
-        manualTestRunDetailsPanel.setRunByDetails(
-                getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEST_RUN_RUN_BY)));
-        manualTestRunDetailsPanel.setStartedTimeDetails(
-                getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEST_RUN_STARTED_TIME)));
-        manualTestRunDetailsPanel.setContentDetails(
-                getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEST_RUN_CONTENT)));
-        manualTestRunDetailsPanel
-                .setReleaseDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_RELEASE)));
-        manualTestRunDetailsPanel.setEnvironmentDetails(
-                getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_ENVIROMENT)));
-
-        manualTestRunDetailsPanel.setNativeStatusDetails(
-                getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEST_RUN_NATIVE_STATUS)));
-        manualTestRunDetailsPanel
-                .setAuthorDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_AUTHOR)));
-        manualTestRunDetailsPanel.setDurationDetails(
-                getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEST_RUN_DURATION)));
-        manualTestRunDetailsPanel.setDraftRunDetails(
-                getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEST_RUN_DRAFT_RUN)));
-        manualTestRunDetailsPanel.setVersionFromReleaseDescription(
-                getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEST_RUN_VERSION)));
-        manualTestRunDetailsPanel.setLastModifiedDetails(
-                getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_LAST_MODIFIED)));
-
-        return manualTestRunDetailsPanel;
-    }
-
-    private JXPanel updateUiWithTestsDetails(EntityModel entityModel, boolean isGherkin) {
-        TestDetailsPanel testDetailsPanel = new TestDetailsPanel();
-        testDetailsPanel.setApplicationModulesDetails(
-                getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_APPMODULE)));
-        testDetailsPanel
-                .setDesignerDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_DESIGNER)));
-        testDetailsPanel
-                .setTestTypeDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEST_TYPE)));
-        testDetailsPanel.setTestToolTypeDetails(
-                getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TESTING_TOOL_TYPE)));
-        testDetailsPanel
-                .setCreatedDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_CREATED)));
-        testDetailsPanel
-                .setOwnerDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_OWNER)));
-        testDetailsPanel.setEstimatedDurationDetails(
-                getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_ESTIMATED_DURATTION)));
-        testDetailsPanel.setLastModifiedDetails(
-                getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_LAST_MODIFIED)));
-        testDetailsPanel
-                .setCoveredContentDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_COVERED_CONTENT)));
-        FieldModel automationStatus = entityModel.getValue(DetailsViewDefaultFields.FIELD_AUTOMATION_STATUS);
-        String automationStatusValue = getUiDataFromModel(automationStatus);
-        if (StringUtils.isNotEmpty(automationStatusValue)) {
-            testDetailsPanel.setAutomationStatusDetails(automationStatusValue);
-        }
-        return testDetailsPanel;
-    }
-
-    private JXPanel updateUiWithDefectDetails(EntityModel entityModel) {
-        DefectsDetailsPanel defectsDetailsPanel = new DefectsDetailsPanel();
-        defectsDetailsPanel
-                .setFeatureDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_FEATURE)));
-        defectsDetailsPanel
-                .setSeverityDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_SEVERITY)));
-        defectsDetailsPanel
-                .setSprintDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_SPRINT)));
-        defectsDetailsPanel.setStoryPointsDetails(
-                getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_STORYPOINTS)));
-        defectsDetailsPanel
-                .setBlockedDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_BLOCKED)));
-        defectsDetailsPanel.setEnviromentDetails(
-                getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_ENVIROMENT)));
-        defectsDetailsPanel
-                .setReleaseDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_RELEASE)));
-        defectsDetailsPanel.setDefectTypeDetails(
-                getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_DEFECT_TYPE)));
-        defectsDetailsPanel.setLastModifiedDetails(
-                getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_LAST_MODIFIED)));
-
-        defectsDetailsPanel
-                .setOwnerDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_OWNER)));
-        defectsDetailsPanel.setDetectedByDetails(
-                getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_DETECTEDBY)));
-        defectsDetailsPanel
-                .setTeamDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEAM)));
-        defectsDetailsPanel
-                .setPriorityDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_PRIORITY)));
-        defectsDetailsPanel.setBlockedReasonDetails(
-                getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_BLOCKED_REASON)));
-        defectsDetailsPanel.setAppModuleDetails(
-                getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_APPMODULE)));
-        defectsDetailsPanel.setDetectedInReleaseDetails(
-                getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_DETECTEDINRELEASE)));
-        defectsDetailsPanel.setCreationTimeDetails(
-                getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_CREATION_TIME)));
-        defectsDetailsPanel
-                .setClosedOnDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_CLOSED_ON)));
-        return defectsDetailsPanel;
-    }
-
-    private JXPanel updateUiWithTaskDetails(EntityModel entityModel) {
-        TaskDetailsPanel taskDetailsPanel = new TaskDetailsPanel();
-        taskDetailsPanel
-                .setStoryDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_STORY)));
-        taskDetailsPanel
-                .setAuthorDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_AUTHOR)));
-        taskDetailsPanel
-                .setOwnerDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_OWNER)));
-        taskDetailsPanel.setCreationTimeDetails(
-                getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_CREATION_TIME)));
-        taskDetailsPanel.setLastModifiedDetails(
-                getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_LAST_MODIFIED)));
-
-        taskDetailsPanel
-                .setTaskTypeDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TASK_TYPE)));
-        taskDetailsPanel.setRemainingHoursDetails(
-                getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_REMAINING_HOURS)));
-        taskDetailsPanel.setEstimatedHoursDetails(
-                getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_ESTIMATED_HOURS)));
-        taskDetailsPanel.setInvestedHoursDetails(
-                getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_INVESTED_HOURS)));
-        return taskDetailsPanel;
-    }
-
-    private JXPanel updateUiWithRequirementDetails(EntityModel entityModel){
-        RequirementsDetailsPanel taskDetailsPanel = new RequirementsDetailsPanel();
-        taskDetailsPanel.setCreationTimeDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_CREATION_TIME)));
-        taskDetailsPanel.setLastModifiedDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_LAST_MODIFIED)));
-        taskDetailsPanel.setReleaseDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_RELEASE)));
-        taskDetailsPanel.setOwnerDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_OWNER)));
-        taskDetailsPanel.setAuthorDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_AUTHOR)));
-        return taskDetailsPanel;
-    }
-
-    private void updateUiWithStoryDetails(StoryDetailsPanel userStoryDetailsPanel, EntityModel entityModel) {
-        userStoryDetailsPanel.setOwnerDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_OWNER)));
-        userStoryDetailsPanel.setFeatureDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_FEATURE)));
-        userStoryDetailsPanel.setSprintDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_SPRINT)));
-        userStoryDetailsPanel.setStoryPointsDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_STORYPOINTS)));
-        userStoryDetailsPanel.setBlockedDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_BLOCKED)));
-        userStoryDetailsPanel.setLastModifiedDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_LAST_MODIFIED)));
-        userStoryDetailsPanel.setTeamDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_TEAM)));
-        userStoryDetailsPanel.setAuthorDetailsDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_AUTHOR), "full_name"));
-        userStoryDetailsPanel.setAppModuleDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_APPMODULE)));
-        userStoryDetailsPanel.setItemOriginDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_ITEM_ORIGIN)));
-        userStoryDetailsPanel.setBlockedReasonDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_BLOCKED_REASON)));
-        userStoryDetailsPanel.setReleaseDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_RELEASE)));
-        userStoryDetailsPanel.setCreationTimeDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_CREATION_TIME)));
-    }
-
-    private JXPanel updateUiWithUserStoryDetails(EntityModel entityModel) {
-        StoryDetailsPanel userStoryDetailsPanel = new StoryDetailsPanel(true);
-        updateUiWithStoryDetails(userStoryDetailsPanel, entityModel);
-        userStoryDetailsPanel.setVarItemValue(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_LAST_RUNS)));
-        return userStoryDetailsPanel;
-    }
 
     public void setPossiblePhasesForEntity(Collection<EntityModel> phasesList) {
         headerPanel.setPossiblePhasesForEntity(phasesList);
-    }
-
-    private JXPanel updateUiWithQualityStoryDetails(EntityModel entityModel) {
-        StoryDetailsPanel qualityStoryDetailsPanel = new StoryDetailsPanel(false);
-        updateUiWithStoryDetails(qualityStoryDetailsPanel, entityModel);
-        qualityStoryDetailsPanel.setVarItemValue(
-                getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_QUALITY_STORY_TYPE)));
-        return qualityStoryDetailsPanel;
     }
 
     public void setComments(Collection<EntityModel> comments) {
@@ -459,6 +238,158 @@ public class GeneralEntityDetailsPanel extends JPanel {
 
     public void activateCollapsible() {
         commentsDetails.setCollapsed(!commentsDetails.isCollapsed());
+    }
+
+    public void createSectionWithEntityDetails(int row, JXPanel mainPanel, EntityModel entityModel, FormLayoutSection formSection) {
+
+        //get the list of fields from the formsection
+        List<FormField> formFields = formSection.getFields();
+
+        //create section title label
+        JXLabel sectionTitle = new JXLabel();
+        sectionTitle.setFont(new Font("Arial", Font.BOLD, 18));
+        sectionTitle.setText(formSection.getSectionTitle());
+        GridBagConstraints gbc_title = new GridBagConstraints();
+        gbc_title.anchor = GridBagConstraints.SOUTHWEST;
+        gbc_title.insets = new Insets(0, 0, 0, 0);
+        gbc_title.gridx = 0;
+        gbc_title.gridy = row++;
+        mainPanel.add(sectionTitle, gbc_title);
+
+        //create the right and left panels
+        JXPanel detailsPanelLeft = createLeftPanel(row, mainPanel);
+        JXPanel detailsPanelRight = createRightPanel(row, mainPanel);
+        addComponentListener(mainPanel, detailsPanelLeft, detailsPanelRight);
+
+        int fieldCount = 0;
+        for (int i = 0; i < formFields.size(); i++) {
+            String fieldName = formFields.get(i).getName();
+
+            if (!"description".equals(fieldName)) {
+
+                JXLabel field = new JXLabel();
+                field.setFont(new Font("Arial", Font.BOLD, 12));
+                field.setText(prettifyLabels(fieldName));
+                GridBagConstraints gbc1 = new GridBagConstraints();
+                gbc1.anchor = GridBagConstraints.SOUTHWEST;
+                gbc1.insets = new Insets(10, 0, 0, 0);
+                gbc1.fill = GridBagConstraints.HORIZONTAL;
+                gbc1.gridx = 0;
+                gbc1.gridy = i;
+
+                String fieldValue = getUiDataFromModel(entityModel.getValue(fieldName));
+                JXLabel fieldValueLabel = new JXLabel();
+                fieldValueLabel.setFont(new Font("Arial", Font.PLAIN, 12));
+                fieldValueLabel.setText(fieldValue);
+                fieldValueLabel.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
+                fieldValueLabel.setToolTipText(fieldValue);
+                GridBagConstraints gbc2 = new GridBagConstraints();
+                gbc2.insets = new Insets(10, 0, 0, 5);
+                gbc2.anchor = GridBagConstraints.SOUTHWEST;
+                gbc2.fill = GridBagConstraints.HORIZONTAL;
+                gbc2.gridx = 1;
+                gbc2.gridy = i;
+
+                if (fieldCount % 2 == 0) {
+                    detailsPanelLeft.add(field, gbc1);
+                    detailsPanelLeft.add(fieldValueLabel, gbc2);
+                } else {
+                    detailsPanelRight.add(field, gbc1);
+                    detailsPanelRight.add(fieldValueLabel, gbc2);
+                }
+
+                fieldCount++;
+            }
+        }
+    }
+
+    private JXPanel createLeftPanel(int row, JXPanel mainPanel) {
+        JXPanel detailsPanelLeft = new JXPanel();
+        detailsPanelLeft.setBorder(null);
+        GridBagConstraints gbc1 = new GridBagConstraints();
+        gbc1.anchor = GridBagConstraints.NORTH;
+        gbc1.insets = new Insets(10, 0, 0, 0);
+        gbc1.gridx = 0;
+        gbc1.gridy = row;
+        mainPanel.add(detailsPanelLeft, gbc1);
+        GridBagLayout gbl_detailsPanelLeft = new GridBagLayout();
+        gbl_detailsPanelLeft.columnWidths = new int[]{140, 580};
+        gbl_detailsPanelLeft.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+        gbl_detailsPanelLeft.columnWeights = new double[]{0.0, 1.0};
+        gbl_detailsPanelLeft.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+        detailsPanelLeft.setLayout(gbl_detailsPanelLeft);
+
+        return detailsPanelLeft;
+    }
+
+    private JXPanel createRightPanel(int row, JXPanel mainPanel) {
+        JXPanel detailsPanelRight = new JXPanel();
+        detailsPanelRight.setBorder(null);
+        GridBagConstraints gbc1 = new GridBagConstraints();
+        gbc1.anchor = GridBagConstraints.NORTH;
+        gbc1.insets = new Insets(10, 10, 0, 0);
+        gbc1.gridx = 1;
+        gbc1.gridy = row;
+        mainPanel.add(detailsPanelRight, gbc1);
+        GridBagLayout gbl_detailsPanelRight = new GridBagLayout();
+        gbl_detailsPanelRight.columnWidths = new int[]{140, 580};
+        gbl_detailsPanelRight.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+        gbl_detailsPanelRight.columnWeights = new double[]{0.0, 1.0};
+        gbl_detailsPanelRight.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+        detailsPanelRight.setLayout(gbl_detailsPanelRight);
+        return detailsPanelRight;
+    }
+
+    private void addComponentListener(JXPanel mainPanel, JXPanel leftPanel, JXPanel rightPanel) {
+        mainPanel.addComponentListener(new ComponentAdapter() {
+            public void componentResized(ComponentEvent e) {
+                int halfWidth = mainPanel.getWidth() / 2;
+                int height = mainPanel.getHeight();
+
+                if (halfWidth != 0 && height != 0) {
+                    leftPanel.setPreferredSize(new Dimension((int) halfWidth, height));
+                    rightPanel.setPreferredSize(new Dimension((int) halfWidth, height));
+                    mainPanel.updateUI();
+                    mainPanel.repaint();
+                }
+            }
+        });
+    }
+
+    private JXPanel createMainPanel(){
+        JXPanel rootPanel = new JXPanel();
+        rootPanel.setBorder(null);
+        rootPanel.setLayout(new BorderLayout(0, 0));
+        JXPanel detailsPanelMain = new JXPanel();
+        detailsPanelMain.setBorder(null);
+        rootPanel.add(detailsPanelMain, BorderLayout.CENTER);
+        GridBagLayout mainPaneGrid = new GridBagLayout();
+        mainPaneGrid.columnWidths = new int[]{500, 500};
+        mainPaneGrid.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+        mainPaneGrid.columnWeights = new double[]{1.0, 1.0};
+        mainPaneGrid.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+        detailsPanelMain.setLayout(mainPaneGrid);
+        detailsPanelMain.setMinimumSize(new Dimension(0, 0));
+        return detailsPanelMain;
+    }
+
+    private String prettifyLabels(String str1) {
+        //for udfs
+        str1 = str1.replaceAll("_udf", "");
+        str1 = str1.replaceAll("_", " ");
+        char[] chars = str1.toCharArray();
+        chars[0] = Character.toUpperCase(chars[0]);
+        for (int x = 1; x < chars.length; x++) {
+            if (chars[x - 1] == ' ') {
+                chars[x] = Character.toUpperCase(chars[x]);
+            }
+        }
+        return new String(chars);
+    }
+
+    private String getUdfLabel(){
+        //TODO
+        return "";
     }
 
 }

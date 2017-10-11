@@ -18,6 +18,7 @@ import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.View;
 import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.LoadingWidget;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
+import com.hpe.adm.octane.ideplugins.services.ui.FormLayout;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.ui.components.JBScrollPane;
 
@@ -34,7 +35,7 @@ public class EntityDetailView implements View {
     private EntityModel entityModel;
     private JBScrollPane component = new JBScrollPane(new LoadingWidget());
     private GeneralEntityDetailsPanel entityDetailsPanel;
-
+    private FormLayout octaneEntityForm;
     @Inject
     private ConnectionSettingsProvider connectionSettingsProvider;
 
@@ -52,7 +53,10 @@ public class EntityDetailView implements View {
 
     public void setEntityModel(EntityModel entityModel) {
         this.entityModel =entityModel;
-        entityDetailsPanel = new GeneralEntityDetailsPanel(entityModel);
+    }
+
+    public void createDetailsPanel(){
+        entityDetailsPanel = new GeneralEntityDetailsPanel(octaneEntityForm, entityModel);
         component.setViewportView(entityDetailsPanel);
     }
 
@@ -120,5 +124,9 @@ public class EntityDetailView implements View {
 
     public GeneralEntityDetailsPanel getEntityDetailsPanel() {
         return entityDetailsPanel;
+    }
+
+    public void setOctaneEntityForm(FormLayout octaneEntityForm){
+        this.octaneEntityForm = octaneEntityForm;
     }
 }

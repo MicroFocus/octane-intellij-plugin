@@ -28,6 +28,7 @@ import com.hpe.adm.octane.ideplugins.services.EntityService;
 import com.hpe.adm.octane.ideplugins.services.MetadataService;
 import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
+import com.hpe.adm.octane.ideplugins.services.ui.FormLayout;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -38,8 +39,10 @@ import com.intellij.openapi.vcs.VcsShowConfirmationOption;
 import com.intellij.util.ui.ConfirmationDialog;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Set;
 
 import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.*;
 
@@ -54,7 +57,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
     @Inject
     private MetadataService metadataService;
 
-
+    private FormLayout octaneEntityForm;
     private EntityDetailView entityDetailView;
     private Entity entityType;
     private Long entityId;
@@ -82,10 +85,16 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
         RestUtil.runInBackground(
                 () -> {
                     try {
-                        entityModel = entityService.findEntity(this.entityType, this.entityId,metadataService.getFields(entityType));
-                        entityModel.setValue(new StringFieldModel("type",entityType.getSubtypeName()));
+                        octaneEntityForm = metadataService.getFormLayoutForSpecificEntityType(this.entityType);
+                        Set<String> fields;
+                        if(entityType.isSubtype()) {
+                            fields	= new HashSet<>(metadataService.getFields(entityType.getSubtypeOf()));
+                        } else {
+                            fields	= new HashSet<>(metadataService.getFields(entityType));
+                        }
+                        entityModel = entityService.findEntity(this.entityType, this.entityId,fields);
                         return entityModel;
-                    } catch (ServiceException ex) {
+                    } catch (ServiceException |UnsupportedEncodingException ex) {
                         entityDetailView.setErrorMessage(ex.getMessage());
                         return null;
                     }
@@ -93,7 +102,9 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                 (entityModel) -> {
                     if (entityModel != null) {
                         this.entityModel = entityModel;
+                        entityDetailView.setOctaneEntityForm(octaneEntityForm);
                         entityDetailView.setEntityModel(entityModel);
+                        entityDetailView.createDetailsPanel();
                         entityDetailView.setSaveSelectedPhaseButton(new SaveSelectedPhaseAction());
                         entityDetailView.setRefreshEntityButton(new EntityRefreshAction());
                         if (entityType!= TASK&&entityType != MANUAL_TEST_RUN && entityType != TEST_SUITE_RUN) {
