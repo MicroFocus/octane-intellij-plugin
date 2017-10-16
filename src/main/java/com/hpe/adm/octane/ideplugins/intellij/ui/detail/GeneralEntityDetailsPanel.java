@@ -21,6 +21,7 @@ import com.hpe.adm.octane.ideplugins.services.ui.FormField;
 import com.hpe.adm.octane.ideplugins.services.ui.FormLayout;
 import com.hpe.adm.octane.ideplugins.services.ui.FormLayoutSection;
 import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.roots.ui.componentsList.components.ScrollablePanel;
 import com.intellij.ui.JBColor;
 import javafx.application.Platform;
 import org.jdesktop.swingx.JXCollapsiblePane;
@@ -58,10 +59,10 @@ public class GeneralEntityDetailsPanel extends JPanel {
         this.metadataService = metadataService;
         try {
             octaneEntityForm = metadataService.getFormLayoutForSpecificEntityType(Entity.getEntityType(entityModel));
-        } catch (UnsupportedEncodingException e){
+        } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        JPanel rootPanel = new JPanel();
+        ScrollablePanel rootPanel = new ScrollablePanel();
         rootPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
         add(rootPanel, BorderLayout.CENTER);
         GridBagLayout gbl_rootPanel = new GridBagLayout();
@@ -87,6 +88,7 @@ public class GeneralEntityDetailsPanel extends JPanel {
         gbc_entityDetailsPanel.fill = GridBagConstraints.BOTH;
         gbc_entityDetailsPanel.gridx = 0;
         gbc_entityDetailsPanel.gridy = 0;
+
 
         JXPanel entityDetailsAndCommentsPanel = new JXPanel();
         entityDetailsAndCommentsPanel.setPreferredSize(new Dimension((int) entityDetailsPanel.getPreferredSize().getWidth(), (int) entityDetailsPanel.getPreferredSize().getHeight() + 50));
@@ -194,7 +196,7 @@ public class GeneralEntityDetailsPanel extends JPanel {
         headerPanel.setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(Entity.getEntityType(entityModel))));
         headerPanel.setNameDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_NAME)));
         hasAttachment = false;
-        JXPanel ret  = createMainPanel();
+        JXPanel ret = createMainPanel();
         int sections = 0;
         for (FormLayoutSection formLayoutSection : octaneEntityForm.getFormLayoutSections()) {
             createSectionWithEntityDetails(sections, ret, entityModel, formLayoutSection);
@@ -374,7 +376,7 @@ public class GeneralEntityDetailsPanel extends JPanel {
 
     private String prettifyLabels(String str1) {
         //for udfs
-        if(str1.contains("_udf")){
+        if (str1.contains("_udf")) {
             str1 = metadataService.getUdfLabel(str1);
         }
         str1 = str1.replaceAll("_udf", "");
