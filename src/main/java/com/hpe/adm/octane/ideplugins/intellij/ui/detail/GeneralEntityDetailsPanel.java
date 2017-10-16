@@ -13,11 +13,7 @@
 
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
-import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.model.EntityModel;
-import com.hpe.adm.nga.sdk.model.FieldModel;
-import com.hpe.adm.nga.sdk.model.MultiReferenceFieldModel;
-import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entity.*;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
 import com.hpe.adm.octane.ideplugins.services.MetadataService;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
@@ -27,7 +23,6 @@ import com.hpe.adm.octane.ideplugins.services.ui.FormLayoutSection;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.ui.JBColor;
 import javafx.application.Platform;
-import org.apache.commons.lang.StringUtils;
 import org.jdesktop.swingx.JXCollapsiblePane;
 import org.jdesktop.swingx.JXCollapsiblePane.Direction;
 import org.jdesktop.swingx.JXLabel;
@@ -40,29 +35,33 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.List;
 
-import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.*;
+import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.DEFECT;
 import static com.hpe.adm.octane.ideplugins.services.util.Util.getUiDataFromModel;
 
 public class GeneralEntityDetailsPanel extends JPanel {
     private JXPanel entityDetailsPanel;
     private JXCollapsiblePane commentsDetails;
     private HTMLPresenterFXPanel descriptionDetails;
-
-    private boolean hasAttachment = false;
+    private boolean hasAttachment;
+    private MetadataService metadataService;
     private HeaderPanel headerPanel;
     private CommentsConversationPanel commentsListPanel;
     private JXLabel label;
 
     private FormLayout octaneEntityForm;
 
-    public GeneralEntityDetailsPanel(FormLayout octaneFormLayout, EntityModel entityModel) {
+    public GeneralEntityDetailsPanel(MetadataService metadataService, EntityModel entityModel) {
         setLayout(new BorderLayout(0, 0));
-
-        octaneEntityForm = octaneFormLayout;
-
+        this.metadataService = metadataService;
+        try {
+            octaneEntityForm = metadataService.getFormLayoutForSpecificEntityType(Entity.getEntityType(entityModel));
+        } catch (UnsupportedEncodingException e){
+            e.printStackTrace();
+        }
         JPanel rootPanel = new JPanel();
         rootPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 
@@ -201,7 +200,8 @@ public class GeneralEntityDetailsPanel extends JPanel {
         ret = createMainPanel();
         int sections = 0;
         for (FormLayoutSection formLayoutSection : octaneEntityForm.getFormLayoutSections()) {
-            createSectionWithEntityDetails(sections++, ret, entityModel, formLayoutSection);
+            createSectionWithEntityDetails(sections, ret, entityModel, formLayoutSection);
+            sections += 2;
         }
         return ret;
     }
@@ -308,7 +308,7 @@ public class GeneralEntityDetailsPanel extends JPanel {
         detailsPanelLeft.setBorder(null);
         GridBagConstraints gbc1 = new GridBagConstraints();
         gbc1.anchor = GridBagConstraints.NORTH;
-        gbc1.insets = new Insets(10, 0, 0, 0);
+        gbc1.insets = new Insets(10, 0, 15, 0);
         gbc1.gridx = 0;
         gbc1.gridy = row;
         mainPanel.add(detailsPanelLeft, gbc1);
@@ -327,7 +327,7 @@ public class GeneralEntityDetailsPanel extends JPanel {
         detailsPanelRight.setBorder(null);
         GridBagConstraints gbc1 = new GridBagConstraints();
         gbc1.anchor = GridBagConstraints.NORTH;
-        gbc1.insets = new Insets(10, 10, 0, 0);
+        gbc1.insets = new Insets(10, 10, 15, 0);
         gbc1.gridx = 1;
         gbc1.gridy = row;
         mainPanel.add(detailsPanelRight, gbc1);
@@ -356,7 +356,7 @@ public class GeneralEntityDetailsPanel extends JPanel {
         });
     }
 
-    private JXPanel createMainPanel(){
+    private JXPanel createMainPanel() {
         JXPanel rootPanel = new JXPanel();
         rootPanel.setBorder(null);
         rootPanel.setLayout(new BorderLayout(0, 0));
@@ -364,7 +364,7 @@ public class GeneralEntityDetailsPanel extends JPanel {
         detailsPanelMain.setBorder(null);
         rootPanel.add(detailsPanelMain, BorderLayout.CENTER);
         GridBagLayout mainPaneGrid = new GridBagLayout();
-        mainPaneGrid.columnWidths = new int[]{500, 500};
+        mainPaneGrid.columnWidths = new int[]{0, 0};
         mainPaneGrid.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
         mainPaneGrid.columnWeights = new double[]{1.0, 1.0};
         mainPaneGrid.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
@@ -375,6 +375,9 @@ public class GeneralEntityDetailsPanel extends JPanel {
 
     private String prettifyLabels(String str1) {
         //for udfs
+        if(str1.contains("_udf")){
+            str1 = metadataService.getUdfLabel(str1);
+        }
         str1 = str1.replaceAll("_udf", "");
         str1 = str1.replaceAll("_", " ");
         char[] chars = str1.toCharArray();
@@ -387,9 +390,5 @@ public class GeneralEntityDetailsPanel extends JPanel {
         return new String(chars);
     }
 
-    private String getUdfLabel(){
-        //TODO
-        return "";
-    }
 
 }

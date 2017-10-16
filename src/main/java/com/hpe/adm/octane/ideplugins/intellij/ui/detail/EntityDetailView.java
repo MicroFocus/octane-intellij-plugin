@@ -17,8 +17,8 @@ import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.View;
 import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.LoadingWidget;
+import com.hpe.adm.octane.ideplugins.services.MetadataService;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
-import com.hpe.adm.octane.ideplugins.services.ui.FormLayout;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.ui.components.JBScrollPane;
 
@@ -35,13 +35,14 @@ public class EntityDetailView implements View {
     private EntityModel entityModel;
     private JBScrollPane component = new JBScrollPane(new LoadingWidget());
     private GeneralEntityDetailsPanel entityDetailsPanel;
-    private FormLayout octaneEntityForm;
+
     @Inject
     private ConnectionSettingsProvider connectionSettingsProvider;
 
     public EntityDetailView() {
 
     }
+
     @Override
     public JComponent getComponent() {
         component.setBorder(null);
@@ -51,21 +52,19 @@ public class EntityDetailView implements View {
         return component;
     }
 
-    public void setEntityModel(EntityModel entityModel) {
-        this.entityModel =entityModel;
-    }
 
-    public void createDetailsPanel(){
-        entityDetailsPanel = new GeneralEntityDetailsPanel(octaneEntityForm, entityModel);
+    public void createDetailsPanel(EntityModel entityModel, MetadataService metadataService) {
+        this.entityModel = entityModel;
+        entityDetailsPanel = new GeneralEntityDetailsPanel(metadataService, entityModel);
         component.setViewportView(entityDetailsPanel);
     }
 
     public void setErrorMessage(String error) {
-        JPanel errorPanel = new JPanel(new BorderLayout(0,0));
+        JPanel errorPanel = new JPanel(new BorderLayout(0, 0));
 
         JLabel errorLabel = new JLabel();
         errorLabel.setForeground(Color.RED);
-        errorLabel.setText("<html><center>"+error+"</center></html>");
+        errorLabel.setText("<html><center>" + error + "</center></html>");
         errorPanel.add(errorLabel);
         errorLabel.setHorizontalAlignment(SwingConstants.CENTER);
         errorLabel.setVerticalAlignment(SwingConstants.CENTER);
@@ -76,17 +75,20 @@ public class EntityDetailView implements View {
     public void setRefreshEntityButton(AnAction refreshAction) {
         entityDetailsPanel.setRefreshButton(refreshAction);
     }
+
     public void setCommentsEntityButton(AnAction commentsAction) {
         entityDetailsPanel.setCommentsButton(commentsAction);
     }
-    public void setSaveSelectedPhaseButton(AnAction saveSelectedPhaseAction){
+
+    public void setSaveSelectedPhaseButton(AnAction saveSelectedPhaseAction) {
         entityDetailsPanel.setSaveSelectedPhaseButton(saveSelectedPhaseAction);
     }
-    public void removeSaveSelectedPhaseButton(){
+
+    public void removeSaveSelectedPhaseButton() {
         entityDetailsPanel.removeSaveSelectedPhaseButton();
     }
 
-    public void setPhaseInHeader(boolean showPhase){
+    public void setPhaseInHeader(boolean showPhase) {
         entityDetailsPanel.setPhaseInHeader(showPhase);
     }
 
@@ -97,9 +99,11 @@ public class EntityDetailView implements View {
     public void setPossiblePhasesForEntity(Collection<EntityModel> phasesList) {
         entityDetailsPanel.setPossiblePhasesForEntity(phasesList);
     }
-    public EntityModel getSelectedTransition(){
+
+    public EntityModel getSelectedTransition() {
         return entityDetailsPanel.getSelectedTransition();
     }
+
     public EntityModel getEntityModel() {
         return this.entityModel;
     }
@@ -111,9 +115,11 @@ public class EntityDetailView implements View {
     public void setComments(Collection<EntityModel> comments) {
         entityDetailsPanel.setComments(comments);
     }
+
     public void addSendNewCommentAction(ActionListener actionListener) {
         entityDetailsPanel.addSendNewCommentAction(actionListener);
     }
+
     public void setCommentMessageBoxText(String t) {
         entityDetailsPanel.setCommentMessageBoxText(t);
     }
@@ -126,7 +132,5 @@ public class EntityDetailView implements View {
         return entityDetailsPanel;
     }
 
-    public void setOctaneEntityForm(FormLayout octaneEntityForm){
-        this.octaneEntityForm = octaneEntityForm;
-    }
+
 }

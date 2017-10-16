@@ -28,7 +28,9 @@ import com.hpe.adm.octane.ideplugins.services.EntityService;
 import com.hpe.adm.octane.ideplugins.services.MetadataService;
 import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
+import com.hpe.adm.octane.ideplugins.services.ui.FormField;
 import com.hpe.adm.octane.ideplugins.services.ui.FormLayout;
+import com.hpe.adm.octane.ideplugins.services.ui.FormLayoutSection;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -39,7 +41,6 @@ import com.intellij.openapi.vcs.VcsShowConfirmationOption;
 import com.intellij.util.ui.ConfirmationDialog;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -85,7 +86,6 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
         RestUtil.runInBackground(
                 () -> {
                     try {
-                        octaneEntityForm = metadataService.getFormLayoutForSpecificEntityType(this.entityType);
                         Set<String> fields;
                         if(entityType.isSubtype()) {
                             fields	= new HashSet<>(metadataService.getFields(entityType.getSubtypeOf()));
@@ -94,7 +94,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                         }
                         entityModel = entityService.findEntity(this.entityType, this.entityId,fields);
                         return entityModel;
-                    } catch (ServiceException |UnsupportedEncodingException ex) {
+                    } catch (ServiceException ex) {
                         entityDetailView.setErrorMessage(ex.getMessage());
                         return null;
                     }
@@ -102,9 +102,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                 (entityModel) -> {
                     if (entityModel != null) {
                         this.entityModel = entityModel;
-                        entityDetailView.setOctaneEntityForm(octaneEntityForm);
-                        entityDetailView.setEntityModel(entityModel);
-                        entityDetailView.createDetailsPanel();
+                        entityDetailView.createDetailsPanel(entityModel,metadataService);
                         entityDetailView.setSaveSelectedPhaseButton(new SaveSelectedPhaseAction());
                         entityDetailView.setRefreshEntityButton(new EntityRefreshAction());
                         if (entityType!= TASK&&entityType != MANUAL_TEST_RUN && entityType != TEST_SUITE_RUN) {
@@ -129,7 +127,17 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
 
 
     }
-
+    public void getUdfLabels(FormLayout octaneForms){
+        for(FormLayoutSection layoutSection: octaneForms.getFormLayoutSections()){
+            for(FormField fieldModel : layoutSection.getFields()){
+                if(fieldModel.getName().contains("_udf")){
+                    fieldModel.setName(metadataService.getUdfLabel(fieldModel.getName()));
+                    entityModel.getValue(fieldModel.getName());
+                    entityModel.setValue(new StringFieldModel(metadataService.getUdfLabel(fieldModel.getName()),entityModel.getValue(fieldModel.getName()).getValue().toString()));
+                }
+            }
+        }
+    }
     private void setPossibleTransitions(EntityModel entityModel) {
         Collection<EntityModel> result = new HashSet<>();
         RestUtil.runInBackground(() -> {
