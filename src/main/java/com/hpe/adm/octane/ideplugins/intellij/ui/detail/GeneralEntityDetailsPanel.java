@@ -39,7 +39,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.List;
 
-import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.DEFECT;
 import static com.hpe.adm.octane.ideplugins.services.util.Util.getUiDataFromModel;
 
 public class GeneralEntityDetailsPanel extends JPanel {
@@ -64,7 +63,6 @@ public class GeneralEntityDetailsPanel extends JPanel {
         }
         JPanel rootPanel = new JPanel();
         rootPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-
         add(rootPanel, BorderLayout.CENTER);
         GridBagLayout gbl_rootPanel = new GridBagLayout();
         gbl_rootPanel.columnWidths = new int[]{0, 0};
@@ -131,7 +129,7 @@ public class GeneralEntityDetailsPanel extends JPanel {
 
         label = new JXLabel();
         label.setText("Description");
-        label.setFont(new Font("Arial", Font.BOLD, 11));
+        label.setFont(new Font("Arial", Font.BOLD, 15));
         GridBagConstraints gbc_label = new GridBagConstraints();
         gbc_label.fill = GridBagConstraints.HORIZONTAL;
         gbc_label.insets = new Insets(0, 0, 5, 0);
@@ -192,12 +190,11 @@ public class GeneralEntityDetailsPanel extends JPanel {
     }
 
     private JXPanel drawSpecificDetailsForEntity(EntityModel entityModel) {
-        JXPanel ret = null;
         EntityIconFactory entityIconFactory = new EntityIconFactory(26, 26, 12);
-        headerPanel.setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(DEFECT)));
+        headerPanel.setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(Entity.getEntityType(entityModel))));
         headerPanel.setNameDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_NAME)));
         hasAttachment = false;
-        ret = createMainPanel();
+        JXPanel ret  = createMainPanel();
         int sections = 0;
         for (FormLayoutSection formLayoutSection : octaneEntityForm.getFormLayoutSections()) {
             createSectionWithEntityDetails(sections, ret, entityModel, formLayoutSection);
@@ -284,7 +281,7 @@ public class GeneralEntityDetailsPanel extends JPanel {
                 fieldValueLabel.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
                 fieldValueLabel.setToolTipText(fieldValue);
                 GridBagConstraints gbc2 = new GridBagConstraints();
-                gbc2.insets = new Insets(10, 0, 0, 5);
+                gbc2.insets = new Insets(10, 10, 0, 5);
                 gbc2.anchor = GridBagConstraints.SOUTHWEST;
                 gbc2.fill = GridBagConstraints.HORIZONTAL;
                 gbc2.gridx = 1;
@@ -308,12 +305,13 @@ public class GeneralEntityDetailsPanel extends JPanel {
         detailsPanelLeft.setBorder(null);
         GridBagConstraints gbc1 = new GridBagConstraints();
         gbc1.anchor = GridBagConstraints.NORTH;
+        gbc1.fill = GridBagConstraints.HORIZONTAL;
         gbc1.insets = new Insets(10, 0, 15, 0);
         gbc1.gridx = 0;
         gbc1.gridy = row;
         mainPanel.add(detailsPanelLeft, gbc1);
         GridBagLayout gbl_detailsPanelLeft = new GridBagLayout();
-        gbl_detailsPanelLeft.columnWidths = new int[]{140, 580};
+        gbl_detailsPanelLeft.columnWidths = new int[]{0, 0};
         gbl_detailsPanelLeft.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
         gbl_detailsPanelLeft.columnWeights = new double[]{0.0, 1.0};
         gbl_detailsPanelLeft.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
@@ -330,9 +328,10 @@ public class GeneralEntityDetailsPanel extends JPanel {
         gbc1.insets = new Insets(10, 10, 15, 0);
         gbc1.gridx = 1;
         gbc1.gridy = row;
+        gbc1.fill = GridBagConstraints.HORIZONTAL;
         mainPanel.add(detailsPanelRight, gbc1);
         GridBagLayout gbl_detailsPanelRight = new GridBagLayout();
-        gbl_detailsPanelRight.columnWidths = new int[]{140, 580};
+        gbl_detailsPanelRight.columnWidths = new int[]{0, 0};
         gbl_detailsPanelRight.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
         gbl_detailsPanelRight.columnWeights = new double[]{0.0, 1.0};
         gbl_detailsPanelRight.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
