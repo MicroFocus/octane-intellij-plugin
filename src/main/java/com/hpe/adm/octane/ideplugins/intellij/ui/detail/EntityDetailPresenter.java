@@ -87,12 +87,12 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                 () -> {
                     try {
                         Set<String> fields;
-                        if(entityType.isSubtype()) {
-                            fields	= new HashSet<>(metadataService.getFields(entityType.getSubtypeOf()));
+                        if (entityType.isSubtype()) {
+                            fields = new HashSet<>(metadataService.getFields(entityType.getSubtypeOf()));
                         } else {
-                            fields	= new HashSet<>(metadataService.getFields(entityType));
+                            fields = new HashSet<>(metadataService.getFields(entityType));
                         }
-                        entityModel = entityService.findEntity(this.entityType, this.entityId,fields);
+                        entityModel = entityService.findEntity(this.entityType, this.entityId, fields);
                         return entityModel;
                     } catch (ServiceException ex) {
                         entityDetailView.setErrorMessage(ex.getMessage());
@@ -102,10 +102,10 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                 (entityModel) -> {
                     if (entityModel != null) {
                         this.entityModel = entityModel;
-                        entityDetailView.createDetailsPanel(entityModel,metadataService);
+                        entityDetailView.createDetailsPanel(entityModel, metadataService);
                         entityDetailView.setSaveSelectedPhaseButton(new SaveSelectedPhaseAction());
                         entityDetailView.setRefreshEntityButton(new EntityRefreshAction());
-                        if (entityType!= TASK&&entityType != MANUAL_TEST_RUN && entityType != TEST_SUITE_RUN) {
+                        if (entityType != TASK && entityType != MANUAL_TEST_RUN && entityType != TEST_SUITE_RUN) {
                             entityDetailView.setCommentsEntityButton(new EntityCommentsAction());
                             setComments(entityModel);
                             addSendNewCommentAction(entityModel);
@@ -127,17 +127,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
 
 
     }
-    public void getUdfLabels(FormLayout octaneForms){
-        for(FormLayoutSection layoutSection: octaneForms.getFormLayoutSections()){
-            for(FormField fieldModel : layoutSection.getFields()){
-                if(fieldModel.getName().contains("_udf")){
-                    fieldModel.setName(metadataService.getUdfLabel(fieldModel.getName()));
-                    entityModel.getValue(fieldModel.getName());
-                    entityModel.setValue(new StringFieldModel(metadataService.getUdfLabel(fieldModel.getName()),entityModel.getValue(fieldModel.getName()).getValue().toString()));
-                }
-            }
-        }
-    }
+
     private void setPossibleTransitions(EntityModel entityModel) {
         Collection<EntityModel> result = new HashSet<>();
         RestUtil.runInBackground(() -> {
