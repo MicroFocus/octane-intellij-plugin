@@ -41,7 +41,7 @@ import java.util.List;
 
 import static com.hpe.adm.octane.ideplugins.services.util.Util.getUiDataFromModel;
 
-public class GeneralEntityDetailsPanel extends JPanel implements Scrollable{
+public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
 
     private JXPanel entityDetailsPanel;
     private JXCollapsiblePane commentsDetails;
@@ -399,12 +399,15 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable{
 
     @Override
     public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
-        return 20;
+
+        int currentPosition = visibleRect.height;
+
+        return  (currentPosition) / 10;
     }
 
     @Override
     public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
-        return 20;
+        return getHeight() - visibleRect.height;
     }
 
     @Override
