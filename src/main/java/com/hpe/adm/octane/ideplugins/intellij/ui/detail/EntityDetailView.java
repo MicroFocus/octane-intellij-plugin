@@ -49,6 +49,7 @@ public class EntityDetailView implements View {
         component.setVerticalScrollBarPolicy(VERTICAL_SCROLLBAR_ALWAYS);
         component.setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_NEVER);
         component.setMinimumSize(new Dimension(0, 0));
+        component.getVerticalScrollBar().setUnitIncrement(16);
         return component;
     }
 

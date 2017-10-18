@@ -23,6 +23,7 @@ import com.hpe.adm.octane.ideplugins.services.ui.FormLayoutSection;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.roots.ui.componentsList.components.ScrollablePanel;
 import com.intellij.ui.JBColor;
+import com.intellij.ui.components.JBScrollPane;
 import javafx.application.Platform;
 import org.jdesktop.swingx.JXCollapsiblePane;
 import org.jdesktop.swingx.JXCollapsiblePane.Direction;
@@ -33,9 +34,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 import java.awt.*;
-import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
+import java.awt.event.*;
 import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.List;
@@ -43,6 +42,7 @@ import java.util.List;
 import static com.hpe.adm.octane.ideplugins.services.util.Util.getUiDataFromModel;
 
 public class GeneralEntityDetailsPanel extends JPanel {
+
     private JXPanel entityDetailsPanel;
     private JXCollapsiblePane commentsDetails;
     private HTMLPresenterFXPanel descriptionDetails;
@@ -56,13 +56,15 @@ public class GeneralEntityDetailsPanel extends JPanel {
 
     public GeneralEntityDetailsPanel(MetadataService metadataService, EntityModel entityModel) {
         setLayout(new BorderLayout(0, 0));
+
         this.metadataService = metadataService;
         try {
             octaneEntityForm = metadataService.getFormLayoutForSpecificEntityType(Entity.getEntityType(entityModel));
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        ScrollablePanel rootPanel = new ScrollablePanel();
+
+        JPanel rootPanel = new JPanel();
         rootPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
         add(rootPanel, BorderLayout.CENTER);
         GridBagLayout gbl_rootPanel = new GridBagLayout();
@@ -81,14 +83,12 @@ public class GeneralEntityDetailsPanel extends JPanel {
         gbc_headerPanel.gridy = 0;
         rootPanel.add(headerPanel, gbc_headerPanel);
 
-
         entityDetailsPanel = drawSpecificDetailsForEntity(entityModel);
         entityDetailsPanel.setBorder(new EmptyBorder(0, 0, 0, 10));
         GridBagConstraints gbc_entityDetailsPanel = new GridBagConstraints();
         gbc_entityDetailsPanel.fill = GridBagConstraints.BOTH;
         gbc_entityDetailsPanel.gridx = 0;
         gbc_entityDetailsPanel.gridy = 0;
-
 
         JXPanel entityDetailsAndCommentsPanel = new JXPanel();
         entityDetailsAndCommentsPanel.setPreferredSize(new Dimension((int) entityDetailsPanel.getPreferredSize().getWidth(), (int) entityDetailsPanel.getPreferredSize().getHeight() + 50));
@@ -139,7 +139,6 @@ public class GeneralEntityDetailsPanel extends JPanel {
         gbc_label.gridy = 2;
         rootPanel.add(label, gbc_label);
 
-        //ScrollPane scrollPane = new ScrollPane();
         descriptionDetails = new HTMLPresenterFXPanel();
         descriptionDetails.setPreferredSize(new Dimension(0, 120));
         GridBagConstraints gbc = new GridBagConstraints();
@@ -150,6 +149,7 @@ public class GeneralEntityDetailsPanel extends JPanel {
 
         drawGeneralDetailsForEntity(entityModel);
         descriptionDetails.addEventActions();
+
     }
 
     private void drawGeneralDetailsForEntity(EntityModel entityModel) {
