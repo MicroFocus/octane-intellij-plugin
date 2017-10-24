@@ -21,9 +21,7 @@ import com.hpe.adm.octane.ideplugins.services.ui.FormField;
 import com.hpe.adm.octane.ideplugins.services.ui.FormLayout;
 import com.hpe.adm.octane.ideplugins.services.ui.FormLayoutSection;
 import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.roots.ui.componentsList.components.ScrollablePanel;
 import com.intellij.ui.JBColor;
-import com.intellij.ui.components.JBScrollPane;
 import javafx.application.Platform;
 import org.jdesktop.swingx.JXCollapsiblePane;
 import org.jdesktop.swingx.JXCollapsiblePane.Direction;
@@ -34,7 +32,9 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.List;
@@ -402,7 +402,7 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
 
         int currentPosition = visibleRect.height;
 
-        return  (currentPosition) / 10;
+        return  (getHeight() - currentPosition) / 10;
     }
 
     @Override
