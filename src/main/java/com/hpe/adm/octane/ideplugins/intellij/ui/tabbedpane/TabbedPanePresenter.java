@@ -69,7 +69,7 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
         });
     }
 
-    private static EntityIconFactory entityIconFactory = new EntityIconFactory(25, 25, 12, Color.WHITE);
+    private static EntityIconFactory entityIconFactory = new EntityIconFactory(22, 22, 12, Color.WHITE);
 
     @Inject
     private TabbedPaneView tabbedPaneView;
@@ -143,6 +143,7 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
         PartialEntity tabKey = new PartialEntity(entityId, entityName, entityType);
 
         ImageIcon tabIcon = new ImageIcon(entityIconFactory.getIconAsImage(entityType));
+
 
         TabInfo tabInfo = tabbedPaneView.addTab(
                 String.valueOf(entityId),
