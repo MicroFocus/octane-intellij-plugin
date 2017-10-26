@@ -27,6 +27,7 @@ import org.jdesktop.swingx.JXCollapsiblePane;
 import org.jdesktop.swingx.JXCollapsiblePane.Direction;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
+import org.jdesktop.swingx.JXTextField;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -38,6 +39,7 @@ import java.awt.event.ComponentEvent;
 import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import static com.hpe.adm.octane.ideplugins.services.util.Util.getUiDataFromModel;
 
@@ -45,6 +47,8 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
 
     private JXPanel entityDetailsPanel;
     private JXCollapsiblePane commentsDetails;
+    private JXCollapsiblePane fieldsDetails;
+    private JPanel fieldsRootPanel;
     private HTMLPresenterFXPanel descriptionDetails;
     private boolean hasAttachment;
     private MetadataService metadataService;
@@ -123,11 +127,40 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         commentsListPanel.setBorder(new MatteBorder(1, 1, 1, 1, JBColor.border()));
         commentsDetails.getContentPane().add(commentsListPanel);
 
+        fieldsDetails = new JXCollapsiblePane(Direction.LEFT);
+        fieldsDetails.setCollapsed(true);
+        fieldsDetails.setLayout(new BorderLayout());
+
+        fieldsRootPanel = new JPanel();
+        fieldsDetails.setBorder(new MatteBorder(2, 2, 2, 2, JBColor.border()));
+        GridBagLayout gbl = new GridBagLayout();
+        gbl.columnWidths = new int[]{0,0,0};
+        gbl.rowHeights = new int[]{0, 0, 0, 0};
+        gbl.columnWeights = new double[]{0.0,0.0,0.0};
+        gbl.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0};
+        fieldsRootPanel.setLayout(gbl);
+        fieldsDetails.getContentPane().add(fieldsRootPanel,BorderLayout.NORTH);
+
+        JXTextField searchField = new JXTextField("Search fields  ");
+        searchField.setColumns(15);
+        searchField.setBorder(new MatteBorder(1,1,1,1,JBColor.border()));
+        GridBagConstraints gbcSearchField = new GridBagConstraints();
+        gbcSearchField.insets = new Insets(10,10,10,10);
+        gbcSearchField.anchor = GridBagConstraints.NORTH;
+        gbcSearchField.gridx = 0;
+        gbcSearchField.gridy = 0;
+        fieldsRootPanel.add(searchField,gbcSearchField);
+
+
+
+
         GridBagConstraints gbc_commentsPanel = new GridBagConstraints();
         gbc_commentsPanel.fill = GridBagConstraints.BOTH;
         gbc_commentsPanel.gridx = 1;
         gbc_commentsPanel.gridy = 0;
         entityDetailsAndCommentsPanel.add(commentsDetails, gbc_commentsPanel);
+        gbc_commentsPanel.gridx = 2;
+        entityDetailsAndCommentsPanel.add(fieldsDetails,gbc_commentsPanel);
 
         label = new JXLabel();
         label.setText("Description");
@@ -161,6 +194,16 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         //Setting description content
         Platform.runLater(() -> descriptionDetails.setContent(descriptionContent));
         Platform.runLater(() -> descriptionDetails.initFX());
+    }
+
+    private void createFieldsList(Set<String> fields){
+        int fieldsCount = 1;
+        for(String field: fields){
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.gridx = 0;
+            gbc.gridy = fieldsCount++;
+            fieldsRootPanel.add(new JLabel(field),gbc);
+        }
     }
 
     public void setEntityNameClickHandler(Runnable runnable) {
@@ -235,8 +278,20 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         return commentsListPanel.getCommentMessageBoxText();
     }
 
-    public void activateCollapsible() {
+    public void activateCommentsCollapsible() {
+        if(!fieldsDetails.isCollapsed())
+            fieldsDetails.setCollapsed(true);
         commentsDetails.setCollapsed(!commentsDetails.isCollapsed());
+    }
+
+    public void activateFieldsSettingsCollapsible() {
+        if(!commentsDetails.isCollapsed())
+            commentsDetails.setCollapsed(true);
+        fieldsDetails.setCollapsed(!fieldsDetails.isCollapsed());
+    }
+
+    public void setFieldSelectButton(AnAction fieldSelectButton){
+        headerPanel.setFieldSelectButton(fieldSelectButton);
     }
 
     public void createSectionWithEntityDetails(int row, JXPanel mainPanel, EntityModel entityModel, FormLayoutSection formSection) {
@@ -419,4 +474,6 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
     public boolean getScrollableTracksViewportHeight() {
         return false;
     }
+
+
 }

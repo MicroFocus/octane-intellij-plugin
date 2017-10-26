@@ -154,7 +154,7 @@ public class HeaderPanel extends JPanel {
         
         
         buttonActionGroup = new DefaultActionGroup();
-        ActionToolbar actionToolBar = ActionManager.getInstance().createActionToolbar("refresh | save | comments", buttonActionGroup, true);
+        ActionToolbar actionToolBar = ActionManager.getInstance().createActionToolbar("refresh | save | comments ", buttonActionGroup, true);
         panelControls.add(actionToolBar.getComponent(), BorderLayout.EAST);
     }
 
@@ -178,6 +178,11 @@ public class HeaderPanel extends JPanel {
     public void setCommentButton(AnAction commentAction){
         buttonActionGroup.addSeparator();
         buttonActionGroup.add(commentAction);
+    }
+
+    public void setFieldSelectButton(AnAction fieldSelectButton){
+        buttonActionGroup.addSeparator();
+        buttonActionGroup.add(fieldSelectButton);
     }
 
     public void setActionToEntityLink(Runnable runnable) {

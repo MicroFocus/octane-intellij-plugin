@@ -19,7 +19,6 @@ import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.exception.OctaneException;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.nga.sdk.model.ReferenceFieldModel;
-import com.hpe.adm.nga.sdk.model.StringFieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
 import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
@@ -28,9 +27,6 @@ import com.hpe.adm.octane.ideplugins.services.EntityService;
 import com.hpe.adm.octane.ideplugins.services.MetadataService;
 import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
-import com.hpe.adm.octane.ideplugins.services.ui.FormField;
-import com.hpe.adm.octane.ideplugins.services.ui.FormLayout;
-import com.hpe.adm.octane.ideplugins.services.ui.FormLayoutSection;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -41,9 +37,7 @@ import com.intellij.openapi.vcs.VcsShowConfirmationOption;
 import com.intellij.util.ui.ConfirmationDialog;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.*;
 
@@ -58,10 +52,12 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
     @Inject
     private MetadataService metadataService;
 
-    private FormLayout octaneEntityForm;
     private EntityDetailView entityDetailView;
     private Entity entityType;
     private Long entityId;
+
+    private Map<Entity,Set<String>> allfields = new HashMap<>();
+    private Map<Entity,Set<String>> selectedFields = new HashMap<>();
     private EntityModel entityModel;
     private Logger logger = Logger.getInstance("EntityDetailPresenter");
     private final String GO_TO_BROWSER_DIALOG_MESSAGE = "\nYou can only provide a value for this field using ALM Octane in a browser." + "\nDo you want to do this now? ";
@@ -117,6 +113,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                             entityDetailView.removeSaveSelectedPhaseButton();
                             entityDetailView.setPhaseInHeader(false);
                         }
+                        entityDetailView.setFieldSelectButton(new EntitySelectFieldsAction());
                         //Title goes to browser
                         entityDetailView.setEntityNameClickHandler(() -> entityService.openInBrowser(entityModel));
                     }
@@ -168,7 +165,18 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
         public void actionPerformed(AnActionEvent e) {
             //GeneralEntityDetailsPanel.getCommetsDetails().getActionMap().get(JXCollapsiblePane.TOGGLE_ACTION);
             //setComments(entityModel);
-            entityDetailView.getEntityDetailsPanel().activateCollapsible();
+            entityDetailView.getEntityDetailsPanel().activateCommentsCollapsible();
+        }
+    }
+
+    private final class EntitySelectFieldsAction extends AnAction {
+        public EntitySelectFieldsAction() {
+            super("Select fields for this entity type", "This will display a list of selectable fields.", IconLoader.findIcon(Constants.IMG_FIELD_SELECTION_DEFAULT));
+        }
+
+        public void actionPerformed(AnActionEvent e) {
+
+            entityDetailView.getEntityDetailsPanel().activateFieldsSettingsCollapsible();
         }
     }
 
