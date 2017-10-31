@@ -55,7 +55,7 @@ sourceSets {
 }
 
 dependencies {
-    compile('com.hpe.adm.octane.ideplugins:octane-plugin-common:1.4.4-SNAPSHOT'){
+    compile('com.hpe.adm.octane.ideplugins:octane-plugin-common:1.5-SNAPSHOT'){
         exclude group: 'org.slf4j', module: 'slf4j-api'
     }
 
