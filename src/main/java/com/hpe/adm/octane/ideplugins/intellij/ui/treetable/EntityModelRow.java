@@ -158,7 +158,7 @@ public class EntityModelRow extends JPanel {
         if(StringUtils.isEmpty(subTitle)){
             lblSubtitle.setText(defaultText);
         } else {
-        	lblSubtitle.setText(subTitle);
+        	lblSubtitle.setText("<html><body><span style=\"font-family:'arial unicode ms' , sans-serif\">"+subTitle+"</body></html>");
         }
     }
 

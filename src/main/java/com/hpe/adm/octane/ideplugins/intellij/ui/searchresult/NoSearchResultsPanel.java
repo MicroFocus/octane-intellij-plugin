@@ -13,8 +13,8 @@
 
 package com.hpe.adm.octane.ideplugins.intellij.ui.searchresult;
 
-import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.nowork.NoWorkPanel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
+import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.nowork.NoWorkPanel;
 
 import javax.swing.*;
 import java.awt.*;

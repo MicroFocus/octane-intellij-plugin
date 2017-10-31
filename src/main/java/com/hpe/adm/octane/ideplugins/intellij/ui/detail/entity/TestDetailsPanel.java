@@ -328,6 +328,7 @@ public class TestDetailsPanel extends JXPanel {
 
     public void setCoveredContentDetails(String coveredContentDetails) {
         this.coveredContentDetails.setText(coveredContentDetails);
+        this.coveredContentDetails.setToolTipText(coveredContentDetails);
     }
 
     public void setApplicationModulesDetails(String applicationModulesDetails) {

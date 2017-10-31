@@ -13,11 +13,6 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.detail.entity;
  * limitations under the License.
  */
 
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.util.Objects;
-
 import com.intellij.ui.JBColor;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
@@ -27,7 +22,6 @@ import javax.swing.border.MatteBorder;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.util.Objects;
 
 public class RequirementsDetailsPanel extends JXPanel {
     private static final long serialVersionUID = -7172388625845199450L;
