@@ -38,9 +38,6 @@ import com.intellij.openapi.vcs.VcsShowConfirmationOption;
 import com.intellij.util.ui.ConfirmationDialog;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.HashSet;
-
 import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.*;
 
 public class EntityDetailPresenter implements Presenter<EntityDetailView> {
@@ -54,7 +51,6 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
     @Inject
     private MetadataService metadataService;
 
-
     private EntityDetailView entityDetailView;
     private Entity entityType;
     private Long entityId;
@@ -62,8 +58,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
     private Logger logger = Logger.getInstance("EntityDetailPresenter");
     private final String GO_TO_BROWSER_DIALOG_MESSAGE = "\nYou can only provide a value for this field using ALM Octane in a browser." + "\nDo you want to do this now? ";
 
-    public EntityDetailPresenter() {
-    }
+    public EntityDetailPresenter() {}
 
     public EntityDetailView getView() {
         return entityDetailView;
@@ -83,8 +78,13 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                 () -> {
                     try {
                         entityModel = entityService.findEntity(this.entityType, this.entityId,metadataService.getFields(entityType));
-                        entityModel.setValue(new StringFieldModel("type",entityType.getSubtypeName()));
+
+                        //Make sure the subtype field is set for all subtype entities, the server might not return it
+                        if(entityType.getSubtypeName() != null){
+                            entityModel.setValue(new StringFieldModel("subtype", entityType.getSubtypeName()));
+                        }
                         return entityModel;
+
                     } catch (ServiceException ex) {
                         entityDetailView.setErrorMessage(ex.getMessage());
                         return null;
@@ -120,7 +120,6 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
     }
 
     private void setPossibleTransitions(EntityModel entityModel) {
-        Collection<EntityModel> result = new HashSet<>();
         RestUtil.runInBackground(() -> {
             String currentPhaseId = Util.getUiDataFromModel(entityModel.getValue("phase"), "id");
             return entityService.findPossibleTransitionFromCurrentPhase(Entity.getEntityType(entityModel), currentPhaseId);
@@ -136,7 +135,6 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
     }
 
     private void setComments(EntityModel entityModel) {
-        Collection<EntityModel> result = new HashSet<>();
         RestUtil.runInBackground(() -> commentService.getComments(entityModel), (comments) -> entityDetailView.setComments(comments), null, "Failed to get possible comments", "fetching comments");
     }
 
@@ -157,8 +155,6 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
         }
 
         public void actionPerformed(AnActionEvent e) {
-            //GeneralEntityDetailsPanel.getCommetsDetails().getActionMap().get(JXCollapsiblePane.TOGGLE_ACTION);
-            //setComments(entityModel);
             entityDetailView.getEntityDetailsPanel().activateCollapsible();
         }
     }
