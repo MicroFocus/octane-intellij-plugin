@@ -58,7 +58,8 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
     private Logger logger = Logger.getInstance("EntityDetailPresenter");
     private final String GO_TO_BROWSER_DIALOG_MESSAGE = "\nYou can only provide a value for this field using ALM Octane in a browser." + "\nDo you want to do this now? ";
 
-    public EntityDetailPresenter() {}
+    public EntityDetailPresenter() {
+    }
 
     public EntityDetailView getView() {
         return entityDetailView;
@@ -77,10 +78,10 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
         RestUtil.runInBackground(
                 () -> {
                     try {
-                        entityModel = entityService.findEntity(this.entityType, this.entityId,metadataService.getFields(entityType));
+                        entityModel = entityService.findEntity(this.entityType, this.entityId, metadataService.getFields(entityType));
 
                         //Make sure the subtype field is set for all subtype entities, the server might not return it
-                        if(entityType.getSubtypeName() != null){
+                        if (entityType.getSubtypeName() != null) {
                             entityModel.setValue(new StringFieldModel("subtype", entityType.getSubtypeName()));
                         }
                         return entityModel;
@@ -96,7 +97,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                         entityDetailView.setEntityModel(entityModel);
                         entityDetailView.setSaveSelectedPhaseButton(new SaveSelectedPhaseAction());
                         entityDetailView.setRefreshEntityButton(new EntityRefreshAction());
-                        if (entityType!= TASK&&entityType != MANUAL_TEST_RUN && entityType != TEST_SUITE_RUN) {
+                        if (entityType != TASK && entityType != MANUAL_TEST_RUN && entityType != TEST_SUITE_RUN) {
                             entityDetailView.setCommentsEntityButton(new EntityCommentsAction());
                             setComments(entityModel);
                             addSendNewCommentAction(entityModel);
@@ -115,8 +116,6 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                 null,
                 null,
                 "Loading entity " + entityType.name() + ": " + entityId);
-
-
     }
 
     private void setPossibleTransitions(EntityModel entityModel) {
