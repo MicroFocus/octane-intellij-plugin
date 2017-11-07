@@ -37,7 +37,9 @@ import com.intellij.openapi.vcs.VcsShowConfirmationOption;
 import com.intellij.util.ui.ConfirmationDialog;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.*;
 
@@ -56,8 +58,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
     private Entity entityType;
     private Long entityId;
 
-    private Map<Entity,Set<String>> allfields = new HashMap<>();
-    private Map<Entity,Set<String>> selectedFields = new HashMap<>();
+    private Set<String> fields;
     private EntityModel entityModel;
     private Logger logger = Logger.getInstance("EntityDetailPresenter");
     private final String GO_TO_BROWSER_DIALOG_MESSAGE = "\nYou can only provide a value for this field using ALM Octane in a browser." + "\nDo you want to do this now? ";
@@ -82,7 +83,6 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
         RestUtil.runInBackground(
                 () -> {
                     try {
-                        Set<String> fields;
                         if (entityType.isSubtype()) {
                             fields = new HashSet<>(metadataService.getFields(entityType.getSubtypeOf()));
                         } else {
@@ -98,7 +98,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                 (entityModel) -> {
                     if (entityModel != null) {
                         this.entityModel = entityModel;
-                        entityDetailView.createDetailsPanel(entityModel, metadataService);
+                        entityDetailView.createDetailsPanel(entityModel, fields);
                         entityDetailView.setSaveSelectedPhaseButton(new SaveSelectedPhaseAction());
                         entityDetailView.setRefreshEntityButton(new EntityRefreshAction());
                         if (entityType != TASK && entityType != MANUAL_TEST_RUN && entityType != TEST_SUITE_RUN) {

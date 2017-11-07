@@ -13,14 +13,19 @@
 
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
+import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.model.EntityModel;
+import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
+import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
-import com.hpe.adm.octane.ideplugins.services.MetadataService;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
-import com.hpe.adm.octane.ideplugins.services.ui.FormField;
 import com.hpe.adm.octane.ideplugins.services.ui.FormLayout;
-import com.hpe.adm.octane.ideplugins.services.ui.FormLayoutSection;
+import com.hpe.adm.octane.ideplugins.services.util.DefaultEntityFieldsUtil;
+import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.actionSystem.DataKeys;
+import com.intellij.openapi.project.Project;
 import com.intellij.ui.JBColor;
 import javafx.application.Platform;
 import org.jdesktop.swingx.JXCollapsiblePane;
@@ -28,6 +33,7 @@ import org.jdesktop.swingx.JXCollapsiblePane.Direction;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.JXTextField;
+import org.json.JSONObject;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -36,14 +42,19 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.io.UnsupportedEncodingException;
 import java.util.Collection;
-import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static com.hpe.adm.octane.ideplugins.services.util.Util.getUiDataFromModel;
 
 public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
+
+    @Inject
+    private IdePluginPersistentState idePluginPersistentState;
+
+    private Map<Entity,Set<String>> defaultFields = DefaultEntityFieldsUtil.getDefaultFields();
+    private Map<Entity,Set<String>> selectedFields;
 
     private JXPanel entityDetailsPanel;
     private JXCollapsiblePane commentsDetails;
@@ -51,21 +62,28 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
     private JPanel fieldsRootPanel;
     private HTMLPresenterFXPanel descriptionDetails;
     private boolean hasAttachment;
-    private MetadataService metadataService;
+
     private HeaderPanel headerPanel;
     private CommentsConversationPanel commentsListPanel;
     private JXLabel label;
 
     private FormLayout octaneEntityForm;
 
-    public GeneralEntityDetailsPanel(MetadataService metadataService, EntityModel entityModel) {
+    public GeneralEntityDetailsPanel(EntityModel entityModel, Set<String> fields) {
         setLayout(new BorderLayout(0, 0));
 
-        this.metadataService = metadataService;
-        try {
-            octaneEntityForm = metadataService.getFormLayoutForSpecificEntityType(Entity.getEntityType(entityModel));
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+        DataManager dataManager = DataManager.getInstance();
+        @SuppressWarnings("deprecation")
+        DataContext dataContext = dataManager.getDataContext();
+        Project project = DataKeys.PROJECT.getData(dataContext);
+
+        idePluginPersistentState = PluginModule.getInstance(project,IdePluginPersistentState.class);
+
+        JSONObject selectedFieldsJson = idePluginPersistentState.loadState(IdePluginPersistentState.Key.SELECTED_FIELDS);
+        if(selectedFieldsJson == null){
+            selectedFields = defaultFields;
+        } else {
+            selectedFields = DefaultEntityFieldsUtil.entityFieldsFromJson(selectedFieldsJson.toString());
         }
 
         JPanel rootPanel = new JPanel();
@@ -240,11 +258,7 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         headerPanel.setNameDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_NAME)));
         hasAttachment = false;
         JXPanel ret = createMainPanel();
-        int sections = 0;
-        for (FormLayoutSection formLayoutSection : octaneEntityForm.getFormLayoutSections()) {
-            createSectionWithEntityDetails(sections, ret, entityModel, formLayoutSection);
-            sections += 2;
-        }
+        createSectionWithEntityDetails(ret, entityModel);
         return ret;
     }
 
@@ -294,30 +308,31 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         headerPanel.setFieldSelectButton(fieldSelectButton);
     }
 
-    public void createSectionWithEntityDetails(int row, JXPanel mainPanel, EntityModel entityModel, FormLayoutSection formSection) {
+    public void createSectionWithEntityDetails(JXPanel mainPanel, EntityModel entityModel) {
 
-        //get the list of fields from the formsection
-        List<FormField> formFields = formSection.getFields();
+
 
         //create section title label
         JXLabel sectionTitle = new JXLabel();
         sectionTitle.setFont(new Font("Arial", Font.BOLD, 18));
-        sectionTitle.setText(formSection.getSectionTitle());
+        sectionTitle.setText("General");
         GridBagConstraints gbc_title = new GridBagConstraints();
         gbc_title.anchor = GridBagConstraints.SOUTHWEST;
         gbc_title.insets = new Insets(0, 0, 0, 0);
         gbc_title.gridx = 0;
-        gbc_title.gridy = row++;
+        gbc_title.gridy = 0;
         mainPanel.add(sectionTitle, gbc_title);
 
         //create the right and left panels
-        JXPanel detailsPanelLeft = createLeftPanel(row, mainPanel);
-        JXPanel detailsPanelRight = createRightPanel(row, mainPanel);
+        JXPanel detailsPanelLeft = createLeftPanel(mainPanel);
+        JXPanel detailsPanelRight = createRightPanel(mainPanel);
         addComponentListener(mainPanel, detailsPanelLeft, detailsPanelRight);
 
         int fieldCount = 0;
-        for (int i = 0; i < formFields.size(); i++) {
-            String fieldName = formFields.get(i).getName();
+        Set<String> fields = selectedFields.get(Entity.getEntityType(entityModel));
+        int i = 0;
+        for (String fieldName : fields) {
+
 
             if (!"description".equals(fieldName)) {
 
@@ -351,13 +366,13 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
                     detailsPanelRight.add(field, gbc1);
                     detailsPanelRight.add(fieldValueLabel, gbc2);
                 }
-
+                i++;
                 fieldCount++;
             }
         }
     }
 
-    private JXPanel createLeftPanel(int row, JXPanel mainPanel) {
+    private JXPanel createLeftPanel( JXPanel mainPanel) {
         JXPanel detailsPanelLeft = new JXPanel();
         detailsPanelLeft.setBorder(null);
         GridBagConstraints gbc1 = new GridBagConstraints();
@@ -365,7 +380,7 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         gbc1.fill = GridBagConstraints.HORIZONTAL;
         gbc1.insets = new Insets(10, 0, 15, 0);
         gbc1.gridx = 0;
-        gbc1.gridy = row;
+        gbc1.gridy = 1;
         mainPanel.add(detailsPanelLeft, gbc1);
         GridBagLayout gbl_detailsPanelLeft = new GridBagLayout();
         gbl_detailsPanelLeft.columnWidths = new int[]{0, 0};
@@ -377,14 +392,14 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         return detailsPanelLeft;
     }
 
-    private JXPanel createRightPanel(int row, JXPanel mainPanel) {
+    private JXPanel createRightPanel( JXPanel mainPanel) {
         JXPanel detailsPanelRight = new JXPanel();
         detailsPanelRight.setBorder(null);
         GridBagConstraints gbc1 = new GridBagConstraints();
         gbc1.anchor = GridBagConstraints.NORTH;
         gbc1.insets = new Insets(10, 10, 15, 0);
         gbc1.gridx = 1;
-        gbc1.gridy = row;
+        gbc1.gridy = 1;
         gbc1.fill = GridBagConstraints.HORIZONTAL;
         mainPanel.add(detailsPanelRight, gbc1);
         GridBagLayout gbl_detailsPanelRight = new GridBagLayout();
@@ -422,18 +437,14 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         GridBagLayout mainPaneGrid = new GridBagLayout();
         mainPaneGrid.columnWidths = new int[]{0, 0};
         mainPaneGrid.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-        mainPaneGrid.columnWeights = new double[]{1.0, 1.0};
+        mainPaneGrid.columnWeights = new double[]{0.5, 1.0};
         mainPaneGrid.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
         detailsPanelMain.setLayout(mainPaneGrid);
-        detailsPanelMain.setMinimumSize(new Dimension(0, 0));
         return detailsPanelMain;
     }
 
     private String prettifyLabels(String str1) {
         //for udfs
-        if (str1.contains("_udf")) {
-            str1 = metadataService.getUdfLabel(str1);
-        }
         str1 = str1.replaceAll("_udf", "");
         str1 = str1.replaceAll("_", " ");
         char[] chars = str1.toCharArray();
