@@ -19,7 +19,6 @@ import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
-import com.hpe.adm.octane.ideplugins.services.ui.FormLayout;
 import com.hpe.adm.octane.ideplugins.services.util.DefaultEntityFieldsUtil;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -32,7 +31,6 @@ import org.jdesktop.swingx.JXCollapsiblePane;
 import org.jdesktop.swingx.JXCollapsiblePane.Direction;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
-import org.jdesktop.swingx.JXTextField;
 import org.json.JSONObject;
 
 import javax.swing.*;
@@ -53,21 +51,19 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
     @Inject
     private IdePluginPersistentState idePluginPersistentState;
 
-    private Map<Entity,Set<String>> defaultFields = DefaultEntityFieldsUtil.getDefaultFields();
-    private Map<Entity,Set<String>> selectedFields;
+    private Map<Entity, Set<String>> defaultFields = DefaultEntityFieldsUtil.getDefaultFields();
+    private Map<Entity, Set<String>> selectedFields;
 
     private JXPanel entityDetailsPanel;
     private JXCollapsiblePane commentsDetails;
-    private JXCollapsiblePane fieldsDetails;
-    private JPanel fieldsRootPanel;
+    private FieldsSelectPopup fieldsPopup;
+
     private HTMLPresenterFXPanel descriptionDetails;
-    private boolean hasAttachment;
 
     private HeaderPanel headerPanel;
     private CommentsConversationPanel commentsListPanel;
     private JXLabel label;
 
-    private FormLayout octaneEntityForm;
 
     public GeneralEntityDetailsPanel(EntityModel entityModel, Set<String> fields) {
         setLayout(new BorderLayout(0, 0));
@@ -77,10 +73,10 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         DataContext dataContext = dataManager.getDataContext();
         Project project = DataKeys.PROJECT.getData(dataContext);
 
-        idePluginPersistentState = PluginModule.getInstance(project,IdePluginPersistentState.class);
+        idePluginPersistentState = PluginModule.getInstance(project, IdePluginPersistentState.class);
 
         JSONObject selectedFieldsJson = idePluginPersistentState.loadState(IdePluginPersistentState.Key.SELECTED_FIELDS);
-        if(selectedFieldsJson == null){
+        if (selectedFieldsJson == null) {
             selectedFields = defaultFields;
         } else {
             selectedFields = DefaultEntityFieldsUtil.entityFieldsFromJson(selectedFieldsJson.toString());
@@ -145,31 +141,8 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         commentsListPanel.setBorder(new MatteBorder(1, 1, 1, 1, JBColor.border()));
         commentsDetails.getContentPane().add(commentsListPanel);
 
-        fieldsDetails = new JXCollapsiblePane(Direction.LEFT);
-        fieldsDetails.setCollapsed(true);
-        fieldsDetails.setLayout(new BorderLayout());
 
-        fieldsRootPanel = new JPanel();
-        fieldsDetails.setBorder(new MatteBorder(2, 2, 2, 2, JBColor.border()));
-        GridBagLayout gbl = new GridBagLayout();
-        gbl.columnWidths = new int[]{0,0,0};
-        gbl.rowHeights = new int[]{0, 0, 0, 0};
-        gbl.columnWeights = new double[]{0.0,0.0,0.0};
-        gbl.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0};
-        fieldsRootPanel.setLayout(gbl);
-        fieldsDetails.getContentPane().add(fieldsRootPanel,BorderLayout.NORTH);
-
-        JXTextField searchField = new JXTextField("Search fields  ");
-        searchField.setColumns(15);
-        searchField.setBorder(new MatteBorder(1,1,1,1,JBColor.border()));
-        GridBagConstraints gbcSearchField = new GridBagConstraints();
-        gbcSearchField.insets = new Insets(10,10,10,10);
-        gbcSearchField.anchor = GridBagConstraints.NORTH;
-        gbcSearchField.gridx = 0;
-        gbcSearchField.gridy = 0;
-        fieldsRootPanel.add(searchField,gbcSearchField);
-
-
+        fieldsPopup = new FieldsSelectPopup(defaultFields.get(Entity.getEntityType(entityModel)),fields,selectedFields.get(Entity.getEntityType(entityModel)),headerPanel);
 
 
         GridBagConstraints gbc_commentsPanel = new GridBagConstraints();
@@ -177,8 +150,7 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         gbc_commentsPanel.gridx = 1;
         gbc_commentsPanel.gridy = 0;
         entityDetailsAndCommentsPanel.add(commentsDetails, gbc_commentsPanel);
-        gbc_commentsPanel.gridx = 2;
-        entityDetailsAndCommentsPanel.add(fieldsDetails,gbc_commentsPanel);
+
 
         label = new JXLabel();
         label.setText("Description");
@@ -214,15 +186,6 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         Platform.runLater(() -> descriptionDetails.initFX());
     }
 
-    private void createFieldsList(Set<String> fields){
-        int fieldsCount = 1;
-        for(String field: fields){
-            GridBagConstraints gbc = new GridBagConstraints();
-            gbc.gridx = 0;
-            gbc.gridy = fieldsCount++;
-            fieldsRootPanel.add(new JLabel(field),gbc);
-        }
-    }
 
     public void setEntityNameClickHandler(Runnable runnable) {
         headerPanel.setActionToEntityLink(runnable);
@@ -256,7 +219,6 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         EntityIconFactory entityIconFactory = new EntityIconFactory(26, 26, 12);
         headerPanel.setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(Entity.getEntityType(entityModel))));
         headerPanel.setNameDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_NAME)));
-        hasAttachment = false;
         JXPanel ret = createMainPanel();
         createSectionWithEntityDetails(ret, entityModel);
         return ret;
@@ -293,23 +255,19 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
     }
 
     public void activateCommentsCollapsible() {
-        if(!fieldsDetails.isCollapsed())
-            fieldsDetails.setCollapsed(true);
         commentsDetails.setCollapsed(!commentsDetails.isCollapsed());
     }
 
-    public void activateFieldsSettingsCollapsible() {
-        if(!commentsDetails.isCollapsed())
-            commentsDetails.setCollapsed(true);
-        fieldsDetails.setCollapsed(!fieldsDetails.isCollapsed());
+    public void activateFieldsSettingsPopup() {
+        fieldsPopup.setLocation((int) MouseInfo.getPointerInfo().getLocation().getX() - fieldsPopup.getWidth(), (int) MouseInfo.getPointerInfo().getLocation().getY() + 15);
+        fieldsPopup.setVisible(!fieldsPopup.isVisible());
     }
 
-    public void setFieldSelectButton(AnAction fieldSelectButton){
+    public void setFieldSelectButton(AnAction fieldSelectButton) {
         headerPanel.setFieldSelectButton(fieldSelectButton);
     }
 
     public void createSectionWithEntityDetails(JXPanel mainPanel, EntityModel entityModel) {
-
 
 
         //create section title label
@@ -372,7 +330,7 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         }
     }
 
-    private JXPanel createLeftPanel( JXPanel mainPanel) {
+    private JXPanel createLeftPanel(JXPanel mainPanel) {
         JXPanel detailsPanelLeft = new JXPanel();
         detailsPanelLeft.setBorder(null);
         GridBagConstraints gbc1 = new GridBagConstraints();
@@ -392,7 +350,7 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         return detailsPanelLeft;
     }
 
-    private JXPanel createRightPanel( JXPanel mainPanel) {
+    private JXPanel createRightPanel(JXPanel mainPanel) {
         JXPanel detailsPanelRight = new JXPanel();
         detailsPanelRight.setBorder(null);
         GridBagConstraints gbc1 = new GridBagConstraints();
@@ -468,7 +426,7 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
 
         int currentPosition = visibleRect.height;
 
-        return  (getHeight() - currentPosition) / 10;
+        return (getHeight() - currentPosition) / 10;
     }
 
     @Override

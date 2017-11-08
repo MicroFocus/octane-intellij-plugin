@@ -42,7 +42,7 @@ public class HeaderPanel extends JPanel {
     private JXLabel moveToLabel;
     private PhaseComboBox phaseComboBox;    
     private AnAction saveSelectedPhaseAction;
-
+    private ActionToolbar actionToolBar;
     private JPanel panelControls;
     private DefaultActionGroup buttonActionGroup;
 
@@ -154,7 +154,8 @@ public class HeaderPanel extends JPanel {
         
         
         buttonActionGroup = new DefaultActionGroup();
-        ActionToolbar actionToolBar = ActionManager.getInstance().createActionToolbar("refresh | save | comments ", buttonActionGroup, true);
+        actionToolBar = ActionManager.getInstance().createActionToolbar("refresh | save | comments ", buttonActionGroup, true);
+        actionToolBar.getComponent().putClientProperty("doNotCancelPopup",new JComboBox().getClientProperty("doNotCancelPopup"));
         panelControls.add(actionToolBar.getComponent(), BorderLayout.EAST);
     }
 
@@ -221,5 +222,6 @@ public class HeaderPanel extends JPanel {
     public void setPhaseInHeader(boolean showPhase){
         phasePanel.setVisible(showPhase);
     }
+
 
 }

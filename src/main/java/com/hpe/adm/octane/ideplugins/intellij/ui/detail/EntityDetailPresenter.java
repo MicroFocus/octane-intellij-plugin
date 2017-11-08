@@ -176,7 +176,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
 
         public void actionPerformed(AnActionEvent e) {
 
-            entityDetailView.getEntityDetailsPanel().activateFieldsSettingsCollapsible();
+            entityDetailView.getEntityDetailsPanel().activateFieldsSettingsPopup();
         }
     }
 
