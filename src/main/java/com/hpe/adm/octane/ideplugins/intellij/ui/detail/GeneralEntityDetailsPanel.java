@@ -56,7 +56,7 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
 
     private JXPanel entityDetailsPanel;
     private JXCollapsiblePane commentsDetails;
-    private FieldsSelectPopup fieldsPopup;
+    private FieldsSelectFrame fieldsPopup;
 
     private HTMLPresenterFXPanel descriptionDetails;
 
@@ -142,7 +142,7 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         commentsDetails.getContentPane().add(commentsListPanel);
 
 
-        fieldsPopup = new FieldsSelectPopup(defaultFields.get(Entity.getEntityType(entityModel)),fields,selectedFields.get(Entity.getEntityType(entityModel)),headerPanel);
+        fieldsPopup = new FieldsSelectFrame(defaultFields.get(Entity.getEntityType(entityModel)),fields,selectedFields,Entity.getEntityType(entityModel),idePluginPersistentState);
 
 
         GridBagConstraints gbc_commentsPanel = new GridBagConstraints();
@@ -260,7 +260,7 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
 
     public void activateFieldsSettingsPopup() {
         fieldsPopup.setLocation((int) MouseInfo.getPointerInfo().getLocation().getX() - fieldsPopup.getWidth(), (int) MouseInfo.getPointerInfo().getLocation().getY() + 15);
-        fieldsPopup.setVisible(!fieldsPopup.isVisible());
+        fieldsPopup.setVisible();
     }
 
     public void setFieldSelectButton(AnAction fieldSelectButton) {
