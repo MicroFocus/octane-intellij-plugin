@@ -17,6 +17,7 @@ import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
+import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.util.DefaultEntityFieldsUtil;
@@ -25,6 +26,7 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.DataKeys;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.JBColor;
 import javafx.application.Platform;
 import org.jdesktop.swingx.JXCollapsiblePane;
@@ -34,12 +36,9 @@ import org.jdesktop.swingx.JXPanel;
 import org.json.JSONObject;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.MatteBorder;
+import javax.swing.border.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
+import java.awt.event.*;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -101,6 +100,19 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         gbc_headerPanel.gridy = 0;
         rootPanel.add(headerPanel, gbc_headerPanel);
 
+
+
+        JButton fieldsButton = new JButton(IconLoader.findIcon(Constants.IMG_FIELD_SELECTION_DEFAULT));
+        fieldsButton.setBorder(null);
+        fieldsButton.setOpaque(false);
+        fieldsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                activateFieldsSettingsPopup();
+            }
+        });
+        headerPanel.add(fieldsButton);
+
         entityDetailsPanel = drawSpecificDetailsForEntity(entityModel);
         entityDetailsPanel.setBorder(new EmptyBorder(0, 0, 0, 10));
         GridBagConstraints gbc_entityDetailsPanel = new GridBagConstraints();
@@ -142,7 +154,20 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         commentsDetails.getContentPane().add(commentsListPanel);
 
 
-        fieldsPopup = new FieldsSelectFrame(defaultFields.get(Entity.getEntityType(entityModel)),fields,selectedFields,Entity.getEntityType(entityModel),idePluginPersistentState);
+        fieldsPopup = new FieldsSelectFrame(defaultFields.get(Entity.getEntityType(entityModel)),
+                                            fields,
+                                            selectedFields,
+                                            Entity.getEntityType(entityModel),
+                                            idePluginPersistentState,
+                                            fieldsButton);
+
+        fieldsPopup.addSelectionListener(new FieldsSelectFrame.SelectionListener() {
+            @Override
+            public void valueChanged(FieldsSelectFrame.SelectionEvent e) {
+                System.out.println("potato");
+                fieldsPopup.getSelectedFields();
+            }
+        });
 
 
         GridBagConstraints gbc_commentsPanel = new GridBagConstraints();
@@ -172,6 +197,7 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
 
         drawGeneralDetailsForEntity(entityModel);
         descriptionDetails.addEventActions();
+
 
     }
 
@@ -219,9 +245,9 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         EntityIconFactory entityIconFactory = new EntityIconFactory(26, 26, 12);
         headerPanel.setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(Entity.getEntityType(entityModel))));
         headerPanel.setNameDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_NAME)));
-        JXPanel ret = createMainPanel();
-        createSectionWithEntityDetails(ret, entityModel);
-        return ret;
+        JXPanel mainPanel = createMainPanel();
+        createSectionWithEntityDetails(mainPanel, entityModel);
+        return mainPanel;
     }
 
 
@@ -265,6 +291,10 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
 
     public void setFieldSelectButton(AnAction fieldSelectButton) {
         headerPanel.setFieldSelectButton(fieldSelectButton);
+    }
+
+    public void updateSection(){
+
     }
 
     public void createSectionWithEntityDetails(JXPanel mainPanel, EntityModel entityModel) {
@@ -329,6 +359,7 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
             }
         }
     }
+
 
     private JXPanel createLeftPanel(JXPanel mainPanel) {
         JXPanel detailsPanelLeft = new JXPanel();
@@ -443,6 +474,5 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
     public boolean getScrollableTracksViewportHeight() {
         return false;
     }
-
 
 }

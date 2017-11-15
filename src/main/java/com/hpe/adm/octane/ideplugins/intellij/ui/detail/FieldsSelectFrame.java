@@ -1,9 +1,11 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
+import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.util.DefaultEntityFieldsUtil;
 import com.intellij.openapi.ui.JBCheckboxMenuItem;
+import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.JBColor;
 import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.JXTextField;
@@ -14,9 +16,12 @@ import javax.swing.border.MatteBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
-import java.awt.event.*;
-import java.util.Map;
-import java.util.Set;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
+import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -24,25 +29,40 @@ import java.util.stream.Collectors;
  */
 public class FieldsSelectFrame extends JFrame {
 
+    public interface SelectionListener extends EventListener {
+        void valueChanged(SelectionEvent e);
+    }
+
+    public class SelectionEvent extends EventObject {
+        public SelectionEvent(Object source) {
+            super(source);
+        }
+    }
+
     private Set<String> defaultFields;
-    private Map<Entity,Set<String>> selectedFieldsMap;
+    private Map<Entity, Set<String>> selectedFieldsMap;
     private Set<String> selectedFields;
     private Set<String> allFields;
+    private Map<String, String> prettyFields = new HashMap<>();
+    private List<JCheckBoxMenuItem> menuItems;
 
-    private boolean exitedFocus = false;
     private boolean visible = false;
     private IdePluginPersistentState idePluginPersistentState;
-    private JScrollPane fieldsPanel;
+    private JScrollPane fieldsScrollPanel;
     private JPanel fieldsRootPanel;
     private JXTextField searchField;
+    private JButton fieldsLabel;
+    private JPanel fieldsPanel;
 
-    public FieldsSelectFrame(Set<String> defaultFields, Set<String> allFields, Map<Entity,Set<String>> selectedFieldsMap, Entity entityType, IdePluginPersistentState idePluginPersistentState) {
+    private List<SelectionListener> listeners = new ArrayList<>();
+
+    public FieldsSelectFrame(Set<String> defaultFields, Set<String> allFields, Map<Entity, Set<String>> selectedFieldsMap, Entity entityType, IdePluginPersistentState idePluginPersistentState, JButton fieldsLabel) {
         this.defaultFields = defaultFields;
         this.allFields = allFields;
         this.selectedFieldsMap = selectedFieldsMap;
         this.selectedFields = selectedFieldsMap.get(entityType);
         this.idePluginPersistentState = idePluginPersistentState;
-
+        this.fieldsLabel = fieldsLabel;
 
         setLayout(new BorderLayout());
         fieldsRootPanel = new JPanel();
@@ -54,76 +74,59 @@ public class FieldsSelectFrame extends JFrame {
         gbl.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0};
         fieldsRootPanel.setLayout(gbl);
 
-
-
         searchField = new JXTextField("Search fields  ");
         searchField.setColumns(15);
         searchField.setBorder(new MatteBorder(1, 1, 1, 1, JBColor.border()));
-        searchField.getDocument().addDocumentListener(new DocumentListener(){
+        searchField.getDocument().addDocumentListener(new DocumentListener() {
 
             @Override
             public void insertUpdate(DocumentEvent e) {
-                Set<String> searchfields;
-                if(!searchField.getText().equals("")){
-                    searchfields = allFields.stream().filter(s -> s.contains(searchField.getText())).collect(Collectors.toSet());
-
+                Set<String> searchfields = new HashSet<>();
+                if (!searchField.getText().equals("")) {
+                    for(String string : prettyFields.keySet().stream().filter(pf -> pf.contains(searchField.getText())).collect(Collectors.toSet())){
+                        searchfields.add(prettyFields.get(string));
+                    }
                 } else {
                     searchfields = allFields;
                 }
-                fieldsRootPanel.remove(fieldsPanel);
-                fieldsPanel = createFieldsPanel(getSelectedFields(),searchfields);
-                GridBagConstraints gbc1 = new GridBagConstraints();
-                gbc1.gridx = 0;
-                gbc1.gridy = 1;
-                fieldsRootPanel.add(fieldsPanel,gbc1);
-                fieldsRootPanel.repaint();
+                updateFieldsPanel(selectedFields, searchfields);
+                fieldsPanel.repaint();
                 revalidate();
                 repaint();
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                Set<String> searchfields;
-                if(!searchField.getText().equals("")){
-                    searchfields = allFields.stream().filter(s -> s.contains(searchField.getText())).collect(Collectors.toSet());
-
+                Set<String> searchfields = new HashSet<>();
+                if (!searchField.getText().equals("")) {
+                    for(String string : prettyFields.keySet().stream().filter(pf -> pf.contains(searchField.getText())).collect(Collectors.toSet())){
+                        searchfields.add(prettyFields.get(string));
+                    }
                 } else {
                     searchfields = allFields;
                 }
-                fieldsRootPanel.remove(fieldsPanel);
-                fieldsPanel = createFieldsPanel(getSelectedFields(),searchfields);
-                GridBagConstraints gbc1 = new GridBagConstraints();
-                gbc1.gridx = 0;
-                gbc1.gridy = 1;
-                fieldsRootPanel.add(fieldsPanel,gbc1);
-                fieldsRootPanel.repaint();
+                updateFieldsPanel(selectedFields, searchfields);
+                fieldsPanel.repaint();
                 revalidate();
                 repaint();
             }
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-                Set<String> searchfields;
-                if(!searchField.getText().equals("")){
-                    searchfields = allFields.stream().filter(s -> s.contains(searchField.getText())).collect(Collectors.toSet());
-
+                Set<String> searchfields = new HashSet<>();
+                if (!searchField.getText().equals("")) {
+                    for(String string : prettyFields.keySet().stream().filter(pf -> pf.contains(searchField.getText())).collect(Collectors.toSet())){
+                        searchfields.add(prettyFields.get(string));
+                    }
                 } else {
                     searchfields = allFields;
                 }
-                fieldsRootPanel.remove(fieldsPanel);
-                fieldsPanel = createFieldsPanel(getSelectedFields(),searchfields);
-                GridBagConstraints gbc1 = new GridBagConstraints();
-                gbc1.gridx = 0;
-                gbc1.gridy = 1;
-                fieldsRootPanel.add(fieldsPanel,gbc1);
-                fieldsRootPanel.repaint();
+                updateFieldsPanel(selectedFields, searchfields);
+                fieldsPanel.repaint();
                 revalidate();
                 repaint();
             }
         });
-
-
-
 
         GridBagConstraints gbcSearchField = new GridBagConstraints();
         gbcSearchField.insets = new Insets(10, 10, 10, 10);
@@ -132,28 +135,26 @@ public class FieldsSelectFrame extends JFrame {
         gbcSearchField.gridy = 0;
         fieldsRootPanel.add(searchField, gbcSearchField);
 
-        fieldsPanel = createFieldsPanel(selectedFields, allFields);
+        createCheckBoxMenuItems(selectedFields, allFields);
+        fieldsScrollPanel = createFieldsPanel(selectedFields, allFields);
         GridBagConstraints gbc1 = new GridBagConstraints();
         gbc1.gridx = 0;
         gbc1.gridy = 1;
-        fieldsRootPanel.add(fieldsPanel, gbc1);
+        fieldsRootPanel.add(fieldsScrollPanel, gbc1);
 
         JXButton resetButton = new JXButton("Reset");
         resetButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 setSelectedFields(getDefaultFields());
-                fieldsRootPanel.remove(fieldsPanel);
-                fieldsPanel = createFieldsPanel(getSelectedFields(),allFields);
-                GridBagConstraints gbc1 = new GridBagConstraints();
-                gbc1.gridx = 0;
-                gbc1.gridy = 1;
-                fieldsRootPanel.add(fieldsPanel,gbc1);
-                fieldsRootPanel.repaint();
+                updateFieldsPanel(getSelectedFields(), allFields);
+                fieldsPanel.repaint();
                 revalidate();
                 repaint();
 
                 idePluginPersistentState.saveState(IdePluginPersistentState.Key.SELECTED_FIELDS, new JSONObject(DefaultEntityFieldsUtil.entityFieldsToJson(selectedFieldsMap)));
+                fieldsLabel.setIcon(IconLoader.findIcon(Constants.IMG_FIELD_SELECTION_DEFAULT));
+                fieldsLabel.repaint();
             }
         });
         GridBagConstraints gbcButton = new GridBagConstraints();
@@ -172,7 +173,6 @@ public class FieldsSelectFrame extends JFrame {
             @Override
             public void windowLostFocus(WindowEvent e) {
                 setVisible(false);
-                exitedFocus = true;
 
             }
         });
@@ -182,57 +182,73 @@ public class FieldsSelectFrame extends JFrame {
     }
 
     public void setVisible() {
-        if(visible){
+        if (visible) {
             setVisible(!visible);
             visible = false;
-        }
-        else {
+        } else {
             setVisible(!visible);
             visible = true;
         }
     }
 
     public JScrollPane createFieldsPanel(Set<String> selectedFields, Set<String> allFields) {
-        JPanel fields = new JPanel();
-        GridBagLayout gbl = new GridBagLayout();
-        gbl.columnWidths = new int[]{0};
-        gbl.rowHeights = new int[]{0};
-        gbl.columnWeights = new double[]{0.0, 0.0, 0.0};
-        gbl.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0};
-        fields.setLayout(gbl);
-        createFieldsList(selectedFields, allFields, fields);
-        JScrollPane scrollPane = new JScrollPane(fields, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        fieldsPanel = new JPanel();
+        fieldsPanel.setLayout(new BoxLayout(fieldsPanel, BoxLayout.Y_AXIS));
+        updateFieldsPanel(selectedFields, allFields);
+        fieldsPanel.revalidate();
+        JScrollPane scrollPane = new JScrollPane(fieldsPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setPreferredSize(new Dimension((int) searchField.getPreferredSize().getWidth(), 200));
         scrollPane.getVerticalScrollBar().setUnitIncrement(10);
         return scrollPane;
     }
 
-    public void createFieldsList(Set<String> selectedfields, Set<String> allFields, JPanel panel) {
-        int fieldsCount = 0;
+    public void createCheckBoxMenuItems(Set<String> selectedfields, Set<String> allFields) {
+        menuItems = new ArrayList<>();
         for (String field : allFields) {
-            GridBagConstraints gbc = new GridBagConstraints();
-            gbc.anchor = GridBagConstraints.NORTH;
-            gbc.weighty = 1;
-            gbc.anchor = GridBagConstraints.NORTH;
-            gbc.gridx = 0;
-            gbc.gridy = fieldsCount++;
             JBCheckboxMenuItem menuItem = new JBCheckboxMenuItem(prettifyLabels(field));
             menuItem.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    if(selectedFields.contains(field)){
-                        selectedFields.remove(field);
+                    if (menuItem.isSelected()) {
+                        selectedfields.add(field);
                     } else {
-                        selectedFields.add(field);
+                        selectedfields.remove(field);
+                    }
+                    listeners.forEach(listener -> listener.valueChanged(new SelectionEvent(this)));
+                    if (defaultFields.containsAll(selectedfields) && selectedfields.containsAll(defaultFields)) {
+                        fieldsLabel.setIcon(IconLoader.findIcon(Constants.IMG_FIELD_SELECTION_DEFAULT));
+                        fieldsLabel.repaint();
+                    } else {
+                        fieldsLabel.setIcon(IconLoader.findIcon(Constants.IMG_FIELD_SELECTION_NON_DEFAULT));
+                        fieldsLabel.repaint();
                     }
                     idePluginPersistentState.saveState(IdePluginPersistentState.Key.SELECTED_FIELDS, new JSONObject(DefaultEntityFieldsUtil.entityFieldsToJson(selectedFieldsMap)));
                 }
             });
-            if (selectedfields.contains(field)) {
+            if(selectedfields.contains(field))
                 menuItem.setState(true);
-            }
-            panel.add(menuItem, gbc);
+            menuItems.add(menuItem);
+            prettyFields.put(prettifyLabels(field),field);
         }
+    }
+
+    public void updateFieldsPanel(Set<String> selectedFields, Set<String> allFields) {
+        fieldsPanel.removeAll();
+        for (JCheckBoxMenuItem checkBoxMenuItem : menuItems) {
+            if (allFields.stream().filter(e -> checkBoxMenuItem.getText().equals(prettifyLabels(e))).count() == 1) {
+                if(selectedFields.stream().filter(e -> checkBoxMenuItem.getText().equals(prettifyLabels(e))).count() == 1){
+                    checkBoxMenuItem.setState(true);
+                } else {
+                    checkBoxMenuItem.setState(false);
+                }
+                fieldsPanel.add(checkBoxMenuItem);
+            }
+        }
+        fieldsPanel.add(Box.createRigidArea(new Dimension((int) searchField.getPreferredSize().getWidth(), 200)));
+    }
+
+    public void addSelectionListener(SelectionListener selectionListener) {
+        listeners.add(selectionListener);
     }
 
     public Set<String> getDefaultFields() {
@@ -244,7 +260,7 @@ public class FieldsSelectFrame extends JFrame {
     }
 
     private void setSelectedFields(Set<String> selectedFields) {
-         this.selectedFields = selectedFields;
+        this.selectedFields = selectedFields;
     }
 
 
@@ -260,26 +276,6 @@ public class FieldsSelectFrame extends JFrame {
             }
         }
         return new String(chars);
-    }
-
-
-    /**
-     * Class for checkboxmenu item needed to override basic behaviour
-     */
-    class CheckBoxMenuItem extends JBCheckboxMenuItem {
-        public CheckBoxMenuItem(String text) {
-            super(text);
-        }
-
-        @Override
-        protected void processMouseEvent(MouseEvent evt) {
-            switch (evt.getID()) {
-                case MouseEvent.MOUSE_ENTERED:
-                    break;
-                case MouseEvent.MOUSE_CLICKED:
-                    doClick();
-            }
-        }
     }
 
 }

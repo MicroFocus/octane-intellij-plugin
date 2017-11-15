@@ -113,7 +113,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                             entityDetailView.removeSaveSelectedPhaseButton();
                             entityDetailView.setPhaseInHeader(false);
                         }
-                        entityDetailView.setFieldSelectButton(new EntitySelectFieldsAction());
+                        //entityDetailView.setFieldSelectButton(new EntitySelectFieldsAction());
                         //Title goes to browser
                         entityDetailView.setEntityNameClickHandler(() -> entityService.openInBrowser(entityModel));
                     }
