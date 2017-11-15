@@ -77,7 +77,6 @@ public class FieldsSelectFrame extends JFrame {
             }
         });
 
-
         if (defaultFields.containsAll(selectedFields) && selectedFields.containsAll(defaultFields)) {
             fieldsButton.setIcon(IconLoader.findIcon(Constants.IMG_FIELD_SELECTION_DEFAULT));
             fieldsButton.repaint();
@@ -100,7 +99,6 @@ public class FieldsSelectFrame extends JFrame {
         searchField.setColumns(15);
         searchField.setBorder(new MatteBorder(1, 1, 1, 1, JBColor.border()));
         searchField.getDocument().addDocumentListener(new DocumentListener() {
-
             @Override
             public void insertUpdate(DocumentEvent e) {
                 Set<String> searchfields = new HashSet<>();
@@ -116,7 +114,6 @@ public class FieldsSelectFrame extends JFrame {
                 revalidate();
                 repaint();
             }
-
             @Override
             public void removeUpdate(DocumentEvent e) {
                 Set<String> searchfields = new HashSet<>();
@@ -132,7 +129,6 @@ public class FieldsSelectFrame extends JFrame {
                 revalidate();
                 repaint();
             }
-
             @Override
             public void changedUpdate(DocumentEvent e) {
                 Set<String> searchfields = new HashSet<>();
@@ -157,8 +153,8 @@ public class FieldsSelectFrame extends JFrame {
         gbcSearchField.gridy = 0;
         fieldsRootPanel.add(searchField, gbcSearchField);
 
-        createCheckBoxMenuItems(selectedFields, allFields);
-        fieldsScrollPanel = createFieldsPanel(selectedFields, allFields);
+        createCheckBoxMenuItems();
+        fieldsScrollPanel = createFieldsPanel();
         GridBagConstraints gbc1 = new GridBagConstraints();
         gbc1.gridx = 0;
         gbc1.gridy = 1;
@@ -190,7 +186,6 @@ public class FieldsSelectFrame extends JFrame {
         addWindowFocusListener(new WindowFocusListener() {
             @Override
             public void windowGainedFocus(WindowEvent e) {
-
             }
 
             @Override
@@ -198,6 +193,7 @@ public class FieldsSelectFrame extends JFrame {
                 setVisible(false);
                 int mouseLocationX = MouseInfo.getPointerInfo().getLocation().x;
                 int mouseLocationY = MouseInfo.getPointerInfo().getLocation().y;
+                //check if clicked outside of button
                 if ((mouseLocationX < fieldsButton.getLocationOnScreen().x) ||
                         (mouseLocationX > (fieldsButton.getLocationOnScreen().x + fieldsButton.getWidth())) ||
                         (mouseLocationY < fieldsButton.getLocationOnScreen().y) ||
@@ -211,7 +207,7 @@ public class FieldsSelectFrame extends JFrame {
         pack();
     }
 
-    public JScrollPane createFieldsPanel(Set<String> selectedFields, Set<String> allFields) {
+    public JScrollPane createFieldsPanel() {
         fieldsPanel = new JPanel();
         fieldsPanel.setLayout(new BoxLayout(fieldsPanel, BoxLayout.Y_AXIS));
         updateFieldsPanel(selectedFields, allFields);
@@ -222,7 +218,7 @@ public class FieldsSelectFrame extends JFrame {
         return scrollPane;
     }
 
-    public void createCheckBoxMenuItems(Set<String> selectedfields, Set<String> allFields) {
+    public void createCheckBoxMenuItems() {
         menuItems = new ArrayList<>();
         for (String field : allFields) {
             JBCheckboxMenuItem menuItem = new JBCheckboxMenuItem(prettifyLabels(field));
@@ -230,12 +226,12 @@ public class FieldsSelectFrame extends JFrame {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     if (menuItem.isSelected()) {
-                        selectedfields.add(field);
+                        selectedFields.add(field);
                     } else {
-                        selectedfields.remove(field);
+                        selectedFields.remove(field);
                     }
                     listeners.forEach(listener -> listener.valueChanged(new SelectionEvent(this)));
-                    if (defaultFields.containsAll(selectedfields) && selectedfields.containsAll(defaultFields)) {
+                    if (defaultFields.containsAll(selectedFields) && selectedFields.containsAll(defaultFields)) {
                         fieldsLabel.setIcon(IconLoader.findIcon(Constants.IMG_FIELD_SELECTION_DEFAULT));
                         fieldsLabel.repaint();
                     } else {
@@ -246,8 +242,9 @@ public class FieldsSelectFrame extends JFrame {
                     idePluginPersistentState.saveState(IdePluginPersistentState.Key.SELECTED_FIELDS, new JSONObject(DefaultEntityFieldsUtil.entityFieldsToJson(selectedFieldsMap)));
                 }
             });
-            if (selectedfields.contains(field))
+            if (selectedFields.contains(field)){
                 menuItem.setState(true);
+            }
             menuItems.add(menuItem);
             prettyFields.put(prettifyLabels(field), field);
         }

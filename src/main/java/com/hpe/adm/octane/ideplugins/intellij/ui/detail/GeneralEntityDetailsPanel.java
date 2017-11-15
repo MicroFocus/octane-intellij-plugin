@@ -102,27 +102,29 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         gbc_headerPanel.gridy = 0;
         rootPanel.add(headerPanel, gbc_headerPanel);
 
-
-
-
-
         JButton fieldsButton = new JButton(IconLoader.findIcon(Constants.IMG_FIELD_SELECTION_DEFAULT));
         fieldsButton.setBorder(null);
         fieldsButton.setOpaque(false);
         headerPanel.add(fieldsButton);
 
-        entityDetailsPanel = createMainPanel();;
-        drawSpecificDetailsForEntity(entityModel);
-        entityDetailsPanel.setBorder(new EmptyBorder(0, 0, 0, 10));
-        GridBagConstraints gbc_entityDetailsPanel = new GridBagConstraints();
-        gbc_entityDetailsPanel.fill = GridBagConstraints.BOTH;
-        gbc_entityDetailsPanel.gridx = 0;
-        gbc_entityDetailsPanel.gridy = 0;
-
+        //create main details panel
+        entityDetailsPanel = createMainPanel();
         //create the right and left panels
         detailsPanelLeft = createLeftPanel(entityDetailsPanel);
         detailsPanelRight = createRightPanel(entityDetailsPanel);
         addComponentListener(entityDetailsPanel, detailsPanelLeft, detailsPanelRight);
+        drawSpecificDetailsForEntity(entityModel);
+        entityDetailsPanel.setBorder(new EmptyBorder(0, 0, 0, 10));
+        //add padding panel
+        JPanel paddingPanel = new JPanel();
+        paddingPanel.setMinimumSize(new Dimension(50,50));
+        GridBagConstraints gbc_paddingPanel = new GridBagConstraints();
+        gbc_paddingPanel.anchor = GridBagConstraints.SOUTHWEST;
+        gbc_paddingPanel.insets = new Insets(0, 0, 0, 0);
+        gbc_paddingPanel.gridx = 0;
+        gbc_paddingPanel.gridy = 2;
+        gbc_paddingPanel.gridwidth = 2;
+        entityDetailsPanel.add(paddingPanel,gbc_paddingPanel);
 
         //create section title label
         JXLabel sectionTitle = new JXLabel();
@@ -148,8 +150,11 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         gbl_entityDetailsAndCommentsPanel.columnWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};
         gbl_entityDetailsAndCommentsPanel.rowWeights = new double[]{0.0, Double.MIN_VALUE};
         entityDetailsAndCommentsPanel.setLayout(gbl_entityDetailsAndCommentsPanel);
+        GridBagConstraints gbc_entityDetailsPanel = new GridBagConstraints();
+        gbc_entityDetailsPanel.fill = GridBagConstraints.BOTH;
+        gbc_entityDetailsPanel.gridx = 0;
+        gbc_entityDetailsPanel.gridy = 0;
         entityDetailsAndCommentsPanel.add(entityDetailsPanel, gbc_entityDetailsPanel);
-
 
         GridBagConstraints gbc_descriptionDetails_1 = new GridBagConstraints();
         gbc_descriptionDetails_1.insets = new Insets(0, 0, 5, 0);
@@ -167,7 +172,6 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         commentsListPanel.setBorder(new MatteBorder(1, 1, 1, 1, JBColor.border()));
         commentsDetails.getContentPane().add(commentsListPanel);
 
-
         fieldsPopup = new FieldsSelectFrame(defaultFields.get(Entity.getEntityType(entityModel)),
                                             fields,
                                             selectedFields,
@@ -182,7 +186,6 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         gbc_commentsPanel.gridx = 1;
         gbc_commentsPanel.gridy = 0;
         entityDetailsAndCommentsPanel.add(commentsDetails, gbc_commentsPanel);
-
 
         label = new JXLabel();
         label.setText("Description");
@@ -204,8 +207,6 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
 
         drawGeneralDetailsForEntity(entityModel);
         descriptionDetails.addEventActions();
-
-
     }
 
     private void drawGeneralDetailsForEntity(EntityModel entityModel) {
@@ -299,7 +300,6 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         int i = 0;
         for (String fieldName : fields) {
             if (!"description".equals(fieldName)) {
-
                 JXLabel field = new JXLabel();
                 field.setFont(new Font("Arial", Font.BOLD, 12));
                 field.setText(prettifyLabels(fieldName));
@@ -357,7 +357,6 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         gbl_detailsPanelLeft.columnWeights = new double[]{0.0, 1.0};
         gbl_detailsPanelLeft.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
         detailsPanelLeft.setLayout(gbl_detailsPanelLeft);
-
         return detailsPanelLeft;
     }
 
@@ -385,7 +384,6 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
             public void componentResized(ComponentEvent e) {
                 int halfWidth = mainPanel.getWidth() / 2;
                 int height = mainPanel.getHeight();
-
                 if (halfWidth != 0 && height != 0) {
                     leftPanel.setPreferredSize(new Dimension((int) halfWidth, height));
                     rightPanel.setPreferredSize(new Dimension((int) halfWidth, height));
@@ -430,9 +428,7 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
 
     @Override
     public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
-
         int currentPosition = visibleRect.height;
-
         return (getHeight() - currentPosition) / 10;
     }
 
