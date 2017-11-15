@@ -57,7 +57,6 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
     private EntityDetailView entityDetailView;
     private Entity entityType;
     private Long entityId;
-
     private Set<String> fields;
     private EntityModel entityModel;
     private Logger logger = Logger.getInstance("EntityDetailPresenter");
@@ -113,7 +112,6 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                             entityDetailView.removeSaveSelectedPhaseButton();
                             entityDetailView.setPhaseInHeader(false);
                         }
-                        //entityDetailView.setFieldSelectButton(new EntitySelectFieldsAction());
                         //Title goes to browser
                         entityDetailView.setEntityNameClickHandler(() -> entityService.openInBrowser(entityModel));
                     }
@@ -166,17 +164,6 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
             //GeneralEntityDetailsPanel.getCommetsDetails().getActionMap().get(JXCollapsiblePane.TOGGLE_ACTION);
             //setComments(entityModel);
             entityDetailView.getEntityDetailsPanel().activateCommentsCollapsible();
-        }
-    }
-
-    private final class EntitySelectFieldsAction extends AnAction {
-        public EntitySelectFieldsAction() {
-            super("Select fields for this entity type", "This will display a list of selectable fields.", IconLoader.findIcon(Constants.IMG_FIELD_SELECTION_DEFAULT));
-        }
-
-        public void actionPerformed(AnActionEvent e) {
-
-            entityDetailView.getEntityDetailsPanel().activateFieldsSettingsPopup();
         }
     }
 

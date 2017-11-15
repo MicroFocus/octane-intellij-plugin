@@ -16,10 +16,7 @@ import javax.swing.border.MatteBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowFocusListener;
+import java.awt.event.*;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -46,7 +43,8 @@ public class FieldsSelectFrame extends JFrame {
     private Map<String, String> prettyFields = new HashMap<>();
     private List<JCheckBoxMenuItem> menuItems;
 
-    private boolean visible = false;
+    private boolean buttonPressed = false;
+    private Entity entityType;
     private IdePluginPersistentState idePluginPersistentState;
     private JScrollPane fieldsScrollPanel;
     private JPanel fieldsRootPanel;
@@ -56,13 +54,37 @@ public class FieldsSelectFrame extends JFrame {
 
     private List<SelectionListener> listeners = new ArrayList<>();
 
-    public FieldsSelectFrame(Set<String> defaultFields, Set<String> allFields, Map<Entity, Set<String>> selectedFieldsMap, Entity entityType, IdePluginPersistentState idePluginPersistentState, JButton fieldsLabel) {
+    public FieldsSelectFrame(Set<String> defaultFields, Set<String> allFields, Map<Entity, Set<String>> selectedFieldsMap, Entity entityType, IdePluginPersistentState idePluginPersistentState, JButton fieldsButton) {
         this.defaultFields = defaultFields;
         this.allFields = allFields;
         this.selectedFieldsMap = selectedFieldsMap;
         this.selectedFields = selectedFieldsMap.get(entityType);
         this.idePluginPersistentState = idePluginPersistentState;
-        this.fieldsLabel = fieldsLabel;
+        this.fieldsLabel = fieldsButton;
+        this.entityType = entityType;
+
+        fieldsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (buttonPressed) {
+                    setVisible(false);
+                    buttonPressed = false;
+                } else {
+                    setLocation((int) fieldsButton.getLocationOnScreen().x - getWidth(), (int) fieldsButton.getLocationOnScreen().y+ 15);
+                    setVisible(true);
+                    buttonPressed = true;
+                }
+            }
+        });
+
+
+        if (defaultFields.containsAll(selectedFields) && selectedFields.containsAll(defaultFields)) {
+            fieldsButton.setIcon(IconLoader.findIcon(Constants.IMG_FIELD_SELECTION_DEFAULT));
+            fieldsButton.repaint();
+        } else {
+            fieldsButton.setIcon(IconLoader.findIcon(Constants.IMG_FIELD_SELECTION_NON_DEFAULT));
+            fieldsButton.repaint();
+        }
 
         setLayout(new BorderLayout());
         fieldsRootPanel = new JPanel();
@@ -83,7 +105,7 @@ public class FieldsSelectFrame extends JFrame {
             public void insertUpdate(DocumentEvent e) {
                 Set<String> searchfields = new HashSet<>();
                 if (!searchField.getText().equals("")) {
-                    for(String string : prettyFields.keySet().stream().filter(pf -> pf.contains(searchField.getText())).collect(Collectors.toSet())){
+                    for (String string : prettyFields.keySet().stream().filter(pf -> pf.contains(searchField.getText())).collect(Collectors.toSet())) {
                         searchfields.add(prettyFields.get(string));
                     }
                 } else {
@@ -99,7 +121,7 @@ public class FieldsSelectFrame extends JFrame {
             public void removeUpdate(DocumentEvent e) {
                 Set<String> searchfields = new HashSet<>();
                 if (!searchField.getText().equals("")) {
-                    for(String string : prettyFields.keySet().stream().filter(pf -> pf.contains(searchField.getText())).collect(Collectors.toSet())){
+                    for (String string : prettyFields.keySet().stream().filter(pf -> pf.contains(searchField.getText())).collect(Collectors.toSet())) {
                         searchfields.add(prettyFields.get(string));
                     }
                 } else {
@@ -115,7 +137,7 @@ public class FieldsSelectFrame extends JFrame {
             public void changedUpdate(DocumentEvent e) {
                 Set<String> searchfields = new HashSet<>();
                 if (!searchField.getText().equals("")) {
-                    for(String string : prettyFields.keySet().stream().filter(pf -> pf.contains(searchField.getText())).collect(Collectors.toSet())){
+                    for (String string : prettyFields.keySet().stream().filter(pf -> pf.contains(searchField.getText())).collect(Collectors.toSet())) {
                         searchfields.add(prettyFields.get(string));
                     }
                 } else {
@@ -151,10 +173,11 @@ public class FieldsSelectFrame extends JFrame {
                 fieldsPanel.repaint();
                 revalidate();
                 repaint();
-
+                listeners.forEach(listener -> listener.valueChanged(new SelectionEvent(this)));
+                selectedFieldsMap.replace(entityType, selectedFields);
                 idePluginPersistentState.saveState(IdePluginPersistentState.Key.SELECTED_FIELDS, new JSONObject(DefaultEntityFieldsUtil.entityFieldsToJson(selectedFieldsMap)));
-                fieldsLabel.setIcon(IconLoader.findIcon(Constants.IMG_FIELD_SELECTION_DEFAULT));
-                fieldsLabel.repaint();
+                fieldsButton.setIcon(IconLoader.findIcon(Constants.IMG_FIELD_SELECTION_DEFAULT));
+                fieldsButton.repaint();
             }
         });
         GridBagConstraints gbcButton = new GridBagConstraints();
@@ -167,28 +190,25 @@ public class FieldsSelectFrame extends JFrame {
         addWindowFocusListener(new WindowFocusListener() {
             @Override
             public void windowGainedFocus(WindowEvent e) {
-                visible = true;
+
             }
 
             @Override
             public void windowLostFocus(WindowEvent e) {
                 setVisible(false);
-
+                int mouseLocationX = MouseInfo.getPointerInfo().getLocation().x;
+                int mouseLocationY = MouseInfo.getPointerInfo().getLocation().y;
+                if ((mouseLocationX < fieldsButton.getLocationOnScreen().x) ||
+                        (mouseLocationX > (fieldsButton.getLocationOnScreen().x + fieldsButton.getWidth())) ||
+                        (mouseLocationY < fieldsButton.getLocationOnScreen().y) ||
+                        (mouseLocationY > (fieldsButton.getLocationOnScreen().y + fieldsButton.getHeight()))) {
+                    buttonPressed = false;
+                }
             }
         });
         setAlwaysOnTop(true);
         setUndecorated(true);
         pack();
-    }
-
-    public void setVisible() {
-        if (visible) {
-            setVisible(!visible);
-            visible = false;
-        } else {
-            setVisible(!visible);
-            visible = true;
-        }
     }
 
     public JScrollPane createFieldsPanel(Set<String> selectedFields, Set<String> allFields) {
@@ -222,13 +242,14 @@ public class FieldsSelectFrame extends JFrame {
                         fieldsLabel.setIcon(IconLoader.findIcon(Constants.IMG_FIELD_SELECTION_NON_DEFAULT));
                         fieldsLabel.repaint();
                     }
+                    selectedFieldsMap.replace(entityType, selectedFields);
                     idePluginPersistentState.saveState(IdePluginPersistentState.Key.SELECTED_FIELDS, new JSONObject(DefaultEntityFieldsUtil.entityFieldsToJson(selectedFieldsMap)));
                 }
             });
-            if(selectedfields.contains(field))
+            if (selectedfields.contains(field))
                 menuItem.setState(true);
             menuItems.add(menuItem);
-            prettyFields.put(prettifyLabels(field),field);
+            prettyFields.put(prettifyLabels(field), field);
         }
     }
 
@@ -236,7 +257,7 @@ public class FieldsSelectFrame extends JFrame {
         fieldsPanel.removeAll();
         for (JCheckBoxMenuItem checkBoxMenuItem : menuItems) {
             if (allFields.stream().filter(e -> checkBoxMenuItem.getText().equals(prettifyLabels(e))).count() == 1) {
-                if(selectedFields.stream().filter(e -> checkBoxMenuItem.getText().equals(prettifyLabels(e))).count() == 1){
+                if (selectedFields.stream().filter(e -> checkBoxMenuItem.getText().equals(prettifyLabels(e))).count() == 1) {
                     checkBoxMenuItem.setState(true);
                 } else {
                     checkBoxMenuItem.setState(false);
@@ -259,8 +280,9 @@ public class FieldsSelectFrame extends JFrame {
         return selectedFields;
     }
 
-    private void setSelectedFields(Set<String> selectedFields) {
-        this.selectedFields = selectedFields;
+    private void setSelectedFields(Set<String> fields) {
+        selectedFields.removeAll(selectedFields);
+        selectedFields.addAll(fields);
     }
 
 
