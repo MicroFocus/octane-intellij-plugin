@@ -110,7 +110,11 @@ public class FieldsSelectFrame extends JFrame {
                 } else {
                     searchfields = allFields;
                 }
-                updateFieldsPanel(selectedFields, searchfields);
+                if(searchfields.size()!=0){
+                    updateFieldsPanel(selectedFields, searchfields);
+                } else {
+                    createNoResultsPanel();
+                }
                 fieldsPanel.repaint();
                 revalidate();
                 repaint();
@@ -125,7 +129,11 @@ public class FieldsSelectFrame extends JFrame {
                 } else {
                     searchfields = allFields;
                 }
-                updateFieldsPanel(selectedFields, searchfields);
+                if(searchfields.size()!=0){
+                    updateFieldsPanel(selectedFields, searchfields);
+                } else {
+                    createNoResultsPanel();
+                }
                 fieldsPanel.repaint();
                 revalidate();
                 repaint();
@@ -140,7 +148,11 @@ public class FieldsSelectFrame extends JFrame {
                 } else {
                     searchfields = allFields;
                 }
-                updateFieldsPanel(selectedFields, searchfields);
+                if(searchfields.size()!=0){
+                    updateFieldsPanel(selectedFields, searchfields);
+                } else {
+                    createNoResultsPanel();
+                }
                 fieldsPanel.repaint();
                 revalidate();
                 repaint();
@@ -304,6 +316,15 @@ public class FieldsSelectFrame extends JFrame {
             }
         }
         fieldsPanel.add(Box.createRigidArea(new Dimension((int) searchField.getPreferredSize().getWidth(), 200)));
+    }
+
+    public void createNoResultsPanel(){
+        fieldsPanel.removeAll();
+        JMenuItem noResults =  new JMenuItem("No results");
+        noResults.setForeground(Color.RED);
+        //noResults.setEnabled(false);
+        fieldsPanel.add(noResults,BorderLayout.EAST);
+        fieldsPanel.add(Box.createRigidArea(new Dimension((int) searchField.getPreferredSize().getWidth(),  200 - (int) noResults.getPreferredSize().getHeight())));
     }
 
     public void addSelectionListener(SelectionListener selectionListener) {
