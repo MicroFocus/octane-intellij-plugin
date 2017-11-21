@@ -151,7 +151,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
 
     private final class EntityRefreshAction extends AnAction {
         public EntityRefreshAction() {
-            super("Refresh current entity", "This will refresh the current entity.", IconLoader.findIcon(Constants.IMG_REFRESH_ICON));
+            super("Refresh current entity", "Refresh entity details", IconLoader.findIcon(Constants.IMG_REFRESH_ICON));
         }
 
         public void actionPerformed(AnActionEvent e) {
@@ -162,7 +162,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
 
     private final class EntityCommentsAction extends AnAction {
         public EntityCommentsAction() {
-            super("Show comments for current entity", "This will show comments for current entity.", IconLoader.findIcon(Constants.IMG_COMMENTS_ICON));
+            super("Show comments for current entity", "Show comments for current entity", IconLoader.findIcon(Constants.IMG_COMMENTS_ICON));
         }
 
         public void actionPerformed(AnActionEvent e) {
@@ -174,7 +174,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
 
     private final class SaveSelectedPhaseAction extends AnAction {
         public SaveSelectedPhaseAction() {
-            super("Save selected phase", "this will save the new phase entity", IconLoader.findIcon("/actions/menu-saveall.png"));
+            super("Save selected phase", "Save changes to entity phase", IconLoader.findIcon("/actions/menu-saveall.png"));
         }
 
         public void actionPerformed(AnActionEvent e) {
