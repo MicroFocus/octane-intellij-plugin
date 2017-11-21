@@ -173,8 +173,46 @@ public class FieldsSelectFrame extends JFrame {
         gbc1.gridy = 1;
         fieldsRootPanel.add(fieldsScrollPanel, gbc1);
 
-        JPanel buttonsPanel = new JPanel(new FlowLayout());
+        JPanel buttonsPanel = new JPanel();
+        FlowLayout flowLayout = new FlowLayout();
+        flowLayout.setHgap(0);
+        buttonsPanel.setLayout(flowLayout);
+
+        JXButton selectNoneButton = new JXButton("None");
+        selectNoneButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                selectedFields.removeAll(selectedFields);
+                updateFieldsPanel(getSelectedFields(), allFields);
+                fieldsPanel.repaint();
+                listeners.forEach(listener -> listener.valueChanged(new SelectionEvent(this)));
+                selectedFieldsMap.replace(entityType, selectedFields);
+                idePluginPersistentState.saveState(IdePluginPersistentState.Key.SELECTED_FIELDS, new JSONObject(DefaultEntityFieldsUtil.entityFieldsToJson(selectedFieldsMap)));
+                fieldsButton.setIcon(IconLoader.findIcon(Constants.IMG_FIELD_SELECTION_NON_DEFAULT));
+                fieldsButton.repaint();
+                selectNoneButton.transferFocusUpCycle();
+            }
+        });
+
+        JXButton selectAllButton = new JXButton("All");
+        selectAllButton.setPreferredSize(selectNoneButton.getPreferredSize());
+        selectAllButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setSelectedFields(allFields);
+                updateFieldsPanel(getSelectedFields(), allFields);
+                fieldsPanel.repaint();
+                listeners.forEach(listener -> listener.valueChanged(new SelectionEvent(this)));
+                selectedFieldsMap.replace(entityType, selectedFields);
+                idePluginPersistentState.saveState(IdePluginPersistentState.Key.SELECTED_FIELDS, new JSONObject(DefaultEntityFieldsUtil.entityFieldsToJson(selectedFieldsMap)));
+                fieldsButton.setIcon(IconLoader.findIcon(Constants.IMG_FIELD_SELECTION_NON_DEFAULT));
+                fieldsButton.repaint();
+                selectAllButton.transferFocusUpCycle();
+            }
+        });
+
         JXButton resetButton = new JXButton("Reset");
+        resetButton.setPreferredSize(selectNoneButton.getPreferredSize());
         resetButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -191,36 +229,6 @@ public class FieldsSelectFrame extends JFrame {
             }
         });
 
-        JXButton selectAllButton = new JXButton("All");
-        selectAllButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                setSelectedFields(allFields);
-                updateFieldsPanel(getSelectedFields(), allFields);
-                fieldsPanel.repaint();
-                listeners.forEach(listener -> listener.valueChanged(new SelectionEvent(this)));
-                selectedFieldsMap.replace(entityType, selectedFields);
-                idePluginPersistentState.saveState(IdePluginPersistentState.Key.SELECTED_FIELDS, new JSONObject(DefaultEntityFieldsUtil.entityFieldsToJson(selectedFieldsMap)));
-                fieldsButton.setIcon(IconLoader.findIcon(Constants.IMG_FIELD_SELECTION_NON_DEFAULT));
-                fieldsButton.repaint();
-                selectAllButton.transferFocusUpCycle();
-            }
-        });
-        JXButton selectNoneButton = new JXButton("None");
-        selectNoneButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                selectedFields.removeAll(selectedFields);
-                updateFieldsPanel(getSelectedFields(), allFields);
-                fieldsPanel.repaint();
-                listeners.forEach(listener -> listener.valueChanged(new SelectionEvent(this)));
-                selectedFieldsMap.replace(entityType, selectedFields);
-                idePluginPersistentState.saveState(IdePluginPersistentState.Key.SELECTED_FIELDS, new JSONObject(DefaultEntityFieldsUtil.entityFieldsToJson(selectedFieldsMap)));
-                fieldsButton.setIcon(IconLoader.findIcon(Constants.IMG_FIELD_SELECTION_NON_DEFAULT));
-                fieldsButton.repaint();
-                selectNoneButton.transferFocusUpCycle();
-            }
-        });
         buttonsPanel.add(selectAllButton);
         buttonsPanel.add(selectNoneButton);
         buttonsPanel.add(resetButton);
