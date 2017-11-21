@@ -17,7 +17,6 @@ import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.View;
 import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.LoadingWidget;
-import com.hpe.adm.octane.ideplugins.services.MetadataService;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.ui.components.JBScrollPane;
@@ -26,6 +25,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.Collection;
+import java.util.Set;
 
 import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
 import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS;
@@ -53,9 +53,9 @@ public class EntityDetailView implements View {
     }
 
 
-    public void createDetailsPanel(EntityModel entityModel, MetadataService metadataService) {
+    public void createDetailsPanel(EntityModel entityModel, Set<String> fields) {
         this.entityModel = entityModel;
-        entityDetailsPanel = new GeneralEntityDetailsPanel(metadataService, entityModel);
+        entityDetailsPanel = new GeneralEntityDetailsPanel(entityModel, fields);
         component.setViewportView(entityDetailsPanel);
     }
 
@@ -118,6 +118,10 @@ public class EntityDetailView implements View {
 
     public void addSendNewCommentAction(ActionListener actionListener) {
         entityDetailsPanel.addSendNewCommentAction(actionListener);
+    }
+
+    public void setFieldSelectButton(AnAction fieldSelectButton) {
+        entityDetailsPanel.setFieldSelectButton(fieldSelectButton);
     }
 
     public void setCommentMessageBoxText(String t) {

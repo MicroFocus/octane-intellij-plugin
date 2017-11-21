@@ -19,7 +19,6 @@ import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.exception.OctaneException;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.nga.sdk.model.ReferenceFieldModel;
-import com.hpe.adm.nga.sdk.model.StringFieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
 import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
@@ -28,9 +27,6 @@ import com.hpe.adm.octane.ideplugins.services.EntityService;
 import com.hpe.adm.octane.ideplugins.services.MetadataService;
 import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
-import com.hpe.adm.octane.ideplugins.services.ui.FormField;
-import com.hpe.adm.octane.ideplugins.services.ui.FormLayout;
-import com.hpe.adm.octane.ideplugins.services.ui.FormLayoutSection;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -58,10 +54,10 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
     @Inject
     private MetadataService metadataService;
 
-    private FormLayout octaneEntityForm;
     private EntityDetailView entityDetailView;
     private Entity entityType;
     private Long entityId;
+    private Set<String> fields;
     private EntityModel entityModel;
     private Logger logger = Logger.getInstance("EntityDetailPresenter");
     private final String GO_TO_BROWSER_DIALOG_MESSAGE = "\nYou can only provide a value for this field using ALM Octane in a browser." + "\nDo you want to do this now? ";
@@ -86,7 +82,6 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
         RestUtil.runInBackground(
                 () -> {
                     try {
-                        Set<String> fields;
                         if (entityType.isSubtype()) {
                             fields = new HashSet<>(metadataService.getFields(entityType.getSubtypeOf()));
                         } else {
@@ -102,7 +97,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                 (entityModel) -> {
                     if (entityModel != null) {
                         this.entityModel = entityModel;
-                        entityDetailView.createDetailsPanel(entityModel, metadataService);
+                        entityDetailView.createDetailsPanel(entityModel, fields);
                         entityDetailView.setSaveSelectedPhaseButton(new SaveSelectedPhaseAction());
                         entityDetailView.setRefreshEntityButton(new EntityRefreshAction());
                         if (entityType != TASK && entityType != MANUAL_TEST_RUN && entityType != TEST_SUITE_RUN) {
@@ -168,7 +163,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
         public void actionPerformed(AnActionEvent e) {
             //GeneralEntityDetailsPanel.getCommetsDetails().getActionMap().get(JXCollapsiblePane.TOGGLE_ACTION);
             //setComments(entityModel);
-            entityDetailView.getEntityDetailsPanel().activateCollapsible();
+            entityDetailView.getEntityDetailsPanel().activateCommentsCollapsible();
         }
     }
 

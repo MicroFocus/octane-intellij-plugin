@@ -53,10 +53,13 @@ sourceSets {
         resources.srcDir 'src/test/resources'
     }
 }
-;
+
 dependencies {
-    compile 'com.hpe.adm.octane.ideplugins:octane-plugin-common:1.5-SNAPSHOT'
+    compile('com.hpe.adm.octane.ideplugins:octane-plugin-common:1.5-SNAPSHOT'){
+        exclude group: 'org.slf4j', module: 'slf4j-api'
+    }
     compile group: 'org.jsoup', name: 'jsoup', version: '1.8.3'
+
     compile('com.google.inject:guice:4.0') {
         exclude group: 'com.google.guava', module: 'guava'
     }

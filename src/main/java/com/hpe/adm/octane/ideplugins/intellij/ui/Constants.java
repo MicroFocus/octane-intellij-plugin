@@ -28,6 +28,8 @@ public class Constants {
     public static final String IMG_UNIDRAG_SMALL_SAD = IMAGE_FOLDER_PATH + "unidrag-small-sad.png";
     public static final String IMG_ACTIVE_ITEM = IMAGE_FOLDER_PATH + "activeitem.png";
     public static final String IMG_MYWORK = IMAGE_FOLDER_PATH + "mywork.png";
+    public static final String IMG_FIELD_SELECTION_NON_DEFAULT = IMAGE_FOLDER_PATH + "cus-on.png";
+    public static final String IMG_FIELD_SELECTION_DEFAULT = IMAGE_FOLDER_PATH + "cus-off.png";
 
     //Settings validation
     public static final String CORRECT_URL_FORMAT_MESSAGE = "Example: (http|https)://{serverurl[:port]}/?p={sharedspaceId}/{workspaceId}";
