@@ -32,7 +32,6 @@ import org.jdesktop.swingx.JXCollapsiblePane.Direction;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
 import org.json.JSONObject;
-
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
@@ -53,15 +52,12 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
 
     private Map<Entity, Set<String>> defaultFields = DefaultEntityFieldsUtil.getDefaultFields();
     private Map<Entity, Set<String>> selectedFields;
-
     private JXPanel entityDetailsPanel;
     private JXCollapsiblePane commentsDetails;
     private FieldsSelectFrame fieldsPopup;
     private JXPanel detailsPanelLeft;
     private JXPanel detailsPanelRight;
-
     private HTMLPresenterFXPanel descriptionDetails;
-
     private EntityModel entityModel;
     private Set<String> fields;
     private HeaderPanel headerPanel;
@@ -434,8 +430,7 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
 
     @Override
     public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
-        int currentPosition = visibleRect.height;
-        return (getHeight() - currentPosition) / 10;
+        return (getHeight() - visibleRect.height) / 10;
     }
 
     @Override
