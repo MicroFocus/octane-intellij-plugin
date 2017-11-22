@@ -1,5 +1,6 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
+import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.util.DefaultEntityFieldsUtil;
@@ -40,7 +41,8 @@ public class FieldsSelectFrame extends JFrame {
     private Set<String> defaultFields;
     private Map<Entity, Set<String>> selectedFieldsMap;
     private Set<String> selectedFields;
-    private Set<String> allFields;
+    private Set<String> allFieldNames;
+    private Collection<FieldMetadata> allFields;
     private Map<String, String> prettyFields = new HashMap<>();
     private List<JCheckBoxMenuItem> menuItems;
     private Entity entityType;
@@ -54,9 +56,10 @@ public class FieldsSelectFrame extends JFrame {
 
     private List<SelectionListener> listeners = new ArrayList<>();
 
-    public FieldsSelectFrame(Set<String> defaultFields, Set<String> allFields, Map<Entity, Set<String>> selectedFieldsMap, Entity entityType, IdePluginPersistentState idePluginPersistentState, EntityDetailPresenter.SelectFieldsAction fieldsButton) {
+    public FieldsSelectFrame(Set<String> defaultFields, Collection<FieldMetadata> allFields, Map<Entity, Set<String>> selectedFieldsMap, Entity entityType, IdePluginPersistentState idePluginPersistentState, EntityDetailPresenter.SelectFieldsAction fieldsButton) {
         this.defaultFields = defaultFields;
         this.allFields = allFields;
+        this.allFieldNames = allFields.stream().map(FieldMetadata::getName).collect(Collectors.toSet());
         this.selectedFieldsMap = selectedFieldsMap;
         this.selectedFields = selectedFieldsMap.get(entityType);
         this.idePluginPersistentState = idePluginPersistentState;
@@ -85,7 +88,7 @@ public class FieldsSelectFrame extends JFrame {
                         searchfields.add(prettyFields.get(string));
                     }
                 } else {
-                    searchfields = allFields;
+                    searchfields = allFieldNames;
                 }
                 if (searchfields.size() != 0) {
                     updateFieldsPanel(selectedFields, searchfields);
@@ -105,7 +108,7 @@ public class FieldsSelectFrame extends JFrame {
                         searchfields.add(prettyFields.get(string));
                     }
                 } else {
-                    searchfields = allFields;
+                    searchfields = allFieldNames;
                 }
                 if (searchfields.size() != 0) {
                     updateFieldsPanel(selectedFields, searchfields);
@@ -125,7 +128,7 @@ public class FieldsSelectFrame extends JFrame {
                         searchfields.add(prettyFields.get(string));
                     }
                 } else {
-                    searchfields = allFields;
+                    searchfields = allFieldNames;
                 }
                 if (searchfields.size() != 0) {
                     updateFieldsPanel(selectedFields, searchfields);
@@ -162,7 +165,7 @@ public class FieldsSelectFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 selectedFields.removeAll(selectedFields);
-                updateFieldsPanel(getSelectedFields(), allFields);
+                updateFieldsPanel(getSelectedFields(), allFieldNames);
                 fieldsPanel.repaint();
                 listeners.forEach(listener -> listener.valueChanged(new SelectionEvent(this)));
                 selectedFieldsMap.replace(entityType, selectedFields);
@@ -178,8 +181,8 @@ public class FieldsSelectFrame extends JFrame {
         selectAllButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                setSelectedFields(allFields);
-                updateFieldsPanel(getSelectedFields(), allFields);
+                setSelectedFields(allFieldNames);
+                updateFieldsPanel(getSelectedFields(), allFieldNames);
                 fieldsPanel.repaint();
                 listeners.forEach(listener -> listener.valueChanged(new SelectionEvent(this)));
                 selectedFieldsMap.replace(entityType, selectedFields);
@@ -196,7 +199,7 @@ public class FieldsSelectFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 setSelectedFields(getDefaultFields());
-                updateFieldsPanel(getSelectedFields(), allFields);
+                updateFieldsPanel(getSelectedFields(), allFieldNames);
                 fieldsPanel.repaint();
                 listeners.forEach(listener -> listener.valueChanged(new SelectionEvent(this)));
                 selectedFieldsMap.replace(entityType, selectedFields);
@@ -248,7 +251,7 @@ public class FieldsSelectFrame extends JFrame {
     public JScrollPane createFieldsPanel() {
         fieldsPanel = new JPanel();
         fieldsPanel.setLayout(new BoxLayout(fieldsPanel, BoxLayout.Y_AXIS));
-        updateFieldsPanel(selectedFields, allFields);
+        updateFieldsPanel(selectedFields, allFieldNames);
         fieldsPanel.revalidate();
         JScrollPane scrollPane = new JScrollPane(fieldsPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setPreferredSize(new Dimension((int) searchField.getPreferredSize().getWidth(), 200));
@@ -258,9 +261,10 @@ public class FieldsSelectFrame extends JFrame {
 
     public void createCheckBoxMenuItems() {
         menuItems = new ArrayList<>();
-        for (String field : allFields) {
+        for (String field : allFieldNames) {
             if (!"description".equals(field) && !"phase".equals(field)) {
-                JBCheckboxMenuItem menuItem = new JBCheckboxMenuItem(prettifyLabels(field));
+                List<FieldMetadata> fieldMetadata = allFields.stream().filter(e -> e.getName().equals(field)).limit(1).collect(Collectors.toList());
+                JBCheckboxMenuItem menuItem = new JBCheckboxMenuItem(fieldMetadata.get(0).getLabel());
                 menuItem.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
@@ -286,16 +290,17 @@ public class FieldsSelectFrame extends JFrame {
                     menuItem.setState(true);
                 }
                 menuItems.add(menuItem);
-                prettyFields.put(prettifyLabels(field), field);
+                prettyFields.put(fieldMetadata.get(0).getLabel(),field);
             }
         }
     }
 
-    public void updateFieldsPanel(Set<String> selectedFields, Set<String> allFields) {
+    public void updateFieldsPanel(Set<String> selectedFields, Set<String> allFieldNames) {
         fieldsPanel.removeAll();
         int rowCount = 0;
         for (JCheckBoxMenuItem checkBoxMenuItem : menuItems) {
-            if (allFields.contains(prettyFields.get(checkBoxMenuItem.getText()))) {
+
+            if (allFields.stream().filter(e -> e.getLabel().equals(checkBoxMenuItem.getText())).count() == 1) {
                 if (selectedFields.contains(prettyFields.get(checkBoxMenuItem.getText()))) {
                     checkBoxMenuItem.setState(true);
                 } else {

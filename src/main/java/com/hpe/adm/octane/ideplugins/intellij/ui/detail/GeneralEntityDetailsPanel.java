@@ -14,6 +14,7 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
 import com.google.inject.Inject;
+import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
@@ -60,13 +61,13 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
     private JXPanel detailsPanelRight;
     private HTMLPresenterFXPanel descriptionDetails;
     private EntityModel entityModel;
-    private Set<String> fields;
+    private Collection<FieldMetadata> fields;
     private HeaderPanel headerPanel;
     private CommentsConversationPanel commentsListPanel;
     private JXLabel label;
 
 
-    public GeneralEntityDetailsPanel(EntityModel entityModel, Set<String> fields) {
+    public GeneralEntityDetailsPanel(EntityModel entityModel, Collection<FieldMetadata> fields) {
         setLayout(new BorderLayout(0, 0));
 
         this.entityModel = entityModel;

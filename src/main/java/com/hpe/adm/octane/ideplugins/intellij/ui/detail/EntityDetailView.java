@@ -14,6 +14,7 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
 import com.google.inject.Inject;
+import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.View;
 import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.LoadingWidget;
@@ -25,7 +26,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.Collection;
-import java.util.Set;
 
 import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
 import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS;
@@ -53,7 +53,7 @@ public class EntityDetailView implements View {
     }
 
 
-    public void createDetailsPanel(EntityModel entityModel, Set<String> fields) {
+    public void createDetailsPanel(EntityModel entityModel, Collection<FieldMetadata> fields) {
         this.entityModel = entityModel;
         entityDetailsPanel = new GeneralEntityDetailsPanel(entityModel, fields);
         component.setViewportView(entityDetailsPanel);

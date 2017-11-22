@@ -17,6 +17,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.exception.OctaneException;
+import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.nga.sdk.model.ReferenceFieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
@@ -39,7 +40,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.*;
 
@@ -57,7 +58,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
     private EntityDetailView entityDetailView;
     private Entity entityType;
     private Long entityId;
-    private Set<String> fields;
+    private Collection<FieldMetadata> fields;
     private EntityModel entityModel;
     private Logger logger = Logger.getInstance("EntityDetailPresenter");
     private final String GO_TO_BROWSER_DIALOG_MESSAGE = "\nYou can only provide a value for this field using ALM Octane in a browser." + "\nDo you want to do this now? ";
@@ -83,11 +84,11 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                 () -> {
                     try {
                         if (entityType.isSubtype()) {
-                            fields = new HashSet<>(metadataService.getFields(entityType.getSubtypeOf()));
+                            fields = metadataService.getFields(entityType.getSubtypeOf());
                         } else {
-                            fields = new HashSet<>(metadataService.getFields(entityType));
+                            fields = metadataService.getFields(entityType);
                         }
-                        entityModel = entityService.findEntity(this.entityType, this.entityId, fields);
+                        entityModel = entityService.findEntity(this.entityType, this.entityId, fields.stream().map(FieldMetadata::getName).collect(Collectors.toSet()));
                         return entityModel;
                     } catch (ServiceException ex) {
                         entityDetailView.setErrorMessage(ex.getMessage());
