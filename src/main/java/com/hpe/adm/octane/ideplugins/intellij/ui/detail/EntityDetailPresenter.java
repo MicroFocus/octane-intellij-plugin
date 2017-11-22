@@ -112,6 +112,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                             entityDetailView.removeSaveSelectedPhaseButton();
                             entityDetailView.setPhaseInHeader(false);
                         }
+                        entityDetailView.setFieldSelectButton(new SelectFieldsAction());
                         //Title goes to browser
                         entityDetailView.setEntityNameClickHandler(() -> entityService.openInBrowser(entityModel));
                     }
@@ -164,7 +165,35 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
             //GeneralEntityDetailsPanel.getCommetsDetails().getActionMap().get(JXCollapsiblePane.TOGGLE_ACTION);
             //setComments(entityModel);
             entityDetailView.getEntityDetailsPanel().activateCommentsCollapsible();
+
         }
+    }
+
+    public final class SelectFieldsAction extends AnAction {
+
+        private boolean defaultfields = true;
+
+        public void setDefaultFieldsIcon(boolean defaultfields) {
+            this.defaultfields = defaultfields;
+        }
+
+        public SelectFieldsAction() {
+            super("Select fields for this entity type", "This will display a list of selectable fields.", IconLoader.findIcon(Constants.IMG_FIELD_SELECTION_DEFAULT));
+        }
+
+        public void actionPerformed(AnActionEvent e) {
+            entityDetailView.getEntityDetailsPanel().activateFieldsSettings();
+        }
+
+        public void update(AnActionEvent e){
+            if(defaultfields){
+                e.getPresentation().setIcon(IconLoader.findIcon(Constants.IMG_FIELD_SELECTION_DEFAULT));
+            } else {
+                e.getPresentation().setIcon(IconLoader.findIcon(Constants.IMG_FIELD_SELECTION_NON_DEFAULT));
+            }
+        }
+
+
     }
 
     private final class SaveSelectedPhaseAction extends AnAction {
