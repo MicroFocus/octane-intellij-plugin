@@ -178,7 +178,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
         }
 
         public SelectFieldsAction() {
-            super("Select fields for this entity type", "This will display a list of selectable fields.", IconLoader.findIcon(Constants.IMG_FIELD_SELECTION_DEFAULT));
+            super("Select fields for this entity type", "Select fields popup.", IconLoader.findIcon(Constants.IMG_FIELD_SELECTION_DEFAULT));
         }
 
         public void actionPerformed(AnActionEvent e) {

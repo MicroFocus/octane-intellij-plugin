@@ -32,6 +32,7 @@ import org.jdesktop.swingx.JXCollapsiblePane.Direction;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
 import org.json.JSONObject;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
@@ -83,6 +84,9 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
             selectedFields = defaultFields;
         } else {
             selectedFields = DefaultEntityFieldsUtil.entityFieldsFromJson(selectedFieldsJson.toString());
+            if (selectedFields.get(Entity.getEntityType(entityModel)) == null) {
+                selectedFields = defaultFields;
+            }
         }
 
         JPanel rootPanel = new JPanel();
@@ -114,14 +118,14 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         entityDetailsPanel.setBorder(new EmptyBorder(0, 0, 0, 10));
         //add padding panel
         JPanel paddingPanel = new JPanel();
-        paddingPanel.setMinimumSize(new Dimension(50,50));
+        paddingPanel.setMinimumSize(new Dimension(50, 50));
         GridBagConstraints gbc_paddingPanel = new GridBagConstraints();
         gbc_paddingPanel.anchor = GridBagConstraints.SOUTHWEST;
         gbc_paddingPanel.insets = new Insets(0, 0, 0, 0);
         gbc_paddingPanel.gridx = 0;
         gbc_paddingPanel.gridy = 2;
         gbc_paddingPanel.gridwidth = 2;
-        entityDetailsPanel.add(paddingPanel,gbc_paddingPanel);
+        entityDetailsPanel.add(paddingPanel, gbc_paddingPanel);
 
         //create section title label
         JXLabel sectionTitle = new JXLabel();
@@ -168,7 +172,6 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         commentsListPanel.setMaximumSize(new Dimension(400, 200));
         commentsListPanel.setBorder(new MatteBorder(1, 1, 1, 1, JBColor.border()));
         commentsDetails.getContentPane().add(commentsListPanel);
-
 
 
         GridBagConstraints gbc_commentsPanel = new GridBagConstraints();
@@ -243,7 +246,7 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         EntityIconFactory entityIconFactory = new EntityIconFactory(26, 26, 12);
         headerPanel.setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(Entity.getEntityType(entityModel))));
         headerPanel.setNameDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_NAME)));
-        createSectionWithEntityDetails(entityModel,selectedFields.get(Entity.getEntityType(entityModel)));
+        createSectionWithEntityDetails(entityModel, selectedFields.get(Entity.getEntityType(entityModel)));
     }
 
 
@@ -266,10 +269,11 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         commentsListPanel.addSendNewCommentAction(actionListener);
     }
 
-    public void activateFieldsSettings(){
-        fieldsPopup.setLocation(headerPanel.getFieldsPopupLocation().x - (int) fieldsPopup.getPreferredSize().getWidth(),headerPanel.getFieldsPopupLocation().y);
+    public void activateFieldsSettings() {
+        fieldsPopup.setLocation(headerPanel.getFieldsPopupLocation().x - (int) fieldsPopup.getPreferredSize().getWidth(), headerPanel.getFieldsPopupLocation().y);
         fieldsPopup.setVisible(!fieldsPopup.isVisible());
     }
+
     public void setCommentMessageBoxText(String t) {
         commentsListPanel.setCommentMessageBoxText(t);
     }
@@ -290,11 +294,11 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
                 Entity.getEntityType(entityModel),
                 idePluginPersistentState,
                 fieldSelectButton);
-        fieldsPopup.addSelectionListener( e -> createSectionWithEntityDetails(entityModel,fieldsPopup.getSelectedFields()));
+        fieldsPopup.addSelectionListener(e -> createSectionWithEntityDetails(entityModel, fieldsPopup.getSelectedFields()));
     }
 
 
-    public void createSectionWithEntityDetails(EntityModel entityModel,Set<String> fields) {
+    public void createSectionWithEntityDetails(EntityModel entityModel, Set<String> fields) {
         detailsPanelLeft.removeAll();
         detailsPanelRight.removeAll();
 

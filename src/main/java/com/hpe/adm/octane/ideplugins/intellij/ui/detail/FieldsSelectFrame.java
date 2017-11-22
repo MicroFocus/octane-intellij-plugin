@@ -237,6 +237,7 @@ public class FieldsSelectFrame extends JFrame {
             resetButton.setEnabled(false);
         } else {
             fieldsActionButton.setDefaultFieldsIcon(false);
+            resetButton.setEnabled(false);
         }
 
         setAlwaysOnTop(true);
