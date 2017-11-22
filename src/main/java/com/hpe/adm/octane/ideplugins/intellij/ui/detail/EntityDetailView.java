@@ -120,7 +120,7 @@ public class EntityDetailView implements View {
         entityDetailsPanel.addSendNewCommentAction(actionListener);
     }
 
-    public void setFieldSelectButton(AnAction fieldSelectButton) {
+    public void setFieldSelectButton(EntityDetailPresenter.SelectFieldsAction fieldSelectButton) {
         entityDetailsPanel.setFieldSelectButton(fieldSelectButton);
     }
 

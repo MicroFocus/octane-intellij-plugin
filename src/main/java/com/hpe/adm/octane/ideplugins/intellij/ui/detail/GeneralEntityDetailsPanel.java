@@ -17,7 +17,6 @@ import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
-import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.util.DefaultEntityFieldsUtil;
@@ -26,7 +25,6 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.DataKeys;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.JBColor;
 import javafx.application.Platform;
 import org.jdesktop.swingx.JXCollapsiblePane;
@@ -36,9 +34,12 @@ import org.jdesktop.swingx.JXPanel;
 import org.json.JSONObject;
 
 import javax.swing.*;
-import javax.swing.border.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.MatteBorder;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -61,6 +62,8 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
 
     private HTMLPresenterFXPanel descriptionDetails;
 
+    private EntityModel entityModel;
+    private Set<String> fields;
     private HeaderPanel headerPanel;
     private CommentsConversationPanel commentsListPanel;
     private JXLabel label;
@@ -68,6 +71,9 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
 
     public GeneralEntityDetailsPanel(EntityModel entityModel, Set<String> fields) {
         setLayout(new BorderLayout(0, 0));
+
+        this.entityModel = entityModel;
+        this.fields = fields;
 
         DataManager dataManager = DataManager.getInstance();
         @SuppressWarnings("deprecation")
@@ -101,11 +107,6 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         gbc_headerPanel.gridx = 0;
         gbc_headerPanel.gridy = 0;
         rootPanel.add(headerPanel, gbc_headerPanel);
-
-        JButton fieldsButton = new JButton(IconLoader.findIcon(Constants.IMG_FIELD_SELECTION_DEFAULT));
-        fieldsButton.setBorder(null);
-        fieldsButton.setOpaque(false);
-        headerPanel.add(fieldsButton);
 
         //create main details panel
         entityDetailsPanel = createMainPanel();
@@ -172,14 +173,7 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         commentsListPanel.setBorder(new MatteBorder(1, 1, 1, 1, JBColor.border()));
         commentsDetails.getContentPane().add(commentsListPanel);
 
-        fieldsPopup = new FieldsSelectFrame(defaultFields.get(Entity.getEntityType(entityModel)),
-                                            fields,
-                                            selectedFields,
-                                            Entity.getEntityType(entityModel),
-                                            idePluginPersistentState,
-                                            fieldsButton);
 
-        fieldsPopup.addSelectionListener( e -> createSectionWithEntityDetails(entityModel,fieldsPopup.getSelectedFields()));
 
         GridBagConstraints gbc_commentsPanel = new GridBagConstraints();
         gbc_commentsPanel.fill = GridBagConstraints.BOTH;
@@ -276,6 +270,10 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         commentsListPanel.addSendNewCommentAction(actionListener);
     }
 
+    public void activateFieldsSettings(){
+        fieldsPopup.setLocation(headerPanel.getFieldsPopupLocation().x - (int) fieldsPopup.getPreferredSize().getWidth(),headerPanel.getFieldsPopupLocation().y);
+        fieldsPopup.setVisible(!fieldsPopup.isVisible());
+    }
     public void setCommentMessageBoxText(String t) {
         commentsListPanel.setCommentMessageBoxText(t);
     }
@@ -288,9 +286,17 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         commentsDetails.setCollapsed(!commentsDetails.isCollapsed());
     }
 
-    public void setFieldSelectButton(AnAction fieldSelectButton) {
+    public void setFieldSelectButton(EntityDetailPresenter.SelectFieldsAction fieldSelectButton) {
         headerPanel.setFieldSelectButton(fieldSelectButton);
+        fieldsPopup = new FieldsSelectFrame(defaultFields.get(Entity.getEntityType(entityModel)),
+                fields,
+                selectedFields,
+                Entity.getEntityType(entityModel),
+                idePluginPersistentState,
+                fieldSelectButton);
+        fieldsPopup.addSelectionListener( e -> createSectionWithEntityDetails(entityModel,fieldsPopup.getSelectedFields()));
     }
+
 
     public void createSectionWithEntityDetails(EntityModel entityModel,Set<String> fields) {
         detailsPanelLeft.removeAll();
