@@ -299,17 +299,17 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
     }
 
 
-    public void createSectionWithEntityDetails(EntityModel entityModel, Set<String> fields) {
+    public void createSectionWithEntityDetails(EntityModel entityModel, Set<String> fieldNames) {
         detailsPanelLeft.removeAll();
         detailsPanelRight.removeAll();
 
         int fieldCount = 0;
         int i = 0;
-        for (String fieldName : fields) {
-            if (!"description".equals(fieldName)) {
-                JXLabel field = new JXLabel();
-                field.setFont(new Font("Arial", Font.BOLD, 12));
-                field.setText(prettifyLabels(fieldName));
+        for (FieldMetadata fieldMetadata : fields) {
+            if (fieldNames.contains(fieldMetadata.getName())) {
+                JXLabel fieldLabel = new JXLabel();
+                fieldLabel.setFont(new Font("Arial", Font.BOLD, 12));
+                fieldLabel.setText(fieldMetadata.getLabel());
                 GridBagConstraints gbc1 = new GridBagConstraints();
                 gbc1.anchor = GridBagConstraints.SOUTHWEST;
                 gbc1.insets = new Insets(10, 0, 0, 0);
@@ -317,7 +317,7 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
                 gbc1.gridx = 0;
                 gbc1.gridy = i;
 
-                String fieldValue = getUiDataFromModel(entityModel.getValue(fieldName));
+                String fieldValue = getUiDataFromModel(entityModel.getValue(fieldMetadata.getName()));
                 JXLabel fieldValueLabel = new JXLabel();
                 fieldValueLabel.setFont(new Font("Arial", Font.PLAIN, 12));
                 fieldValueLabel.setText(fieldValue);
@@ -331,10 +331,10 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
                 gbc2.gridy = i;
 
                 if (fieldCount % 2 == 0) {
-                    detailsPanelLeft.add(field, gbc1);
+                    detailsPanelLeft.add(fieldLabel, gbc1);
                     detailsPanelLeft.add(fieldValueLabel, gbc2);
                 } else {
-                    detailsPanelRight.add(field, gbc1);
+                    detailsPanelRight.add(fieldLabel, gbc1);
                     detailsPanelRight.add(fieldValueLabel, gbc2);
                 }
                 i++;

@@ -9,7 +9,6 @@ import com.intellij.ui.JBColor;
 import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.JXTextField;
 import org.json.JSONObject;
-
 import javax.swing.*;
 import javax.swing.border.MatteBorder;
 import javax.swing.event.DocumentEvent;
@@ -41,7 +40,6 @@ public class FieldsSelectFrame extends JFrame {
     private Set<String> defaultFields;
     private Map<Entity, Set<String>> selectedFieldsMap;
     private Set<String> selectedFields;
-    private Set<String> allFieldNames;
     private Collection<FieldMetadata> allFields;
     private Map<String, String> prettyFields = new HashMap<>();
     private List<JCheckBoxMenuItem> menuItems;
@@ -59,7 +57,6 @@ public class FieldsSelectFrame extends JFrame {
     public FieldsSelectFrame(Set<String> defaultFields, Collection<FieldMetadata> allFields, Map<Entity, Set<String>> selectedFieldsMap, Entity entityType, IdePluginPersistentState idePluginPersistentState, EntityDetailPresenter.SelectFieldsAction fieldsButton) {
         this.defaultFields = defaultFields;
         this.allFields = allFields;
-        this.allFieldNames = allFields.stream().map(FieldMetadata::getName).collect(Collectors.toSet());
         this.selectedFieldsMap = selectedFieldsMap;
         this.selectedFields = selectedFieldsMap.get(entityType);
         this.idePluginPersistentState = idePluginPersistentState;
@@ -82,13 +79,15 @@ public class FieldsSelectFrame extends JFrame {
         searchField.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
-                Set<String> searchfields = new HashSet<>();
+                Collection<FieldMetadata> searchfields = new HashSet<>();
                 if (!searchField.getText().equals("")) {
-                    for (String string : prettyFields.keySet().stream().filter(pf -> pf.toLowerCase().contains(searchField.getText().toLowerCase())).collect(Collectors.toSet())) {
-                        searchfields.add(prettyFields.get(string));
+                    for (FieldMetadata fieldMetadata : allFields.stream()
+                            .filter(pf -> pf.getLabel().toLowerCase().contains(searchField.getText().toLowerCase()))
+                            .collect(Collectors.toSet())) {
+                        searchfields.add(fieldMetadata);
                     }
                 } else {
-                    searchfields = allFieldNames;
+                    searchfields = allFields;
                 }
                 if (searchfields.size() != 0) {
                     updateFieldsPanel(selectedFields, searchfields);
@@ -102,13 +101,15 @@ public class FieldsSelectFrame extends JFrame {
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                Set<String> searchfields = new HashSet<>();
+                Collection<FieldMetadata> searchfields = new HashSet<>();
                 if (!searchField.getText().equals("")) {
-                    for (String string : prettyFields.keySet().stream().filter(pf -> pf.toLowerCase().contains(searchField.getText().toLowerCase())).collect(Collectors.toSet())) {
-                        searchfields.add(prettyFields.get(string));
+                    for (FieldMetadata fieldMetadata : allFields.stream()
+                            .filter(pf -> pf.getLabel().toLowerCase().contains(searchField.getText().toLowerCase()))
+                            .collect(Collectors.toSet())) {
+                        searchfields.add(fieldMetadata);
                     }
                 } else {
-                    searchfields = allFieldNames;
+                    searchfields = allFields;
                 }
                 if (searchfields.size() != 0) {
                     updateFieldsPanel(selectedFields, searchfields);
@@ -122,13 +123,15 @@ public class FieldsSelectFrame extends JFrame {
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-                Set<String> searchfields = new HashSet<>();
+                Collection<FieldMetadata> searchfields = new HashSet<>();
                 if (!searchField.getText().equals("")) {
-                    for (String string : prettyFields.keySet().stream().filter(pf -> pf.toLowerCase().contains(searchField.getText().toLowerCase())).collect(Collectors.toSet())) {
-                        searchfields.add(prettyFields.get(string));
+                    for (FieldMetadata fieldMetadata : allFields.stream()
+                                                              .filter(pf -> pf.getLabel().toLowerCase().contains(searchField.getText().toLowerCase()))
+                                                              .collect(Collectors.toSet())) {
+                        searchfields.add(fieldMetadata);
                     }
                 } else {
-                    searchfields = allFieldNames;
+                    searchfields = allFields;
                 }
                 if (searchfields.size() != 0) {
                     updateFieldsPanel(selectedFields, searchfields);
@@ -165,7 +168,7 @@ public class FieldsSelectFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 selectedFields.removeAll(selectedFields);
-                updateFieldsPanel(getSelectedFields(), allFieldNames);
+                updateFieldsPanel(getSelectedFields(), allFields);
                 fieldsPanel.repaint();
                 listeners.forEach(listener -> listener.valueChanged(new SelectionEvent(this)));
                 selectedFieldsMap.replace(entityType, selectedFields);
@@ -181,8 +184,8 @@ public class FieldsSelectFrame extends JFrame {
         selectAllButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                setSelectedFields(allFieldNames);
-                updateFieldsPanel(getSelectedFields(), allFieldNames);
+                setSelectedFields(allFields.stream().map(FieldMetadata::getName).collect(Collectors.toSet()));
+                updateFieldsPanel(getSelectedFields(), allFields);
                 fieldsPanel.repaint();
                 listeners.forEach(listener -> listener.valueChanged(new SelectionEvent(this)));
                 selectedFieldsMap.replace(entityType, selectedFields);
@@ -199,7 +202,7 @@ public class FieldsSelectFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 setSelectedFields(getDefaultFields());
-                updateFieldsPanel(getSelectedFields(), allFieldNames);
+                updateFieldsPanel(getSelectedFields(), allFields);
                 fieldsPanel.repaint();
                 listeners.forEach(listener -> listener.valueChanged(new SelectionEvent(this)));
                 selectedFieldsMap.replace(entityType, selectedFields);
@@ -251,7 +254,7 @@ public class FieldsSelectFrame extends JFrame {
     public JScrollPane createFieldsPanel() {
         fieldsPanel = new JPanel();
         fieldsPanel.setLayout(new BoxLayout(fieldsPanel, BoxLayout.Y_AXIS));
-        updateFieldsPanel(selectedFields, allFieldNames);
+        updateFieldsPanel(selectedFields, allFields);
         fieldsPanel.revalidate();
         JScrollPane scrollPane = new JScrollPane(fieldsPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setPreferredSize(new Dimension((int) searchField.getPreferredSize().getWidth(), 200));
@@ -261,17 +264,16 @@ public class FieldsSelectFrame extends JFrame {
 
     public void createCheckBoxMenuItems() {
         menuItems = new ArrayList<>();
-        for (String field : allFieldNames) {
-            if (!"description".equals(field) && !"phase".equals(field)) {
-                List<FieldMetadata> fieldMetadata = allFields.stream().filter(e -> e.getName().equals(field)).limit(1).collect(Collectors.toList());
-                JBCheckboxMenuItem menuItem = new JBCheckboxMenuItem(fieldMetadata.get(0).getLabel());
+        for (FieldMetadata fieldMetadata : allFields) {
+            if (!"description".equals(fieldMetadata.getName()) && !"phase".equals(fieldMetadata.getName())) {
+                JBCheckboxMenuItem menuItem = new JBCheckboxMenuItem(fieldMetadata.getLabel());
                 menuItem.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         if (menuItem.isSelected()) {
-                            selectedFields.add(field);
+                            selectedFields.add(fieldMetadata.getName());
                         } else {
-                            selectedFields.remove(field);
+                            selectedFields.remove(fieldMetadata.getName());
                         }
                         listeners.forEach(listener -> listener.valueChanged(new SelectionEvent(this)));
                         if (defaultFields.containsAll(selectedFields) && selectedFields.containsAll(defaultFields)) {
@@ -286,21 +288,21 @@ public class FieldsSelectFrame extends JFrame {
 
                     }
                 });
-                if (selectedFields.contains(field)) {
+                if (selectedFields.contains(fieldMetadata)) {
                     menuItem.setState(true);
                 }
                 menuItems.add(menuItem);
-                prettyFields.put(fieldMetadata.get(0).getLabel(),field);
+                prettyFields.put(fieldMetadata.getLabel(),fieldMetadata.getName());
             }
         }
     }
 
-    public void updateFieldsPanel(Set<String> selectedFields, Set<String> allFieldNames) {
+    public void updateFieldsPanel(Set<String> selectedFields, Collection<FieldMetadata> allFieldNames) {
         fieldsPanel.removeAll();
         int rowCount = 0;
         for (JCheckBoxMenuItem checkBoxMenuItem : menuItems) {
 
-            if (allFields.stream().filter(e -> e.getLabel().equals(checkBoxMenuItem.getText())).count() == 1) {
+            if (allFieldNames.stream().filter(e -> e.getLabel().equals(checkBoxMenuItem.getText())).count() == 1) {
                 if (selectedFields.contains(prettyFields.get(checkBoxMenuItem.getText()))) {
                     checkBoxMenuItem.setState(true);
                 } else {
@@ -337,20 +339,4 @@ public class FieldsSelectFrame extends JFrame {
         selectedFields.removeAll(selectedFields);
         selectedFields.addAll(fields);
     }
-
-
-    private String prettifyLabels(String str1) {
-        //for udfs
-        str1 = str1.replaceAll("_udf", "");
-        str1 = str1.replaceAll("_", " ");
-        char[] chars = str1.toCharArray();
-        chars[0] = Character.toUpperCase(chars[0]);
-        for (int x = 1; x < chars.length; x++) {
-            if (chars[x - 1] == ' ') {
-                chars[x] = Character.toUpperCase(chars[x]);
-            }
-        }
-        return new String(chars);
-    }
-
 }
