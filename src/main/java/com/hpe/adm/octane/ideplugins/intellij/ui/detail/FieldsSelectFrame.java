@@ -51,6 +51,8 @@ public class FieldsSelectFrame extends JFrame {
     private EntityDetailPresenter.SelectFieldsAction fieldsActionButton;
     private JPanel fieldsPanel;
     private JXButton resetButton;
+    private JXButton selectNoneButton;
+    private JXButton selectAllButton;
 
     private List<SelectionListener> listeners = new ArrayList<>();
 
@@ -163,7 +165,8 @@ public class FieldsSelectFrame extends JFrame {
         flowLayout.setHgap(0);
         buttonsPanel.setLayout(flowLayout);
 
-        JXButton selectNoneButton = new JXButton("None");
+
+        selectNoneButton = new JXButton("None");
         selectNoneButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -176,10 +179,12 @@ public class FieldsSelectFrame extends JFrame {
                 fieldsActionButton.setDefaultFieldsIcon(false);
                 selectNoneButton.transferFocusUpCycle();
                 resetButton.setEnabled(true);
+                selectNoneButton.setEnabled(false);
+                selectAllButton.setEnabled(true);
             }
         });
 
-        JXButton selectAllButton = new JXButton("All");
+        selectAllButton = new JXButton("All");
         selectAllButton.setPreferredSize(selectNoneButton.getPreferredSize());
         selectAllButton.addActionListener(new ActionListener() {
             @Override
@@ -193,6 +198,8 @@ public class FieldsSelectFrame extends JFrame {
                 fieldsActionButton.setDefaultFieldsIcon(false);
                 selectAllButton.transferFocusUpCycle();
                 resetButton.setEnabled(true);
+                selectNoneButton.setEnabled(true);
+                selectAllButton.setEnabled(false);
             }
         });
 
@@ -210,6 +217,8 @@ public class FieldsSelectFrame extends JFrame {
                 fieldsActionButton.setDefaultFieldsIcon(true);
                 resetButton.transferFocusUpCycle();
                 resetButton.setEnabled(false);
+                selectNoneButton.setEnabled(true);
+                selectAllButton.setEnabled(true);
 
             }
         });
@@ -279,9 +288,23 @@ public class FieldsSelectFrame extends JFrame {
                         if (defaultFields.containsAll(selectedFields) && selectedFields.containsAll(defaultFields)) {
                             fieldsActionButton.setDefaultFieldsIcon(true);
                             resetButton.setEnabled(false);
+                            selectNoneButton.setEnabled(true);
+                            selectAllButton.setEnabled(true);
                         } else {
                             fieldsActionButton.setDefaultFieldsIcon(false);
                             resetButton.setEnabled(true);
+
+                            if(selectedFields.size()==0){
+                                selectNoneButton.setEnabled(false);
+                            } else {
+                                selectNoneButton.setEnabled(true);
+                            }
+
+                            if(selectedFields.containsAll(allFields.stream().map(FieldMetadata::getName).collect(Collectors.toSet()))){
+                                selectAllButton.setEnabled(false);
+                            } else {
+                                selectAllButton.setEnabled(true);
+                            }
                         }
                         selectedFieldsMap.replace(entityType, selectedFields);
                         idePluginPersistentState.saveState(IdePluginPersistentState.Key.SELECTED_FIELDS, new JSONObject(DefaultEntityFieldsUtil.entityFieldsToJson(selectedFieldsMap)));
