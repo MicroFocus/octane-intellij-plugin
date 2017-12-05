@@ -81,8 +81,8 @@ public class WelcomeViewComponent extends JPanel implements HasComponent {
         GridBagConstraints gbc_lblCompany = new GridBagConstraints();
         gbc_lblCompany.anchor = GridBagConstraints.SOUTHEAST;
         gbc_lblCompany.fill = GridBagConstraints.VERTICAL;
-        gbc_lblCompany.insets = new Insets(0, 0, 10, 10);
-        gbc_lblCompany.gridx = 2;
+        gbc_lblCompany.insets = new Insets(0, 0, 20, 20);
+        gbc_lblCompany.gridx = 1;
         gbc_lblCompany.gridy = 5;
         add(lblCompany, gbc_lblCompany);
 

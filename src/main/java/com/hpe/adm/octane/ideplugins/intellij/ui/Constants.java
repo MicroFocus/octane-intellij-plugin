@@ -16,7 +16,7 @@ package com.hpe.adm.octane.ideplugins.intellij.ui;
 public class Constants {
 
     public static final String IMAGE_FOLDER_PATH = "/images/";
-    public static final String IMG_VENDOR_LOGO = IMAGE_FOLDER_PATH + "microfocus-logo.png";
+    public static final String IMG_VENDOR_LOGO = IMAGE_FOLDER_PATH + "microfocus-blue-logo.png";
     public static final String IMG_OCTANE_LOGO = IMAGE_FOLDER_PATH + "octane-logo.png";
     public static final String IMG_AJAX_SPINNER = IMAGE_FOLDER_PATH + "octane_preloader.gif";
     public static final String IMG_REFRESH_ICON = IMAGE_FOLDER_PATH + "refresh-16x16.png";
