@@ -26,6 +26,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.Collection;
+import java.util.Set;
 
 import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
 import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS;
@@ -35,6 +36,7 @@ public class EntityDetailView implements View {
     private EntityModel entityModel;
     private JBScrollPane component = new JBScrollPane(new LoadingWidget());
     private GeneralEntityDetailsPanel entityDetailsPanel;
+    private FieldsSelectFrame.SelectionListener selectionListener;
 
     @Inject
     private ConnectionSettingsProvider connectionSettingsProvider;
@@ -56,6 +58,9 @@ public class EntityDetailView implements View {
     public void createDetailsPanel(EntityModel entityModel, Collection<FieldMetadata> fields) {
         this.entityModel = entityModel;
         entityDetailsPanel = new GeneralEntityDetailsPanel(entityModel, fields);
+        if(selectionListener != null){
+            entityDetailsPanel.addFieldSelectListener(selectionListener);
+        }
         component.setViewportView(entityDetailsPanel);
     }
 
@@ -136,5 +141,17 @@ public class EntityDetailView implements View {
         return entityDetailsPanel;
     }
 
+    public void addFieldSelectListener(FieldsSelectFrame.SelectionListener selectionListener){
+        this.selectionListener = selectionListener;
+    }
+
+    public Set<String> getSelectedFields(){
+        return entityDetailsPanel.getSelectedFields();
+    }
+
+    public void setSelectedFields(Set<String> selectedFields){
+        entityDetailsPanel.setSelectedFields(selectedFields);
+        entityDetailsPanel.repaint();
+    }
 
 }

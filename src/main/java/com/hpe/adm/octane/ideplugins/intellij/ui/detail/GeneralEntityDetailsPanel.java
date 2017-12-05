@@ -66,6 +66,8 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
     private CommentsConversationPanel commentsListPanel;
     private JXLabel label;
 
+    private FieldsSelectFrame.SelectionListener selectionListener;
+
 
     public GeneralEntityDetailsPanel(EntityModel entityModel, Collection<FieldMetadata> fields) {
         setLayout(new BorderLayout(0, 0));
@@ -296,8 +298,13 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
                 idePluginPersistentState,
                 fieldSelectButton);
         fieldsPopup.addSelectionListener(e -> createSectionWithEntityDetails(entityModel, fieldsPopup.getSelectedFields()));
+        //listener for other opened tabs with the same entity
+        fieldsPopup.addSelectionListener(selectionListener);
     }
 
+    public void addFieldSelectListener(FieldsSelectFrame.SelectionListener selectionListener){
+        this.selectionListener = selectionListener;
+    }
 
     public void createSectionWithEntityDetails(EntityModel entityModel, Set<String> fieldNames) {
         detailsPanelLeft.removeAll();
@@ -413,20 +420,13 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         return detailsPanelMain;
     }
 
-    private String prettifyLabels(String str1) {
-        //for udfs
-        str1 = str1.replaceAll("_udf", "");
-        str1 = str1.replaceAll("_", " ");
-        char[] chars = str1.toCharArray();
-        chars[0] = Character.toUpperCase(chars[0]);
-        for (int x = 1; x < chars.length; x++) {
-            if (chars[x - 1] == ' ') {
-                chars[x] = Character.toUpperCase(chars[x]);
-            }
-        }
-        return new String(chars);
+    public Set<String> getSelectedFields(){
+        return fieldsPopup.getSelectedFields();
     }
 
+    public void setSelectedFields(Set<String> selectedFields){
+        fieldsPopup.setSelectedFieldsFromOtherTab(selectedFields);
+    }
 
     @Override
     public Dimension getPreferredScrollableViewportSize() {

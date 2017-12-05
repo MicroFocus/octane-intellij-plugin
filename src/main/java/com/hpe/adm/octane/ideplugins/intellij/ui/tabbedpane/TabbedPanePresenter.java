@@ -26,6 +26,7 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.ToolbarActiveItem;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.EntityDetailPresenter;
+import com.hpe.adm.octane.ideplugins.intellij.ui.detail.EntityDetailView;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
 import com.hpe.adm.octane.ideplugins.intellij.ui.searchresult.EntitySearchResultPresenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeTablePresenter;
@@ -47,7 +48,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.*;
 
@@ -100,10 +103,13 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
     private TabInfo searchTab;
     private Icon searchIcon = IconLoader.findIcon("/com/intellij/ide/ui/laf/icons/search.png");
 
+    private Map<Entity,List<EntityDetailView>> presenters = new HashMap<>();
+
     public EntityTreeTablePresenter openMyWorkTab() {
         EntityTreeTablePresenter presenter = entityTreeTablePresenterProvider.get();
         Icon myWorkIcon = IconLoader.findIcon(Constants.IMG_MYWORK);
         tabbedPaneView.addTab(Constants.TAB_MY_WORK_TITLE, null, myWorkIcon, presenter.getView().getComponent(), false);
+
         return presenter;
     }
 
@@ -140,19 +146,25 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
     public void openDetailTab(Entity entityType, Long entityId, String entityName) {
         EntityDetailPresenter presenter = entityDetailPresenterProvider.get();
         presenter.setEntity(entityType, entityId);
+        if(presenters.containsKey(entityType)){
+            presenters.get(entityType).add(presenter.getView());
+        } else {
+            List<EntityDetailView> detailViews = new ArrayList<>();
+            detailViews.add(presenter.getView());
+            presenters.put(entityType,detailViews);
+        }
+        presenter.getView().addFieldSelectListener(e -> {
+                                                        presenters.get(entityType).remove(presenter.getView());
+                                                        presenters.get(entityType).forEach(f -> f.setSelectedFields(presenter.getView().getSelectedFields()));
+                                                        presenters.get(entityType).add(presenter.getView());});
         PartialEntity tabKey = new PartialEntity(entityId, entityName, entityType);
-
         ImageIcon tabIcon = new ImageIcon(entityIconFactory.getIconAsImage(entityType));
-
-
         TabInfo tabInfo = tabbedPaneView.addTab(
                 String.valueOf(entityId),
                 entityName,
                 tabIcon,
                 presenter.getView().getComponent());
-
         detailTabInfo.put(tabKey, tabInfo);
-
         saveDetailTabsToPersistentState();
     }
 

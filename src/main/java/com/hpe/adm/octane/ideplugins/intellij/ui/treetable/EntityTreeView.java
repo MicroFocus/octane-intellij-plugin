@@ -25,7 +25,6 @@ import com.intellij.openapi.actionSystem.*;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBScrollPane;
 import org.jdesktop.swingx.JXLabel;
-
 import javax.inject.Provider;
 import javax.swing.*;
 import javax.swing.tree.TreeCellRenderer;
@@ -165,6 +164,7 @@ public class EntityTreeView implements View {
                                 handler.entityDoubleClicked(e, entityType, entityId, entityModel);
                             } catch (Exception ex) {
                                 //TODO: logger and error bubble
+                                ex.printStackTrace();
                             }
                         }
                     }

@@ -362,4 +362,19 @@ public class FieldsSelectFrame extends JFrame {
         selectedFields.removeAll(selectedFields);
         selectedFields.addAll(fields);
     }
+
+    public void setSelectedFieldsFromOtherTab(Set<String> fields){
+        setSelectedFields(fields);
+        updateFieldsPanel(selectedFields,allFields);
+        fieldsPanel.repaint();
+        listeners.get(0).valueChanged(new SelectionEvent(this));
+        if (defaultFields.containsAll(selectedFields) && selectedFields.containsAll(defaultFields)) {
+            fieldsActionButton.setDefaultFieldsIcon(true);
+            resetButton.setEnabled(false);
+        } else {
+            fieldsActionButton.setDefaultFieldsIcon(false);
+            resetButton.setEnabled(true);
+        }
+
+    }
 }
