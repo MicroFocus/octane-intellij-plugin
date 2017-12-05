@@ -22,7 +22,6 @@ import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvi
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 import org.jdesktop.swingx.JXHyperlink;
-
 import javax.swing.*;
 import java.awt.*;
 
@@ -35,7 +34,6 @@ public class WelcomeViewComponent extends JPanel implements HasComponent {
     private JXHyperlink hyperlinkSettings;
     private JXHyperlink hyperlinkRetry;
     private JLabel lblMessage;
-    private JPanel panel;
     private boolean connectionFailed;
 
     public WelcomeViewComponent() {
