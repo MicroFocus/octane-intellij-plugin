@@ -51,7 +51,7 @@ public class NoWorkPanel extends JPanel {
 		panelNoWork.setLayout(gbl_panelNoWork);
 		
 		JLabel label = new JLabel("");
-		label.setIcon(new ImageIcon(NoWorkPanel.class.getResource(Constants.IMG_UNIDRAG_SMALL)));
+		label.setIcon(new ImageIcon(NoWorkPanel.class.getResource(Constants.IMG_NO_WORK_ROBOT)));
 		GridBagConstraints gbc_label = new GridBagConstraints();
 		gbc_label.anchor = GridBagConstraints.SOUTH;
 		gbc_label.insets = new Insets(0, 0, 5, 0);
