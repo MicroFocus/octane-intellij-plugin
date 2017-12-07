@@ -35,8 +35,9 @@ public class SnakeGame extends JPanel {
 	private static int verticalPosCount = 10;
 	private static int horizontalPosCount = 20;
 	private Timer gameLoopTimer;
-	private static final Color octaneGreen = new Color(0, 179, 141);
-	private static final Color octaneGray = new Color(133, 142, 132);
+	private static final Color microfocusBlue = new Color(0, 121, 239);
+	private static final Color gray = new Color(133, 142, 132);
+
 
 	private enum GameState {
 		NOT_STARTED, RUNNING, PAUSED, OVER, WON;
@@ -46,15 +47,15 @@ public class SnakeGame extends JPanel {
 
 	//state of the game
 	private static class SpritePos {
-		public int x; //0 <= x < verticalPosCount
-		public int y; //0 <= x < horizontalPosCount
-		public SpriteDirection dir = SpriteDirection.RIGHT;
+		int x; //0 <= x < verticalPosCount
+		int y; //0 <= x < horizontalPosCount
+		SpriteDirection dir = SpriteDirection.RIGHT;
 		
-		public SpritePos(int x, int y) {
+		SpritePos(int x, int y) {
 			this.x = x;
 			this.y = y;
 		}
-		public SpritePos(int x, int y, SpriteDirection dir) {
+		SpritePos(int x, int y, SpriteDirection dir) {
 			this.x = x;
 			this.y = y;
 			this.dir = dir;
@@ -101,7 +102,7 @@ public class SnakeGame extends JPanel {
 	private int speed = INIT_SPEED;
 
 	//changes to a random color very apple hit
-	private Color backgroundColor = octaneGreen;
+	private Color backgroundColor = microfocusBlue;
 
 	public SnakeGame() {
 		requestFocusInWindow();
@@ -223,7 +224,7 @@ public class SnakeGame extends JPanel {
 		if(possiblePositions.size() <= 1){
             applePos = null;
             gameState = GameState.WON; //nice
-            backgroundColor = octaneGreen;
+            backgroundColor = microfocusBlue;
             return;
         }
 
@@ -363,7 +364,7 @@ public class SnakeGame extends JPanel {
 		int bottomFontSize = width * 3 / 100;
 		
 		Font titleFont = new JLabel().getFont().deriveFont(Font.BOLD | Font.ITALIC).deriveFont((float)titleFontSize);
-		g.setColor(octaneGreen);
+		g.setColor(microfocusBlue);
 		FontMetrics fontMetrics =  getFontMetrics(titleFont);
 		g.setFont(titleFont);
 		String title = "OCTANE SNAKE";
@@ -371,7 +372,7 @@ public class SnakeGame extends JPanel {
 		
 		
 		Font bottomFont = new JLabel().getFont().deriveFont(Font.BOLD).deriveFont((float)bottomFontSize);
-		g.setColor(octaneGray);
+		g.setColor(gray);
 		fontMetrics =  getFontMetrics(bottomFont);
 		g.setFont(bottomFont);
 		String click = "Click to start, space/click to pause";
@@ -382,7 +383,7 @@ public class SnakeGame extends JPanel {
 		int titleFontSize = width * 5 / 100;
 		int bottomFontSize = width * 3 / 100;
 		Font titleFont = new JLabel().getFont().deriveFont(Font.BOLD | Font.ITALIC).deriveFont((float)titleFontSize);
-		g.setColor(octaneGray);
+		g.setColor(gray);
 		FontMetrics fontMetrics =  getFontMetrics(titleFont);
 		g.setFont(titleFont);
 		String title = "PAUSED";
@@ -390,7 +391,7 @@ public class SnakeGame extends JPanel {
 		
 		
 		Font bottomFont = new JLabel().getFont().deriveFont(Font.BOLD).deriveFont((float)bottomFontSize);
-		g.setColor(octaneGray);
+		g.setColor(gray);
 		fontMetrics =  getFontMetrics(bottomFont);
 		g.setFont(bottomFont);
 		String score = "Score: " + (snakeBody.size() - INIT_SIZE);
@@ -413,7 +414,7 @@ public class SnakeGame extends JPanel {
 		
 		
 		Font bottomFont = new JLabel().getFont().deriveFont(Font.BOLD).deriveFont((float)bottomFontSize);
-		g.setColor(octaneGray);
+		g.setColor(gray);
 		fontMetrics =  getFontMetrics(bottomFont);
 		g.setFont(bottomFont);
 		String score = "Score: " + (snakeBody.size() - INIT_SIZE);
@@ -427,14 +428,14 @@ public class SnakeGame extends JPanel {
         int titleFontSize = width * 5 / 100;
         int bottomFontSize = width * 3 / 100;
 		Font titleFont = new JLabel().getFont().deriveFont(Font.BOLD | Font.ITALIC).deriveFont((float)titleFontSize);
-		g.setColor(octaneGreen);
+		g.setColor(microfocusBlue);
 		FontMetrics fontMetrics =  getFontMetrics(titleFont);
 		g.setFont(titleFont);
 		String title = "GAME WON";
         g.drawString(title, x + (width- fontMetrics.stringWidth(title)) / 2, y + height / 2 - titleFontSize / 2);
 		
 		Font bottomFont = new JLabel().getFont().deriveFont(Font.BOLD).deriveFont((float)bottomFontSize);
-		g.setColor(octaneGray);
+		g.setColor(gray);
 		fontMetrics =  getFontMetrics(bottomFont);
 		g.setFont(bottomFont);
 		String score = "Wow, that's impressive!";
