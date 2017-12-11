@@ -24,11 +24,10 @@ public class Constants {
     public static final String IMG_BROWSER_ICON = IMAGE_FOLDER_PATH + "browser-16x16.png";
     public static final String IMG_START_TIMER = IMAGE_FOLDER_PATH + "startTimer-16x16.png";
     public static final String IMG_STOP_TIMER = IMAGE_FOLDER_PATH + "stopTimer-16x16.png";
-    public static final String IMG_UNIDRAG_SMALL = IMAGE_FOLDER_PATH + "unidrag-small.png";
-    public static final String IMG_UNIDRAG_SMALL_SAD = IMAGE_FOLDER_PATH + "unidrag-small-sad.png";
+    public static final String IMG_PLAIN_ROBOT = IMAGE_FOLDER_PATH + "s-no-items-to-display.png";
     public static final String IMG_ACTIVE_ITEM = IMAGE_FOLDER_PATH + "activeitem.png";
     public static final String IMG_MYWORK = IMAGE_FOLDER_PATH + "mywork.png";
-    public static final String IMG_NO_WORK_ROBOT = IMAGE_FOLDER_PATH + "s-no-items-to-display.png";
+    public static final String IMG_NO_WORK_ROCKET = IMAGE_FOLDER_PATH + "s-rocket.png";
 
     //Settings validation
     public static final String CORRECT_URL_FORMAT_MESSAGE = "Example: (http|https)://{serverurl[:port]}/?p={sharedspaceId}/{workspaceId}";

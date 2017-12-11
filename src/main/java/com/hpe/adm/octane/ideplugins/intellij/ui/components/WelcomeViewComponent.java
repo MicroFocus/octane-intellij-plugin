@@ -75,11 +75,10 @@ public class WelcomeViewComponent extends JPanel implements HasComponent {
 
         JLabel lblCompany = new JLabel("");
         lblCompany.setIcon(new ImageIcon(NoWorkPanel.class.getResource(Constants.IMG_VENDOR_LOGO)));
-
         GridBagConstraints gbc_lblCompany = new GridBagConstraints();
         gbc_lblCompany.anchor = GridBagConstraints.SOUTHEAST;
         gbc_lblCompany.fill = GridBagConstraints.VERTICAL;
-        gbc_lblCompany.insets = new Insets(0, 0, 20, 20);
+        gbc_lblCompany.insets = new Insets(0, 0, 10, 10);
         gbc_lblCompany.gridx = 1;
         gbc_lblCompany.gridy = 5;
         add(lblCompany, gbc_lblCompany);
@@ -88,11 +87,11 @@ public class WelcomeViewComponent extends JPanel implements HasComponent {
         JLabel lblOctane = new JLabel("");
         lblOctane.setIcon(new ImageIcon(NoWorkPanel.class.getResource(Constants.IMG_OCTANE_LOGO)));
         GridBagConstraints gbc_lblOctane = new GridBagConstraints();
-        gbc_lblOctane.anchor = GridBagConstraints.NORTHWEST;
+        gbc_lblOctane.anchor = GridBagConstraints.CENTER;
         gbc_lblOctane.fill = GridBagConstraints.VERTICAL;
-        gbc_lblOctane.insets = new Insets(0, 0, 0, 0);
-        gbc_lblOctane.gridx = 0;
-        gbc_lblOctane.gridy = 0;
+        gbc_lblOctane.insets = new Insets(10, 0, 0, 0);
+        gbc_lblOctane.gridx = 1;
+        gbc_lblOctane.gridy = 1;
         add(lblOctane, gbc_lblOctane);
 
         lblMessage = new JLabel(WELCOME_TEXT);
