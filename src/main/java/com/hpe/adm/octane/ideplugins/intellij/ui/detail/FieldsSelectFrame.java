@@ -6,9 +6,11 @@ import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.util.DefaultEntityFieldsUtil;
 import com.intellij.openapi.ui.JBCheckboxMenuItem;
 import com.intellij.ui.JBColor;
+import com.intellij.ui.components.JBScrollPane;
 import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.JXTextField;
 import org.json.JSONObject;
+
 import javax.swing.*;
 import javax.swing.border.MatteBorder;
 import javax.swing.event.DocumentEvent;
@@ -265,7 +267,7 @@ public class FieldsSelectFrame extends JFrame {
         fieldsPanel.setLayout(new BoxLayout(fieldsPanel, BoxLayout.Y_AXIS));
         updateFieldsPanel(selectedFields, allFields);
         fieldsPanel.revalidate();
-        JScrollPane scrollPane = new JScrollPane(fieldsPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        JScrollPane scrollPane = new JBScrollPane(fieldsPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setPreferredSize(new Dimension((int) searchField.getPreferredSize().getWidth(), 200));
         scrollPane.getVerticalScrollBar().setUnitIncrement(10);
         return scrollPane;
