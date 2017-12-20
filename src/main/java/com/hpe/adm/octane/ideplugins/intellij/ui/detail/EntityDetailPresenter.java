@@ -40,6 +40,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.*;
@@ -126,7 +127,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
     }
 
     private void setPossibleTransitions(EntityModel entityModel) {
-        Collection<EntityModel> result = new HashSet<>();
+        Set<EntityModel> result = new HashSet<>();
         RestUtil.runInBackground(() -> {
             String currentPhaseId = Util.getUiDataFromModel(entityModel.getValue("phase"), "id");
             return entityService.findPossibleTransitionFromCurrentPhase(Entity.getEntityType(entityModel), currentPhaseId);
@@ -163,8 +164,6 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
         }
 
         public void actionPerformed(AnActionEvent e) {
-            //GeneralEntityDetailsPanel.getCommetsDetails().getActionMap().get(JXCollapsiblePane.TOGGLE_ACTION);
-            //setComments(entityModel);
             entityDetailView.getEntityDetailsPanel().activateCommentsCollapsible();
 
         }
@@ -179,7 +178,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
         }
 
         public SelectFieldsAction() {
-            super("Select fields for this entity type", "Select fields popup.", IconLoader.findIcon(Constants.IMG_FIELD_SELECTION_DEFAULT));
+            super("Select fields for this entity type", "Select fields popup", IconLoader.findIcon(Constants.IMG_FIELD_SELECTION_DEFAULT));
         }
 
         public void actionPerformed(AnActionEvent e) {

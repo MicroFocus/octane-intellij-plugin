@@ -24,9 +24,7 @@ import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Created by manasse on 11/8/2017.
- */
+
 public class FieldsSelectFrame extends JFrame {
 
     public interface SelectionListener extends EventListener {
@@ -83,68 +81,17 @@ public class FieldsSelectFrame extends JFrame {
         searchField.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
-                Collection<FieldMetadata> searchfields = new HashSet<>();
-                if (!searchField.getText().equals("")) {
-                    for (FieldMetadata fieldMetadata : allFields.stream()
-                            .filter(pf -> pf.getLabel().toLowerCase().contains(searchField.getText().toLowerCase()))
-                            .collect(Collectors.toSet())) {
-                        searchfields.add(fieldMetadata);
-                    }
-                } else {
-                    searchfields = allFields;
-                }
-                if (searchfields.size() != 0) {
-                    updateFieldsPanel(selectedFields, searchfields);
-                } else {
-                    createNoResultsPanel();
-                }
-                fieldsPanel.repaint();
-                revalidate();
-                repaint();
+                searchFieldAction();
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                Collection<FieldMetadata> searchfields = new HashSet<>();
-                if (!searchField.getText().equals("")) {
-                    for (FieldMetadata fieldMetadata : allFields.stream()
-                            .filter(pf -> pf.getLabel().toLowerCase().contains(searchField.getText().toLowerCase()))
-                            .collect(Collectors.toSet())) {
-                        searchfields.add(fieldMetadata);
-                    }
-                } else {
-                    searchfields = allFields;
-                }
-                if (searchfields.size() != 0) {
-                    updateFieldsPanel(selectedFields, searchfields);
-                } else {
-                    createNoResultsPanel();
-                }
-                fieldsPanel.repaint();
-                revalidate();
-                repaint();
+                searchFieldAction();
             }
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-                Collection<FieldMetadata> searchfields = new HashSet<>();
-                if (!searchField.getText().equals("")) {
-                    for (FieldMetadata fieldMetadata : allFields.stream()
-                                                              .filter(pf -> pf.getLabel().toLowerCase().contains(searchField.getText().toLowerCase()))
-                                                              .collect(Collectors.toSet())) {
-                        searchfields.add(fieldMetadata);
-                    }
-                } else {
-                    searchfields = allFields;
-                }
-                if (searchfields.size() != 0) {
-                    updateFieldsPanel(selectedFields, searchfields);
-                } else {
-                    createNoResultsPanel();
-                }
-                fieldsPanel.repaint();
-                revalidate();
-                repaint();
+                searchFieldAction();
             }
         });
 
@@ -172,17 +119,7 @@ public class FieldsSelectFrame extends JFrame {
         selectNoneButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                selectedFields.removeAll(selectedFields);
-                updateFieldsPanel(getSelectedFields(), allFields);
-                fieldsPanel.repaint();
-                listeners.forEach(listener -> listener.valueChanged(new SelectionEvent(this)));
-                selectedFieldsMap.replace(entityType, selectedFields);
-                idePluginPersistentState.saveState(IdePluginPersistentState.Key.SELECTED_FIELDS, new JSONObject(DefaultEntityFieldsUtil.entityFieldsToJson(selectedFieldsMap)));
-                fieldsActionButton.setDefaultFieldsIcon(false);
-                selectNoneButton.transferFocusUpCycle();
-                resetButton.setEnabled(true);
-                selectNoneButton.setEnabled(false);
-                selectAllButton.setEnabled(true);
+                noneButtonClicked();
             }
         });
 
@@ -191,17 +128,7 @@ public class FieldsSelectFrame extends JFrame {
         selectAllButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                setSelectedFields(allFields.stream().map(FieldMetadata::getName).collect(Collectors.toSet()));
-                updateFieldsPanel(getSelectedFields(), allFields);
-                fieldsPanel.repaint();
-                listeners.forEach(listener -> listener.valueChanged(new SelectionEvent(this)));
-                selectedFieldsMap.replace(entityType, selectedFields);
-                idePluginPersistentState.saveState(IdePluginPersistentState.Key.SELECTED_FIELDS, new JSONObject(DefaultEntityFieldsUtil.entityFieldsToJson(selectedFieldsMap)));
-                fieldsActionButton.setDefaultFieldsIcon(false);
-                selectAllButton.transferFocusUpCycle();
-                resetButton.setEnabled(true);
-                selectNoneButton.setEnabled(true);
-                selectAllButton.setEnabled(false);
+                allButtonClicked();
             }
         });
 
@@ -210,18 +137,7 @@ public class FieldsSelectFrame extends JFrame {
         resetButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                setSelectedFields(getDefaultFields());
-                updateFieldsPanel(getSelectedFields(), allFields);
-                fieldsPanel.repaint();
-                listeners.forEach(listener -> listener.valueChanged(new SelectionEvent(this)));
-                selectedFieldsMap.replace(entityType, selectedFields);
-                idePluginPersistentState.saveState(IdePluginPersistentState.Key.SELECTED_FIELDS, new JSONObject(DefaultEntityFieldsUtil.entityFieldsToJson(selectedFieldsMap)));
-                fieldsActionButton.setDefaultFieldsIcon(true);
-                resetButton.transferFocusUpCycle();
-                resetButton.setEnabled(false);
-                selectNoneButton.setEnabled(true);
-                selectAllButton.setEnabled(true);
-
+                resetButtonClicked();
             }
         });
 
@@ -262,7 +178,70 @@ public class FieldsSelectFrame extends JFrame {
         pack();
     }
 
-    public JScrollPane createFieldsPanel() {
+    private void noneButtonClicked() {
+        selectedFields.removeAll(selectedFields);
+        updateFieldsPanel(getSelectedFields(), allFields);
+        fieldsPanel.repaint();
+        listeners.forEach(listener -> listener.valueChanged(new SelectionEvent(this)));
+        selectedFieldsMap.replace(entityType, selectedFields);
+        idePluginPersistentState.saveState(IdePluginPersistentState.Key.SELECTED_FIELDS, new JSONObject(DefaultEntityFieldsUtil.entityFieldsToJson(selectedFieldsMap)));
+        fieldsActionButton.setDefaultFieldsIcon(false);
+        selectNoneButton.transferFocusUpCycle();
+        resetButton.setEnabled(true);
+        selectNoneButton.setEnabled(false);
+        selectAllButton.setEnabled(true);
+    }
+
+    private void allButtonClicked() {
+        setSelectedFields(allFields.stream().map(FieldMetadata::getName).collect(Collectors.toSet()));
+        updateFieldsPanel(getSelectedFields(), allFields);
+        fieldsPanel.repaint();
+        listeners.forEach(listener -> listener.valueChanged(new SelectionEvent(this)));
+        selectedFieldsMap.replace(entityType, selectedFields);
+        idePluginPersistentState.saveState(IdePluginPersistentState.Key.SELECTED_FIELDS, new JSONObject(DefaultEntityFieldsUtil.entityFieldsToJson(selectedFieldsMap)));
+        fieldsActionButton.setDefaultFieldsIcon(false);
+        selectAllButton.transferFocusUpCycle();
+        resetButton.setEnabled(true);
+        selectNoneButton.setEnabled(true);
+        selectAllButton.setEnabled(false);
+    }
+
+    private void resetButtonClicked() {
+        setSelectedFields(getDefaultFields());
+        updateFieldsPanel(getSelectedFields(), allFields);
+        fieldsPanel.repaint();
+        listeners.forEach(listener -> listener.valueChanged(new SelectionEvent(this)));
+        selectedFieldsMap.replace(entityType, selectedFields);
+        idePluginPersistentState.saveState(IdePluginPersistentState.Key.SELECTED_FIELDS, new JSONObject(DefaultEntityFieldsUtil.entityFieldsToJson(selectedFieldsMap)));
+        fieldsActionButton.setDefaultFieldsIcon(true);
+        resetButton.transferFocusUpCycle();
+        resetButton.setEnabled(false);
+        selectNoneButton.setEnabled(true);
+        selectAllButton.setEnabled(true);
+    }
+
+    private void searchFieldAction() {
+        Collection<FieldMetadata> searchfields = new HashSet<>();
+        if (!searchField.getText().equals("")) {
+            for (FieldMetadata fieldMetadata : allFields.stream()
+                    .filter(pf -> pf.getLabel().toLowerCase().contains(searchField.getText().toLowerCase()))
+                    .collect(Collectors.toSet())) {
+                searchfields.add(fieldMetadata);
+            }
+        } else {
+            searchfields = allFields;
+        }
+        if (searchfields.size() != 0) {
+            updateFieldsPanel(selectedFields, searchfields);
+        } else {
+            createNoResultsPanel();
+        }
+        fieldsPanel.repaint();
+        revalidate();
+        repaint();
+    }
+
+    private JScrollPane createFieldsPanel() {
         fieldsPanel = new JPanel();
         fieldsPanel.setLayout(new BoxLayout(fieldsPanel, BoxLayout.Y_AXIS));
         updateFieldsPanel(selectedFields, allFields);
@@ -273,7 +252,7 @@ public class FieldsSelectFrame extends JFrame {
         return scrollPane;
     }
 
-    public void createCheckBoxMenuItems() {
+    private void createCheckBoxMenuItems() {
         menuItems = new ArrayList<>();
         for (FieldMetadata fieldMetadata : allFields) {
             if (!"description".equals(fieldMetadata.getName()) && !"phase".equals(fieldMetadata.getName())) {
@@ -296,13 +275,13 @@ public class FieldsSelectFrame extends JFrame {
                             fieldsActionButton.setDefaultFieldsIcon(false);
                             resetButton.setEnabled(true);
 
-                            if(selectedFields.size()==0){
+                            if (selectedFields.size() == 0) {
                                 selectNoneButton.setEnabled(false);
                             } else {
                                 selectNoneButton.setEnabled(true);
                             }
 
-                            if(selectedFields.containsAll(allFields.stream().map(FieldMetadata::getName).collect(Collectors.toSet()))){
+                            if (selectedFields.containsAll(allFields.stream().map(FieldMetadata::getName).collect(Collectors.toSet()))) {
                                 selectAllButton.setEnabled(false);
                             } else {
                                 selectAllButton.setEnabled(true);
@@ -317,12 +296,12 @@ public class FieldsSelectFrame extends JFrame {
                     menuItem.setState(true);
                 }
                 menuItems.add(menuItem);
-                prettyFields.put(fieldMetadata.getLabel(),fieldMetadata.getName());
+                prettyFields.put(fieldMetadata.getLabel(), fieldMetadata.getName());
             }
         }
     }
 
-    public void updateFieldsPanel(Set<String> selectedFields, Collection<FieldMetadata> allFieldNames) {
+    private void updateFieldsPanel(Set<String> selectedFields, Collection<FieldMetadata> allFieldNames) {
         fieldsPanel.removeAll();
         int rowCount = 0;
         for (JCheckBoxMenuItem checkBoxMenuItem : menuItems) {
@@ -340,7 +319,7 @@ public class FieldsSelectFrame extends JFrame {
         fieldsPanel.add(Box.createRigidArea(new Dimension((int) searchField.getPreferredSize().getWidth(), rowCount > 9 ? 0 : (200 - 20 * rowCount))));
     }
 
-    public void createNoResultsPanel() {
+    private void createNoResultsPanel() {
         fieldsPanel.removeAll();
         JMenuItem noResults = new JMenuItem("No results");
         noResults.setForeground(Color.RED);
@@ -348,14 +327,26 @@ public class FieldsSelectFrame extends JFrame {
         fieldsPanel.add(Box.createRigidArea(new Dimension((int) searchField.getPreferredSize().getWidth(), 200 - (int) noResults.getPreferredSize().getHeight())));
     }
 
+    /**
+     * Adds a listener to the listeners of the class
+     * @param selectionListener custom listener to be added
+     */
     public void addSelectionListener(SelectionListener selectionListener) {
         listeners.add(selectionListener);
     }
 
+    /**
+     * Gets the default fields
+     * @return the default fields of the entity opened in detailed view
+     */
     public Set<String> getDefaultFields() {
         return defaultFields;
     }
 
+    /**
+     * Gets the selected fields from the popup
+     * @return the selected fields
+     */
     public Set<String> getSelectedFields() {
         return selectedFields;
     }
@@ -365,9 +356,13 @@ public class FieldsSelectFrame extends JFrame {
         selectedFields.addAll(fields);
     }
 
-    public void setSelectedFieldsFromOtherTab(Set<String> fields){
+    /**
+     * Sets the fields in the current detailed view
+     * @param fields the fields from another detailed view tab with the same entity
+     */
+    public void setSelectedFieldsFromOtherTab(Set<String> fields) {
         setSelectedFields(fields);
-        updateFieldsPanel(selectedFields,allFields);
+        updateFieldsPanel(selectedFields, allFields);
         fieldsPanel.repaint();
         listeners.get(0).valueChanged(new SelectionEvent(this));
         if (defaultFields.containsAll(selectedFields) && selectedFields.containsAll(defaultFields)) {

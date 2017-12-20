@@ -111,15 +111,15 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         gbc_headerPanel.gridy = 0;
         rootPanel.add(headerPanel, gbc_headerPanel);
 
-        //create main details panel
+
         entityDetailsPanel = createMainPanel();
-        //create the right and left panels
+
         detailsPanelLeft = createLeftPanel(entityDetailsPanel);
         detailsPanelRight = createRightPanel(entityDetailsPanel);
         addComponentListener(entityDetailsPanel, detailsPanelLeft, detailsPanelRight);
         drawSpecificDetailsForEntity(entityModel);
         entityDetailsPanel.setBorder(new EmptyBorder(0, 0, 0, 10));
-        //add padding panel
+
         JPanel paddingPanel = new JPanel();
         paddingPanel.setMinimumSize(new Dimension(50, 50));
         GridBagConstraints gbc_paddingPanel = new GridBagConstraints();
@@ -130,7 +130,7 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         gbc_paddingPanel.gridwidth = 2;
         entityDetailsPanel.add(paddingPanel, gbc_paddingPanel);
 
-        //create section title label
+
         JXLabel sectionTitle = new JXLabel();
         sectionTitle.setFont(new Font("Arial", Font.BOLD, 18));
         sectionTitle.setText("General");
@@ -298,7 +298,6 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
                 idePluginPersistentState,
                 fieldSelectButton);
         fieldsPopup.addSelectionListener(e -> createSectionWithEntityDetails(entityModel, fieldsPopup.getSelectedFields()));
-        //listener for other opened tabs with the same entity
         fieldsPopup.addSelectionListener(selectionListener);
     }
 
