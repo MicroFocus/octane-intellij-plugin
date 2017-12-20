@@ -25,6 +25,9 @@ import com.intellij.openapi.actionSystem.*;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBScrollPane;
 import org.jdesktop.swingx.JXLabel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.inject.Provider;
 import javax.swing.*;
 import javax.swing.tree.TreeCellRenderer;
@@ -72,6 +75,7 @@ public class EntityTreeView implements View {
         void keyPressed(KeyEvent keyEvent, Entity selectedEntityType, Long selectedEntityId, EntityModel model);
     }
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(EntityTreeView.class);
     private JPanel rootPanel;
     private FillingTree tree;
     private JBScrollPane scrollPane;
@@ -141,7 +145,7 @@ public class EntityTreeView implements View {
                             Long entityId = Long.parseLong(entityModel.getValue("id").getValue().toString());
                             handler.keyPressed(e, entityType, entityId, entityModel);
                         } catch (Exception ex) {
-                            //TODO: logger and error bubble
+                            LOGGER.debug(ex.getMessage());
                         }
                     }
                 }
@@ -163,8 +167,7 @@ public class EntityTreeView implements View {
                                 Long entityId = Long.parseLong(entityModel.getValue("id").getValue().toString());
                                 handler.entityDoubleClicked(e, entityType, entityId, entityModel);
                             } catch (Exception ex) {
-                                //TODO: logger and error bubble
-                                ex.printStackTrace();
+                                LOGGER.debug(ex.getMessage());
                             }
                         }
                     }
