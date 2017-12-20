@@ -27,6 +27,8 @@ public class Constants {
     public static final String IMG_PLAIN_ROBOT = IMAGE_FOLDER_PATH + "s-no-items-to-display.png";
     public static final String IMG_ACTIVE_ITEM = IMAGE_FOLDER_PATH + "activeitem.png";
     public static final String IMG_MYWORK = IMAGE_FOLDER_PATH + "mywork.png";
+    public static final String IMG_FIELD_SELECTION_NON_DEFAULT = IMAGE_FOLDER_PATH + "cus-on.png";
+    public static final String IMG_FIELD_SELECTION_DEFAULT = IMAGE_FOLDER_PATH + "cus-off.png";
     public static final String IMG_NO_WORK_ROCKET = IMAGE_FOLDER_PATH + "s-rocket.png";
 
     //Settings validation
