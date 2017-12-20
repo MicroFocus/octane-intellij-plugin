@@ -68,7 +68,7 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <toolWindow factoryClass="com.hpe.adm.octane.ideplugins.intellij.ui.EntryPoint" anchor="bottom"
-                    icon="/images/octane-icon-13x13.png" secondary="true" id="ALM Octane"/>
+                    icon="/images/favicon.png" secondary="true" id="ALM Octane"/>
 
         <projectService
                 serviceInterface="com.hpe.adm.octane.ideplugins.intellij.settings.IdePersistentConnectionSettingsProvider"

@@ -22,7 +22,6 @@ import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvi
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 import org.jdesktop.swingx.JXHyperlink;
-
 import javax.swing.*;
 import java.awt.*;
 
@@ -35,7 +34,6 @@ public class WelcomeViewComponent extends JPanel implements HasComponent {
     private JXHyperlink hyperlinkSettings;
     private JXHyperlink hyperlinkRetry;
     private JLabel lblMessage;
-    private JPanel panel;
     private boolean connectionFailed;
 
     public WelcomeViewComponent() {
@@ -71,65 +69,60 @@ public class WelcomeViewComponent extends JPanel implements HasComponent {
         GridBagLayout gridBagLayout = new GridBagLayout();
         gridBagLayout.columnWidths = new int[]{0, 0, 0};
         gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0};
-        gridBagLayout.columnWeights = new double[]{1.0, 1.0, Double.MIN_VALUE};
-        gridBagLayout.rowWeights = new double[]{1.0, 1.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
+        gridBagLayout.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
+        gridBagLayout.rowWeights = new double[]{0.0, 1.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
         setLayout(gridBagLayout);
-
-        panel = new JPanel();
-        GridBagConstraints gbc_panel = new GridBagConstraints();
-        gbc_panel.gridwidth = 2;
-        gbc_panel.insets = new Insets(0, 0, 5, 0);
-        gbc_panel.fill = GridBagConstraints.BOTH;
-        gbc_panel.gridx = 0;
-        gbc_panel.gridy = 0;
-        add(panel, gbc_panel);
 
         JLabel lblCompany = new JLabel("");
         lblCompany.setIcon(new ImageIcon(NoWorkPanel.class.getResource(Constants.IMG_VENDOR_LOGO)));
-
         GridBagConstraints gbc_lblCompany = new GridBagConstraints();
-        gbc_lblCompany.anchor = GridBagConstraints.EAST;
+        gbc_lblCompany.anchor = GridBagConstraints.SOUTHEAST;
         gbc_lblCompany.fill = GridBagConstraints.VERTICAL;
-        gbc_lblCompany.insets = new Insets(0, 0, 5, 50);
-        gbc_lblCompany.gridx = 0;
-        gbc_lblCompany.gridy = 1;
+        gbc_lblCompany.insets = new Insets(0, 0, 10, 10);
+        gbc_lblCompany.gridx = 1;
+        gbc_lblCompany.gridy = 5;
         add(lblCompany, gbc_lblCompany);
 
 
         JLabel lblOctane = new JLabel("");
         lblOctane.setIcon(new ImageIcon(NoWorkPanel.class.getResource(Constants.IMG_OCTANE_LOGO)));
         GridBagConstraints gbc_lblOctane = new GridBagConstraints();
-        gbc_lblOctane.anchor = GridBagConstraints.WEST;
+        gbc_lblOctane.anchor = GridBagConstraints.CENTER;
         gbc_lblOctane.fill = GridBagConstraints.VERTICAL;
-        gbc_lblOctane.insets = new Insets(0, 0, 5, 0);
+        gbc_lblOctane.insets = new Insets(10, 0, 0, 0);
         gbc_lblOctane.gridx = 1;
         gbc_lblOctane.gridy = 1;
         add(lblOctane, gbc_lblOctane);
 
         lblMessage = new JLabel(WELCOME_TEXT);
+        Font lblMessageFont = new Font(lblMessage.getFont().getFontName(),Font.PLAIN,18);
+        lblMessage.setFont(lblMessageFont);
         GridBagConstraints gbc_lblMessage = new GridBagConstraints();
-        gbc_lblMessage.gridwidth = 2;
+        gbc_lblMessage.anchor = GridBagConstraints.CENTER;
         gbc_lblMessage.insets = new Insets(0, 0, 5, 0);
-        gbc_lblMessage.gridx = 0;
+        gbc_lblMessage.gridx =1;
         gbc_lblMessage.gridy = 2;
         add(lblMessage, gbc_lblMessage);
 
         hyperlinkSettings = new JXHyperlink();
         hyperlinkSettings.setText(OCTANE_SETTINGS_TEXT);
+        Font  hyperlinkSettingsFont = new Font(hyperlinkSettings.getFont().getFontName(),Font.PLAIN,18);
+        hyperlinkSettings.setFont(hyperlinkSettingsFont);
         GridBagConstraints gbc_hyperlinkSettings = new GridBagConstraints();
-        gbc_hyperlinkSettings.gridwidth = 2;
+        gbc_hyperlinkSettings.anchor = GridBagConstraints.CENTER;
         gbc_hyperlinkSettings.insets = new Insets(0, 0, 5, 0);
-        gbc_hyperlinkSettings.gridx = 0;
+        gbc_hyperlinkSettings.gridx = 1;
         gbc_hyperlinkSettings.gridy = 3;
         add(hyperlinkSettings, gbc_hyperlinkSettings);
 
         if (connectionFailed) {
             hyperlinkRetry = new JXHyperlink();
             hyperlinkRetry.setText(OCTANE_SETTINGS_RETRY);
+            Font  hyperlinkRetryFont = new Font(hyperlinkRetry.getFont().getFontName(),Font.PLAIN,18);
+            hyperlinkRetry.setFont(hyperlinkRetryFont);
             GridBagConstraints gbc_hyperlinkRetry = new GridBagConstraints();
-            gbc_hyperlinkRetry.anchor = GridBagConstraints.NORTH;
-            gbc_hyperlinkRetry.gridwidth = 2;
-            gbc_hyperlinkRetry.gridx = 0;
+            gbc_hyperlinkRetry.anchor = GridBagConstraints.CENTER;
+            gbc_hyperlinkRetry.gridx = 1;
             gbc_hyperlinkRetry.gridy = 4;
             add(hyperlinkRetry, gbc_hyperlinkRetry);
         }
