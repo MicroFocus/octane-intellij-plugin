@@ -185,15 +185,13 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
             entityDetailView.getEntityDetailsPanel().activateFieldsSettings();
         }
 
-        public void update(AnActionEvent e){
-            if(defaultfields){
+        public void update(AnActionEvent e) {
+            if (defaultfields) {
                 e.getPresentation().setIcon(IconLoader.findIcon(Constants.IMG_FIELD_SELECTION_DEFAULT));
             } else {
                 e.getPresentation().setIcon(IconLoader.findIcon(Constants.IMG_FIELD_SELECTION_NON_DEFAULT));
             }
         }
-
-
     }
 
     private final class SaveSelectedPhaseAction extends AnAction {
