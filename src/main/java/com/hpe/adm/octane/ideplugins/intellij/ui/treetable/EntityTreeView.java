@@ -22,11 +22,10 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.util.EntityContextMenuFactory;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBScrollPane;
 import org.jdesktop.swingx.JXLabel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.inject.Provider;
 import javax.swing.*;
@@ -75,7 +74,7 @@ public class EntityTreeView implements View {
         void keyPressed(KeyEvent keyEvent, Entity selectedEntityType, Long selectedEntityId, EntityModel model);
     }
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(EntityTreeView.class);
+    private Logger LOGGER = Logger.getInstance("EntityTreeView");
     private JPanel rootPanel;
     private FillingTree tree;
     private JBScrollPane scrollPane;
