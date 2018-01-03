@@ -34,18 +34,17 @@ public class HeaderPanel extends JPanel {
 
     private JLabel entityIconLabel;
     private JXLabel entityLinkToBrowser;
-    
+
     private JXPanel phasePanel;
-    
+
     private JXLabel phaseDetails;
     private JXLabel currentPhaseLabel;
     private JXLabel moveToLabel;
-    private PhaseComboBox phaseComboBox;    
+    private PhaseComboBox phaseComboBox;
     private AnAction saveSelectedPhaseAction;
-
+    private ActionToolbar actionToolBar;
     private JPanel panelControls;
     private DefaultActionGroup buttonActionGroup;
-
 
 
     public HeaderPanel() {
@@ -71,12 +70,13 @@ public class HeaderPanel extends JPanel {
             public void mouseEntered(MouseEvent e) {
                 entityLinkToBrowser.setForeground(Color.blue);
             }
+
             @Override
             public void mouseExited(MouseEvent e) {
                 entityLinkToBrowser.setForeground(JBColor.foreground());
             }
         });
-        
+
         entityIconLabel = new JLabel("");
         entityIconLabel.setHorizontalAlignment(SwingConstants.CENTER);
         GridBagConstraints gbc_entityIconLabel = new GridBagConstraints();
@@ -90,7 +90,7 @@ public class HeaderPanel extends JPanel {
         gbc_labelReplaceme.gridx = 1;
         gbc_labelReplaceme.gridy = 0;
         add(entityLinkToBrowser, gbc_labelReplaceme);
-        
+
         panelControls = new JPanel(new BorderLayout());
         GridBagConstraints gbc_panelControls = new GridBagConstraints();
         gbc_panelControls.fill = GridBagConstraints.BOTH;
@@ -98,7 +98,7 @@ public class HeaderPanel extends JPanel {
         gbc_panelControls.gridy = 0;
         add(panelControls, gbc_panelControls);
         panelControls.setLayout(new BorderLayout(0, 0));
-        
+
         phasePanel = new JXPanel();
         panelControls.add(phasePanel);
         phasePanel.setBorder(null);
@@ -109,7 +109,7 @@ public class HeaderPanel extends JPanel {
         gbl_phasePanel.columnWeights = new double[]{0.0, 0.0, 0.0, 1.0};
         gbl_phasePanel.rowWeights = new double[]{1.0, Double.MIN_VALUE};
         phasePanel.setLayout(gbl_phasePanel);
-        
+
         currentPhaseLabel = new JXLabel();
         currentPhaseLabel.setText("Current phase:");
         currentPhaseLabel.setFont(new Font("Arial", Font.BOLD, 13));
@@ -120,7 +120,7 @@ public class HeaderPanel extends JPanel {
         gbc_currentPhaseLabel.gridx = 0;
         gbc_currentPhaseLabel.gridy = 0;
         phasePanel.add(currentPhaseLabel, gbc_currentPhaseLabel);
-        
+
         phaseDetails = new JXLabel();
         phaseDetails.setText("phase");
         phaseDetails.setFont(new Font("Arial", Font.PLAIN, 13));
@@ -131,7 +131,7 @@ public class HeaderPanel extends JPanel {
         gbc_phaseDetails.gridx = 1;
         gbc_phaseDetails.gridy = 0;
         phasePanel.add(phaseDetails, gbc_phaseDetails);
-        
+
         moveToLabel = new JXLabel();
         moveToLabel.setText("Move to:");
         moveToLabel.setFont(new Font("Arial", Font.BOLD, 13));
@@ -142,7 +142,7 @@ public class HeaderPanel extends JPanel {
         gbc_moveToLabel.gridx = 2;
         gbc_moveToLabel.gridy = 0;
         phasePanel.add(moveToLabel, gbc_moveToLabel);
-        
+
         phaseComboBox = new PhaseComboBox();
         phaseComboBox.setPreferredSize(new Dimension(150, 30));
         phaseComboBox.setEditable(true);
@@ -151,15 +151,15 @@ public class HeaderPanel extends JPanel {
         gbc_phaseComboBox.gridx = 3;
         gbc_phaseComboBox.gridy = 0;
         phasePanel.add(phaseComboBox, gbc_phaseComboBox);
-        
-        
+
+
         buttonActionGroup = new DefaultActionGroup();
-        ActionToolbar actionToolBar = ActionManager.getInstance().createActionToolbar("refresh | save | comments", buttonActionGroup, true);
+        actionToolBar = ActionManager.getInstance().createActionToolbar("refresh | save | comments ", buttonActionGroup, true);
         panelControls.add(actionToolBar.getComponent(), BorderLayout.EAST);
     }
 
     public void setNameDetails(String nameDetails) {
-        this.entityLinkToBrowser.setText("<html><body><span style=\"font-family:'arial unicode ms'\">"+nameDetails+"</body></html>");
+        this.entityLinkToBrowser.setText("<html><body><span style=\"font-family:'arial unicode ms'\">" + nameDetails + "</body></html>");
     }
 
     public void setPhaseDetails(String phaseDetails) {
@@ -167,7 +167,7 @@ public class HeaderPanel extends JPanel {
     }
 
     public void setEntityIcon(ImageIcon entityIcon) {
-    	entityIconLabel.setIcon(entityIcon);
+        entityIconLabel.setIcon(entityIcon);
     }
 
     public void setRefreshButton(AnAction refreshAction) {
@@ -175,9 +175,14 @@ public class HeaderPanel extends JPanel {
         buttonActionGroup.add(refreshAction);
     }
 
-    public void setCommentButton(AnAction commentAction){
+    public void setCommentButton(AnAction commentAction) {
         buttonActionGroup.addSeparator();
         buttonActionGroup.add(commentAction);
+    }
+
+    public void setFieldSelectButton(AnAction fieldSelectButton) {
+        buttonActionGroup.addSeparator();
+        buttonActionGroup.add(fieldSelectButton);
     }
 
     public void setActionToEntityLink(Runnable runnable) {
@@ -190,11 +195,11 @@ public class HeaderPanel extends JPanel {
     }
 
     public void setPossiblePhasesForEntity(Collection<EntityModel> phasesList) {
-    	phaseComboBox.addItems(phasesList);
+        phaseComboBox.addItems(phasesList);
         if (phasesList.size() == 1) {
-        	phaseComboBox.setEnabled(false);
+            phaseComboBox.setEnabled(false);
         } else {
-        	phaseComboBox.setEnabled(true);
+            phaseComboBox.setEnabled(true);
         }
     }
 
@@ -206,15 +211,23 @@ public class HeaderPanel extends JPanel {
     public void setSaveSelectedPhaseButton(AnAction saveSelectedPhaseAction) {
         buttonActionGroup.addSeparator();
         buttonActionGroup.add(saveSelectedPhaseAction);
-        this.saveSelectedPhaseAction =saveSelectedPhaseAction;
+        this.saveSelectedPhaseAction = saveSelectedPhaseAction;
 
     }
-    public void removeSaveSelectedPhaseButton(){
+
+    public void removeSaveSelectedPhaseButton() {
         buttonActionGroup.remove(this.saveSelectedPhaseAction);
     }
 
-    public void setPhaseInHeader(boolean showPhase){
+    public void setPhaseInHeader(boolean showPhase) {
         phasePanel.setVisible(showPhase);
     }
+
+    public Point getFieldsPopupLocation() {
+        Component button = actionToolBar.getComponent().getComponent(actionToolBar.getComponent().getComponents().length - 1);
+        return new Point(button.getLocationOnScreen().x + (int) button.getPreferredSize().getWidth(),
+                button.getLocationOnScreen().y + (int) button.getPreferredSize().getHeight() + 8);
+    }
+
 
 }
