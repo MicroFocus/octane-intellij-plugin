@@ -33,6 +33,7 @@ import org.jdesktop.swingx.JXCollapsiblePane;
 import org.jdesktop.swingx.JXCollapsiblePane.Direction;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
+import org.jdesktop.swingx.JXTextField;
 import org.json.JSONObject;
 
 import javax.swing.*;
@@ -75,7 +76,7 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         setLayout(new BorderLayout(0, 0));
 
         this.entityModel = entityModel;
-
+        this.fields = fields;
         genericFieldList = new ArrayList<>();
 
         //create the generic fields
@@ -317,11 +318,11 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
 
         int fieldCount = 0;
         int i = 0;
-        for (FieldMetadata fieldMetadata : fields) {
-            if (fieldNames.contains(fieldMetadata.getName())) {
+        for (GenericField gField : genericFieldList) {
+            if (fieldNames.contains(gField.getFieldName())) {
                 JXLabel fieldLabel = new JXLabel();
                 fieldLabel.setFont(new Font("Arial", Font.BOLD, 12));
-                fieldLabel.setText(fieldMetadata.getLabel());
+                fieldLabel.setText(gField.getFieldLabel());
                 GridBagConstraints gbc1 = new GridBagConstraints();
                 gbc1.anchor = GridBagConstraints.SOUTHWEST;
                 gbc1.insets = new Insets(10, 0, 0, 0);
@@ -329,13 +330,21 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
                 gbc1.gridx = 0;
                 gbc1.gridy = i;
 
-                String fieldValue = getUiDataFromModel(entityModel.getValue(fieldMetadata.getName()));
-                JXLabel fieldValueLabel = new JXLabel();
+                String fieldValue = getUiDataFromModel(entityModel.getValue(gField.getFieldName()));
+
+                JXTextField fieldValueLabel = new JXTextField();
                 fieldValueLabel.setFont(new Font("Arial", Font.PLAIN, 12));
                 fieldValueLabel.setText(fieldValue);
                 fieldValueLabel.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
                 fieldValueLabel.setToolTipText(fieldValue);
                 GridBagConstraints gbc2 = new GridBagConstraints();
+
+                if(gField.isEditable()){
+                    //TODO add the creion label as background or somesing
+                } else {
+                    fieldValueLabel.setFocusable(false);
+                }
+
                 gbc2.insets = new Insets(10, 10, 0, 5);
                 gbc2.anchor = GridBagConstraints.SOUTHWEST;
                 gbc2.fill = GridBagConstraints.HORIZONTAL;
