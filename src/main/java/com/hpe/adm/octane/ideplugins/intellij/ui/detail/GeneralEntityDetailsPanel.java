@@ -19,6 +19,7 @@ import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
+import com.hpe.adm.octane.ideplugins.services.EntityService;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.util.DefaultEntityFieldsUtil;
 import com.intellij.ide.DataManager;
@@ -37,13 +38,13 @@ import org.json.JSONObject;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
-import java.awt.*;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.awt.*;
+import java.util.List;
 
 import static com.hpe.adm.octane.ideplugins.services.util.Util.getUiDataFromModel;
 
@@ -65,15 +66,20 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
     private HeaderPanel headerPanel;
     private CommentsConversationPanel commentsListPanel;
     private JXLabel label;
+    private List<GenericField> genericFieldList;
 
     private FieldsSelectFrame.SelectionListener selectionListener;
 
 
-    public GeneralEntityDetailsPanel(EntityModel entityModel, Collection<FieldMetadata> fields) {
+    public GeneralEntityDetailsPanel(EntityModel entityModel, Collection<FieldMetadata> fields, EntityService entityService) {
         setLayout(new BorderLayout(0, 0));
 
         this.entityModel = entityModel;
-        this.fields = fields;
+
+        genericFieldList = new ArrayList<>();
+
+        //create the generic fields
+        fields.forEach(e -> genericFieldList.add(new GenericField(e, entityService, entityModel)));
 
         DataManager dataManager = DataManager.getInstance();
         @SuppressWarnings("deprecation")

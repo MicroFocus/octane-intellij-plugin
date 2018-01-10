@@ -99,7 +99,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                 (entityModel) -> {
                     if (entityModel != null) {
                         this.entityModel = entityModel;
-                        entityDetailView.createDetailsPanel(entityModel, fields);
+                        entityDetailView.createDetailsPanel(entityModel, fields, entityService);
                         entityDetailView.setSaveSelectedPhaseButton(new SaveSelectedPhaseAction());
                         entityDetailView.setRefreshEntityButton(new EntityRefreshAction());
                         if (entityType != TASK && entityType != MANUAL_TEST_RUN && entityType != TEST_SUITE_RUN) {
