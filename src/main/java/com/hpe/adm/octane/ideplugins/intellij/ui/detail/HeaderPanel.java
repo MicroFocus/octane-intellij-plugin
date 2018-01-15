@@ -49,7 +49,6 @@ public class HeaderPanel extends JPanel {
     private DefaultActionGroup buttonActionGroup;
 
 
-
     public HeaderPanel() {
         UIManager.put("ComboBox.background", JBColor.background());
         UIManager.put("ComboBox.foreground", JBColor.foreground());
@@ -166,11 +165,11 @@ public class HeaderPanel extends JPanel {
         this.entityLinkToBrowser.setText(nameDetails);
     }
 
-    public void setNameFieldListener(ActionListener actionListener){
+    public void setNameFieldListener(ActionListener actionListener) {
         this.entityLinkToBrowser.addActionListener(actionListener);
     }
 
-    public String getNameFieldValue(){
+    public String getNameFieldValue() {
         return entityLinkToBrowser.getText();
     }
 

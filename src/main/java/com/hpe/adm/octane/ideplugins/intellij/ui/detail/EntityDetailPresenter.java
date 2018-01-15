@@ -128,8 +128,6 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                 null,
                 null,
                 "Loading entity " + entityType.name() + ": " + entityId);
-
-
     }
 
     private void setPossibleTransitions(EntityModel entityModel) {

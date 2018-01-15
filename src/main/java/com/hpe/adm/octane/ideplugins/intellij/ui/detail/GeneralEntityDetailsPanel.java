@@ -262,7 +262,7 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         headerPanel.setNameDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_NAME)));
 
         GenericField gField = genericFieldList.stream().filter(f -> f.getFieldName().equals("name")).limit(1).collect(Collectors.toList()).get(0);
-        headerPanel.setNameFieldListener(e -> gField.updateField(entityModel,headerPanel.getNameFieldValue()) );
+        headerPanel.setNameFieldListener(e -> gField.updateField(entityModel, headerPanel.getNameFieldValue()));
         createSectionWithEntityDetails(entityModel, selectedFields.get(Entity.getEntityType(entityModel)));
     }
 
@@ -315,7 +315,7 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         fieldsPopup.addSelectionListener(selectionListener);
     }
 
-    public void addFieldSelectListener(FieldsSelectFrame.SelectionListener selectionListener){
+    public void addFieldSelectListener(FieldsSelectFrame.SelectionListener selectionListener) {
         this.selectionListener = selectionListener;
     }
 
@@ -346,8 +346,8 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
                 fieldValueLabel.setToolTipText(fieldValue);
                 GridBagConstraints gbc2 = new GridBagConstraints();
 
-                if(gField.isEditable()){
-                    fieldValueLabel.addActionListener(e -> gField.updateField(entityModel,fieldValueLabel.getText()));
+                if (gField.isEditable()) {
+                    fieldValueLabel.addActionListener(e -> gField.updateField(entityModel, fieldValueLabel.getText()));
                 } else {
                     fieldValueLabel.setEnabled(false);
                 }
@@ -371,13 +371,13 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
                 if (fieldCount % 2 == 0) {
                     detailsPanelLeft.add(fieldLabel, gbc1);
                     detailsPanelLeft.add(fieldValueLabel, gbc2);
-                    if(gField.isEditable())
-                            detailsPanelLeft.add(new JXLabel(IconLoader.findIcon(Constants.IMG_EDIT_LOGO)),gbc3);
+                    if (gField.isEditable())
+                        detailsPanelLeft.add(new JXLabel(IconLoader.findIcon(Constants.IMG_EDIT_LOGO)), gbc3);
                 } else {
                     detailsPanelRight.add(fieldLabel, gbc1);
                     detailsPanelRight.add(fieldValueLabel, gbc2);
-                    if(gField.isEditable())
-                            detailsPanelRight.add(new JXLabel(IconLoader.findIcon(Constants.IMG_EDIT_LOGO)),gbc3);
+                    if (gField.isEditable())
+                        detailsPanelRight.add(new JXLabel(IconLoader.findIcon(Constants.IMG_EDIT_LOGO)), gbc3);
                 }
                 i++;
                 fieldCount++;
@@ -401,9 +401,9 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         gbc1.gridy = 1;
         mainPanel.add(detailsPanelLeft, gbc1);
         GridBagLayout gbl_detailsPanelLeft = new GridBagLayout();
-        gbl_detailsPanelLeft.columnWidths = new int[]{0, 0,0};
+        gbl_detailsPanelLeft.columnWidths = new int[]{0, 0, 0};
         gbl_detailsPanelLeft.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-        gbl_detailsPanelLeft.columnWeights = new double[]{0.0, 1.0,0.0};
+        gbl_detailsPanelLeft.columnWeights = new double[]{0.0, 1.0, 0.0};
         gbl_detailsPanelLeft.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
         detailsPanelLeft.setLayout(gbl_detailsPanelLeft);
         return detailsPanelLeft;
@@ -455,17 +455,18 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         return detailsPanelMain;
     }
 
-    public Set<String> getSelectedFields(){
+    public Set<String> getSelectedFields() {
         return fieldsPopup.getSelectedFields();
     }
 
-    public void setSelectedFields(Set<String> selectedFields){
+    public void setSelectedFields(Set<String> selectedFields) {
         fieldsPopup.setSelectedFieldsFromOtherTab(selectedFields);
     }
 
-    public EntityModel getEntityModel(){
+    public EntityModel getEntityModel() {
         return entityModel;
     }
+
     @Override
     public Dimension getPreferredScrollableViewportSize() {
         return getPreferredSize();
