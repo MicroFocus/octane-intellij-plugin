@@ -99,7 +99,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                 (entityModel) -> {
                     if (entityModel != null) {
                         this.entityModel = entityModel;
-                        entityDetailView.createDetailsPanel(entityModel, fields, entityService);
+                        entityDetailView.createDetailsPanel(entityModel, fields);
                         entityDetailView.setSaveSelectedPhaseButton(new SaveSelectedPhaseAction());
                         entityDetailView.setRefreshEntityButton(new EntityRefreshAction());
                         if (entityType != TASK && entityType != MANUAL_TEST_RUN && entityType != TEST_SUITE_RUN) {
@@ -195,47 +195,51 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
     }
 
     private final class SaveSelectedPhaseAction extends AnAction {
+
+
         public SaveSelectedPhaseAction() {
             super("Save selected phase", "Save changes to entity phase", IconLoader.findIcon("/actions/menu-saveall.png"));
         }
 
         public void actionPerformed(AnActionEvent e) {
-            RestUtil.runInBackground(() -> {
-                EntityModel selectedTransition = entityDetailView.getSelectedTransition();
-                return (ReferenceFieldModel) selectedTransition.getValue("target_phase");
-            }, (nextPhase) -> {
-                try {
-                    entityService.updateEntityPhase(entityDetailView.getEntityModel(), nextPhase);
-                } catch (OctaneException ex) {
-                    if (ex.getMessage().contains("400")) {
-                        String errorMessage = "Failed to change phase";
-                        try {
-                            JsonParser jsonParser = new JsonParser();
-                            JsonObject jsonObject = (JsonObject) jsonParser.parse(ex.getMessage().substring(ex.getMessage().indexOf("{")));
-                            errorMessage = jsonObject.get("description_translated").getAsString();
-                        } catch (Exception e1) {
-                            logger.debug("Failed to get JSON message from Octane Server" + e1.getMessage());
-                        }
-                        ConfirmationDialog dialog = new ConfirmationDialog(
-                                project,
-                                "Server message: " + errorMessage + GO_TO_BROWSER_DIALOG_MESSAGE,
-                                "Business rule violation",
-                                null, VcsShowConfirmationOption.STATIC_SHOW_CONFIRMATION) {
-                            @Override
-                            public void setDoNotAskOption(@Nullable DoNotAskOption doNotAsk) {
-                                super.setDoNotAskOption(null);
+                RestUtil.runInBackground(() -> {
+                    EntityModel selectedTransition = entityDetailView.getSelectedTransition();
+                    EntityModel updatedEntityModel = entityDetailView.getEntityModel();
+                    updatedEntityModel.removeValue("phase");
+                    updatedEntityModel.setValue((new ReferenceFieldModel("phase",((ReferenceFieldModel) selectedTransition.getValue("target_phase")).getValue())));
+                    return updatedEntityModel;
+                }, (newEntityModel) -> {
+                    try {
+                        entityService.updateEntity(newEntityModel);
+                    } catch (OctaneException ex) {
+                        if (ex.getMessage().contains("400")) {
+                            String errorMessage = "Failed to update entity";
+                            try {
+                                JsonParser jsonParser = new JsonParser();
+                                JsonObject jsonObject = (JsonObject) jsonParser.parse(ex.getMessage().substring(ex.getMessage().indexOf("{")));
+                                errorMessage = jsonObject.get("description_translated").getAsString();
+                            } catch (Exception e1) {
+                                logger.debug("Failed to get JSON message from Octane Server" + e1.getMessage());
                             }
-                        };
-                        if (dialog.showAndGet()) {
-                            entityService.openInBrowser(entityModel);
+                            ConfirmationDialog dialog = new ConfirmationDialog(
+                                    project,
+                                    "Server message: " + errorMessage + GO_TO_BROWSER_DIALOG_MESSAGE,
+                                    "Business rule violation",
+                                    null, VcsShowConfirmationOption.STATIC_SHOW_CONFIRMATION) {
+                                @Override
+                                public void setDoNotAskOption(@Nullable DoNotAskOption doNotAsk) {
+                                    super.setDoNotAskOption(null);
+                                }
+                            };
+                            if (dialog.showAndGet()) {
+                                entityService.openInBrowser(entityModel);
+                            }
                         }
                     }
-                }
-                entityDetailView.doRefresh();
-                setEntity(entityType, entityId);
-            }, null, "Failed to move to next phase", "Moving to next phase");
-
-        }
+                    entityDetailView.doRefresh();
+                    setEntity(entityType, entityId);
+                }, null, "Failed to update entity", "Updating entity");
+            }
     }
 
     public void addSendNewCommentAction(EntityModel entityModel) {

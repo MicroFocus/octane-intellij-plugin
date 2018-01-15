@@ -56,9 +56,9 @@ public class EntityDetailView implements View {
     }
 
 
-    public void createDetailsPanel(EntityModel entityModel, Collection<FieldMetadata> fields, EntityService entityService) {
+    public void createDetailsPanel(EntityModel entityModel, Collection<FieldMetadata> fields) {
         this.entityModel = entityModel;
-        entityDetailsPanel = new GeneralEntityDetailsPanel(entityModel, fields, entityService);
+        entityDetailsPanel = new GeneralEntityDetailsPanel(entityModel, fields);
         if(selectionListener != null){
             entityDetailsPanel.addFieldSelectListener(selectionListener);
         }
@@ -111,7 +111,7 @@ public class EntityDetailView implements View {
     }
 
     public EntityModel getEntityModel() {
-        return this.entityModel;
+        return entityDetailsPanel.getEntityModel();
     }
 
     public void setEntityNameClickHandler(Runnable runnable) {

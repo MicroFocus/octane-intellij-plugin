@@ -18,7 +18,9 @@ import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
+import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
+import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.nowork.NoWorkPanel;
 import com.hpe.adm.octane.ideplugins.services.EntityService;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.util.DefaultEntityFieldsUtil;
@@ -27,6 +29,7 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.DataKeys;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.JBColor;
 import javafx.application.Platform;
 import org.jdesktop.swingx.JXCollapsiblePane;
@@ -72,7 +75,7 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
     private FieldsSelectFrame.SelectionListener selectionListener;
 
 
-    public GeneralEntityDetailsPanel(EntityModel entityModel, Collection<FieldMetadata> fields, EntityService entityService) {
+    public GeneralEntityDetailsPanel(EntityModel entityModel, Collection<FieldMetadata> fields) {
         setLayout(new BorderLayout(0, 0));
 
         this.entityModel = entityModel;
@@ -80,7 +83,7 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         genericFieldList = new ArrayList<>();
 
         //create the generic fields
-        fields.forEach(e -> genericFieldList.add(new GenericField(e, entityService, entityModel)));
+        fields.forEach(e -> genericFieldList.add(new GenericField(e)));
 
         DataManager dataManager = DataManager.getInstance();
         @SuppressWarnings("deprecation")
@@ -340,10 +343,11 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
                 GridBagConstraints gbc2 = new GridBagConstraints();
 
                 if(gField.isEditable()){
-                    //TODO add the creion label as background or somesing
+                    fieldValueLabel.addActionListener(e -> gField.updateField(entityModel,fieldValueLabel.getText()));
                 } else {
-                    fieldValueLabel.setFocusable(false);
+                    fieldValueLabel.setEnabled(false);
                 }
+                fieldValueLabel.setBackground(detailsPanelLeft.getBackground());
 
                 gbc2.insets = new Insets(10, 10, 0, 5);
                 gbc2.anchor = GridBagConstraints.SOUTHWEST;
@@ -351,12 +355,25 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
                 gbc2.gridx = 1;
                 gbc2.gridy = i;
 
+                //edit label grid bag layout
+                GridBagConstraints gbc3 = new GridBagConstraints();
+                gbc3.anchor = GridBagConstraints.SOUTHWEST;
+                gbc3.insets = new Insets(10, 0, 0, 0);
+                gbc3.fill = GridBagConstraints.HORIZONTAL;
+                gbc3.gridx = 2;
+                gbc3.gridy = i;
+
+
                 if (fieldCount % 2 == 0) {
                     detailsPanelLeft.add(fieldLabel, gbc1);
                     detailsPanelLeft.add(fieldValueLabel, gbc2);
+                    if(gField.isEditable())
+                            detailsPanelLeft.add(new JXLabel(IconLoader.findIcon(Constants.IMG_EDIT_LOGO)),gbc3);
                 } else {
                     detailsPanelRight.add(fieldLabel, gbc1);
                     detailsPanelRight.add(fieldValueLabel, gbc2);
+                    if(gField.isEditable())
+                            detailsPanelRight.add(new JXLabel(IconLoader.findIcon(Constants.IMG_EDIT_LOGO)),gbc3);
                 }
                 i++;
                 fieldCount++;
@@ -380,9 +397,9 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         gbc1.gridy = 1;
         mainPanel.add(detailsPanelLeft, gbc1);
         GridBagLayout gbl_detailsPanelLeft = new GridBagLayout();
-        gbl_detailsPanelLeft.columnWidths = new int[]{0, 0};
+        gbl_detailsPanelLeft.columnWidths = new int[]{0, 0,0};
         gbl_detailsPanelLeft.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-        gbl_detailsPanelLeft.columnWeights = new double[]{0.0, 1.0};
+        gbl_detailsPanelLeft.columnWeights = new double[]{0.0, 1.0,0.0};
         gbl_detailsPanelLeft.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
         detailsPanelLeft.setLayout(gbl_detailsPanelLeft);
         return detailsPanelLeft;
@@ -399,9 +416,9 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         gbc1.fill = GridBagConstraints.HORIZONTAL;
         mainPanel.add(detailsPanelRight, gbc1);
         GridBagLayout gbl_detailsPanelRight = new GridBagLayout();
-        gbl_detailsPanelRight.columnWidths = new int[]{0, 0};
+        gbl_detailsPanelRight.columnWidths = new int[]{0, 0, 0};
         gbl_detailsPanelRight.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-        gbl_detailsPanelRight.columnWeights = new double[]{0.0, 1.0};
+        gbl_detailsPanelRight.columnWeights = new double[]{0.0, 1.0, 0.0};
         gbl_detailsPanelRight.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
         detailsPanelRight.setLayout(gbl_detailsPanelRight);
         return detailsPanelRight;
@@ -428,7 +445,7 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         GridBagLayout mainPaneGrid = new GridBagLayout();
         mainPaneGrid.columnWidths = new int[]{0, 0};
         mainPaneGrid.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-        mainPaneGrid.columnWeights = new double[]{0.5, 1.0};
+        mainPaneGrid.columnWeights = new double[]{0.5, 0.5};
         mainPaneGrid.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
         detailsPanelMain.setLayout(mainPaneGrid);
         return detailsPanelMain;
@@ -442,6 +459,9 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         fieldsPopup.setSelectedFieldsFromOtherTab(selectedFields);
     }
 
+    public EntityModel getEntityModel(){
+        return entityModel;
+    }
     @Override
     public Dimension getPreferredScrollableViewportSize() {
         return getPreferredSize();
