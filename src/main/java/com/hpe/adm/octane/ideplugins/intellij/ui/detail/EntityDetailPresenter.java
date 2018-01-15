@@ -63,6 +63,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
     private EntityModel entityModel;
     private Logger logger = Logger.getInstance("EntityDetailPresenter");
     private final String GO_TO_BROWSER_DIALOG_MESSAGE = "\nYou can only provide a value for this field using ALM Octane in a browser." + "\nDo you want to do this now? ";
+    private int clickCount = 0;
 
     public EntityDetailPresenter() {
     }
@@ -116,7 +117,12 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                         }
                         entityDetailView.setFieldSelectButton(new SelectFieldsAction());
                         //Title goes to browser
-                        entityDetailView.setEntityNameClickHandler(() -> entityService.openInBrowser(entityModel));
+                        entityDetailView.setEntityNameClickHandler(() -> {
+                            if (clickCount == 1) {
+                                entityService.openInBrowser(entityModel);
+                                clickCount = 0;
+                            } else clickCount++;
+                        });
                     }
                 },
                 null,
@@ -202,44 +208,44 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
         }
 
         public void actionPerformed(AnActionEvent e) {
-                RestUtil.runInBackground(() -> {
-                    EntityModel selectedTransition = entityDetailView.getSelectedTransition();
-                    EntityModel updatedEntityModel = entityDetailView.getEntityModel();
-                    updatedEntityModel.removeValue("phase");
-                    updatedEntityModel.setValue((new ReferenceFieldModel("phase",((ReferenceFieldModel) selectedTransition.getValue("target_phase")).getValue())));
-                    return updatedEntityModel;
-                }, (newEntityModel) -> {
-                    try {
-                        entityService.updateEntity(newEntityModel);
-                    } catch (OctaneException ex) {
-                        if (ex.getMessage().contains("400")) {
-                            String errorMessage = "Failed to update entity";
-                            try {
-                                JsonParser jsonParser = new JsonParser();
-                                JsonObject jsonObject = (JsonObject) jsonParser.parse(ex.getMessage().substring(ex.getMessage().indexOf("{")));
-                                errorMessage = jsonObject.get("description_translated").getAsString();
-                            } catch (Exception e1) {
-                                logger.debug("Failed to get JSON message from Octane Server" + e1.getMessage());
+            RestUtil.runInBackground(() -> {
+                EntityModel selectedTransition = entityDetailView.getSelectedTransition();
+                EntityModel updatedEntityModel = entityDetailView.getEntityModel();
+                updatedEntityModel.removeValue("phase");
+                updatedEntityModel.setValue((new ReferenceFieldModel("phase", ((ReferenceFieldModel) selectedTransition.getValue("target_phase")).getValue())));
+                return updatedEntityModel;
+            }, (newEntityModel) -> {
+                try {
+                    entityService.updateEntity(newEntityModel);
+                } catch (OctaneException ex) {
+                    if (ex.getMessage().contains("400")) {
+                        String errorMessage = "Failed to update entity";
+                        try {
+                            JsonParser jsonParser = new JsonParser();
+                            JsonObject jsonObject = (JsonObject) jsonParser.parse(ex.getMessage().substring(ex.getMessage().indexOf("{")));
+                            errorMessage = jsonObject.get("description_translated").getAsString();
+                        } catch (Exception e1) {
+                            logger.debug("Failed to get JSON message from Octane Server" + e1.getMessage());
+                        }
+                        ConfirmationDialog dialog = new ConfirmationDialog(
+                                project,
+                                "Server message: " + errorMessage + GO_TO_BROWSER_DIALOG_MESSAGE,
+                                "Business rule violation",
+                                null, VcsShowConfirmationOption.STATIC_SHOW_CONFIRMATION) {
+                            @Override
+                            public void setDoNotAskOption(@Nullable DoNotAskOption doNotAsk) {
+                                super.setDoNotAskOption(null);
                             }
-                            ConfirmationDialog dialog = new ConfirmationDialog(
-                                    project,
-                                    "Server message: " + errorMessage + GO_TO_BROWSER_DIALOG_MESSAGE,
-                                    "Business rule violation",
-                                    null, VcsShowConfirmationOption.STATIC_SHOW_CONFIRMATION) {
-                                @Override
-                                public void setDoNotAskOption(@Nullable DoNotAskOption doNotAsk) {
-                                    super.setDoNotAskOption(null);
-                                }
-                            };
-                            if (dialog.showAndGet()) {
-                                entityService.openInBrowser(entityModel);
-                            }
+                        };
+                        if (dialog.showAndGet()) {
+                            entityService.openInBrowser(entityModel);
                         }
                     }
-                    entityDetailView.doRefresh();
-                    setEntity(entityType, entityId);
-                }, null, "Failed to update entity", "Updating entity");
-            }
+                }
+                entityDetailView.doRefresh();
+                setEntity(entityType, entityId);
+            }, null, "Failed to update entity", "Updating entity");
+        }
     }
 
     public void addSendNewCommentAction(EntityModel entityModel) {

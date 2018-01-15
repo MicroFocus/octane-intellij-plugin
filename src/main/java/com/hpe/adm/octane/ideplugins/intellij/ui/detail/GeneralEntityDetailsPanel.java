@@ -49,6 +49,7 @@ import java.awt.event.ComponentEvent;
 import java.util.*;
 import java.awt.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.hpe.adm.octane.ideplugins.services.util.Util.getUiDataFromModel;
 
@@ -259,6 +260,9 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         EntityIconFactory entityIconFactory = new EntityIconFactory(26, 26, 12);
         headerPanel.setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(Entity.getEntityType(entityModel))));
         headerPanel.setNameDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_NAME)));
+
+        GenericField gField = genericFieldList.stream().filter(f -> f.getFieldName().equals("name")).limit(1).collect(Collectors.toList()).get(0);
+        headerPanel.setNameFieldListener(e -> gField.updateField(entityModel,headerPanel.getNameFieldValue()) );
         createSectionWithEntityDetails(entityModel, selectedFields.get(Entity.getEntityType(entityModel)));
     }
 

@@ -22,10 +22,12 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.ui.JBColor;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
+import org.jdesktop.swingx.JXTextField;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Collection;
@@ -33,7 +35,7 @@ import java.util.Collection;
 public class HeaderPanel extends JPanel {
 
     private JLabel entityIconLabel;
-    private JXLabel entityLinkToBrowser;
+    private JXTextField entityLinkToBrowser;
 
     private JXPanel phasePanel;
 
@@ -45,6 +47,7 @@ public class HeaderPanel extends JPanel {
     private ActionToolbar actionToolBar;
     private JPanel panelControls;
     private DefaultActionGroup buttonActionGroup;
+
 
 
     public HeaderPanel() {
@@ -62,13 +65,14 @@ public class HeaderPanel extends JPanel {
         gridBagLayout.rowWeights = new double[]{0.0, Double.MIN_VALUE};
         setLayout(gridBagLayout);
 
-        entityLinkToBrowser = new JXLabel();
-        entityLinkToBrowser.setFont(new Font("Arial", Font.PLAIN, 13));
+        entityLinkToBrowser = new JXTextField();
+        entityLinkToBrowser.setFont(new Font("Arial", Font.PLAIN, 15));
         entityLinkToBrowser.setBorder(new EmptyBorder(0, 5, 0, 0));
+        entityLinkToBrowser.setBackground(this.getBackground());
         entityLinkToBrowser.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                entityLinkToBrowser.setForeground(Color.blue);
+                entityLinkToBrowser.setForeground(Color.cyan);
             }
 
             @Override
@@ -159,8 +163,17 @@ public class HeaderPanel extends JPanel {
     }
 
     public void setNameDetails(String nameDetails) {
-        this.entityLinkToBrowser.setText("<html><body><span style=\"font-family:'arial unicode ms'\">" + nameDetails + "</body></html>");
+        this.entityLinkToBrowser.setText(nameDetails);
     }
+
+    public void setNameFieldListener(ActionListener actionListener){
+        this.entityLinkToBrowser.addActionListener(actionListener);
+    }
+
+    public String getNameFieldValue(){
+        return entityLinkToBrowser.getText();
+    }
+
 
     public void setPhaseDetails(String phaseDetails) {
         this.phaseDetails.setText(phaseDetails);
