@@ -19,7 +19,7 @@
     <!--This is set by gradle build plugin-->
     <version>0.0</version>
 
-    <vendor email="support@hpe.com" url="https://www.hpe.com">Hewlett Packard Enterprise</vendor>
+    <vendor email="agm.cluj.dev@microfocus.com" url="https://www.microfocus.com">Micro Focus</vendor>
 
     <description><![CDATA[
         Enables integration with ALM Octane.<br>
