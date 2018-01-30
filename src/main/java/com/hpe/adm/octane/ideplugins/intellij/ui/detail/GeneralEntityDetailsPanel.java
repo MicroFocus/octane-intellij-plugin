@@ -55,7 +55,7 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
     private Map<Entity, Set<String>> defaultFields = DefaultEntityFieldsUtil.getDefaultFields();
     private Map<Entity, Set<String>> selectedFields;
     private JXPanel entityDetailsPanel;
-    private JXCollapsiblePane commentsDetails;
+    private JXPanel commentsDetails;
     private FieldsSelectFrame fieldsPopup;
     private JXPanel detailsPanelLeft;
     private JXPanel detailsPanelRight;
@@ -166,15 +166,17 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         gbc_descriptionDetails_1.gridx = 0;
         gbc_descriptionDetails_1.gridy = 1;
 
-        commentsDetails = new JXCollapsiblePane(Direction.LEFT);
-        commentsDetails.setCollapsed(true);
+        commentsDetails = new JXPanel();
+        commentsDetails.setVisible(false);
         commentsDetails.setLayout(new BorderLayout());
+        commentsDetails.setMinimumSize(new Dimension(400,200));
+        commentsDetails.setScrollableTracksViewportWidth(false);
 
         commentsListPanel = new CommentsConversationPanel();
         commentsListPanel.setPreferredSize(new Dimension(400, (int) entityDetailsPanel.getPreferredSize().getHeight() + 50));
         commentsListPanel.setMaximumSize(new Dimension(400, 200));
         commentsListPanel.setBorder(new MatteBorder(1, 1, 1, 1, JBColor.border()));
-        commentsDetails.getContentPane().add(commentsListPanel);
+        commentsDetails.add(commentsListPanel);
 
 
         GridBagConstraints gbc_commentsPanel = new GridBagConstraints();
@@ -286,7 +288,7 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
     }
 
     public void activateCommentsCollapsible() {
-        commentsDetails.setCollapsed(!commentsDetails.isCollapsed());
+        commentsDetails.setVisible(!commentsDetails.isVisible());
     }
 
     public void setFieldSelectButton(EntityDetailPresenter.SelectFieldsAction fieldSelectButton) {
