@@ -27,10 +27,17 @@
     ]]></description>
 
     <change-notes><![CDATA[
+      <b>2016.2-12.55.13.1</b>
+      <ul>
+        <li>Micro Focus re-branding</li>
+        <li>User can now select what fields to see in a backlog item's details view</li>
+      </ul>
+
       <b>2016.2-12.55.8.1</b>
       <ul>
         <li>Implemented compatibility with ALM Octane 12.55.8 (backwards compatible down to version 12.53.20)</li>
       </ul>
+
       <b>2016.2-12.55.6.1</b>
       <ul>
         <li>Added support for requirements and updated the commit message functionality</li>
