@@ -80,7 +80,7 @@ public class HeaderPanel extends JPanel {
         entityIconLabel = new JLabel("");
         entityIconLabel.setHorizontalAlignment(SwingConstants.CENTER);
         GridBagConstraints gbc_entityIconLabel = new GridBagConstraints();
-        gbc_entityIconLabel.insets = new Insets(0, 20, 0, 5);
+        gbc_entityIconLabel.insets = new Insets(0, 10, 0, 5);
         gbc_entityIconLabel.gridx = 0;
         gbc_entityIconLabel.gridy = 0;
         add(entityIconLabel, gbc_entityIconLabel);

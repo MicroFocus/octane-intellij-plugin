@@ -143,7 +143,7 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
 
         JXPanel entityDetailsAndCommentsPanel = new JXPanel();
         GridBagConstraints gbc_entityDetailsAndCommentsPanel = new GridBagConstraints();
-        gbc_entityDetailsAndCommentsPanel.insets = new Insets(0, 0, 5, 0);
+        gbc_entityDetailsAndCommentsPanel.insets = new Insets(10, 10, 5, 0);
         gbc_entityDetailsAndCommentsPanel.fill = GridBagConstraints.BOTH;
         gbc_entityDetailsAndCommentsPanel.gridx = 0;
         gbc_entityDetailsAndCommentsPanel.gridy = 1;
@@ -161,7 +161,7 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         entityDetailsAndCommentsPanel.add(entityDetailsPanel, gbc_entityDetailsPanel);
 
         GridBagConstraints gbc_descriptionDetails_1 = new GridBagConstraints();
-        gbc_descriptionDetails_1.insets = new Insets(0, 0, 5, 0);
+        gbc_descriptionDetails_1.insets = new Insets(0, 10, 5, 0);
         gbc_descriptionDetails_1.fill = GridBagConstraints.BOTH;
         gbc_descriptionDetails_1.gridx = 0;
         gbc_descriptionDetails_1.gridy = 1;
