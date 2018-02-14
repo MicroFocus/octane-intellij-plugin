@@ -84,7 +84,7 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         genericFieldList = new ArrayList<>();
 
         //create the generic fields
-        fields.forEach(e -> genericFieldList.add(new GenericField(e)));
+        fields.forEach(e -> { if(!"phase".equals(e.getName())) genericFieldList.add(new GenericField(e));});
 
         DataManager dataManager = DataManager.getInstance();
         @SuppressWarnings("deprecation")
@@ -308,7 +308,7 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
     public void setFieldSelectButton(EntityDetailPresenter.SelectFieldsAction fieldSelectButton) {
         headerPanel.setFieldSelectButton(fieldSelectButton);
         fieldsPopup = new FieldsSelectFrame(defaultFields.get(Entity.getEntityType(entityModel)),
-                fields,
+                fields.stream().filter(e -> !"description".equals(e.getName())&&!"phase".equals(e.getName())&&!"name".equals(e.getName())).collect(Collectors.toList()),
                 selectedFields,
                 Entity.getEntityType(entityModel),
                 idePluginPersistentState,
@@ -328,6 +328,10 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         int fieldCount = 0;
         int i = 0;
         for (GenericField gField : genericFieldList) {
+            if("name".equals(gField.getFieldName())){
+                continue;
+            }
+
             if (fieldNames.contains(gField.getFieldName())) {
                 JXLabel fieldLabel = new JXLabel();
                 fieldLabel.setFont(new Font("Arial", Font.BOLD, 12));
