@@ -440,10 +440,14 @@ class FillingTree extends JTree {
 
             Component component;
 
-            component = currentCellRenderer.getTreeCellRendererComponent
-                    (tree, path.getLastPathComponent(),
-                            tree.isRowSelected(row), isExpanded, isLeaf, row,
-                            (leadIndex == row));
+            try{
+                component = currentCellRenderer.getTreeCellRendererComponent
+                        (tree, path.getLastPathComponent(),
+                                tree.isRowSelected(row), isExpanded, isLeaf, row,
+                                (leadIndex == row));
+            } catch (Exception ex){
+                component = new JLabel("N/A");
+            }
 
             rendererPane.paintComponent(g, component, tree, bounds.x, bounds.y,
                     bounds.width, bounds.height, true);
