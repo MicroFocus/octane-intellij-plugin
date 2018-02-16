@@ -267,7 +267,6 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
             final StringBuilder errorMessageBuilder = new StringBuilder();
             errorMessageBuilder.append(ex.getMessage());
             errorMessageBuilder.append(Constants.CORRECT_URL_FORMAT_MESSAGE);
-            //SwingUtilities.invokeLater(() -> connectionSettingsView.setConnectionStatusError(errorMessageBuilder.toString()));
             connectionSettingsView.setConnectionStatusError(errorMessageBuilder.toString());
             throw ex;
         }
