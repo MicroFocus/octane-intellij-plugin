@@ -198,7 +198,7 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
                     @Override
                     public void mousePressed(MouseEvent e) {
                         ApplicationManager.getApplication().invokeLater(() -> {
-                            Task.Backgroundable backgroundTask = new Task.Backgroundable(null, "Adding item to to \"My Work\"", true) {
+                            Task.Backgroundable backgroundTask = new Task.Backgroundable(null, "Adding item to \"My Work\"", true) {
                                 public void run(@NotNull ProgressIndicator indicator) {
                                     if(myWorkService.addToMyWork(entityModel)) {
                                         eventBus.post(new RefreshMyWorkEvent());
