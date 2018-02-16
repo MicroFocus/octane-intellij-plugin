@@ -132,17 +132,17 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
         entityFields.get(Entity.REQUIREMENT).add(FIELD_RELEASE);
         entityFields.get(Entity.REQUIREMENT).add("subtype");
 
-        subtypeNames.put("story", "User Story");
-        subtypeNames.put("defect", "Defect");
-        subtypeNames.put("quality_story", "Quality Story");
-        subtypeNames.put("epic", "Epic");
-        subtypeNames.put("feature", "Feature");
-        subtypeNames.put("gherkin_test", "Gherkin Test");
-        subtypeNames.put("test_manual", "Manual Test");
-        subtypeNames.put("run_manual", "Manual Run");
-        subtypeNames.put("test_suite", "Test Suite");
-        subtypeNames.put("run_suite", "Run Suite");
-        subtypeNames.put("requirement_document", "Requirement");
+        subtypeNames.put("story", "user story");
+        subtypeNames.put("defect", "defect");
+        subtypeNames.put("quality_story", "quality story");
+        subtypeNames.put("epic", "epic");
+        subtypeNames.put("feature", "feature");
+        subtypeNames.put("gherkin_test", "gherkin test");
+        subtypeNames.put("test_manual", "manual test");
+        subtypeNames.put("run_manual", "manual tun");
+        subtypeNames.put("test_suite", "test suite");
+        subtypeNames.put("run_suite", "run suite");
+        subtypeNames.put("requirement_document", "requirement");
     }
 
     /**
@@ -322,9 +322,9 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
                 FieldModel owner = getContainerItemForCommentModel(entityModel);
                 String ownerId = getUiDataFromModel(owner, "id");
                 String ownerName = getUiDataFromModel(owner, "name");
-                String ownerSubtype = getUiDataFromModel(owner, "subtype");
+                String ownerSubtype = getUiDataFromModel(owner, "type");
 
-                String entityName = wrapHtml("Appears in " + getSubtypeName(ownerSubtype) + ": " + "<b>" + ownerId + "</b>" + " " + ownerName);
+                String entityName = wrapHtml("Comment on " + getSubtypeName(ownerSubtype) + ": " + "<b>" + ownerId + "</b>" + " " + ownerName);
 
                 rowPanel.setEntityName("", entityName);
                 rowPanel.setEntitySubTitle(text, "");
