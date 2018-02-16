@@ -184,7 +184,7 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
         }
     }
 
-    private void showWarningBallon(String message){
+    private void showWarningBallon(String message) {
         StatusBar statusBar = WindowManager.getInstance().getStatusBar(currentProject);
         Balloon balloon = JBPopupFactory.getInstance().createHtmlTextBalloonBuilder(message,
                 MessageType.WARNING, null)
@@ -217,7 +217,7 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
             testOctaneVersion(newConnectionSettings);
             SwingUtilities.invokeLater(connectionSettingsView::setConnectionStatusSuccess);
         } catch (ServiceException | ServiceRuntimeException ex) {
-            SwingUtilities.invokeLater(() -> connectionSettingsView.setConnectionStatusError(ex.getMessage()));
+            connectionSettingsView.setConnectionStatusError(ex.getMessage());
             return null;
         }
 
@@ -267,7 +267,8 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
             final StringBuilder errorMessageBuilder = new StringBuilder();
             errorMessageBuilder.append(ex.getMessage());
             errorMessageBuilder.append(Constants.CORRECT_URL_FORMAT_MESSAGE);
-            SwingUtilities.invokeLater(() -> connectionSettingsView.setConnectionStatusError(errorMessageBuilder.toString()));
+            //SwingUtilities.invokeLater(() -> connectionSettingsView.setConnectionStatusError(errorMessageBuilder.toString()));
+            connectionSettingsView.setConnectionStatusError(errorMessageBuilder.toString());
             throw ex;
         }
 
@@ -275,7 +276,7 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
         try {
             validateUsernameAndPassword();
         } catch (ServiceException ex) {
-            SwingUtilities.invokeLater(() -> connectionSettingsView.setConnectionStatusError(ex.getMessage()));
+            connectionSettingsView.setConnectionStatusError(ex.getMessage());
             throw ex;
         }
 
