@@ -181,7 +181,7 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
             });
             popup.add(viewInBrowserItem);
 
-            if(isDetailTabSupporterd(entityType)){
+            if(TabbedPanePresenter.isDetailTabSupported(entityType)){
                 Icon icon = new ImageIcon(entityIconFactory.getIconAsImage(entityType));
                 JMenuItem viewDetailMenuItem = new JMenuItem("View details", icon);
                 viewDetailMenuItem.addMouseListener(new MouseAdapter() {
@@ -225,9 +225,5 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
 
             return popup;
         });
-    }
-
-    private boolean isDetailTabSupporterd(Entity entityType){
-        return TabbedPanePresenter.supportedDetailTabs.contains(entityType);
     }
 }
