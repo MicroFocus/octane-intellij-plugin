@@ -242,16 +242,18 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
                     parentEntityModel = (EntityModel) Util.getContainerItemForCommentModel(entityModel).getValue();
                 }
 
-                //Add option
-                Icon icon = new ImageIcon(entityIconFactory.getIconAsImage(Entity.getEntityType(parentEntityModel)));
-                JMenuItem viewParentMenuItem = new JMenuItem("View parent details", icon);
-                viewParentMenuItem.addMouseListener(new MouseAdapter() {
-                    @Override
-                    public void mousePressed(MouseEvent e) {
-                        eventBus.post(new OpenDetailTabEvent(parentEntityModel));
-                    }
-                });
-                popup.add(viewParentMenuItem);
+                if(TabbedPanePresenter.isDetailTabSupported(Entity.getEntityType(parentEntityModel))) {
+                    //Add option
+                    Icon icon = new ImageIcon(entityIconFactory.getIconAsImage(Entity.getEntityType(parentEntityModel)));
+                    JMenuItem viewParentMenuItem = new JMenuItem("View parent details", icon);
+                    viewParentMenuItem.addMouseListener(new MouseAdapter() {
+                        @Override
+                        public void mousePressed(MouseEvent e) {
+                            eventBus.post(new OpenDetailTabEvent(parentEntityModel));
+                        }
+                    });
+                    popup.add(viewParentMenuItem);
+                }
             }
 
             if (entityType == Entity.GHERKIN_TEST) {
