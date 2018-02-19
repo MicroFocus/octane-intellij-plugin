@@ -23,6 +23,7 @@ import com.hpe.adm.octane.ideplugins.intellij.eventbus.RefreshMyWorkEvent;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
+import com.hpe.adm.octane.ideplugins.intellij.ui.tabbedpane.TabbedPanePresenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityCategory;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeView;
@@ -180,7 +181,7 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
             });
             popup.add(viewInBrowserItem);
 
-            if(entityType != Entity.COMMENT && entityType != Entity.AUTOMATED_TEST && entityType != Entity.EPIC) {
+            if(isDetailTabSupporterd(entityType)){
                 Icon icon = new ImageIcon(entityIconFactory.getIconAsImage(entityType));
                 JMenuItem viewDetailMenuItem = new JMenuItem("View details", icon);
                 viewDetailMenuItem.addMouseListener(new MouseAdapter() {
@@ -226,5 +227,7 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
         });
     }
 
-
+    private boolean isDetailTabSupporterd(Entity entityType){
+        return TabbedPanePresenter.supportedDetailTabs.contains(entityType);
+    }
 }
