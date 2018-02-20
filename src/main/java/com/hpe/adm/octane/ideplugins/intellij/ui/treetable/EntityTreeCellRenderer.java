@@ -17,6 +17,7 @@ import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.nga.sdk.model.FieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
+import com.hpe.adm.octane.ideplugins.services.EntityService;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.mywork.MyWorkUtil;
 import com.hpe.adm.octane.ideplugins.services.util.EntityTypeIdPair;
@@ -132,17 +133,17 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
         entityFields.get(Entity.REQUIREMENT).add(FIELD_RELEASE);
         entityFields.get(Entity.REQUIREMENT).add("subtype");
 
-        subtypeNames.put("story", "user story");
-        subtypeNames.put("defect", "defect");
-        subtypeNames.put("quality_story", "quality story");
-        subtypeNames.put("epic", "epic");
-        subtypeNames.put("feature", "feature");
-        subtypeNames.put("gherkin_test", "gherkin test");
-        subtypeNames.put("test_manual", "manual test");
-        subtypeNames.put("run_manual", "manual tun");
-        subtypeNames.put("test_suite", "test suite");
-        subtypeNames.put("run_suite", "run suite");
-        subtypeNames.put("requirement_document", "requirement");
+        subtypeNames.put(Entity.USER_STORY.getSubtypeName(), "User Story");
+        subtypeNames.put(Entity.DEFECT.getSubtypeName(), "Defect");
+        subtypeNames.put(Entity.QUALITY_STORY.getSubtypeName(), "Quality Story");
+        subtypeNames.put(Entity.EPIC.getSubtypeName(), "Epic");
+        subtypeNames.put(Entity.FEATURE.getSubtypeName(), "Feature");
+        subtypeNames.put(Entity.GHERKIN_TEST.getSubtypeName(), "Gherkin Test");
+        subtypeNames.put(Entity.MANUAL_TEST.getSubtypeName(), "Manual Test");
+        subtypeNames.put(Entity.MANUAL_TEST_RUN.getSubtypeName(), "Manual Run");
+        subtypeNames.put(Entity.TEST_SUITE.getSubtypeName(), "Test Suite");
+        subtypeNames.put(Entity.TEST_SUITE_RUN.getSubtypeName(), "Run Suite");
+        subtypeNames.put(Entity.REQUIREMENT.getSubtypeName(), "Requirement");
     }
 
     /**
@@ -322,9 +323,9 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
                 FieldModel owner = getContainerItemForCommentModel(entityModel);
                 String ownerId = getUiDataFromModel(owner, "id");
                 String ownerName = getUiDataFromModel(owner, "name");
-                String ownerSubtype = getUiDataFromModel(owner, "type");
+                String ownerType = getUiDataFromModel(owner, "type");
 
-                String entityName = wrapHtml("Comment on " + getSubtypeName(ownerSubtype) + ": " + "<b>" + ownerId + "</b>" + " " + ownerName);
+                String entityName = wrapHtml("Comment on " + getSubtypeName(ownerType).toLowerCase() + ": " + "<b>" + ownerId + "</b>" + " " + ownerName);
 
                 rowPanel.setEntityName("", entityName);
                 rowPanel.setEntitySubTitle(text, "");
