@@ -16,10 +16,10 @@ public class GenericField {
     public GenericField(FieldMetadata fieldMetadata){
         this.fieldMetadata = fieldMetadata;
 
-        if(("Integer".equals(fieldMetadata.getFieldType().name()) || "Float".equals(fieldMetadata.getFieldType().name())) && fieldMetadata.isEditable()){
+        if((FieldMetadata.FieldType.Integer == fieldMetadata.getFieldType() || FieldMetadata.FieldType.Float == fieldMetadata.getFieldType()) && fieldMetadata.isEditable()){
             editable = true;
         } else {
-            if("String".equals(fieldMetadata.getFieldType().name()) && fieldMetadata.isEditable()){
+            if(FieldMetadata.FieldType.String == fieldMetadata.getFieldType() && fieldMetadata.isEditable()){
                 editable = true;
             } else {
                 editable = false;
@@ -38,12 +38,11 @@ public class GenericField {
     public String getFieldName(){return fieldMetadata.getName();}
 
     public void updateField(EntityModel entityModel, String textFieldValue){
-        switch (fieldMetadata.getFieldType().name()){
-            case "Integer":
-            case "Long": { fieldModel =  new LongFieldModel(fieldMetadata.getName(),Long.parseLong(textFieldValue)); break;}
-            case "Float": { fieldModel =  new FloatFieldModel(fieldMetadata.getName(),Float.parseFloat(textFieldValue)); break;}
-            case "Boolean": { fieldModel =  new BooleanFieldModel(fieldMetadata.getName(),Boolean.parseBoolean(textFieldValue)); break;}
-            case "String": {fieldModel = new StringFieldModel(fieldMetadata.getName(),textFieldValue); break;}
+        switch (fieldMetadata.getFieldType()){
+            case Integer: { fieldModel =  new LongFieldModel(fieldMetadata.getName(),Long.parseLong(textFieldValue)); break;}
+            case Float: { fieldModel =  new FloatFieldModel(fieldMetadata.getName(),Float.parseFloat(textFieldValue)); break;}
+            case Boolean: { fieldModel =  new BooleanFieldModel(fieldMetadata.getName(),Boolean.parseBoolean(textFieldValue)); break;}
+            case String: { fieldModel = new StringFieldModel(fieldMetadata.getName(),textFieldValue); break;}
         }
         entityModel.removeValue(fieldMetadata.getName());
         entityModel.setValue(fieldModel);
