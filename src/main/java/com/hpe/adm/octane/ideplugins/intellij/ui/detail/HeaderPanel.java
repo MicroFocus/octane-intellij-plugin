@@ -72,7 +72,7 @@ public class HeaderPanel extends JPanel {
         entityLinkToBrowser.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                entityLinkToBrowser.setForeground(Color.cyan);
+                entityLinkToBrowser.setForeground(JBColor.BLUE);
             }
 
             @Override
