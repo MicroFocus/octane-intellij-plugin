@@ -116,10 +116,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                         entityDetailView.setFieldSelectButton(new SelectFieldsAction());
                         //Title goes to browser
                         entityDetailView.setEntityNameClickHandler(() -> {
-                            if (clickCount == 1) {
                                 entityService.openInBrowser(entityModel);
-                                clickCount = 0;
-                            } else clickCount++;
                         });
                     }
                 },

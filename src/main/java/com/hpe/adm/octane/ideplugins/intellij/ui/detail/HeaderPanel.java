@@ -20,6 +20,7 @@ import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.ui.JBColor;
+import com.intellij.util.ui.MouseEventAdapter;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.JXTextField;
@@ -201,7 +202,10 @@ public class HeaderPanel extends JPanel {
         entityLinkToBrowser.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                runnable.run();
+                super.mouseClicked(e);
+                if(e.getClickCount()==2){
+                    runnable.run();
+                }
             }
         });
     }
