@@ -195,6 +195,11 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
 
     private final class SaveSelectedPhaseAction extends AnAction {
 
+        private boolean savingEnabled = true;
+
+        public void setSavingButtonEnabled(boolean savingEnabled){
+            this.savingEnabled = savingEnabled;
+        }
 
         public SaveSelectedPhaseAction() {
             super("Save selected phase", "Save changes to entity phase", IconLoader.findIcon("/actions/menu-saveall.png"));
@@ -238,6 +243,12 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                 entityDetailView.doRefresh();
                 setEntity(entityType, entityId);
             }, null, "Failed to update entity", "Updating entity");
+        }
+
+        public void update(){
+            if(savingEnabled){
+
+            }
         }
     }
 

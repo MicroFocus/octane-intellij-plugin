@@ -222,7 +222,8 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         final String descriptionContent = getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_DESCRIPTION));
 
         //Setting header phase
-        headerPanel.setPhaseDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_PHASE)));
+        //headerPanel.setPhaseDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_PHASE)));
+        headerPanel.setPhaseDetails((EntityModel) entityModel.getValue(DetailsViewDefaultFields.FIELD_PHASE).getValue());
 
         //Setting description content
         Platform.runLater(() -> descriptionDetails.setContent(descriptionContent));

@@ -14,7 +14,9 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
 import com.hpe.adm.nga.sdk.model.EntityModel;
+import com.hpe.adm.nga.sdk.model.FieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.PhaseComboBox;
+import com.hpe.adm.octane.ideplugins.services.util.Util;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -48,7 +50,7 @@ public class HeaderPanel extends JPanel {
     private ActionToolbar actionToolBar;
     private JPanel panelControls;
     private DefaultActionGroup buttonActionGroup;
-
+    private EntityModel selectedTransition;
 
     public HeaderPanel() {
         UIManager.put("ComboBox.background", JBColor.background());
@@ -149,6 +151,17 @@ public class HeaderPanel extends JPanel {
 
         phaseComboBox = new PhaseComboBox();
         phaseComboBox.setPreferredSize(new Dimension(150, 30));
+        phaseComboBox.setForeground(JBColor.BLUE);
+        phaseComboBox.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                selectedTransition = (EntityModel) phaseComboBox.getSelectedItem();
+                phaseDetails.setText(Util.getUiDataFromModel(selectedTransition.getValue("target_phase"),"name"));
+                phaseComboBox.setEnabled(false);
+                phaseComboBox.setToolTipText("You must save the entity before you can advance to the next phase.");
+                phaseComboBox.setForeground(JBColor.foreground());
+            }
+        });
         phaseComboBox.setEditable(true);
         GridBagConstraints gbc_phaseComboBox = new GridBagConstraints();
         gbc_phaseComboBox.fill = GridBagConstraints.HORIZONTAL;
@@ -175,8 +188,9 @@ public class HeaderPanel extends JPanel {
     }
 
 
-    public void setPhaseDetails(String phaseDetails) {
-        this.phaseDetails.setText(phaseDetails);
+    public void setPhaseDetails(EntityModel phaseDetails) {
+        this.selectedTransition = phaseDetails;
+        this.phaseDetails.setText(Util.getUiDataFromModel(phaseDetails.getValue("name")));
     }
 
     public void setEntityIcon(ImageIcon entityIcon) {
@@ -220,7 +234,6 @@ public class HeaderPanel extends JPanel {
     }
 
     public EntityModel getSelectedTransition() {
-        EntityModel selectedTransition = (EntityModel) phaseComboBox.getSelectedItem();
         return selectedTransition;
     }
 
