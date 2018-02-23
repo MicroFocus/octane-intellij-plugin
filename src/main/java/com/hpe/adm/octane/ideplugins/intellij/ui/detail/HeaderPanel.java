@@ -14,7 +14,6 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
 import com.hpe.adm.nga.sdk.model.EntityModel;
-import com.hpe.adm.nga.sdk.model.FieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.PhaseComboBox;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
 import com.intellij.openapi.actionSystem.ActionManager;
@@ -22,20 +21,38 @@ import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.ui.JBColor;
-import com.intellij.util.ui.MouseEventAdapter;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.JXTextField;
 
+import javax.accessibility.AccessibleContext;
+import javax.accessibility.AccessibleState;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.plaf.basic.BasicComboBoxUI;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Collection;
+import java.util.*;
+import java.util.List;
 
 public class HeaderPanel extends JPanel {
+
+
+    public interface PhaseSelectionListener extends EventListener {
+       void valueChanged(PhaseSelectionEvent e);
+    }
+
+    public class PhaseSelectionEvent extends EventObject {
+        public PhaseSelectionEvent(Object source) {
+            super(source);
+        }
+
+        public EntityModel getSelectedPhase(){
+            return selectedTransition;
+        }
+    }
 
     private JLabel entityIconLabel;
     private JXTextField entityLinkToBrowser;
@@ -51,6 +68,8 @@ public class HeaderPanel extends JPanel {
     private JPanel panelControls;
     private DefaultActionGroup buttonActionGroup;
     private EntityModel selectedTransition;
+
+    private List<PhaseSelectionListener> listeners = new ArrayList<>();
 
     public HeaderPanel() {
         UIManager.put("ComboBox.background", JBColor.background());
@@ -160,6 +179,8 @@ public class HeaderPanel extends JPanel {
                 phaseComboBox.setEnabled(false);
                 phaseComboBox.setToolTipText("You must save the entity before you can advance to the next phase.");
                 phaseComboBox.setForeground(JBColor.foreground());
+                //notify the listener that the value has been selected
+                listeners.forEach(listener -> listener.valueChanged(new PhaseSelectionEvent(this)));
             }
         });
         phaseComboBox.setEditable(true);
@@ -226,16 +247,12 @@ public class HeaderPanel extends JPanel {
 
     public void setPossiblePhasesForEntity(Collection<EntityModel> phasesList) {
         phaseComboBox.addItems(phasesList);
-        if (phasesList.size() == 1) {
-            phaseComboBox.setEnabled(false);
-        } else {
-            phaseComboBox.setEnabled(true);
-        }
     }
 
-    public EntityModel getSelectedTransition() {
-        return selectedTransition;
+    public void addPhaseSelectionListener(PhaseSelectionListener phaseSelectionListener){
+        listeners.add(phaseSelectionListener);
     }
+
 
     public void setSaveSelectedPhaseButton(AnAction saveSelectedPhaseAction) {
         buttonActionGroup.addSeparator();

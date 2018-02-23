@@ -16,12 +16,11 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
 import com.hpe.adm.nga.sdk.model.EntityModel;
+import com.hpe.adm.nga.sdk.model.ReferenceFieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
-import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.nowork.NoWorkPanel;
-import com.hpe.adm.octane.ideplugins.services.EntityService;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.util.DefaultEntityFieldsUtil;
 import com.intellij.ide.DataManager;
@@ -32,8 +31,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.JBColor;
 import javafx.application.Platform;
-import org.jdesktop.swingx.JXCollapsiblePane;
-import org.jdesktop.swingx.JXCollapsiblePane.Direction;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.JXTextField;
@@ -42,12 +39,11 @@ import org.json.JSONObject;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
-
+import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.util.*;
-import java.awt.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -222,9 +218,12 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         final String descriptionContent = getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_DESCRIPTION));
 
         //Setting header phase
-        //headerPanel.setPhaseDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_PHASE)));
         headerPanel.setPhaseDetails((EntityModel) entityModel.getValue(DetailsViewDefaultFields.FIELD_PHASE).getValue());
-
+        headerPanel.addPhaseSelectionListener((e) -> {
+            EntityModel selectedTransition = e.getSelectedPhase();
+            entityModel.removeValue("phase");
+            entityModel.setValue((new ReferenceFieldModel("phase", ((ReferenceFieldModel) selectedTransition.getValue("target_phase")).getValue())));
+        });
         //Setting description content
         Platform.runLater(() -> descriptionDetails.setContent(descriptionContent));
         Platform.runLater(() -> descriptionDetails.initFX());
@@ -253,10 +252,6 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
 
     public void setPhaseInHeader(boolean showPhase) {
         headerPanel.setPhaseInHeader(showPhase);
-    }
-
-    public EntityModel getSelectedTransition() {
-        return headerPanel.getSelectedTransition();
     }
 
     private void drawSpecificDetailsForEntity(EntityModel entityModel) {

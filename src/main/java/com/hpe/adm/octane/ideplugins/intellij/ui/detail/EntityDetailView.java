@@ -18,7 +18,6 @@ import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.View;
 import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.LoadingWidget;
-import com.hpe.adm.octane.ideplugins.services.EntityService;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.ui.components.JBScrollPane;
@@ -104,10 +103,6 @@ public class EntityDetailView implements View {
 
     public void setPossiblePhasesForEntity(Collection<EntityModel> phasesList) {
         entityDetailsPanel.setPossiblePhasesForEntity(phasesList);
-    }
-
-    public EntityModel getSelectedTransition() {
-        return entityDetailsPanel.getSelectedTransition();
     }
 
     public EntityModel getEntityModel() {
