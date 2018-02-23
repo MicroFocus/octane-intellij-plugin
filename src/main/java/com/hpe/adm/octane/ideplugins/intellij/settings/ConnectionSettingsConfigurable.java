@@ -34,6 +34,7 @@ import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.ui.awt.RelativePoint;
+import javafx.application.Platform;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -217,13 +218,15 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
             testOctaneVersion(newConnectionSettings);
             SwingUtilities.invokeLater(connectionSettingsView::setConnectionStatusSuccess);
         } catch (ServiceException | ServiceRuntimeException ex) {
-            connectionSettingsView.setConnectionStatusError(ex.getMessage());
+            //handle case when ok button is pressed
+            SwingUtilities.invokeLater(() -> {
+                if (connectionSettingsView != null) connectionSettingsView.setConnectionStatusError(ex.getMessage());
+            });
             return null;
         }
 
         return newConnectionSettings;
     }
-
 
     private ConnectionSettings getConnectionSettingsFromView() throws ServiceException {
         //Parse server url
@@ -267,16 +270,23 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
             final StringBuilder errorMessageBuilder = new StringBuilder();
             errorMessageBuilder.append(ex.getMessage());
             errorMessageBuilder.append(Constants.CORRECT_URL_FORMAT_MESSAGE);
-            connectionSettingsView.setConnectionStatusError(errorMessageBuilder.toString());
+            SwingUtilities.invokeLater(() -> {
+                if (connectionSettingsView != null) connectionSettingsView.setConnectionStatusError(ex.getMessage());
+            });
+
             throw ex;
+
         }
 
         //Validation of username and password
         try {
             validateUsernameAndPassword();
         } catch (ServiceException ex) {
-            connectionSettingsView.setConnectionStatusError(ex.getMessage());
-            throw ex;
+            //handle case when ok button is pressed
+            SwingUtilities.invokeLater(() -> {
+                if (connectionSettingsView != null) connectionSettingsView.setConnectionStatusError(ex.getMessage());
+            });
+            return null;
         }
 
         return newConnectionSettings;
