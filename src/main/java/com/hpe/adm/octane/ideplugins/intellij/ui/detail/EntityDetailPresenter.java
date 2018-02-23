@@ -84,9 +84,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
         RestUtil.runInBackground(
                 () -> {
                     try {
-
                         fields = metadataService.getVisibleFields(entityType);
-
                         entityModel = entityService.findEntity(this.entityType, this.entityId, fields.stream().map(FieldMetadata::getName).collect(Collectors.toSet()));
                         return entityModel;
                     } catch (ServiceException ex) {
