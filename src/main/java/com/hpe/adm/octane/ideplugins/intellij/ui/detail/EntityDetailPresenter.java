@@ -19,7 +19,6 @@ import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.exception.OctaneException;
 import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
 import com.hpe.adm.nga.sdk.model.EntityModel;
-import com.hpe.adm.nga.sdk.model.ReferenceFieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
 import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
@@ -63,6 +62,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
     private EntityModel entityModel;
     private Logger logger = Logger.getInstance("EntityDetailPresenter");
     private final String GO_TO_BROWSER_DIALOG_MESSAGE = "\nYou can only provide a value for this field using ALM Octane in a browser." + "\nDo you want to do this now? ";
+    private int clickCount = 0;
 
     public EntityDetailPresenter() {
     }
@@ -84,11 +84,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
         RestUtil.runInBackground(
                 () -> {
                     try {
-                        if (entityType.isSubtype()) {
-                            fields = metadataService.getFields(entityType.getSubtypeOf());
-                        } else {
-                            fields = metadataService.getFields(entityType);
-                        }
+                        fields = metadataService.getVisibleFields(entityType);
                         entityModel = entityService.findEntity(this.entityType, this.entityId, fields.stream().map(FieldMetadata::getName).collect(Collectors.toSet()));
                         return entityModel;
                     } catch (ServiceException ex) {
@@ -116,14 +112,14 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                         }
                         entityDetailView.setFieldSelectButton(new SelectFieldsAction());
                         //Title goes to browser
-                        entityDetailView.setEntityNameClickHandler(() -> entityService.openInBrowser(entityModel));
+                        entityDetailView.setEntityNameClickHandler(() -> {
+                                entityService.openInBrowser(entityModel);
+                        });
                     }
                 },
                 null,
                 null,
                 "Loading entity " + entityType.name() + ": " + entityId);
-
-
     }
 
     private void setPossibleTransitions(EntityModel entityModel) {
@@ -195,20 +191,27 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
     }
 
     private final class SaveSelectedPhaseAction extends AnAction {
+
+        private boolean savingEnabled = true;
+
+        public void setSavingButtonEnabled(boolean savingEnabled){
+            this.savingEnabled = savingEnabled;
+        }
+
         public SaveSelectedPhaseAction() {
             super("Save selected phase", "Save changes to entity phase", IconLoader.findIcon("/actions/menu-saveall.png"));
         }
 
         public void actionPerformed(AnActionEvent e) {
             RestUtil.runInBackground(() -> {
-                EntityModel selectedTransition = entityDetailView.getSelectedTransition();
-                return (ReferenceFieldModel) selectedTransition.getValue("target_phase");
-            }, (nextPhase) -> {
+                EntityModel updatedEntityModel = entityDetailView.getEntityModel();
+                return updatedEntityModel;
+            }, (newEntityModel) -> {
                 try {
-                    entityService.updateEntityPhase(entityDetailView.getEntityModel(), nextPhase);
+                    entityService.updateEntity(newEntityModel);
                 } catch (OctaneException ex) {
                     if (ex.getMessage().contains("400")) {
-                        String errorMessage = "Failed to change phase";
+                        String errorMessage = "Failed to update entity";
                         try {
                             JsonParser jsonParser = new JsonParser();
                             JsonObject jsonObject = (JsonObject) jsonParser.parse(ex.getMessage().substring(ex.getMessage().indexOf("{")));
@@ -233,8 +236,13 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                 }
                 entityDetailView.doRefresh();
                 setEntity(entityType, entityId);
-            }, null, "Failed to move to next phase", "Moving to next phase");
+            }, null, "Failed to update entity", "Updating entity");
+        }
 
+        public void update(){
+            if(savingEnabled){
+
+            }
         }
     }
 

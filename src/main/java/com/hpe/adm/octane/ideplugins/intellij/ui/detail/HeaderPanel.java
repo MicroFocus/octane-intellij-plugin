@@ -15,6 +15,7 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.PhaseComboBox;
+import com.hpe.adm.octane.ideplugins.services.util.Util;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -22,18 +23,39 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.ui.JBColor;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
+import org.jdesktop.swingx.JXTextField;
 
+import javax.accessibility.AccessibleContext;
+import javax.accessibility.AccessibleState;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.plaf.basic.BasicComboBoxUI;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Collection;
+import java.util.*;
+import java.util.List;
 
 public class HeaderPanel extends JPanel {
 
+
+    public interface PhaseSelectionListener extends EventListener {
+       void valueChanged(PhaseSelectionEvent e);
+    }
+
+    public class PhaseSelectionEvent extends EventObject {
+        public PhaseSelectionEvent(Object source) {
+            super(source);
+        }
+
+        public EntityModel getSelectedPhase(){
+            return selectedTransition;
+        }
+    }
+
     private JLabel entityIconLabel;
-    private JXLabel entityLinkToBrowser;
+    private JXTextField entityLinkToBrowser;
 
     private JXPanel phasePanel;
 
@@ -45,7 +67,9 @@ public class HeaderPanel extends JPanel {
     private ActionToolbar actionToolBar;
     private JPanel panelControls;
     private DefaultActionGroup buttonActionGroup;
+    private EntityModel selectedTransition;
 
+    private List<PhaseSelectionListener> listeners = new ArrayList<>();
 
     public HeaderPanel() {
         UIManager.put("ComboBox.background", JBColor.background());
@@ -62,13 +86,14 @@ public class HeaderPanel extends JPanel {
         gridBagLayout.rowWeights = new double[]{0.0, Double.MIN_VALUE};
         setLayout(gridBagLayout);
 
-        entityLinkToBrowser = new JXLabel();
-        entityLinkToBrowser.setFont(new Font("Arial", Font.PLAIN, 13));
+        entityLinkToBrowser = new JXTextField();
+        entityLinkToBrowser.setFont(new Font("Arial", Font.PLAIN, 15));
         entityLinkToBrowser.setBorder(new EmptyBorder(0, 5, 0, 0));
+        entityLinkToBrowser.setBackground(this.getBackground());
         entityLinkToBrowser.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                entityLinkToBrowser.setForeground(Color.blue);
+                entityLinkToBrowser.setForeground(JBColor.BLUE);
             }
 
             @Override
@@ -145,6 +170,19 @@ public class HeaderPanel extends JPanel {
 
         phaseComboBox = new PhaseComboBox();
         phaseComboBox.setPreferredSize(new Dimension(150, 30));
+        phaseComboBox.setForeground(JBColor.BLUE);
+        phaseComboBox.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                selectedTransition = (EntityModel) phaseComboBox.getSelectedItem();
+                phaseDetails.setText(Util.getUiDataFromModel(selectedTransition.getValue("target_phase"),"name"));
+                phaseComboBox.setEnabled(false);
+                phaseComboBox.setToolTipText("You must save the entity before you can advance to the next phase.");
+                phaseComboBox.setForeground(JBColor.foreground());
+                //notify the listener that the value has been selected
+                listeners.forEach(listener -> listener.valueChanged(new PhaseSelectionEvent(this)));
+            }
+        });
         phaseComboBox.setEditable(true);
         GridBagConstraints gbc_phaseComboBox = new GridBagConstraints();
         gbc_phaseComboBox.fill = GridBagConstraints.HORIZONTAL;
@@ -159,11 +197,21 @@ public class HeaderPanel extends JPanel {
     }
 
     public void setNameDetails(String nameDetails) {
-        this.entityLinkToBrowser.setText("<html><body><span style=\"font-family:'arial unicode ms'\">" + nameDetails + "</body></html>");
+        this.entityLinkToBrowser.setText(nameDetails);
     }
 
-    public void setPhaseDetails(String phaseDetails) {
-        this.phaseDetails.setText(phaseDetails);
+    public void setNameFieldListener(ActionListener actionListener) {
+        this.entityLinkToBrowser.addActionListener(actionListener);
+    }
+
+    public String getNameFieldValue() {
+        return entityLinkToBrowser.getText();
+    }
+
+
+    public void setPhaseDetails(EntityModel phaseDetails) {
+        this.selectedTransition = phaseDetails;
+        this.phaseDetails.setText(Util.getUiDataFromModel(phaseDetails.getValue("name")));
     }
 
     public void setEntityIcon(ImageIcon entityIcon) {
@@ -189,24 +237,22 @@ public class HeaderPanel extends JPanel {
         entityLinkToBrowser.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                runnable.run();
+                super.mouseClicked(e);
+                if(e.getClickCount()==2){
+                    runnable.run();
+                }
             }
         });
     }
 
     public void setPossiblePhasesForEntity(Collection<EntityModel> phasesList) {
         phaseComboBox.addItems(phasesList);
-        if (phasesList.size() == 1) {
-            phaseComboBox.setEnabled(false);
-        } else {
-            phaseComboBox.setEnabled(true);
-        }
     }
 
-    public EntityModel getSelectedTransition() {
-        EntityModel selectedTransition = (EntityModel) phaseComboBox.getSelectedItem();
-        return selectedTransition;
+    public void addPhaseSelectionListener(PhaseSelectionListener phaseSelectionListener){
+        listeners.add(phaseSelectionListener);
     }
+
 
     public void setSaveSelectedPhaseButton(AnAction saveSelectedPhaseAction) {
         buttonActionGroup.addSeparator();

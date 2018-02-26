@@ -15,6 +15,7 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents;
 
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
+import com.intellij.ui.JBColor;
 import com.intellij.util.ui.UIUtil;
 
 import javax.swing.*;
@@ -49,7 +50,7 @@ public class PhaseComboBox extends JComboBox {
     private static final Border labelBorder = BorderFactory.createEmptyBorder(5,5,5,5);
 
     private class PhaseItemEditor extends BasicComboBoxEditor {
-        private JLabel labelItem = new JLabel();
+        private JLabel labelItem;
         private EntityModel selectedValue;
 
         public PhaseItemEditor() {
@@ -57,6 +58,7 @@ public class PhaseComboBox extends JComboBox {
             labelItem.setBorder(labelBorder);
             labelItem.setHorizontalAlignment(JLabel.LEFT);
             labelItem.setVerticalAlignment(JLabel.CENTER);
+            labelItem.setForeground(JBColor.BLUE);
         }
 
         public Component getEditorComponent() {
@@ -93,7 +95,7 @@ public class PhaseComboBox extends JComboBox {
             labelItem.setHorizontalAlignment(JLabel.LEFT);
             labelItem.setVerticalAlignment(JLabel.CENTER);
             labelItem.setText(Util.getUiDataFromModel(phaseItem.getValue("target_phase"), "name"));
-
+            labelItem.setForeground(JBColor.BLUE);
             if (isSelected) {
                 labelItem.setBackground(UIUtil.getListSelectionBackground());
                 labelItem.setForeground(UIUtil.getListSelectionForeground());

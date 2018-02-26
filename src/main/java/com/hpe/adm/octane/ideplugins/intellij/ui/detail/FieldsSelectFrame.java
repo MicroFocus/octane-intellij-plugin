@@ -255,49 +255,48 @@ public class FieldsSelectFrame extends JFrame {
     private void createCheckBoxMenuItems() {
         menuItems = new ArrayList<>();
         for (FieldMetadata fieldMetadata : allFields) {
-            if (!"description".equals(fieldMetadata.getName()) && !"phase".equals(fieldMetadata.getName())) {
-                JBCheckboxMenuItem menuItem = new JBCheckboxMenuItem(fieldMetadata.getLabel());
-                menuItem.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        if (menuItem.isSelected()) {
-                            selectedFields.add(fieldMetadata.getName());
-                        } else {
-                            selectedFields.remove(fieldMetadata.getName());
-                        }
-                        listeners.forEach(listener -> listener.valueChanged(new SelectionEvent(this)));
-                        if (defaultFields.containsAll(selectedFields) && selectedFields.containsAll(defaultFields)) {
-                            fieldsActionButton.setDefaultFieldsIcon(true);
-                            resetButton.setEnabled(false);
-                            selectNoneButton.setEnabled(true);
-                            selectAllButton.setEnabled(true);
-                        } else {
-                            fieldsActionButton.setDefaultFieldsIcon(false);
-                            resetButton.setEnabled(true);
-
-                            if (selectedFields.size() == 0) {
-                                selectNoneButton.setEnabled(false);
-                            } else {
-                                selectNoneButton.setEnabled(true);
-                            }
-
-                            if (selectedFields.containsAll(allFields.stream().map(FieldMetadata::getName).collect(Collectors.toSet()))) {
-                                selectAllButton.setEnabled(false);
-                            } else {
-                                selectAllButton.setEnabled(true);
-                            }
-                        }
-                        selectedFieldsMap.replace(entityType, selectedFields);
-                        idePluginPersistentState.saveState(IdePluginPersistentState.Key.SELECTED_FIELDS, new JSONObject(DefaultEntityFieldsUtil.entityFieldsToJson(selectedFieldsMap)));
-
+            JBCheckboxMenuItem menuItem = new JBCheckboxMenuItem(fieldMetadata.getLabel());
+            menuItem.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if (menuItem.isSelected()) {
+                        selectedFields.add(fieldMetadata.getName());
+                    } else {
+                        selectedFields.remove(fieldMetadata.getName());
                     }
-                });
-                if (selectedFields.contains(fieldMetadata)) {
-                    menuItem.setState(true);
+                    listeners.forEach(listener -> listener.valueChanged(new SelectionEvent(this)));
+                    if (defaultFields.containsAll(selectedFields) && selectedFields.containsAll(defaultFields)) {
+                        fieldsActionButton.setDefaultFieldsIcon(true);
+                        resetButton.setEnabled(false);
+                        selectNoneButton.setEnabled(true);
+                        selectAllButton.setEnabled(true);
+                    } else {
+                        fieldsActionButton.setDefaultFieldsIcon(false);
+                        resetButton.setEnabled(true);
+
+                        if (selectedFields.size() == 0) {
+                            selectNoneButton.setEnabled(false);
+                        } else {
+                            selectNoneButton.setEnabled(true);
+                        }
+
+                        if (selectedFields.containsAll(allFields.stream().map(FieldMetadata::getName).collect(Collectors.toSet()))) {
+                            selectAllButton.setEnabled(false);
+                        } else {
+                            selectAllButton.setEnabled(true);
+                        }
+                    }
+                    selectedFieldsMap.replace(entityType, selectedFields);
+                    idePluginPersistentState.saveState(IdePluginPersistentState.Key.SELECTED_FIELDS, new JSONObject(DefaultEntityFieldsUtil.entityFieldsToJson(selectedFieldsMap)));
+
                 }
-                menuItems.add(menuItem);
-                prettyFields.put(fieldMetadata.getLabel(), fieldMetadata.getName());
+            });
+            if (selectedFields.contains(fieldMetadata)) {
+                menuItem.setState(true);
             }
+            menuItems.add(menuItem);
+            prettyFields.put(fieldMetadata.getLabel(), fieldMetadata.getName());
+
         }
     }
 

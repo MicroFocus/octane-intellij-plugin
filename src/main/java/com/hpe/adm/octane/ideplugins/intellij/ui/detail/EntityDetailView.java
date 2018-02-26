@@ -105,12 +105,8 @@ public class EntityDetailView implements View {
         entityDetailsPanel.setPossiblePhasesForEntity(phasesList);
     }
 
-    public EntityModel getSelectedTransition() {
-        return entityDetailsPanel.getSelectedTransition();
-    }
-
     public EntityModel getEntityModel() {
-        return this.entityModel;
+        return entityDetailsPanel.getEntityModel();
     }
 
     public void setEntityNameClickHandler(Runnable runnable) {
