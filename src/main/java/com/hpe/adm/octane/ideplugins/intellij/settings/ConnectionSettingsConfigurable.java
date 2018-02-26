@@ -216,7 +216,7 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
         try {
             testService.testConnection(newConnectionSettings);
             testOctaneVersion(newConnectionSettings);
-            SwingUtilities.invokeLater(connectionSettingsView::setConnectionStatusSuccess);
+            SwingUtilities.invokeLater(() -> { if(connectionSettingsView != null) connectionSettingsView.setConnectionStatusSuccess(); });
         } catch (ServiceException | ServiceRuntimeException ex) {
             //handle case when ok button is pressed
             SwingUtilities.invokeLater(() -> {
@@ -286,7 +286,7 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
             SwingUtilities.invokeLater(() -> {
                 if (connectionSettingsView != null) connectionSettingsView.setConnectionStatusError(ex.getMessage());
             });
-            return null;
+            throw ex;
         }
 
         return newConnectionSettings;
