@@ -21,6 +21,7 @@ import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.util.DefaultEntityFieldsUtil;
+import com.hpe.adm.octane.ideplugins.services.util.Util;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.DataContext;
@@ -28,8 +29,6 @@ import com.intellij.openapi.actionSystem.DataKeys;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.JBColor;
 import javafx.application.Platform;
-import org.jdesktop.swingx.JXCollapsiblePane;
-import org.jdesktop.swingx.JXCollapsiblePane.Direction;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
 import org.json.JSONObject;
@@ -44,8 +43,6 @@ import java.awt.event.ComponentEvent;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
-
-import static com.hpe.adm.octane.ideplugins.services.util.Util.getUiDataFromModel;
 
 public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
 
@@ -208,10 +205,10 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
     }
 
     private void drawGeneralDetailsForEntity(EntityModel entityModel) {
-        final String descriptionContent = getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_DESCRIPTION));
+        final String descriptionContent = Util.getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_DESCRIPTION));
 
         //Setting header phase
-        headerPanel.setPhaseDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_PHASE)));
+        headerPanel.setPhaseDetails(Util.getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_PHASE)));
 
         //Setting description content
         Platform.runLater(() -> descriptionDetails.setContent(descriptionContent));
@@ -250,7 +247,7 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
     private void drawSpecificDetailsForEntity(EntityModel entityModel) {
         EntityIconFactory entityIconFactory = new EntityIconFactory(26, 26, 12);
         headerPanel.setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(Entity.getEntityType(entityModel))));
-        headerPanel.setNameDetails(getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_NAME)));
+        headerPanel.setNameDetails(Util.getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_NAME)));
         createSectionWithEntityDetails(entityModel, selectedFields.get(Entity.getEntityType(entityModel)));
     }
 
@@ -262,9 +259,9 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
     public void setComments(Collection<EntityModel> comments) {
         commentsListPanel.clearCurrentComments();
         for (EntityModel comment : comments) {
-            String commentsPostTime = getUiDataFromModel(comment.getValue(DetailsViewDefaultFields.FIELD_CREATION_TIME));
-            String userName = getUiDataFromModel(comment.getValue(DetailsViewDefaultFields.FIELD_AUTHOR), "full_name");
-            String commentLine = getUiDataFromModel(comment.getValue(DetailsViewDefaultFields.FIELD_COMMENT_TEXT));
+            String commentsPostTime = Util.getUiDataFromModel(comment.getValue(DetailsViewDefaultFields.FIELD_CREATION_TIME));
+            String userName = Util.getUiDataFromModel(comment.getValue(DetailsViewDefaultFields.FIELD_AUTHOR), "full_name");
+            String commentLine = Util.getUiDataFromModel(comment.getValue(DetailsViewDefaultFields.FIELD_COMMENT_TEXT));
             commentsListPanel.addExistingComment(commentsPostTime, userName, commentLine);
         }
         commentsListPanel.setChatBoxScene();
@@ -315,6 +312,7 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         int i = 0;
         for (FieldMetadata fieldMetadata : fields) {
             if (fieldNames.contains(fieldMetadata.getName())) {
+                String fieldName = fieldMetadata.getName();
                 JXLabel fieldLabel = new JXLabel();
                 fieldLabel.setFont(new Font("Arial", Font.BOLD, 12));
                 fieldLabel.setText(fieldMetadata.getLabel());
@@ -325,7 +323,17 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
                 gbc1.gridx = 0;
                 gbc1.gridy = i;
 
-                String fieldValue = getUiDataFromModel(entityModel.getValue(fieldMetadata.getName()));
+                String fieldValue = null;
+
+                if ("owner".equals(fieldName)
+                        || "author".equals(fieldName)
+                        || "run_by".equals(fieldName)
+                        || "detected_by".equals(fieldName)) {
+                    fieldValue = Util.getUiDataFromModel(entityModel.getValue(fieldName),
+                            "full_name");
+                } else {
+                    fieldValue = Util.getUiDataFromModel(entityModel.getValue(fieldName));
+                }
                 JXLabel fieldValueLabel = new JXLabel();
                 fieldValueLabel.setFont(new Font("Arial", Font.PLAIN, 12));
                 fieldValueLabel.setText(fieldValue);

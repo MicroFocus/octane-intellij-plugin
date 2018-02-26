@@ -332,7 +332,7 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
         }
     }
 
-    private boolean isDetailTabSupported(Entity entityType) {
+    public static boolean isDetailTabSupported(Entity entityType) {
         return supportedDetailTabs.contains(entityType);
     }
 
