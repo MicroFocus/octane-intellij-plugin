@@ -120,7 +120,7 @@ public class FieldsSelectFrame extends JFrame {
         fieldsRootPanel.add(buttonsPanel, gbcButton);
 
         searchField = new JXTextField("Search fields  ");
-        searchField.setPreferredSize( new Dimension(buttonsPanel.getPreferredSize().width, searchField.getPreferredSize().height));
+        searchField.setPreferredSize(new Dimension(buttonsPanel.getPreferredSize().width, searchField.getPreferredSize().height));
         searchField.setBorder(new MatteBorder(1, 1, 1, 1, JBColor.border()));
         searchField.getDocument().addDocumentListener(new DocumentListener() {
             @Override
@@ -152,7 +152,6 @@ public class FieldsSelectFrame extends JFrame {
         gbc1.gridx = 0;
         gbc1.gridy = 1;
         fieldsRootPanel.add(fieldsScrollPanel, gbc1);
-
 
 
         setContentPane(fieldsRootPanel);
@@ -331,6 +330,7 @@ public class FieldsSelectFrame extends JFrame {
 
     /**
      * Adds a listener to the listeners of the class
+     *
      * @param selectionListener custom listener to be added
      */
     public void addSelectionListener(SelectionListener selectionListener) {
@@ -339,6 +339,7 @@ public class FieldsSelectFrame extends JFrame {
 
     /**
      * Gets the default fields
+     *
      * @return the default fields of the entity opened in detailed view
      */
     public Set<String> getDefaultFields() {
@@ -347,6 +348,7 @@ public class FieldsSelectFrame extends JFrame {
 
     /**
      * Gets the selected fields from the popup
+     *
      * @return the selected fields
      */
     public Set<String> getSelectedFields() {
@@ -360,6 +362,7 @@ public class FieldsSelectFrame extends JFrame {
 
     /**
      * Sets the fields in the current detailed view
+     *
      * @param fields the fields from another detailed view tab with the same entity
      */
     public void setSelectedFieldsFromOtherTab(Set<String> fields) {
