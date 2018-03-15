@@ -75,8 +75,52 @@ public class FieldsSelectFrame extends JFrame {
         gbl.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0};
         fieldsRootPanel.setLayout(gbl);
 
+
+        JPanel buttonsPanel = new JPanel();
+        FlowLayout flowLayout = new FlowLayout();
+        flowLayout.setHgap(0);
+        buttonsPanel.setLayout(flowLayout);
+
+
+        selectNoneButton = new JXButton("None");
+        selectNoneButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                noneButtonClicked();
+            }
+        });
+
+        selectAllButton = new JXButton("All");
+        selectAllButton.setPreferredSize(selectNoneButton.getPreferredSize());
+        selectAllButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                allButtonClicked();
+            }
+        });
+
+        resetButton = new JXButton("Reset");
+        //resetButton.setPreferredSize(selectNoneButton.getPreferredSize());
+        resetButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                resetButtonClicked();
+            }
+        });
+
+        buttonsPanel.add(selectAllButton);
+        buttonsPanel.add(selectNoneButton);
+        buttonsPanel.add(resetButton);
+
+        GridBagConstraints gbcButton = new GridBagConstraints();
+        gbcButton.insets = new Insets(10, 10, 10, 10);
+        gbcButton.anchor = GridBagConstraints.NORTH;
+        gbcButton.gridx = 0;
+        gbcButton.gridy = 2;
+        fieldsRootPanel.add(buttonsPanel, gbcButton);
+
         searchField = new JXTextField("Search fields  ");
-        searchField.setColumns(15);
+        searchField.setPreferredSize( new Dimension(buttonsPanel.getPreferredSize().width, searchField.getPreferredSize().height));
         searchField.setBorder(new MatteBorder(1, 1, 1, 1, JBColor.border()));
         searchField.getDocument().addDocumentListener(new DocumentListener() {
             @Override
@@ -109,48 +153,6 @@ public class FieldsSelectFrame extends JFrame {
         gbc1.gridy = 1;
         fieldsRootPanel.add(fieldsScrollPanel, gbc1);
 
-        JPanel buttonsPanel = new JPanel();
-        FlowLayout flowLayout = new FlowLayout();
-        flowLayout.setHgap(0);
-        buttonsPanel.setLayout(flowLayout);
-
-
-        selectNoneButton = new JXButton("None");
-        selectNoneButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                noneButtonClicked();
-            }
-        });
-
-        selectAllButton = new JXButton("All");
-        selectAllButton.setPreferredSize(selectNoneButton.getPreferredSize());
-        selectAllButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                allButtonClicked();
-            }
-        });
-
-        resetButton = new JXButton("Reset");
-        resetButton.setPreferredSize(selectNoneButton.getPreferredSize());
-        resetButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                resetButtonClicked();
-            }
-        });
-
-        buttonsPanel.add(selectAllButton);
-        buttonsPanel.add(selectNoneButton);
-        buttonsPanel.add(resetButton);
-
-        GridBagConstraints gbcButton = new GridBagConstraints();
-        gbcButton.insets = new Insets(10, 10, 10, 10);
-        gbcButton.anchor = GridBagConstraints.NORTH;
-        gbcButton.gridx = 0;
-        gbcButton.gridy = 2;
-        fieldsRootPanel.add(buttonsPanel, gbcButton);
 
 
         setContentPane(fieldsRootPanel);
