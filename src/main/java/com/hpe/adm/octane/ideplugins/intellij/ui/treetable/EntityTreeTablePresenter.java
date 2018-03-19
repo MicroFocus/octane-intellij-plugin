@@ -24,6 +24,7 @@ import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
+import com.hpe.adm.octane.ideplugins.intellij.ui.tabbedpane.TabbedPanePresenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
 import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
 import com.hpe.adm.octane.ideplugins.services.EntityService;
@@ -220,7 +221,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
             });
             popup.add(viewInBrowserItem);
 
-            if(entityType != Entity.COMMENT) {
+            if(TabbedPanePresenter.isDetailTabSupported(entityType)) {
                 Icon icon = new ImageIcon(entityIconFactory.getIconAsImage(entityType));
                 JMenuItem viewDetailMenuItem = new JMenuItem("View details", icon);
                 viewDetailMenuItem.addMouseListener(new MouseAdapter() {
@@ -241,16 +242,18 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
                     parentEntityModel = (EntityModel) Util.getContainerItemForCommentModel(entityModel).getValue();
                 }
 
-                //Add option
-                Icon icon = new ImageIcon(entityIconFactory.getIconAsImage(Entity.getEntityType(parentEntityModel)));
-                JMenuItem viewParentMenuItem = new JMenuItem("View parent details", icon);
-                viewParentMenuItem.addMouseListener(new MouseAdapter() {
-                    @Override
-                    public void mousePressed(MouseEvent e) {
-                        eventBus.post(new OpenDetailTabEvent(parentEntityModel));
-                    }
-                });
-                popup.add(viewParentMenuItem);
+                if(TabbedPanePresenter.isDetailTabSupported(Entity.getEntityType(parentEntityModel))) {
+                    //Add option
+                    Icon icon = new ImageIcon(entityIconFactory.getIconAsImage(Entity.getEntityType(parentEntityModel)));
+                    JMenuItem viewParentMenuItem = new JMenuItem("View parent details", icon);
+                    viewParentMenuItem.addMouseListener(new MouseAdapter() {
+                        @Override
+                        public void mousePressed(MouseEvent e) {
+                            eventBus.post(new OpenDetailTabEvent(parentEntityModel));
+                        }
+                    });
+                    popup.add(viewParentMenuItem);
+                }
             }
 
             if (entityType == Entity.GHERKIN_TEST) {

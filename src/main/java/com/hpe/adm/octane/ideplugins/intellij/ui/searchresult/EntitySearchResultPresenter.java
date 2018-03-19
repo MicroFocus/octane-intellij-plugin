@@ -23,6 +23,7 @@ import com.hpe.adm.octane.ideplugins.intellij.eventbus.RefreshMyWorkEvent;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
+import com.hpe.adm.octane.ideplugins.intellij.ui.tabbedpane.TabbedPanePresenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityCategory;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeView;
@@ -180,7 +181,7 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
             });
             popup.add(viewInBrowserItem);
 
-            if(entityType != Entity.COMMENT) {
+            if(TabbedPanePresenter.isDetailTabSupported(entityType)){
                 Icon icon = new ImageIcon(entityIconFactory.getIconAsImage(entityType));
                 JMenuItem viewDetailMenuItem = new JMenuItem("View details", icon);
                 viewDetailMenuItem.addMouseListener(new MouseAdapter() {
@@ -198,7 +199,7 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
                     @Override
                     public void mousePressed(MouseEvent e) {
                         ApplicationManager.getApplication().invokeLater(() -> {
-                            Task.Backgroundable backgroundTask = new Task.Backgroundable(null, "Adding item to to \"My Work\"", true) {
+                            Task.Backgroundable backgroundTask = new Task.Backgroundable(null, "Adding item to \"My Work\"", true) {
                                 public void run(@NotNull ProgressIndicator indicator) {
                                     if(myWorkService.addToMyWork(entityModel)) {
                                         eventBus.post(new RefreshMyWorkEvent());
@@ -225,6 +226,4 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
             return popup;
         });
     }
-
-
 }
