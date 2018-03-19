@@ -75,8 +75,51 @@ public class FieldsSelectFrame extends JFrame {
         gbl.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0};
         fieldsRootPanel.setLayout(gbl);
 
-        searchField = new JXTextField("Search fields  ");
-        searchField.setColumns(15);
+
+        JPanel buttonsPanel = new JPanel();
+        FlowLayout flowLayout = new FlowLayout();
+        flowLayout.setHgap(0);
+        buttonsPanel.setLayout(flowLayout);
+
+
+        selectNoneButton = new JXButton("None");
+        selectNoneButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                noneButtonClicked();
+            }
+        });
+
+        selectAllButton = new JXButton("All");
+        selectAllButton.setPreferredSize(selectNoneButton.getPreferredSize());
+        selectAllButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                allButtonClicked();
+            }
+        });
+
+        resetButton = new JXButton("Reset");
+        resetButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                resetButtonClicked();
+            }
+        });
+
+        buttonsPanel.add(selectAllButton);
+        buttonsPanel.add(selectNoneButton);
+        buttonsPanel.add(resetButton);
+
+        GridBagConstraints gbcButton = new GridBagConstraints();
+        gbcButton.insets = new Insets(10, 10, 10, 10);
+        gbcButton.anchor = GridBagConstraints.NORTH;
+        gbcButton.gridx = 0;
+        gbcButton.gridy = 2;
+        fieldsRootPanel.add(buttonsPanel, gbcButton);
+
+        searchField = new JXTextField("Search fields");
+        searchField.setPreferredSize(new Dimension(buttonsPanel.getPreferredSize().width, searchField.getPreferredSize().height));
         searchField.setBorder(new MatteBorder(1, 1, 1, 1, JBColor.border()));
         searchField.getDocument().addDocumentListener(new DocumentListener() {
             @Override
@@ -108,49 +151,6 @@ public class FieldsSelectFrame extends JFrame {
         gbc1.gridx = 0;
         gbc1.gridy = 1;
         fieldsRootPanel.add(fieldsScrollPanel, gbc1);
-
-        JPanel buttonsPanel = new JPanel();
-        FlowLayout flowLayout = new FlowLayout();
-        flowLayout.setHgap(0);
-        buttonsPanel.setLayout(flowLayout);
-
-
-        selectNoneButton = new JXButton("None");
-        selectNoneButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                noneButtonClicked();
-            }
-        });
-
-        selectAllButton = new JXButton("All");
-        selectAllButton.setPreferredSize(selectNoneButton.getPreferredSize());
-        selectAllButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                allButtonClicked();
-            }
-        });
-
-        resetButton = new JXButton("Reset");
-        resetButton.setPreferredSize(selectNoneButton.getPreferredSize());
-        resetButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                resetButtonClicked();
-            }
-        });
-
-        buttonsPanel.add(selectAllButton);
-        buttonsPanel.add(selectNoneButton);
-        buttonsPanel.add(resetButton);
-
-        GridBagConstraints gbcButton = new GridBagConstraints();
-        gbcButton.insets = new Insets(10, 10, 10, 10);
-        gbcButton.anchor = GridBagConstraints.NORTH;
-        gbcButton.gridx = 0;
-        gbcButton.gridy = 2;
-        fieldsRootPanel.add(buttonsPanel, gbcButton);
 
 
         setContentPane(fieldsRootPanel);
@@ -329,6 +329,7 @@ public class FieldsSelectFrame extends JFrame {
 
     /**
      * Adds a listener to the listeners of the class
+     *
      * @param selectionListener custom listener to be added
      */
     public void addSelectionListener(SelectionListener selectionListener) {
@@ -337,6 +338,7 @@ public class FieldsSelectFrame extends JFrame {
 
     /**
      * Gets the default fields
+     *
      * @return the default fields of the entity opened in detailed view
      */
     public Set<String> getDefaultFields() {
@@ -345,6 +347,7 @@ public class FieldsSelectFrame extends JFrame {
 
     /**
      * Gets the selected fields from the popup
+     *
      * @return the selected fields
      */
     public Set<String> getSelectedFields() {
@@ -358,6 +361,7 @@ public class FieldsSelectFrame extends JFrame {
 
     /**
      * Sets the fields in the current detailed view
+     *
      * @param fields the fields from another detailed view tab with the same entity
      */
     public void setSelectedFieldsFromOtherTab(Set<String> fields) {
