@@ -60,7 +60,9 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
     private Entity entityType;
     private Long entityId;
     private Collection<FieldMetadata> fields;
+    private Collection<FieldMetadata> fields1;
     private EntityModel entityModel;
+    private EntityModel entityModel1;
     private Logger logger = Logger.getInstance("EntityDetailPresenter");
     private final String GO_TO_BROWSER_DIALOG_MESSAGE = "\nYou can only provide a value for this field using ALM Octane in a browser." + "\nDo you want to do this now? ";
 
@@ -84,7 +86,17 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
         RestUtil.runInBackground(
                 () -> {
                     try {
-                        fields = metadataService.getVisibleFields(entityType);
+                        //entities which need to be called by their parent type in order to obtain their correct entity type
+                        if (entityType == Entity.REQUIREMENT
+                                || entityType == Entity.MANUAL_TEST
+                                || entityType == Entity.MANUAL_TEST_RUN
+                                || entityType == Entity.GHERKIN_TEST) {
+                            fields = metadataService.getVisibleFields(entityType.getSubtypeOf());
+                        } else {
+                            fields = metadataService.getVisibleFields(entityType);
+                        }
+                        fields1 = fields = metadataService.getVisibleFields(entityType);
+                        entityModel1 = entityService.findEntity(this.entityType, this.entityId, fields.stream().map(FieldMetadata::getName).collect(Collectors.toSet()));
                         entityModel = entityService.findEntity(this.entityType, this.entityId, fields.stream().map(FieldMetadata::getName).collect(Collectors.toSet()));
                         return entityModel;
                     } catch (ServiceException ex) {
