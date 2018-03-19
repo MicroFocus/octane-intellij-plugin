@@ -100,7 +100,6 @@ public class FieldsSelectFrame extends JFrame {
         });
 
         resetButton = new JXButton("Reset");
-        //resetButton.setPreferredSize(selectNoneButton.getPreferredSize());
         resetButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -119,7 +118,7 @@ public class FieldsSelectFrame extends JFrame {
         gbcButton.gridy = 2;
         fieldsRootPanel.add(buttonsPanel, gbcButton);
 
-        searchField = new JXTextField("Search fields  ");
+        searchField = new JXTextField("Search fields");
         searchField.setPreferredSize(new Dimension(buttonsPanel.getPreferredSize().width, searchField.getPreferredSize().height));
         searchField.setBorder(new MatteBorder(1, 1, 1, 1, JBColor.border()));
         searchField.getDocument().addDocumentListener(new DocumentListener() {
