@@ -2,6 +2,7 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
 import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
+import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.FieldMenuItem;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.util.DefaultEntityFieldsUtil;
 import com.intellij.openapi.ui.JBCheckboxMenuItem;
@@ -42,7 +43,7 @@ public class FieldsSelectFrame extends JFrame {
     private Set<String> selectedFields;
     private Collection<FieldMetadata> allFields;
     private Map<String, String> prettyFields = new HashMap<>();
-    private List<JCheckBoxMenuItem> menuItems;
+    private List<FieldMenuItem> menuItems;
     private Entity entityType;
     private IdePluginPersistentState idePluginPersistentState;
     private JScrollPane fieldsScrollPanel;
@@ -256,7 +257,8 @@ public class FieldsSelectFrame extends JFrame {
         menuItems = new ArrayList<>();
         for (FieldMetadata fieldMetadata : allFields) {
             if (!"description".equals(fieldMetadata.getName()) && !"phase".equals(fieldMetadata.getName())) {
-                JBCheckboxMenuItem menuItem = new JBCheckboxMenuItem(fieldMetadata.getLabel());
+                //JBCheckboxMenuItem menuItem = new JBCheckboxMenuItem(fieldMetadata.getLabel());
+                FieldMenuItem menuItem = new FieldMenuItem(fieldMetadata.getLabel());
                 menuItem.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
@@ -304,7 +306,7 @@ public class FieldsSelectFrame extends JFrame {
     private void updateFieldsPanel(Set<String> selectedFields, Collection<FieldMetadata> allFieldNames) {
         fieldsPanel.removeAll();
         int rowCount = 0;
-        for (JCheckBoxMenuItem checkBoxMenuItem : menuItems) {
+        for (FieldMenuItem checkBoxMenuItem : menuItems) {
 
             if (allFieldNames.stream().filter(e -> e.getLabel().equals(checkBoxMenuItem.getText())).count() == 1) {
                 if (selectedFields.contains(prettyFields.get(checkBoxMenuItem.getText()))) {
