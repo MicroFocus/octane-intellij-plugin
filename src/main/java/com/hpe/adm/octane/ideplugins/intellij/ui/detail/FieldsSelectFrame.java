@@ -18,7 +18,6 @@ import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.FieldMenuItem;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.util.DefaultEntityFieldsUtil;
-import com.intellij.openapi.ui.JBCheckboxMenuItem;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBScrollPane;
 import org.jdesktop.swingx.JXButton;
@@ -270,7 +269,6 @@ public class FieldsSelectFrame extends JFrame {
         menuItems = new ArrayList<>();
         for (FieldMetadata fieldMetadata : allFields) {
             if (!"description".equals(fieldMetadata.getName()) && !"phase".equals(fieldMetadata.getName())) {
-                //JBCheckboxMenuItem menuItem = new JBCheckboxMenuItem(fieldMetadata.getLabel());
                 FieldMenuItem menuItem = new FieldMenuItem(fieldMetadata.getLabel());
                 menuItem.addActionListener(new ActionListener() {
                     @Override
