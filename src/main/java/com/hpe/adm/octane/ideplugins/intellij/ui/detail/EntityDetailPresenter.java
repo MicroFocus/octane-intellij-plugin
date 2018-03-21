@@ -84,7 +84,15 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
         RestUtil.runInBackground(
                 () -> {
                     try {
-                        fields = metadataService.getVisibleFields(entityType);
+                        //entities which need to be called by their parent type in order to obtain their correct entity type
+                        if (entityType == Entity.REQUIREMENT
+                                || entityType == Entity.MANUAL_TEST
+                                || entityType == Entity.MANUAL_TEST_RUN
+                                || entityType == Entity.GHERKIN_TEST) {
+                            fields = metadataService.getVisibleFields(entityType.getSubtypeOf());
+                        } else {
+                            fields = metadataService.getVisibleFields(entityType);
+                        }
                         entityModel = entityService.findEntity(this.entityType, this.entityId, fields.stream().map(FieldMetadata::getName).collect(Collectors.toSet()));
                         return entityModel;
                     } catch (ServiceException ex) {
