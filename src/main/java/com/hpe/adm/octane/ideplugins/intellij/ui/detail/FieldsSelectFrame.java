@@ -1,10 +1,23 @@
+/*
+ * © 2017 EntIT Software LLC, a Micro Focus company, L.P.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
 import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
+import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.FieldMenuItem;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.util.DefaultEntityFieldsUtil;
-import com.intellij.openapi.ui.JBCheckboxMenuItem;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBScrollPane;
 import org.jdesktop.swingx.JXButton;
@@ -42,7 +55,7 @@ public class FieldsSelectFrame extends JFrame {
     private Set<String> selectedFields;
     private Collection<FieldMetadata> allFields;
     private Map<String, String> prettyFields = new HashMap<>();
-    private List<JCheckBoxMenuItem> menuItems;
+    private List<FieldMenuItem> menuItems;
     private Entity entityType;
     private IdePluginPersistentState idePluginPersistentState;
     private JScrollPane fieldsScrollPanel;
@@ -256,7 +269,7 @@ public class FieldsSelectFrame extends JFrame {
         menuItems = new ArrayList<>();
         for (FieldMetadata fieldMetadata : allFields) {
             if (!"description".equals(fieldMetadata.getName()) && !"phase".equals(fieldMetadata.getName())) {
-                JBCheckboxMenuItem menuItem = new JBCheckboxMenuItem(fieldMetadata.getLabel());
+                FieldMenuItem menuItem = new FieldMenuItem(fieldMetadata.getLabel());
                 menuItem.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
@@ -304,7 +317,7 @@ public class FieldsSelectFrame extends JFrame {
     private void updateFieldsPanel(Set<String> selectedFields, Collection<FieldMetadata> allFieldNames) {
         fieldsPanel.removeAll();
         int rowCount = 0;
-        for (JCheckBoxMenuItem checkBoxMenuItem : menuItems) {
+        for (FieldMenuItem checkBoxMenuItem : menuItems) {
 
             if (allFieldNames.stream().filter(e -> e.getLabel().equals(checkBoxMenuItem.getText())).count() == 1) {
                 if (selectedFields.contains(prettyFields.get(checkBoxMenuItem.getText()))) {
