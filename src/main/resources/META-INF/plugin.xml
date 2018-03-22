@@ -30,8 +30,8 @@
       <b>2016.2-12.55.17.1</b>
       <ul>
         <li>Implemented compatibility with ALM Octane 12.55.17 (backwards compatible down to version 12.53.20)</li>
-        <li>Test suites and manual runs now have comment support<li>
-        <li>Fixed bug where the visible fields dropdown would not display the correct information<li>
+        <li>Test suites and manual runs now have comment support</li>
+        <li>Fixed bug where the visible fields dropdown would not display the correct information</li>
         <li>Fixed bug where the visible fields dropdown would not display properly while using the Windows theme</li>
         <li>Comment item in "My Work" will now show the parent item type</li>
       </ul>
