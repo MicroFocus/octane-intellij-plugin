@@ -20,6 +20,7 @@ import com.hpe.adm.nga.sdk.exception.OctaneException;
 import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.nga.sdk.model.ReferenceFieldModel;
+import com.hpe.adm.nga.sdk.model.StringFieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
 import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
@@ -38,9 +39,7 @@ import com.intellij.openapi.vcs.VcsShowConfirmationOption;
 import com.intellij.util.ui.ConfirmationDialog;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.*;
@@ -84,16 +83,16 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
         RestUtil.runInBackground(
                 () -> {
                     try {
-                        //entities which need to be called by their parent type in order to obtain their correct entity type
-                        if (entityType == Entity.REQUIREMENT
-                                || entityType == Entity.MANUAL_TEST
-                                || entityType == Entity.MANUAL_TEST_RUN
-                                || entityType == Entity.GHERKIN_TEST) {
-                            fields = metadataService.getVisibleFields(entityType.getSubtypeOf());
-                        } else {
-                            fields = metadataService.getVisibleFields(entityType);
+                        fields = metadataService.getVisibleFields(entityType);
+
+                        Set<String> requestedFields = fields.stream().map(FieldMetadata::getName).collect(Collectors.toSet());
+                        entityModel = entityService.findEntity(this.entityType, this.entityId, requestedFields);
+
+                        //The subtype field is absolutely necessary, yet the server sometimes has weird ideas, and doesn't return it
+                        if(entityType.isSubtype()){
+                            entityModel.setValue(new StringFieldModel(DetailsViewDefaultFields.FIELD_SUBTYPE, entityType.getSubtypeName()));
                         }
-                        entityModel = entityService.findEntity(this.entityType, this.entityId, fields.stream().map(FieldMetadata::getName).collect(Collectors.toSet()));
+
                         return entityModel;
                     } catch (ServiceException ex) {
                         entityDetailView.setErrorMessage(ex.getMessage());

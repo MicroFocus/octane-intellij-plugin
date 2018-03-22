@@ -15,6 +15,11 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
 public class DetailsViewDefaultFields {
 
+    //System fields
+    public static final String FIELD_ID = "id";
+    public static final String FIELD_SUBTYPE = "subtype";
+    public static final String FIELD_TYPE = "type";
+
     public static final String FIELD_DEFECT_TYPE = "defect_type";
     public static final String FIELD_DESCRIPTION = "description";
     public static final String FIELD_FEATURE = "parent";
