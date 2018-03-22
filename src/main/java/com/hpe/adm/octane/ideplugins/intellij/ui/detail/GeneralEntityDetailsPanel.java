@@ -40,10 +40,13 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static com.intellij.icons.AllIcons.Json.Array;
 
 public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
 
@@ -292,10 +295,7 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
     public void setFieldSelectButton(EntityDetailPresenter.SelectFieldsAction fieldSelectButton) {
         headerPanel.setFieldSelectButton(fieldSelectButton);
         fieldsPopup = new FieldsSelectFrame(defaultFields.get(Entity.getEntityType(entityModel)),
-                fields.stream().filter(e -> !"subtype".equals(e.getName())
-                                            &&!"description".equals(e.getName())
-                                            &&!"phase".equals(e.getName())
-                                            &&!"name".equals(e.getName())).collect(Collectors.toList()),
+                fields.stream().filter(e -> !Arrays.asList("phase", "name", "subtype", "description").contains(e.getName())).collect(Collectors.toList()),
                 selectedFields,
                 Entity.getEntityType(entityModel),
                 idePluginPersistentState,
