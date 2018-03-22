@@ -43,6 +43,7 @@ import java.awt.event.ComponentEvent;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
 
@@ -291,7 +292,10 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
     public void setFieldSelectButton(EntityDetailPresenter.SelectFieldsAction fieldSelectButton) {
         headerPanel.setFieldSelectButton(fieldSelectButton);
         fieldsPopup = new FieldsSelectFrame(defaultFields.get(Entity.getEntityType(entityModel)),
-                fields,
+                fields.stream().filter(e -> !"subtype".equals(e.getName())
+                                            &&!"description".equals(e.getName())
+                                            &&!"phase".equals(e.getName())
+                                            &&!"name".equals(e.getName())).collect(Collectors.toList()),
                 selectedFields,
                 Entity.getEntityType(entityModel),
                 idePluginPersistentState,
