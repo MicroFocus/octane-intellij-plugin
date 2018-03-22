@@ -40,9 +40,13 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+
+import static com.intellij.icons.AllIcons.Json.Array;
 
 public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
 
@@ -291,7 +295,7 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
     public void setFieldSelectButton(EntityDetailPresenter.SelectFieldsAction fieldSelectButton) {
         headerPanel.setFieldSelectButton(fieldSelectButton);
         fieldsPopup = new FieldsSelectFrame(defaultFields.get(Entity.getEntityType(entityModel)),
-                fields,
+                fields.stream().filter(e -> !Arrays.asList("phase", "name", "subtype", "description").contains(e.getName())).collect(Collectors.toList()),
                 selectedFields,
                 Entity.getEntityType(entityModel),
                 idePluginPersistentState,
@@ -423,7 +427,7 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         GridBagLayout mainPaneGrid = new GridBagLayout();
         mainPaneGrid.columnWidths = new int[]{0, 0};
         mainPaneGrid.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-        mainPaneGrid.columnWeights = new double[]{0.5, 1.0};
+        mainPaneGrid.columnWeights = new double[]{0.5, 0.5};
         mainPaneGrid.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
         detailsPanelMain.setLayout(mainPaneGrid);
         return detailsPanelMain;
