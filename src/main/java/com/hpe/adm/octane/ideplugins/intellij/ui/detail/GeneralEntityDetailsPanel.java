@@ -427,7 +427,7 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         GridBagLayout mainPaneGrid = new GridBagLayout();
         mainPaneGrid.columnWidths = new int[]{0, 0};
         mainPaneGrid.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-        mainPaneGrid.columnWeights = new double[]{0.5, 1.0};
+        mainPaneGrid.columnWeights = new double[]{0.5, 0.5};
         mainPaneGrid.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
         detailsPanelMain.setLayout(mainPaneGrid);
         return detailsPanelMain;
