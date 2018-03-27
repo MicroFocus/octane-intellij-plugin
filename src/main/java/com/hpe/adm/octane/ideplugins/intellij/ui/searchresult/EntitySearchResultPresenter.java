@@ -99,7 +99,7 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
 
             public void run(@NotNull ProgressIndicator indicator) {
                 entityTreeView.setLoading(true);
-                searchResults = entitySearchService.searchGlobal(query, 20, searchEntityTypes);
+                searchResults = entitySearchService.searchGlobal(query, 1000, searchEntityTypes);
             }
 
             public void onSuccess() {
