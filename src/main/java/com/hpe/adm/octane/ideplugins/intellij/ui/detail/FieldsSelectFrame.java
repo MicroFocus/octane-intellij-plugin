@@ -99,6 +99,7 @@ public class FieldsSelectFrame extends JFrame {
         selectNoneButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                clearSearchField();
                 noneButtonClicked();
             }
         });
@@ -108,6 +109,7 @@ public class FieldsSelectFrame extends JFrame {
         selectAllButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                clearSearchField();
                 allButtonClicked();
             }
         });
@@ -116,6 +118,7 @@ public class FieldsSelectFrame extends JFrame {
         resetButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                clearSearchField();
                 resetButtonClicked();
             }
         });
@@ -189,6 +192,10 @@ public class FieldsSelectFrame extends JFrame {
         setAlwaysOnTop(true);
         setUndecorated(true);
         pack();
+    }
+
+    private void clearSearchField(){
+        searchField.setText("");
     }
 
     private void noneButtonClicked() {
