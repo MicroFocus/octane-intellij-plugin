@@ -19,6 +19,7 @@ import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
+import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.util.DefaultEntityFieldsUtil;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
@@ -66,6 +67,7 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
     private HeaderPanel headerPanel;
     private CommentsConversationPanel commentsListPanel;
     private JXLabel label;
+    private String baseUrl;
 
     private FieldsSelectFrame.SelectionListener selectionListener;
 
@@ -76,12 +78,12 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         this.entityModel = entityModel;
         this.fields = fields;
 
-        DataManager dataManager = DataManager.getInstance();
-        @SuppressWarnings("deprecation")
-        DataContext dataContext = dataManager.getDataContext();
+        DataContext dataContext = DataManager.getInstance().getDataContextFromFocus().getResult();
         Project project = DataKeys.PROJECT.getData(dataContext);
+        PluginModule module = PluginModule.getPluginModuleForProject(project);
+        baseUrl = module.getInstance(ConnectionSettingsProvider.class).getConnectionSettings().getBaseUrl();
 
-        idePluginPersistentState = PluginModule.getInstance(project, IdePluginPersistentState.class);
+        idePluginPersistentState = module.getInstance(IdePluginPersistentState.class);
 
         JSONObject selectedFieldsJson = idePluginPersistentState.loadState(IdePluginPersistentState.Key.SELECTED_FIELDS);
         if (selectedFieldsJson == null) {
@@ -173,7 +175,7 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         commentsDetails.setMinimumSize(new Dimension(400,200));
         commentsDetails.setScrollableTracksViewportWidth(false);
 
-        commentsListPanel = new CommentsConversationPanel();
+        commentsListPanel = new CommentsConversationPanel(baseUrl);
         commentsListPanel.setPreferredSize(new Dimension(400, (int) entityDetailsPanel.getPreferredSize().getHeight() + 50));
         commentsListPanel.setMaximumSize(new Dimension(400, 200));
         commentsListPanel.setBorder(new MatteBorder(1, 1, 1, 1, JBColor.border()));
@@ -196,7 +198,7 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         gbc_label.gridy = 2;
         rootPanel.add(label, gbc_label);
 
-        descriptionDetails = new HTMLPresenterFXPanel();
+        descriptionDetails = new HTMLPresenterFXPanel(baseUrl);
         descriptionDetails.setPreferredSize(new Dimension(0, 120));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.BOTH;
