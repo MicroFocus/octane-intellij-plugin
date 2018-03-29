@@ -13,8 +13,14 @@
 
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
+import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.util.HtmlTextEditor;
+import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
+import com.intellij.ide.DataManager;
+import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.actionSystem.DataKeys;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.project.Project;
 import javafx.application.Platform;
 import javafx.concurrent.Worker.State;
 import javafx.embed.swing.JFXPanel;
@@ -32,6 +38,7 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import java.awt.*;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -44,13 +51,16 @@ public class HTMLPresenterFXPanel extends JFXPanel {
     private static final String HYPERLINK_TAG = "a";
     private WebView webView;
     private String commentContent;
+    private String baseUrl;
 
-    HTMLPresenterFXPanel() {
+    HTMLPresenterFXPanel(String baseUrl) {
         UIManager.addPropertyChangeListener(evt -> {
             if ("lookAndFeel".equals(evt.getPropertyName())) {
                 Platform.runLater(() -> setContent(getCommentContent()));
             }
         });
+
+        this.baseUrl = baseUrl;
     }
 
     private void addHyperlinkListener(HyperlinkListener listener) {
@@ -161,7 +171,12 @@ public class HTMLPresenterFXPanel extends JFXPanel {
             HyperlinkEvent.EventType eventType = evt.getEventType();
 
             try {
-                targetUrl = new URL(href);
+                //useful for checking whether relative or absolute url been given
+                try {
+                    targetUrl = new URL(href);
+                } catch (MalformedURLException ex){
+                    targetUrl = new URL(baseUrl + href);
+                }
                 targetUri = targetUrl.toURI();
                 if (HyperlinkEvent.EventType.ACTIVATED.equals(eventType)) {
                     Desktop.getDesktop().browse(targetUri);
