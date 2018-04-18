@@ -32,10 +32,8 @@ public class CommentsConversationPanel extends JPanel {
     private HTMLPresenterFXPanel chatBox;
     private String commentContent = "";
     private ActionListener addCommentActionListener;
-    private String baseUrl;
 
-    public CommentsConversationPanel(String baseUrl) {
-        this.baseUrl = baseUrl;
+    public CommentsConversationPanel(String baseUrl, String lwssoValue) {
         setLayout(new BorderLayout());
 
         JPanel southPanel = new JPanel();
@@ -72,9 +70,7 @@ public class CommentsConversationPanel extends JPanel {
         });
         sendMessageButton = new JButton("Add");
 
-
-
-        chatBox = new HTMLPresenterFXPanel(baseUrl);
+        chatBox = new HTMLPresenterFXPanel(baseUrl, lwssoValue);
         chatBox.setOpaque(false);
         chatBox.setBorder(null);
         chatBox.setFont(new Font("Arial", Font.PLAIN, 11));

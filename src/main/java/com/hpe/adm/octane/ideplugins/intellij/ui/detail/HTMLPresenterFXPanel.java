@@ -13,14 +13,8 @@
 
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
-import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.util.HtmlTextEditor;
-import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
-import com.intellij.ide.DataManager;
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.actionSystem.DataKeys;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.project.Project;
 import javafx.application.Platform;
 import javafx.concurrent.Worker.State;
 import javafx.embed.swing.JFXPanel;
@@ -42,6 +36,10 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class HTMLPresenterFXPanel extends JFXPanel {
     private static final Logger log = Logger.getInstance(HTMLPresenterFXPanel.class);
@@ -52,15 +50,19 @@ public class HTMLPresenterFXPanel extends JFXPanel {
     private WebView webView;
     private String commentContent;
     private String baseUrl;
+    private String lwssoValue;
 
-    HTMLPresenterFXPanel(String baseUrl) {
+    HTMLPresenterFXPanel(String baseUrl, String lwssoValue) {
         UIManager.addPropertyChangeListener(evt -> {
             if ("lookAndFeel".equals(evt.getPropertyName())) {
-                Platform.runLater(() -> setContent(getCommentContent()));
+                Platform.runLater(() ->
+                        setContent(getCommentContent())
+                );
             }
         });
 
         this.baseUrl = baseUrl;
+        this.lwssoValue = lwssoValue;
     }
 
     private void addHyperlinkListener(HyperlinkListener listener) {
@@ -90,7 +92,7 @@ public class HTMLPresenterFXPanel extends JFXPanel {
      * From the webview object, the page engine is fetched together with it's worker(object
      * which keeps track of the progress of a task (FAILED, RUNNING, SUCCEEDED). A hyperlink
      * listener is then added to SUCCEEDED state property.
-     *
+     * <p>
      * When a new state was succesfully transitioned to, mouse events are caught and handled accordingly.
      * P.S. For this use case mouseover and mouseout event were not required to be handled.
      */
@@ -140,14 +142,17 @@ public class HTMLPresenterFXPanel extends JFXPanel {
     }
 
     public void setContent(final String commentContent) {
-        final String strippedContent = HtmlTextEditor.removeHtmlStructure(commentContent);
+        StringBuilder strippedContent = new StringBuilder(HtmlTextEditor.removeHtmlStructure(commentContent));
         final StackPane root = new StackPane();
         final Scene scene = new Scene(root);
         final WebView webView = getWebView();
         final WebEngine webEngine = webView.getEngine();
-        final String coloredHtmlCode = HtmlTextEditor.getColoredHTML(strippedContent);
+        String remodeledContent = remodelDescriptionText(strippedContent);
+        final String coloredHtmlCode = HtmlTextEditor.getColoredHTML(remodeledContent);
 
-        setCommentContent(strippedContent);
+        setUpCookie();
+
+        setCommentContent(remodeledContent);
         root.getChildren().add(webView);
         webEngine.loadContent(coloredHtmlCode);
         this.setWebView(webView);
@@ -155,12 +160,21 @@ public class HTMLPresenterFXPanel extends JFXPanel {
         Platform.setImplicitExit(false);
     }
 
+    private String remodelDescriptionText(StringBuilder uiDataFromModel) {
+        String keyWords = "src=\"/api/shared_spaces";
+        if (uiDataFromModel.indexOf(keyWords) != -1) {
+            int myIndex = uiDataFromModel.indexOf(keyWords);
+            uiDataFromModel.insert(myIndex + 5, baseUrl);
+            return remodelDescriptionText(uiDataFromModel);
+        }
+        return uiDataFromModel.toString();
+    }
+
     private void addEventListeners(EventTarget eventTarget, EventListener listener) {
         eventTarget.addEventListener(EVENT_TYPE_CLICK, listener, false);
         eventTarget.addEventListener(EVENT_TYPE_MOUSEOVER, listener, false);
         eventTarget.addEventListener(EVENT_TYPE_MOUSEOUT, listener, false);
     }
-
 
     public void addEventActions() {
         this.addHyperlinkListener(evt -> {
@@ -174,7 +188,7 @@ public class HTMLPresenterFXPanel extends JFXPanel {
                 //useful for checking whether relative or absolute url been given
                 try {
                     targetUrl = new URL(href);
-                } catch (MalformedURLException ex){
+                } catch (MalformedURLException ex) {
                     targetUrl = new URL(baseUrl + href);
                 }
                 targetUri = targetUrl.toURI();
@@ -211,5 +225,17 @@ public class HTMLPresenterFXPanel extends JFXPanel {
         this.commentContent = commentContent;
     }
 
+    private void setUpCookie(){
+        //add the cookie to the CookieHandler, it will be used by webView
+        Map<String, java.util.List<String>> headers = new LinkedHashMap<String, List<String>>();
+        headers.put("Set-Cookie", Arrays.asList(lwssoValue));
+        try {
+            java.net.CookieHandler.getDefault().put(new URI(baseUrl), headers);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+    }
 
 }
