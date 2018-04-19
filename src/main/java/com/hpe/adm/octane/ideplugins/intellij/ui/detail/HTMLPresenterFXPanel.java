@@ -22,6 +22,9 @@ import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.events.EventListener;
@@ -36,10 +39,6 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 public class HTMLPresenterFXPanel extends JFXPanel {
     private static final Logger log = Logger.getInstance(HTMLPresenterFXPanel.class);
@@ -50,9 +49,8 @@ public class HTMLPresenterFXPanel extends JFXPanel {
     private WebView webView;
     private String commentContent;
     private String baseUrl;
-    private String lwssoValue;
 
-    HTMLPresenterFXPanel(String baseUrl, String lwssoValue) {
+    HTMLPresenterFXPanel(String baseUrl) {
         UIManager.addPropertyChangeListener(evt -> {
             if ("lookAndFeel".equals(evt.getPropertyName())) {
                 Platform.runLater(() ->
@@ -62,7 +60,6 @@ public class HTMLPresenterFXPanel extends JFXPanel {
         });
 
         this.baseUrl = baseUrl;
-        this.lwssoValue = lwssoValue;
     }
 
     private void addHyperlinkListener(HyperlinkListener listener) {
@@ -142,15 +139,15 @@ public class HTMLPresenterFXPanel extends JFXPanel {
     }
 
     public void setContent(final String commentContent) {
-        StringBuilder strippedContent = new StringBuilder(HtmlTextEditor.removeHtmlStructure(commentContent));
+        String strippedContent = HtmlTextEditor.removeHtmlStructure(commentContent);
         final StackPane root = new StackPane();
         final Scene scene = new Scene(root);
         final WebView webView = getWebView();
         final WebEngine webEngine = webView.getEngine();
-        String remodeledContent = remodelDescriptionText(strippedContent);
-        final String coloredHtmlCode = HtmlTextEditor.getColoredHTML(remodeledContent);
 
-        setUpCookie();
+        String remodeledContent = remodelDescriptionText(strippedContent);
+
+        final String coloredHtmlCode = HtmlTextEditor.getColoredHTML(remodeledContent);
 
         setCommentContent(remodeledContent);
         root.getChildren().add(webView);
@@ -160,14 +157,16 @@ public class HTMLPresenterFXPanel extends JFXPanel {
         Platform.setImplicitExit(false);
     }
 
-    private String remodelDescriptionText(StringBuilder uiDataFromModel) {
-        String keyWords = "src=\"/api/shared_spaces";
-        if (uiDataFromModel.indexOf(keyWords) != -1) {
-            int myIndex = uiDataFromModel.indexOf(keyWords);
-            uiDataFromModel.insert(myIndex + 5, baseUrl);
-            return remodelDescriptionText(uiDataFromModel);
+    private String remodelDescriptionText(String uiDataFromModel) {
+        org.jsoup.nodes.Document document =  Jsoup.parse(uiDataFromModel);
+        Elements elements = document.getElementsByTag("img");
+        for(Element element: elements) {
+            String src = element.attr("src");
+            if (src.startsWith("/api/shared_spaces")) {
+                element.attr("src", baseUrl + src);
+            }
         }
-        return uiDataFromModel.toString();
+        return document.toString();
     }
 
     private void addEventListeners(EventTarget eventTarget, EventListener listener) {
@@ -223,19 +222,6 @@ public class HTMLPresenterFXPanel extends JFXPanel {
 
     private void setCommentContent(String commentContent) {
         this.commentContent = commentContent;
-    }
-
-    private void setUpCookie(){
-        //add the cookie to the CookieHandler, it will be used by webView
-        Map<String, java.util.List<String>> headers = new LinkedHashMap<String, List<String>>();
-        headers.put("Set-Cookie", Arrays.asList(lwssoValue));
-        try {
-            java.net.CookieHandler.getDefault().put(new URI(baseUrl), headers);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
     }
 
 }
