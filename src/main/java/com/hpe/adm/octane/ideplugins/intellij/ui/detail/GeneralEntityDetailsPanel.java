@@ -14,23 +14,16 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
 import com.google.inject.Inject;
-import com.hpe.adm.nga.sdk.authentication.SimpleUserAuthentication;
 import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
-import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
-import com.hpe.adm.octane.ideplugins.services.connection.ExposedGoogleHttpClient;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.util.DefaultEntityFieldsUtil;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
-import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.actionSystem.DataKeys;
-import com.intellij.openapi.project.Project;
 import com.intellij.ui.JBColor;
 import javafx.application.Platform;
 import org.jdesktop.swingx.JXLabel;
@@ -69,27 +62,19 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
     private CommentsConversationPanel commentsListPanel;
     private JXLabel label;
     private String baseUrl;
-    private ConnectionSettings connectionSettings;
-    private String lwssoValue;
 
     private FieldsSelectFrame.SelectionListener selectionListener;
 
 
-    public GeneralEntityDetailsPanel(EntityModel entityModel, Collection<FieldMetadata> fields) {
+    public GeneralEntityDetailsPanel(EntityModel entityModel, Collection<FieldMetadata> fields, PluginModule pluginModule) {
         setLayout(new BorderLayout(0, 0));
 
         this.entityModel = entityModel;
         this.fields = fields;
 
-        //obtain information regarding the current project and the pluginmodule
-        DataContext dataContext = DataManager.getInstance().getDataContextFromFocus().getResult();
-        Project project = DataKeys.PROJECT.getData(dataContext);
-        PluginModule module = PluginModule.getPluginModuleForProject(project);
-        connectionSettings = module.getInstance(ConnectionSettingsProvider.class).getConnectionSettings();
-        baseUrl = connectionSettings.getBaseUrl();
-        idePluginPersistentState = module.getInstance(IdePluginPersistentState.class);
 
-        lwssoValue = getCookie();
+        baseUrl = pluginModule.getInstance(ConnectionSettingsProvider.class).getConnectionSettings().getBaseUrl();
+        idePluginPersistentState = pluginModule.getInstance(IdePluginPersistentState.class);
 
         JSONObject selectedFieldsJson = idePluginPersistentState.loadState(IdePluginPersistentState.Key.SELECTED_FIELDS);
         if (selectedFieldsJson == null) {
@@ -180,7 +165,7 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         commentsDetails.setLayout(new BorderLayout());
         commentsDetails.setMinimumSize(new Dimension(400,200));
         commentsDetails.setScrollableTracksViewportWidth(false);
-        commentsListPanel = new CommentsConversationPanel(baseUrl, lwssoValue);
+        commentsListPanel = new CommentsConversationPanel(baseUrl);
         commentsListPanel.setPreferredSize(new Dimension(400, (int) entityDetailsPanel.getPreferredSize().getHeight() + 50));
         commentsListPanel.setMaximumSize(new Dimension(400, 200));
         commentsListPanel.setBorder(new MatteBorder(1, 1, 1, 1, JBColor.border()));
@@ -203,7 +188,7 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         gbc_label.gridy = 2;
         rootPanel.add(label, gbc_label);
 
-        descriptionDetails = new HTMLPresenterFXPanel(baseUrl, lwssoValue);
+        descriptionDetails = new HTMLPresenterFXPanel(baseUrl);
         descriptionDetails.setPreferredSize(new Dimension(0, 120));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.BOTH;
@@ -471,15 +456,6 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
     @Override
     public boolean getScrollableTracksViewportHeight() {
         return false;
-    }
-
-    public String getCookie(){
-        ExposedGoogleHttpClient client = new ExposedGoogleHttpClient(connectionSettings.getBaseUrl());
-        SimpleUserAuthentication userAuthentication = new SimpleUserAuthentication(connectionSettings.getUserName(),
-                connectionSettings.getPassword());
-        client.authenticate(userAuthentication);
-        String lwssoValue = "LWSSO_COOKIE_KEY=" + client.getCookieValue();
-        return lwssoValue;
     }
 
 
