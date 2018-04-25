@@ -23,12 +23,14 @@ import com.hpe.adm.nga.sdk.model.ReferenceFieldModel;
 import com.hpe.adm.nga.sdk.model.StringFieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
+import com.hpe.adm.octane.ideplugins.intellij.util.HtmlTextEditor;
 import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
 import com.hpe.adm.octane.ideplugins.services.CommentService;
 import com.hpe.adm.octane.ideplugins.services.EntityService;
 import com.hpe.adm.octane.ideplugins.services.MetadataService;
 import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
+import com.hpe.adm.octane.ideplugins.services.nonentity.ImageService;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -54,6 +56,8 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
     private Project project;
     @Inject
     private MetadataService metadataService;
+    @Inject
+    private ImageService imageService;
 
     private EntityDetailView entityDetailView;
     private Entity entityType;
@@ -88,6 +92,12 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                         Set<String> requestedFields = fields.stream().map(FieldMetadata::getName).collect(Collectors.toSet());
                         entityModel = entityService.findEntity(this.entityType, this.entityId, requestedFields);
 
+                        //change relative urls with local paths to temp and download images
+                        String description = Util.getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_DESCRIPTION));
+                        description =  HtmlTextEditor.removeHtmlStructure(description);
+                        description = imageService.downloadPictures(description);
+                        entityModel.setValue(new StringFieldModel("description", description));
+
                         //The subtype field is absolutely necessary, yet the server sometimes has weird ideas, and doesn't return it
                         if(entityType.isSubtype()){
                             entityModel.setValue(new StringFieldModel(DetailsViewDefaultFields.FIELD_SUBTYPE, entityType.getSubtypeName()));
@@ -102,6 +112,11 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                 (entityModel) -> {
                     if (entityModel != null) {
                         this.entityModel = entityModel;
+
+
+
+
+
                         entityDetailView.createDetailsPanel(entityModel, fields);
                         entityDetailView.setSaveSelectedPhaseButton(new SaveSelectedPhaseAction());
                         entityDetailView.setRefreshEntityButton(new EntityRefreshAction());
