@@ -36,6 +36,7 @@ public class HeaderPanel extends JPanel {
     private JLabel entityIconLabel;
     private JTextField entityId;
     private JSeparator separator;
+    private JSeparator separatorPhasePanel;
     private JTextField entityLinkToBrowser;
 
     private JXPanel phasePanel;
@@ -59,9 +60,9 @@ public class HeaderPanel extends JPanel {
         setToolTipText("");
         setBorder(null);
         GridBagLayout gridBagLayout = new GridBagLayout();
-        gridBagLayout.columnWidths = new int[]{0, 0, 0,30, 0, 0};
+        gridBagLayout.columnWidths = new int[]{0, 0, 0, 30, 0, 0, 0};
         gridBagLayout.rowHeights = new int[]{40, 0};
-        gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE};
+        gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, 1.0, 0.0, 0.0, Double.MIN_VALUE};
         gridBagLayout.rowWeights = new double[]{0.0, Double.MIN_VALUE};
         setLayout(gridBagLayout);
 
@@ -115,10 +116,18 @@ public class HeaderPanel extends JPanel {
         gbc_labelReplaceme.gridy = 0;
         add(entityLinkToBrowser, gbc_labelReplaceme);
 
+        GridBagConstraints gbc_separator2 = new GridBagConstraints();
+        gbc_separator2.insets = new Insets(10, 0, 10, 5);
+        gbc_separator2.gridx = 4;
+        gbc_separator2.gridy = 0;
+        gbc_separator2.fill = GridBagConstraints.VERTICAL;
+        gbc_separator2.weighty = 1;
+        add(separator, gbc_separator2);
+
         panelControls = new JPanel(new BorderLayout());
         GridBagConstraints gbc_panelControls = new GridBagConstraints();
         gbc_panelControls.fill = GridBagConstraints.BOTH;
-        gbc_panelControls.gridx = 4;
+        gbc_panelControls.gridx = 5;
         gbc_panelControls.gridy = 0;
         add(panelControls, gbc_panelControls);
         panelControls.setLayout(new BorderLayout(0, 0));
@@ -128,9 +137,9 @@ public class HeaderPanel extends JPanel {
         phasePanel.setBorder(null);
         phasePanel.setAlignmentX(1.0f);
         GridBagLayout gbl_phasePanel = new GridBagLayout();
-        gbl_phasePanel.columnWidths = new int[]{88, 44, 51, 200};
+        gbl_phasePanel.columnWidths = new int[]{88, 44, 0, 51, 200};
         gbl_phasePanel.rowHeights = new int[]{16, 0};
-        gbl_phasePanel.columnWeights = new double[]{0.0, 0.0, 0.0, 1.0};
+        gbl_phasePanel.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, 1.0};
         gbl_phasePanel.rowWeights = new double[]{1.0, Double.MIN_VALUE};
         phasePanel.setLayout(gbl_phasePanel);
 
@@ -156,6 +165,15 @@ public class HeaderPanel extends JPanel {
         gbc_phaseDetails.gridy = 0;
         phasePanel.add(phaseDetails, gbc_phaseDetails);
 
+        separatorPhasePanel = new JSeparator(SwingConstants.VERTICAL);
+        GridBagConstraints gbc_separator3 = new GridBagConstraints();
+        gbc_separator3.insets = new Insets(10, 0, 10, 5);
+        gbc_separator3.gridx = 2;
+        gbc_separator3.gridy = 0;
+        gbc_separator3.fill = GridBagConstraints.VERTICAL;
+        gbc_separator3.weighty = 1;
+        phasePanel.add(separatorPhasePanel, gbc_separator3);
+
         moveToLabel = new JXLabel();
         moveToLabel.setText("Move to:");
         moveToLabel.setFont(new Font("Arial", Font.BOLD, 13));
@@ -163,7 +181,7 @@ public class HeaderPanel extends JPanel {
         GridBagConstraints gbc_moveToLabel = new GridBagConstraints();
         gbc_moveToLabel.anchor = GridBagConstraints.WEST;
         gbc_moveToLabel.insets = new Insets(0, 0, 0, 5);
-        gbc_moveToLabel.gridx = 2;
+        gbc_moveToLabel.gridx = 3;
         gbc_moveToLabel.gridy = 0;
         phasePanel.add(moveToLabel, gbc_moveToLabel);
 
@@ -172,10 +190,9 @@ public class HeaderPanel extends JPanel {
         phaseComboBox.setEditable(true);
         GridBagConstraints gbc_phaseComboBox = new GridBagConstraints();
         gbc_phaseComboBox.fill = GridBagConstraints.HORIZONTAL;
-        gbc_phaseComboBox.gridx = 3;
+        gbc_phaseComboBox.gridx = 4;
         gbc_phaseComboBox.gridy = 0;
         phasePanel.add(phaseComboBox, gbc_phaseComboBox);
-
 
         buttonActionGroup = new DefaultActionGroup();
         actionToolBar = ActionManager.getInstance().createActionToolbar("refresh | save | comments ", buttonActionGroup, true);
@@ -186,7 +203,7 @@ public class HeaderPanel extends JPanel {
         this.entityLinkToBrowser.setText(nameDetails);
     }
 
-    public void setId(String id){
+    public void setId(String id) {
         this.entityId.setText(id);
     }
 
