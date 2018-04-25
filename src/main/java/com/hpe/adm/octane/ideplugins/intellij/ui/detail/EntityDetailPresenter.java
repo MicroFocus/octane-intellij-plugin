@@ -96,12 +96,12 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
 
                         //change relative urls with local paths to temp and download images
                         String description = Util.getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_DESCRIPTION));
-                        description =  HtmlTextEditor.removeHtmlStructure(description);
+                        description = HtmlTextEditor.removeHtmlStructure(description);
                         description = imageService.downloadPictures(description);
                         entityModel.setValue(new StringFieldModel("description", description));
 
                         //The subtype field is absolutely necessary, yet the server sometimes has weird ideas, and doesn't return it
-                        if(entityType.isSubtype()){
+                        if (entityType.isSubtype()) {
                             entityModel.setValue(new StringFieldModel(DetailsViewDefaultFields.FIELD_SUBTYPE, entityType.getSubtypeName()));
                         }
 
@@ -114,9 +114,6 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                 (entityModel) -> {
                     if (entityModel != null) {
                         this.entityModel = entityModel;
-
-
-
 
 
                         entityDetailView.createDetailsPanel(entityModel, fields);
