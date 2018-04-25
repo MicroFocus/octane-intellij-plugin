@@ -35,10 +35,10 @@ public class HeaderPanel extends JPanel {
 
     private JLabel entityIconLabel;
     private JTextField entityId;
-    private JSeparator separator;
+    private JSeparator separatorIdName;
+    private JSeparator separatorNamePhase;
     private JSeparator separatorPhasePanel;
     private JTextField entityLinkToBrowser;
-
     private JXPanel phasePanel;
 
     private JXLabel phaseDetails;
@@ -100,14 +100,14 @@ public class HeaderPanel extends JPanel {
         gbc_id.gridy = 0;
         add(entityId, gbc_id);
 
-        separator = new JSeparator(SwingConstants.VERTICAL);
+        separatorIdName = new JSeparator(SwingConstants.VERTICAL);
         GridBagConstraints gbc_separator1 = new GridBagConstraints();
         gbc_separator1.insets = new Insets(10, 0, 10, 0);
         gbc_separator1.gridx = 2;
         gbc_separator1.gridy = 0;
         gbc_separator1.fill = GridBagConstraints.VERTICAL;
         gbc_separator1.weighty = 1;
-        add(separator, gbc_separator1);
+        add(separatorIdName, gbc_separator1);
 
         GridBagConstraints gbc_labelReplaceme = new GridBagConstraints();
         gbc_labelReplaceme.fill = GridBagConstraints.HORIZONTAL;
@@ -116,13 +116,14 @@ public class HeaderPanel extends JPanel {
         gbc_labelReplaceme.gridy = 0;
         add(entityLinkToBrowser, gbc_labelReplaceme);
 
+        separatorNamePhase = new JSeparator(SwingConstants.VERTICAL);
         GridBagConstraints gbc_separator2 = new GridBagConstraints();
         gbc_separator2.insets = new Insets(10, 0, 10, 5);
         gbc_separator2.gridx = 4;
         gbc_separator2.gridy = 0;
         gbc_separator2.fill = GridBagConstraints.VERTICAL;
         gbc_separator2.weighty = 1;
-        add(separator, gbc_separator2);
+        add(separatorNamePhase, gbc_separator2);
 
         panelControls = new JPanel(new BorderLayout());
         GridBagConstraints gbc_panelControls = new GridBagConstraints();
@@ -273,6 +274,5 @@ public class HeaderPanel extends JPanel {
         return new Point(button.getLocationOnScreen().x + (int) button.getPreferredSize().getWidth(),
                 button.getLocationOnScreen().y + (int) button.getPreferredSize().getHeight() + 8);
     }
-
 
 }
