@@ -22,6 +22,7 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.ui.JBColor;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
+import org.jdesktop.swingx.JXTextField;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -33,7 +34,9 @@ import java.util.Collection;
 public class HeaderPanel extends JPanel {
 
     private JLabel entityIconLabel;
-    private JXLabel entityLinkToBrowser;
+    private JTextField entityId;
+    private JSeparator separator;
+    private JTextField entityLinkToBrowser;
 
     private JXPanel phasePanel;
 
@@ -56,14 +59,15 @@ public class HeaderPanel extends JPanel {
         setToolTipText("");
         setBorder(null);
         GridBagLayout gridBagLayout = new GridBagLayout();
-        gridBagLayout.columnWidths = new int[]{0, 30, 0, 0};
+        gridBagLayout.columnWidths = new int[]{0, 0, 0,30, 0, 0};
         gridBagLayout.rowHeights = new int[]{40, 0};
-        gridBagLayout.columnWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
+        gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE};
         gridBagLayout.rowWeights = new double[]{0.0, Double.MIN_VALUE};
         setLayout(gridBagLayout);
 
-        entityLinkToBrowser = new JXLabel();
-        entityLinkToBrowser.setFont(new Font("Arial", Font.PLAIN, 13));
+        entityLinkToBrowser = new JTextField();
+        entityLinkToBrowser.setEditable(false);
+        entityLinkToBrowser.setFont(new Font("Arial", Font.PLAIN, 15));
         entityLinkToBrowser.setBorder(new EmptyBorder(0, 5, 0, 0));
         entityLinkToBrowser.addMouseListener(new MouseAdapter() {
             @Override
@@ -84,17 +88,37 @@ public class HeaderPanel extends JPanel {
         gbc_entityIconLabel.gridx = 0;
         gbc_entityIconLabel.gridy = 0;
         add(entityIconLabel, gbc_entityIconLabel);
+
+        entityId = new JXTextField();
+        entityId.setFont(new Font("Arial", Font.BOLD, 15));
+        entityId.setEditable(false);
+        entityId.setBorder(null);
+        GridBagConstraints gbc_id = new GridBagConstraints();
+        gbc_id.insets = new Insets(0, 10, 0, 5);
+        gbc_id.gridx = 1;
+        gbc_id.gridy = 0;
+        add(entityId, gbc_id);
+
+        separator = new JSeparator(SwingConstants.VERTICAL);
+        GridBagConstraints gbc_separator1 = new GridBagConstraints();
+        gbc_separator1.insets = new Insets(10, 0, 10, 0);
+        gbc_separator1.gridx = 2;
+        gbc_separator1.gridy = 0;
+        gbc_separator1.fill = GridBagConstraints.VERTICAL;
+        gbc_separator1.weighty = 1;
+        add(separator, gbc_separator1);
+
         GridBagConstraints gbc_labelReplaceme = new GridBagConstraints();
         gbc_labelReplaceme.fill = GridBagConstraints.HORIZONTAL;
         gbc_labelReplaceme.insets = new Insets(0, 0, 0, 5);
-        gbc_labelReplaceme.gridx = 1;
+        gbc_labelReplaceme.gridx = 3;
         gbc_labelReplaceme.gridy = 0;
         add(entityLinkToBrowser, gbc_labelReplaceme);
 
         panelControls = new JPanel(new BorderLayout());
         GridBagConstraints gbc_panelControls = new GridBagConstraints();
         gbc_panelControls.fill = GridBagConstraints.BOTH;
-        gbc_panelControls.gridx = 2;
+        gbc_panelControls.gridx = 4;
         gbc_panelControls.gridy = 0;
         add(panelControls, gbc_panelControls);
         panelControls.setLayout(new BorderLayout(0, 0));
@@ -159,7 +183,11 @@ public class HeaderPanel extends JPanel {
     }
 
     public void setNameDetails(String nameDetails) {
-        this.entityLinkToBrowser.setText("<html><body><span style=\"font-family:'arial unicode ms'\">" + nameDetails + "</body></html>");
+        this.entityLinkToBrowser.setText(nameDetails);
+    }
+
+    public void setId(String id){
+        this.entityId.setText(id);
     }
 
     public void setPhaseDetails(String phaseDetails) {
