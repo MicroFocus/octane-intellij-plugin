@@ -27,8 +27,7 @@ import org.jdesktop.swingx.JXTextField;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.util.Collection;
 
 public class HeaderPanel extends JPanel {
@@ -38,7 +37,7 @@ public class HeaderPanel extends JPanel {
     private JSeparator separatorIdName;
     private JSeparator separatorNamePhase;
     private JSeparator separatorPhasePanel;
-    private JTextField entityLinkToBrowser;
+    private JXLabel entityLinkToBrowser;
     private JXPanel phasePanel;
 
     private JXLabel phaseDetails;
@@ -66,8 +65,7 @@ public class HeaderPanel extends JPanel {
         gridBagLayout.rowWeights = new double[]{0.0, Double.MIN_VALUE};
         setLayout(gridBagLayout);
 
-        entityLinkToBrowser = new JTextField();
-        entityLinkToBrowser.setEditable(false);
+        entityLinkToBrowser = new JXLabel();
         entityLinkToBrowser.setFont(new Font("Arial", Font.PLAIN, 15));
         entityLinkToBrowser.setBorder(new EmptyBorder(0, 5, 0, 0));
         entityLinkToBrowser.addMouseListener(new MouseAdapter() {
@@ -94,6 +92,7 @@ public class HeaderPanel extends JPanel {
         entityId.setFont(new Font("Arial", Font.BOLD, 15));
         entityId.setEditable(false);
         entityId.setBorder(null);
+
         GridBagConstraints gbc_id = new GridBagConstraints();
         gbc_id.insets = new Insets(0, 10, 0, 5);
         gbc_id.gridx = 1;
