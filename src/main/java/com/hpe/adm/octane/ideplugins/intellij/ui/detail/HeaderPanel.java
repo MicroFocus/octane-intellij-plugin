@@ -200,7 +200,7 @@ public class HeaderPanel extends JPanel {
     }
 
     public void setNameDetails(String nameDetails) {
-        this.entityLinkToBrowser.setText(nameDetails);
+        this.entityLinkToBrowser.setText("<html><body><span style=\"font-family:'arial unicode ms'\">" + nameDetails + "</body></html>");
     }
 
     public void setId(String id) {
