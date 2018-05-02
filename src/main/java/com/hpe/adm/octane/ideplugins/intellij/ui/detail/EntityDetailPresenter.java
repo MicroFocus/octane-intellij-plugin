@@ -28,7 +28,6 @@ import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
 import com.hpe.adm.octane.ideplugins.services.CommentService;
 import com.hpe.adm.octane.ideplugins.services.EntityService;
 import com.hpe.adm.octane.ideplugins.services.MetadataService;
-import com.hpe.adm.octane.ideplugins.services.connection.ClientLoginCookie;
 import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.nonentity.ImageService;
@@ -40,7 +39,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vcs.VcsShowConfirmationOption;
 import com.intellij.util.ui.ConfirmationDialog;
-import javafx.application.Platform;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -63,8 +61,6 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
     private MetadataService metadataService;
     @Inject
     private ImageService imageService;
-    @Inject
-    private ClientLoginCookie clientLoginCookie;
 
     private EntityDetailView entityDetailView;
     private Entity entityType;
