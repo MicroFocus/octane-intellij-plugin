@@ -13,14 +13,8 @@
 
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
-import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.util.HtmlTextEditor;
-import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
-import com.intellij.ide.DataManager;
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.actionSystem.DataKeys;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.project.Project;
 import javafx.application.Platform;
 import javafx.concurrent.Worker.State;
 import javafx.embed.swing.JFXPanel;

@@ -23,12 +23,14 @@ import com.hpe.adm.nga.sdk.model.ReferenceFieldModel;
 import com.hpe.adm.nga.sdk.model.StringFieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
+import com.hpe.adm.octane.ideplugins.intellij.util.HtmlTextEditor;
 import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
 import com.hpe.adm.octane.ideplugins.services.CommentService;
 import com.hpe.adm.octane.ideplugins.services.EntityService;
 import com.hpe.adm.octane.ideplugins.services.MetadataService;
 import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
+import com.hpe.adm.octane.ideplugins.services.nonentity.ImageService;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -39,29 +41,37 @@ import com.intellij.openapi.vcs.VcsShowConfirmationOption;
 import com.intellij.util.ui.ConfirmationDialog;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.*;
 
 public class EntityDetailPresenter implements Presenter<EntityDetailView> {
 
+    private static final Logger logger = Logger.getInstance(EntityDetailPresenter.class.getName());
+    private static final String GO_TO_BROWSER_DIALOG_MESSAGE =
+            "\nYou can only provide a value for this field using ALM Octane in a browser."
+            + "\nDo you want to do this now? ";
+
+    @Inject
+    private Project project;
     @Inject
     private EntityService entityService;
     @Inject
     private CommentService commentService;
     @Inject
-    private Project project;
-    @Inject
     private MetadataService metadataService;
+    @Inject
+    private ImageService imageService;
+
+    private Long entityId;
+    private Entity entityType;
+    private EntityModel entityModel;
+    private Collection<FieldMetadata> fields;
 
     private EntityDetailView entityDetailView;
-    private Entity entityType;
-    private Long entityId;
-    private Collection<FieldMetadata> fields;
-    private EntityModel entityModel;
-    private Logger logger = Logger.getInstance("EntityDetailPresenter");
-    private final String GO_TO_BROWSER_DIALOG_MESSAGE = "\nYou can only provide a value for this field using ALM Octane in a browser." + "\nDo you want to do this now? ";
 
     public EntityDetailPresenter() {
     }
@@ -92,6 +102,12 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                         if(entityType.isSubtype()){
                             entityModel.setValue(new StringFieldModel(DetailsViewDefaultFields.FIELD_SUBTYPE, entityType.getSubtypeName()));
                         }
+
+                        //change relative urls with local paths to temp and download images
+                        String description = Util.getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_DESCRIPTION));
+                        description = HtmlTextEditor.removeHtmlStructure(description);
+                        description = imageService.downloadPictures(description);
+                        entityModel.setValue(new StringFieldModel(DetailsViewDefaultFields.FIELD_DESCRIPTION, description));
 
                         return entityModel;
                     } catch (ServiceException ex) {
@@ -125,8 +141,6 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                 null,
                 null,
                 "Loading entity " + entityType.name() + ": " + entityId);
-
-
     }
 
     private void setPossibleTransitions(EntityModel entityModel) {
