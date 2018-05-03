@@ -108,12 +108,12 @@ public class HeaderPanel extends JPanel {
         gbc_separator1.weighty = 1;
         add(separatorIdName, gbc_separator1);
 
-        GridBagConstraints gbc_labelReplaceme = new GridBagConstraints();
-        gbc_labelReplaceme.fill = GridBagConstraints.HORIZONTAL;
-        gbc_labelReplaceme.insets = new Insets(0, 0, 0, 5);
-        gbc_labelReplaceme.gridx = 3;
-        gbc_labelReplaceme.gridy = 0;
-        add(entityLinkToBrowser, gbc_labelReplaceme);
+        GridBagConstraints gbc_entityNameLabel = new GridBagConstraints();
+        gbc_entityNameLabel.fill = GridBagConstraints.HORIZONTAL;
+        gbc_entityNameLabel.insets = new Insets(0, 0, 0, 5);
+        gbc_entityNameLabel.gridx = 3;
+        gbc_entityNameLabel.gridy = 0;
+        add(entityLinkToBrowser, gbc_entityNameLabel);
 
         separatorNamePhase = new JSeparator(SwingConstants.VERTICAL);
         GridBagConstraints gbc_separator2 = new GridBagConstraints();
