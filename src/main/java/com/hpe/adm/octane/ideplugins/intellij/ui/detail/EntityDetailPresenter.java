@@ -24,7 +24,7 @@ import com.hpe.adm.nga.sdk.model.StringFieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
 import com.hpe.adm.octane.ideplugins.intellij.util.HtmlTextEditor;
-import com.hpe.adm.octane.ideplugins.intellij.util.OctaneExceptionHandler;
+import com.hpe.adm.octane.ideplugins.intellij.util.ExceptionHandler;
 import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
 import com.hpe.adm.octane.ideplugins.services.CommentService;
 import com.hpe.adm.octane.ideplugins.services.EntityService;
@@ -111,7 +111,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
 
                         return entityModel;
                     } catch (OctaneException ex) {
-                        OctaneExceptionHandler exceptionHandler = new OctaneExceptionHandler(ex);
+                        ExceptionHandler exceptionHandler = new ExceptionHandler(ex, project);
                         exceptionHandler.showErrorNotification();
                         entityDetailView.setErrorMessage(ex.getMessage());
                         return null;
@@ -262,7 +262,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
             try {
                 commentService.postComment(entityModel, entityDetailView.getCommentMessageBoxText());
             } catch (OctaneException oe){
-                OctaneExceptionHandler exceptionHandler = new OctaneExceptionHandler(oe);
+                ExceptionHandler exceptionHandler = new ExceptionHandler(oe, project);
                 exceptionHandler.showErrorNotification();
             }
             entityDetailView.setCommentMessageBoxText("");
