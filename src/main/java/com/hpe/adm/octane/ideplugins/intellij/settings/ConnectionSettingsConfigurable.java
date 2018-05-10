@@ -13,7 +13,6 @@
 
 package com.hpe.adm.octane.ideplugins.intellij.settings;
 
-import com.google.api.client.http.HttpResponseException;
 import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.components.ConnectionSettingsComponent;
@@ -42,7 +41,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import javax.xml.ws.http.HTTPException;
 
 public class ConnectionSettingsConfigurable implements SearchableConfigurable, Configurable.NoScroll {
 
