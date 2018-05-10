@@ -16,7 +16,6 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.searchresult;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
-import com.hpe.adm.nga.sdk.exception.OctaneException;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.eventbus.OpenDetailTabEvent;
 import com.hpe.adm.octane.ideplugins.intellij.eventbus.RefreshMyWorkEvent;
@@ -32,7 +31,6 @@ import com.hpe.adm.octane.ideplugins.services.EntityService;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.mywork.MyWorkService;
 import com.hpe.adm.octane.ideplugins.services.nonentity.EntitySearchService;
-import com.hpe.adm.octane.ideplugins.services.util.SdkUtil;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
 import com.intellij.icons.AllIcons;
 import com.intellij.notification.NotificationType;
@@ -110,13 +108,7 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
 
             public void onError(@NotNull Exception ex) {
                 entityTreeView.setLoading(false);
-
-                String message;
-                if(ex instanceof OctaneException){
-                    message = SdkUtil.getMessageFromOctaneException((OctaneException) ex);
-                } else {
-                    message = ex.getMessage();
-                }
+                String message = ex.getMessage();
                 entityTreeView.setErrorMessage("Search failed <br>" + message);
             }
         };
