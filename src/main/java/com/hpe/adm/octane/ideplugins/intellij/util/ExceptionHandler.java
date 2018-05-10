@@ -16,24 +16,31 @@ package com.hpe.adm.octane.ideplugins.intellij.util;
 import com.hpe.adm.nga.sdk.exception.OctaneException;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.project.Project;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-public class OctaneExceptionHandler {
+public class ExceptionHandler {
 
     private StringBuilder exceptionMessage;
     private NotificationBuilder notificationBuilder;
 
-    public OctaneExceptionHandler(OctaneException ex){
+    public ExceptionHandler(OctaneException ex, Project project){
         exceptionMessage = new StringBuilder();
         ex.getError().getValues().forEach( f -> {
             //display the messages as name - value pairs
             String fieldName = convertFieldNameToLabel(f.getName());
             exceptionMessage.append(fieldName + ": " + f.getValue() + "<br/>");
         });
-        notificationBuilder = new NotificationBuilder(null, "ALM Octane plugin error", exceptionMessage.toString());
+        notificationBuilder = new NotificationBuilder(project, "ALM Octane plugin error", exceptionMessage.toString());
+    }
+
+    public ExceptionHandler(Exception ex, Project project){
+        exceptionMessage = new StringBuilder();
+        exceptionMessage.append(ex.getMessage());
+        notificationBuilder = new NotificationBuilder(project, "ALM Octane plugin error", exceptionMessage.toString());
     }
 
     private String convertFieldNameToLabel(String fieldname) {
