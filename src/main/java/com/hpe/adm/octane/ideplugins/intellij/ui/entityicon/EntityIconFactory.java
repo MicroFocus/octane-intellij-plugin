@@ -60,24 +60,24 @@ public class EntityIconFactory {
     }
     
     private void init(){
-        iconDetailMap.put(Entity.USER_STORY, new IconDetail(new Color(218, 199, 120), "US"));
-        iconDetailMap.put(Entity.QUALITY_STORY, new IconDetail(new Color(95, 112, 118), "QS"));
-        iconDetailMap.put(Entity.DEFECT, new IconDetail(new Color(190,102,92), "D"));
-        iconDetailMap.put(Entity.EPIC, new IconDetail(new Color(202, 170, 209), "E"));
-        iconDetailMap.put(Entity.FEATURE, new IconDetail(new Color(226,132,90), "F"));
+        iconDetailMap.put(Entity.USER_STORY, new IconDetail(new Color(255,176,0), "US"));
+        iconDetailMap.put(Entity.QUALITY_STORY, new IconDetail(new Color(51,193,128), "QS"));
+        iconDetailMap.put(Entity.DEFECT, new IconDetail(new Color(178,22,70), "D"));
+        iconDetailMap.put(Entity.EPIC, new IconDetail(new Color(116,37,173), "E"));
+        iconDetailMap.put(Entity.FEATURE, new IconDetail(new Color(229,120,40), "F"));
 
-        iconDetailMap.put(Entity.TASK, new IconDetail(new Color(137,204,174), "T"));
+        iconDetailMap.put(Entity.TASK, new IconDetail(new Color(22,104,193), "T"));
 
-        iconDetailMap.put(Entity.MANUAL_TEST, new IconDetail(new Color(96,121,141), "MT"));
-        iconDetailMap.put(Entity.GHERKIN_TEST, new IconDetail(new Color(120,196,192), "GT"));
+        iconDetailMap.put(Entity.MANUAL_TEST, new IconDetail(new Color(0,171,243), "MT"));
+        iconDetailMap.put(Entity.GHERKIN_TEST, new IconDetail(new Color(0,169,137), "GT"));
 
-        iconDetailMap.put(Entity.TEST_SUITE, new IconDetail(new Color(133,114,147), "TS"));
-        iconDetailMap.put(Entity.MANUAL_TEST_RUN, new IconDetail(new Color(133,169,188), "MR"));
-        iconDetailMap.put(Entity.TEST_SUITE_RUN, new IconDetail(new Color(133,169,188), "SR"));
-        iconDetailMap.put(Entity.AUTOMATED_TEST, new IconDetail(new Color(135,123,117), "AT"));
+        iconDetailMap.put(Entity.TEST_SUITE, new IconDetail(new Color(39,23,130), "TS"));
+        iconDetailMap.put(Entity.MANUAL_TEST_RUN, new IconDetail(new Color(0,171,243), "MR"));
+        iconDetailMap.put(Entity.TEST_SUITE_RUN, new IconDetail(new Color(0,171,243), "SR"));
+        iconDetailMap.put(Entity.AUTOMATED_TEST, new IconDetail(new Color(91,186,54), "AT"));
 
-        iconDetailMap.put(Entity.COMMENT, new IconDetail(new Color(234, 179, 124), "C"));
-        iconDetailMap.put(Entity.REQUIREMENT, new IconDetail(new Color(215, 194, 56), "R"));
+        iconDetailMap.put(Entity.COMMENT, new IconDetail(new Color(253,225,89), "C"));
+        iconDetailMap.put(Entity.REQUIREMENT, new IconDetail(new Color(11,142,172), "R"));
 
         iconDetailMap.keySet().forEach(entity -> iconComponentMap.put(entity, createIconAsComponent(entity)));
     }
