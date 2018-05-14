@@ -16,7 +16,6 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.treetable;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
-import com.hpe.adm.nga.sdk.exception.OctaneException;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.eventbus.OpenDetailTabEvent;
 import com.hpe.adm.octane.ideplugins.intellij.eventbus.RefreshMyWorkEvent;
@@ -34,7 +33,6 @@ import com.hpe.adm.octane.ideplugins.services.mywork.MyWorkUtil;
 import com.hpe.adm.octane.ideplugins.services.nonentity.DownloadScriptService;
 import com.hpe.adm.octane.ideplugins.services.util.EntityUtil;
 import com.hpe.adm.octane.ideplugins.services.util.PartialEntity;
-import com.hpe.adm.octane.ideplugins.services.util.SdkUtil;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.actions.OpenProjectFileChooserDescriptor;
@@ -113,12 +111,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
 
                 } catch (Exception ex) {
                     entityTreeTableView.setLoading(false);
-                    String message;
-                    if (ex instanceof OctaneException) {
-                        message = SdkUtil.getMessageFromOctaneException((OctaneException) ex);
-                    } else {
-                        message = ex.getMessage();
-                    }
+                    String message = ex.getMessage();
                     entityTreeTableView.setErrorMessage("Failed to load \"My work\" <br>" + message);
                 }
             }

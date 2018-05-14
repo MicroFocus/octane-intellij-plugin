@@ -14,9 +14,9 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents;
 
 import com.google.inject.Inject;
+import com.hpe.adm.nga.sdk.exception.OctaneException;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.services.EntityService;
-import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
 
@@ -43,7 +43,7 @@ public class CustomComboBoxTester extends JFrame {
             EntityModel testEntityModel = entityService.findEntity(Entity.DEFECT, entityId);
             String currentPhaseId = Util.getUiDataFromModel(testEntityModel.getValue("phase"), "id");
             phaseList = entityService.findPossibleTransitionFromCurrentPhase(Entity.DEFECT, currentPhaseId);
-        } catch (ServiceException e) {
+        } catch (OctaneException e) {
             e.printStackTrace();
         }
 

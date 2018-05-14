@@ -16,6 +16,7 @@ package com.hpe.adm.octane.ideplugins.intellij.settings;
 import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.components.ConnectionSettingsComponent;
+import com.hpe.adm.octane.ideplugins.intellij.util.ExceptionHandler;
 import com.hpe.adm.octane.ideplugins.services.TestService;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
@@ -34,7 +35,6 @@ import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.ui.awt.RelativePoint;
-import javafx.application.Platform;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -143,8 +143,14 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
             connectionSettingsProvider.setConnectionSettings(new ConnectionSettings());
             return;
         }
+        ConnectionSettings newConnectionSettings = null;
+        try {
+            newConnectionSettings = testConnection();
+        } catch (Exception ex){
+            ExceptionHandler exceptionHandler = new ExceptionHandler(ex, currentProject);
+            exceptionHandler.showErrorNotification();
+        }
 
-        ConnectionSettings newConnectionSettings = testConnection();
 
         //apply if valid
         if (newConnectionSettings != null) {
@@ -224,7 +230,6 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
             });
             return null;
         }
-
         return newConnectionSettings;
     }
 
