@@ -39,8 +39,12 @@ import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import javax.swing.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ConnectionSettingsConfigurable implements SearchableConfigurable, Configurable.NoScroll {
 
@@ -167,6 +171,21 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
             connectionSettingsView.setServerUrl(UrlParser.createUrlFromConnectionSettings(newConnectionSettings));
             connectionSettingsView.setConnectionStatusSuccess();
         }
+
+        //We should not have search history from any previous workspaces
+        new Thread(()-> clearSearchHistory()).start();
+    }
+
+    private void clearSearchHistory(){
+        List<String> searchHistory = new ArrayList<>();
+        JSONArray jsonArray = new JSONArray();
+        searchHistory.forEach(searchQuery -> jsonArray.put(searchQuery));
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(IdePluginPersistentState.Key.SEARCH_HISTORY.name(), jsonArray);
+
+        idePluginPersistentState.saveState(
+                IdePluginPersistentState.Key.SEARCH_HISTORY,
+                jsonObject);
     }
 
     private void testOctaneVersion(ConnectionSettings connectionSettings) {
