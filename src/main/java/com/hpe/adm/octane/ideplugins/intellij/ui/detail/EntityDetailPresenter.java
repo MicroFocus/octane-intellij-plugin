@@ -33,6 +33,10 @@ import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.nonentity.ImageService;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
+import com.intellij.ide.ui.LafManager;
+import com.intellij.ide.ui.LafManagerListener;
+import com.intellij.ide.ui.laf.LafManagerImpl;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.diagnostic.Logger;
@@ -40,8 +44,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vcs.VcsShowConfirmationOption;
 import com.intellij.util.ui.ConfirmationDialog;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -111,7 +117,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                         entityModel.setValue(new StringFieldModel(DetailsViewDefaultFields.FIELD_DESCRIPTION, description));
 
                         return entityModel;
-                    } catch (ServiceException ex) {
+                    } catch (OctaneException ex) {
                         ExceptionHandler exceptionHandler = new ExceptionHandler(ex, project);
                         exceptionHandler.showErrorNotification();
                         entityDetailView.setErrorMessage(ex.getMessage());
@@ -124,6 +130,14 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                         entityDetailView.createDetailsPanel(entityModel, fields);
                         entityDetailView.setSaveSelectedPhaseButton(new SaveSelectedPhaseAction());
                         entityDetailView.setRefreshEntityButton(new EntityRefreshAction());
+
+                        LafManagerListener lafManagerListener = eventSource -> {
+                            entityDetailView.doRefresh();
+                            setEntity(entityType, entityId);
+                        };
+                        LafManagerImpl.getInstance().addLafManagerListener(lafManagerListener);
+
+
                         if (entityType != TASK) {
                             entityDetailView.setCommentsEntityButton(new EntityCommentsAction());
                             setComments(entityModel);
