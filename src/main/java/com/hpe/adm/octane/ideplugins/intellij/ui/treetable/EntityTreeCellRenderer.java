@@ -227,9 +227,6 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
 
             if (new EntityTypeIdPair(entityId, entityType).equals(entityTypeIdPair)) {
                 rowPanel.setIcon(Entity.getEntityType(entityModel), true);
-            } else if (entityType == Entity.COMMENT) {
-                EntityModel innerEntity = (EntityModel) getContainerItemForCommentModel(entityModel).getValue();
-                rowPanel.setIcon(Entity.getEntityType(innerEntity), false);
             } else {
                 rowPanel.setIcon(Entity.getEntityType(entityModel), false);
             }
@@ -321,15 +318,19 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
                 String text = getUiDataFromModel(entityModel.getValue("text"));
                 text = " Comment: " + Util.stripHtml(text);
                 FieldModel owner = getContainerItemForCommentModel(entityModel);
-                String ownerId = getUiDataFromModel(owner, "id");
-                String ownerName = getUiDataFromModel(owner, "name");
-                String ownerType = getUiDataFromModel(owner, "type");
+                if(owner != null){
+                    String ownerId = getUiDataFromModel(owner, "id");
+                    String ownerName = getUiDataFromModel(owner, "name");
+                    String ownerType = getUiDataFromModel(owner, "type");
 
-                String entityName = wrapHtml("Comment on " + getSubtypeName(ownerType).toLowerCase() + ": " + "<b>" + ownerId + "</b>" + " " + ownerName);
+                    String entityName = wrapHtml("Comment on " + getSubtypeName(ownerType).toLowerCase() + ": " + "<b>" + ownerId + "</b>" + " " + ownerName);
 
-                rowPanel.setEntityName("", entityName);
-                rowPanel.setEntitySubTitle(text, "");
-                addRelationFieldDetails(rowPanel, entityModel, FIELD_AUTHOR, FIELD_FULL_NAME, "Author", DetailsPosition.TOP);
+                    rowPanel.setEntityName("", entityName);
+                    rowPanel.setEntitySubTitle(text, "");
+                    addRelationFieldDetails(rowPanel, entityModel, FIELD_AUTHOR, FIELD_FULL_NAME, "Author", DetailsPosition.TOP);
+                } else {
+                    rowPanel.setEntityName("N/A", "");
+                }
 
             } else if (Entity.MANUAL_TEST_RUN.equals(entityType)) {
                 rowPanel.setEntitySubTitle(
@@ -365,12 +366,13 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
 
     /**
      * Add a relation entity model to the row
-     * @param entityModelRow UI object
-     * @param entityModel parent entity
-     * @param relationFieldName field of the related entity
+     *
+     * @param entityModelRow     UI object
+     * @param entityModel        parent entity
+     * @param relationFieldName  field of the related entity
      * @param relationLabelValue field displayed from the related entity
-     * @param displayLabel label of the displayed field
-     * @param displayPosition position of the displayed field
+     * @param displayLabel       label of the displayed field
+     * @param displayPosition    position of the displayed field
      */
     private void addRelationFieldDetails(
             EntityModelRow entityModelRow,
