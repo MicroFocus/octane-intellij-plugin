@@ -249,6 +249,10 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                         if (dialog.showAndGet()) {
                             entityService.openInBrowser(entityModel);
                         }
+                    } else if(ex.getMessage().contains("403")){
+                      //User is not authorised to perform this operation
+                      ExceptionHandler exceptionHandler = new ExceptionHandler( ex, project);
+                      exceptionHandler.showErrorNotification();
                     }
                 }
                 entityDetailView.doRefresh();
