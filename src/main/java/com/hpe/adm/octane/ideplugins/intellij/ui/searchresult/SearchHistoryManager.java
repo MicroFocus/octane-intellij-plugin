@@ -23,36 +23,14 @@ import java.util.List;
 
 public class SearchHistoryManager {
 
+    @Inject
     private IdePluginPersistentState idePluginPersistentState;
 
     private List<String> searchHistory = new ArrayList<>();
 
     private final int HISTORY_SIZE = 5;
 
-    private static SearchHistoryManager searchManager = null;
-
-    private SearchHistoryManager(IdePluginPersistentState idePluginPersistentState){
-        this.idePluginPersistentState = idePluginPersistentState;
-    }
-
-    /**
-     * This method initializes the SearchHistoryManager that is going to be used application wide
-     * makes sure that only one instance of manager is active
-     * @param idePluginPersistentState
-     */
-    public static void init(IdePluginPersistentState idePluginPersistentState){
-        if(searchManager == null){
-            searchManager = new SearchHistoryManager(idePluginPersistentState);
-        }
-    }
-
-    /**
-     * This method retrieves the SearchHistoryManager
-     * its return should be checked
-     * @return null if the SearchHistoryManager was not initialised, otherwise returns the SearchHistoryManager
-     */
-    public static SearchHistoryManager getInstance(){
-        return searchManager;
+    public SearchHistoryManager(){
     }
 
     public void saveSearchHistory() {
@@ -66,16 +44,6 @@ public class SearchHistoryManager {
                 jsonObject);
     }
 
-    public void loadSearchHistory() {
-        JSONObject jsonObject = idePluginPersistentState.loadState(IdePluginPersistentState.Key.SEARCH_HISTORY);
-        if (jsonObject == null) return;
-        JSONArray jsonArray = jsonObject.getJSONArray(IdePluginPersistentState.Key.SEARCH_HISTORY.name());
-        searchHistory = new ArrayList<>();
-        for (int i = 0; i < jsonArray.length(); i++) {
-            searchHistory.add(jsonArray.getString(i));
-        }
-    }
-
     public void addToSearchHistory(String string) {
         if (searchHistory.contains(string)) {
             searchHistory.remove(string);
@@ -87,6 +55,14 @@ public class SearchHistoryManager {
     }
 
     public List<String> getSearchHistory(){
+        JSONObject jsonObject = idePluginPersistentState.loadState(IdePluginPersistentState.Key.SEARCH_HISTORY);
+        if (jsonObject == null)
+            return null;
+        JSONArray jsonArray = jsonObject.getJSONArray(IdePluginPersistentState.Key.SEARCH_HISTORY.name());
+        searchHistory = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            searchHistory.add(jsonArray.getString(i));
+        }
         return searchHistory;
     }
 

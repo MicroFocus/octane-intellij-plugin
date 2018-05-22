@@ -13,7 +13,6 @@
 
 package com.hpe.adm.octane.ideplugins.intellij.settings;
 
-import com.google.inject.Inject;
 import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.components.ConnectionSettingsComponent;
@@ -28,7 +27,6 @@ import com.hpe.adm.octane.ideplugins.services.nonentity.OctaneVersionService;
 import com.hpe.adm.octane.ideplugins.services.util.OctaneVersion;
 import com.hpe.adm.octane.ideplugins.services.util.UrlParser;
 import com.intellij.openapi.options.Configurable;
-import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.MessageType;
@@ -41,12 +39,8 @@ import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import javax.swing.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ConnectionSettingsConfigurable implements SearchableConfigurable, Configurable.NoScroll {
 
@@ -58,6 +52,7 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
     private TestService testService;
     private IdePluginPersistentState idePluginPersistentState;
     private ConnectionSettingsComponent connectionSettingsView = new ConnectionSettingsComponent();
+    private SearchHistoryManager searchManager;
     private boolean pinMessage = false;
 
     @NotNull
@@ -89,7 +84,7 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
         connectionSettingsProvider = module.getInstance(ConnectionSettingsProvider.class);
         testService = module.getInstance(TestService.class);
         idePluginPersistentState = module.getInstance(IdePluginPersistentState.class);
-        System.out.println("ahuhuehue");
+        searchManager = module.getInstance(SearchHistoryManager.class);
         this.currentProject = currentProject;
     }
 
@@ -155,7 +150,7 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
             newConnectionSettings = testConnection();
             //We should not have search history from any previous workspaces
             new Thread(()-> {
-                SearchHistoryManager.getInstance().clearSearchHistory();
+                searchManager.clearSearchHistory();
             }).start();
         } catch (Exception ex){
             ExceptionHandler exceptionHandler = new ExceptionHandler(ex, currentProject);

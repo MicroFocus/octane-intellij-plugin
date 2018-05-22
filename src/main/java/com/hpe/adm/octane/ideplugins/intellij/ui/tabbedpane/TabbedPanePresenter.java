@@ -76,6 +76,9 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
     private static EntityIconFactory entityIconFactory = new EntityIconFactory(22, 22, 12, Color.WHITE);
 
     @Inject
+    private SearchHistoryManager searchManager;
+
+    @Inject
     private TabbedPaneView tabbedPaneView;
 
     @Inject
@@ -137,7 +140,7 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
 
         entitySearchResultPresenter.globalSearch(searchQuery);
 
-        SearchHistoryManager.getInstance().saveSearchHistory();
+        searchManager.saveSearchHistory();
     }
 
     public void openDetailTab(PartialEntity tabKey) {
@@ -391,8 +394,7 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
 
 
     private void loadSearchHistory(){
-        SearchHistoryManager.getInstance().loadSearchHistory();
-        tabbedPaneView.setSearchHistory(SearchHistoryManager.getInstance().getSearchHistory());
+        tabbedPaneView.setSearchHistory(searchManager.getSearchHistory());
     }
 
 }

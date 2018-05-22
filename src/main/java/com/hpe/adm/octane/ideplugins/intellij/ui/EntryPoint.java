@@ -97,9 +97,6 @@ public class EntryPoint implements ToolWindowFactory {
                             MainPresenter mainPresenter = pluginModule.getInstance(MainPresenter.class);
                             setContent(toolWindow, mainPresenter.getView(), workspaceDisplayName);
                         });
-
-                        //initialize the searchHistoryManager
-                        SearchHistoryManager.init(pluginModule.getInstance(IdePluginPersistentState.class));
                     } catch (Exception ex) {
                         pluginModule.getInstance(IdePluginPersistentState.class).clearState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM);
                         WelcomeViewComponent welcomeViewComponent;
