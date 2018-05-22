@@ -111,7 +111,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                         entityModel.setValue(new StringFieldModel(DetailsViewDefaultFields.FIELD_DESCRIPTION, description));
 
                         return entityModel;
-                    } catch (ServiceException ex) {
+                    } catch (OctaneException ex) {
                         ExceptionHandler exceptionHandler = new ExceptionHandler(ex, project);
                         exceptionHandler.showErrorNotification();
                         entityDetailView.setErrorMessage(ex.getMessage());

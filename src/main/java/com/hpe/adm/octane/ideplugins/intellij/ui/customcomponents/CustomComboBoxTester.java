@@ -44,7 +44,7 @@ public class CustomComboBoxTester extends JFrame {
             EntityModel testEntityModel = entityService.findEntity(Entity.DEFECT, entityId);
             String currentPhaseId = Util.getUiDataFromModel(testEntityModel.getValue("phase"), "id");
             phaseList = entityService.findPossibleTransitionFromCurrentPhase(Entity.DEFECT, currentPhaseId);
-        } catch (ServiceException e) {
+        } catch (OctaneException e) {
             e.printStackTrace();
         }
 

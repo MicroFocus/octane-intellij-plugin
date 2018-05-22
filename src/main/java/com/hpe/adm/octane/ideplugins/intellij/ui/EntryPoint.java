@@ -17,6 +17,7 @@ import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.components.WelcomeViewComponent;
 import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.LoadingWidget;
 import com.hpe.adm.octane.ideplugins.intellij.ui.main.MainPresenter;
+import com.hpe.adm.octane.ideplugins.intellij.ui.searchresult.SearchHistoryManager;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
 import com.hpe.adm.octane.ideplugins.services.MetadataService;
 import com.hpe.adm.octane.ideplugins.services.TestService;
@@ -97,6 +98,8 @@ public class EntryPoint implements ToolWindowFactory {
                             setContent(toolWindow, mainPresenter.getView(), workspaceDisplayName);
                         });
 
+                        //initialize the searchHistoryManager
+                        SearchHistoryManager.init(pluginModule.getInstance(IdePluginPersistentState.class));
                     } catch (Exception ex) {
                         pluginModule.getInstance(IdePluginPersistentState.class).clearState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM);
                         WelcomeViewComponent welcomeViewComponent;

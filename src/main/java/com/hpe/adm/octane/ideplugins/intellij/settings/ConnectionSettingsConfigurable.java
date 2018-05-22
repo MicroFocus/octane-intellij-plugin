@@ -13,9 +13,11 @@
 
 package com.hpe.adm.octane.ideplugins.intellij.settings;
 
+import com.google.inject.Inject;
 import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.components.ConnectionSettingsComponent;
+import com.hpe.adm.octane.ideplugins.intellij.ui.searchresult.SearchHistoryManager;
 import com.hpe.adm.octane.ideplugins.intellij.util.ExceptionHandler;
 import com.hpe.adm.octane.ideplugins.services.TestService;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
@@ -87,6 +89,7 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
         connectionSettingsProvider = module.getInstance(ConnectionSettingsProvider.class);
         testService = module.getInstance(TestService.class);
         idePluginPersistentState = module.getInstance(IdePluginPersistentState.class);
+        System.out.println("ahuhuehue");
         this.currentProject = currentProject;
     }
 
@@ -141,7 +144,7 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
     }
 
     @Override
-    public void apply() throws ConfigurationException {
+    public void apply() {
         //If the connection settings are empty then save them, only way to clear and save
         if (isViewConnectionSettingsEmpty()) {
             connectionSettingsProvider.setConnectionSettings(new ConnectionSettings());
@@ -150,6 +153,10 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
         ConnectionSettings newConnectionSettings = null;
         try {
             newConnectionSettings = testConnection();
+            //We should not have search history from any previous workspaces
+            new Thread(()-> {
+                SearchHistoryManager.getInstance().clearSearchHistory();
+            }).start();
         } catch (Exception ex){
             ExceptionHandler exceptionHandler = new ExceptionHandler(ex, currentProject);
             exceptionHandler.showErrorNotification();
@@ -172,21 +179,9 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
             connectionSettingsView.setConnectionStatusSuccess();
         }
 
-        //We should not have search history from any previous workspaces
-        new Thread(()-> clearSearchHistory()).start();
+
     }
 
-    private void clearSearchHistory(){
-        List<String> searchHistory = new ArrayList<>();
-        JSONArray jsonArray = new JSONArray();
-        searchHistory.forEach(searchQuery -> jsonArray.put(searchQuery));
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put(IdePluginPersistentState.Key.SEARCH_HISTORY.name(), jsonArray);
-
-        idePluginPersistentState.saveState(
-                IdePluginPersistentState.Key.SEARCH_HISTORY,
-                jsonObject);
-    }
 
     private void testOctaneVersion(ConnectionSettings connectionSettings) {
         OctaneVersion version;
