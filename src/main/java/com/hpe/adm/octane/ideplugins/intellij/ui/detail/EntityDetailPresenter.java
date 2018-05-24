@@ -126,10 +126,8 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                         entityDetailView.setSaveSelectedPhaseButton(new SaveSelectedPhaseAction());
                         entityDetailView.setRefreshEntityButton(new EntityRefreshAction());
 
-                        LafManagerListener lafManagerListener = eventSource -> {
-                            entityDetailView.doRefresh();
-                            setEntity(entityType, entityId);
-                        };
+                        //look and feel change listener
+                        LafManagerListener lafManagerListener = eventSource -> refreshView();
                         LafManagerImpl.getInstance().addLafManagerListener(lafManagerListener);
 
 
@@ -182,8 +180,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
         }
 
         public void actionPerformed(AnActionEvent e) {
-            entityDetailView.doRefresh();
-            setEntity(entityType, entityId);
+            refreshView();
         }
     }
 
@@ -280,4 +277,8 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
         });
     }
 
+    private void refreshView(){
+        entityDetailView.doRefresh();
+        setEntity(entityType, entityId);
+    }
 }
