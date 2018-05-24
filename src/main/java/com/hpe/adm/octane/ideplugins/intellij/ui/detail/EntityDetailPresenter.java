@@ -112,7 +112,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                         return entityModel;
                     } catch (Exception ex) {
                         //Exception made for branch built
-                        //TODO dont forget to change back to OctaneException
+                        //TODO dont forget to change back to OctaneException when sdk will be available in maven
                         ExceptionHandler exceptionHandler = new ExceptionHandler(ex, project);
                         exceptionHandler.showErrorNotification();
                         entityDetailView.setErrorMessage(ex.getMessage());
