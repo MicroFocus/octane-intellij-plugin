@@ -13,7 +13,7 @@
 
 package com.hpe.adm.octane.ideplugins.intellij.ui.tabbedpane;
 
-import com.google.inject.Inject;
+import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.ui.searchresult.CustomSearchTextField;
 import com.hpe.adm.octane.ideplugins.intellij.ui.searchresult.SearchHistoryManager;
 import com.intellij.execution.ui.layout.impl.JBRunnerTabs;
@@ -49,13 +49,16 @@ class CustomJBRunnerTabs extends JBRunnerTabs {
      * Horrible workaround
      */
     Map<TabInfo, CustomSearchTextField> searchFields = new HashMap<>();
-    @Inject
+
     private SearchHistoryManager searchManager;
 
     private String lastSearchText = "";
 
     public CustomJBRunnerTabs(@Nullable Project project, @NotNull ActionManager actionManager, IdeFocusManager focusManager, @NotNull Disposable parent) {
         super(project, actionManager, focusManager, parent);
+
+        //inject is not supported here but we need SearchManagerHistory
+        searchManager = PluginModule.getPluginModuleForProject(project).getInstance(SearchHistoryManager.class);
 
         addListener(new TabsListener.Adapter() {
             @Override

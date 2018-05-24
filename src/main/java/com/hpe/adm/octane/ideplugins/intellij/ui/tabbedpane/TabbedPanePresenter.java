@@ -181,6 +181,9 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
     public void setView(TabbedPaneView tabbedPaneView) {
         this.tabbedPaneView = tabbedPaneView;
 
+        //we only need to load the search history at the beginning
+        searchManager.loadSearchHistory();
+
         //open test entity tree view
         EntityTreeTablePresenter entityTreeTablePresenter = openMyWorkTab();
 

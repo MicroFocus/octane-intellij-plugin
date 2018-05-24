@@ -14,6 +14,7 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.searchresult;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -21,6 +22,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+@Singleton
 public class SearchHistoryManager {
 
     @Inject
@@ -55,15 +57,18 @@ public class SearchHistoryManager {
     }
 
     public List<String> getSearchHistory(){
+        return searchHistory;
+    }
+
+    public void loadSearchHistory(){
         JSONObject jsonObject = idePluginPersistentState.loadState(IdePluginPersistentState.Key.SEARCH_HISTORY);
         if (jsonObject == null)
-            return null;
+            return;
         JSONArray jsonArray = jsonObject.getJSONArray(IdePluginPersistentState.Key.SEARCH_HISTORY.name());
         searchHistory = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
             searchHistory.add(jsonArray.getString(i));
         }
-        return searchHistory;
     }
 
     public void clearSearchHistory(){
