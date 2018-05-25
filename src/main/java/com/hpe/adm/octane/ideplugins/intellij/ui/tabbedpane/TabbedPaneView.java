@@ -207,10 +207,6 @@ public class TabbedPaneView implements View {
         editorTabs.setSearchHistory(searchHistory);
     }
 
-    public List<String> getSearchHistory() {
-        return editorTabs.getSearchHistory();
-    }
-
     public boolean hasTabWithTabInfo(TabInfo tabInfo){
         return editorTabs.getTabs().contains(tabInfo);
     }

@@ -13,7 +13,9 @@
 
 package com.hpe.adm.octane.ideplugins.intellij.ui.tabbedpane;
 
+import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.ui.searchresult.CustomSearchTextField;
+import com.hpe.adm.octane.ideplugins.intellij.ui.searchresult.SearchHistoryManager;
 import com.intellij.execution.ui.layout.impl.JBRunnerTabs;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.ActionManager;
@@ -31,23 +33,32 @@ import javax.swing.event.DocumentEvent;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 class CustomJBRunnerTabs extends JBRunnerTabs {
 
-    private static final int HISTORY_SIZE = 5;
+    public interface SearchRequestHandler {
+        void searchedQuery(String query);
+    }
+
+    private SearchRequestHandler searchRequestHandler;
 
     /**
      * Horrible workaround
      */
     Map<TabInfo, CustomSearchTextField> searchFields = new HashMap<>();
+
+    private SearchHistoryManager searchManager;
+
     private String lastSearchText = "";
 
     public CustomJBRunnerTabs(@Nullable Project project, @NotNull ActionManager actionManager, IdeFocusManager focusManager, @NotNull Disposable parent) {
         super(project, actionManager, focusManager, parent);
+
+        //inject is not supported here but we need SearchManagerHistory
+        searchManager = PluginModule.getPluginModuleForProject(project).getInstance(SearchHistoryManager.class);
 
         addListener(new TabsListener.Adapter() {
             @Override
@@ -97,9 +108,9 @@ class CustomJBRunnerTabs extends JBRunnerTabs {
     }
 
     private void search(CustomSearchTextField searchTextField){
-        addToSearchHistory(searchTextField.getText());
+        searchManager.addToSearchHistory(searchTextField.getText());
         //sync history
-        searchFields.values().forEach(textField -> textField.setHistory(getSearchHistory()));
+        searchFields.values().forEach(textField -> textField.setHistory(searchManager.getSearchHistory()));
         searchRequestHandler.searchedQuery(searchTextField.getText());
     }
 
@@ -115,35 +126,12 @@ class CustomJBRunnerTabs extends JBRunnerTabs {
         return super.addTab(info);
     }
 
-    public interface SearchRequestHandler {
-        void searchedQuery(String query);
-    }
-
-    private SearchRequestHandler searchRequestHandler;
-
     public void setSearchRequestHandler(SearchRequestHandler searchRequestHandler){
         this.searchRequestHandler = searchRequestHandler;
     }
 
     public void setSearchHistory(List<String> searchHistory){
-        this.searchHistory = searchHistory;
         searchFields.values().forEach(searchTextField -> searchTextField.setHistory(searchHistory));
-    }
-
-    public List<String> getSearchHistory(){
-        return searchHistory;
-    }
-
-    private List<String> searchHistory = new ArrayList<>();
-
-    private void addToSearchHistory(String string){
-        if(searchHistory.contains(string)){
-            searchHistory.remove(string);
-        }
-        searchHistory.add(0, string);
-        if(searchHistory.size() > HISTORY_SIZE){
-            searchHistory.remove(HISTORY_SIZE);
-        }
     }
 
 

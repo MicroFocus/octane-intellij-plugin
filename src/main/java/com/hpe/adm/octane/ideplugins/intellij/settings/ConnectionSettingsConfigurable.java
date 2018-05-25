@@ -16,6 +16,7 @@ package com.hpe.adm.octane.ideplugins.intellij.settings;
 import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.components.ConnectionSettingsComponent;
+import com.hpe.adm.octane.ideplugins.intellij.ui.searchresult.SearchHistoryManager;
 import com.hpe.adm.octane.ideplugins.intellij.util.ExceptionHandler;
 import com.hpe.adm.octane.ideplugins.services.TestService;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
@@ -26,7 +27,6 @@ import com.hpe.adm.octane.ideplugins.services.nonentity.OctaneVersionService;
 import com.hpe.adm.octane.ideplugins.services.util.OctaneVersion;
 import com.hpe.adm.octane.ideplugins.services.util.UrlParser;
 import com.intellij.openapi.options.Configurable;
-import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.MessageType;
@@ -52,6 +52,7 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
     private TestService testService;
     private IdePluginPersistentState idePluginPersistentState;
     private ConnectionSettingsComponent connectionSettingsView = new ConnectionSettingsComponent();
+    private SearchHistoryManager searchManager;
     private boolean pinMessage = false;
 
     @NotNull
@@ -83,6 +84,7 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
         connectionSettingsProvider = module.getInstance(ConnectionSettingsProvider.class);
         testService = module.getInstance(TestService.class);
         idePluginPersistentState = module.getInstance(IdePluginPersistentState.class);
+        searchManager = module.getInstance(SearchHistoryManager.class);
         this.currentProject = currentProject;
     }
 
@@ -137,7 +139,7 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
     }
 
     @Override
-    public void apply() throws ConfigurationException {
+    public void apply() {
         //If the connection settings are empty then save them, only way to clear and save
         if (isViewConnectionSettingsEmpty()) {
             connectionSettingsProvider.setConnectionSettings(new ConnectionSettings());
@@ -146,6 +148,8 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
         ConnectionSettings newConnectionSettings = null;
         try {
             newConnectionSettings = testConnection();
+            //We should not have search history from any previous workspaces
+            searchManager.clearSearchHistory();
         } catch (Exception ex){
             ExceptionHandler exceptionHandler = new ExceptionHandler(ex, currentProject);
             exceptionHandler.showErrorNotification();
@@ -167,7 +171,10 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
             connectionSettingsView.setServerUrl(UrlParser.createUrlFromConnectionSettings(newConnectionSettings));
             connectionSettingsView.setConnectionStatusSuccess();
         }
+
+
     }
+
 
     private void testOctaneVersion(ConnectionSettings connectionSettings) {
         OctaneVersion version;

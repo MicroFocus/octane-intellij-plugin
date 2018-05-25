@@ -29,6 +29,7 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.detail.EntityDetailPresenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.EntityDetailView;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
 import com.hpe.adm.octane.ideplugins.intellij.ui.searchresult.EntitySearchResultPresenter;
+import com.hpe.adm.octane.ideplugins.intellij.ui.searchresult.SearchHistoryManager;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeTablePresenter;
 import com.hpe.adm.octane.ideplugins.services.EntityService;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
@@ -73,6 +74,9 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
     }
 
     private static EntityIconFactory entityIconFactory = new EntityIconFactory(22, 22, 12, Color.WHITE);
+
+    @Inject
+    private SearchHistoryManager searchManager;
 
     @Inject
     private TabbedPaneView tabbedPaneView;
@@ -135,8 +139,6 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
         }
 
         entitySearchResultPresenter.globalSearch(searchQuery);
-
-        saveSearchHistory();
     }
 
     public void openDetailTab(PartialEntity tabKey) {
@@ -387,27 +389,10 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
         }
     }
 
-    private void saveSearchHistory(){
-        List<String> searchHistory = tabbedPaneView.getSearchHistory();
-        JSONArray jsonArray = new JSONArray();
-        searchHistory.forEach(searchQuery -> jsonArray.put(searchQuery));
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put(IdePluginPersistentState.Key.SEARCH_HISTORY.name(), jsonArray);
 
-        idePluginPersistentState.saveState(
-                IdePluginPersistentState.Key.SEARCH_HISTORY,
-                jsonObject);
-    }
 
     private void loadSearchHistory(){
-        JSONObject jsonObject = idePluginPersistentState.loadState(IdePluginPersistentState.Key.SEARCH_HISTORY);
-        if(jsonObject == null) return;
-        JSONArray jsonArray = jsonObject.getJSONArray(IdePluginPersistentState.Key.SEARCH_HISTORY.name());
-        List<String> searchHistory = new ArrayList<>();
-        for(int i = 0; i<jsonArray.length(); i++){
-            searchHistory.add(jsonArray.getString(i));
-        }
-        tabbedPaneView.setSearchHistory(searchHistory);
+        tabbedPaneView.setSearchHistory(searchManager.getSearchHistory());
     }
 
 }

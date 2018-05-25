@@ -12,6 +12,7 @@
  */
 
 package com.hpe.adm.octane.ideplugins.intellij.ui;
+
 import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.components.WelcomeViewComponent;
@@ -96,7 +97,6 @@ public class EntryPoint implements ToolWindowFactory {
                             MainPresenter mainPresenter = pluginModule.getInstance(MainPresenter.class);
                             setContent(toolWindow, mainPresenter.getView(), workspaceDisplayName);
                         });
-
                     } catch (Exception ex) {
                         pluginModule.getInstance(IdePluginPersistentState.class).clearState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM);
                         WelcomeViewComponent welcomeViewComponent;
