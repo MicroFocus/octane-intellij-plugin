@@ -28,7 +28,7 @@ public class SearchHistoryManager {
     @Inject
     private IdePluginPersistentState idePluginPersistentState;
 
-    private List<String> searchHistory = new ArrayList<>();
+    private List<String> searchHistory;
 
     private final int HISTORY_SIZE = 5;
 
@@ -47,18 +47,22 @@ public class SearchHistoryManager {
     }
 
     public void addToSearchHistory(String string) {
-        if (searchHistory.contains(string)) {
-            searchHistory.remove(string);
+        if(searchHistory != null){
+            if (searchHistory.contains(string)) {
+                searchHistory.remove(string);
+            }
+            searchHistory.add(0, string);
+            if (searchHistory.size() > HISTORY_SIZE) {
+                searchHistory.remove(HISTORY_SIZE);
+            }
+            saveSearchHistory();
         }
-        searchHistory.add(0, string);
-        if (searchHistory.size() > HISTORY_SIZE) {
-            searchHistory.remove(HISTORY_SIZE);
-        }
-        saveSearchHistory();
     }
 
     public List<String> getSearchHistory(){
-        loadSearchHistory();
+        if(searchHistory == null){
+            loadSearchHistory();
+        }
         return searchHistory;
     }
 
