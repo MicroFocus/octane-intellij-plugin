@@ -187,6 +187,11 @@ public class FieldsSelectFrame extends JFrame {
         } else {
             fieldsActionButton.setDefaultFieldsIcon(false);
             resetButton.setEnabled(true);
+            if(selectedFields.size()==0){
+                selectNoneButton.setEnabled(false);
+            } else if(selectedFields.size() == allFields.size()){
+                selectAllButton.setEnabled(false);
+            }
         }
 
         setAlwaysOnTop(true);
