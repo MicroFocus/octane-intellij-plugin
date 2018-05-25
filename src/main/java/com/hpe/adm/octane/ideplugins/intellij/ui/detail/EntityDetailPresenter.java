@@ -23,16 +23,17 @@ import com.hpe.adm.nga.sdk.model.ReferenceFieldModel;
 import com.hpe.adm.nga.sdk.model.StringFieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
-import com.hpe.adm.octane.ideplugins.intellij.util.HtmlTextEditor;
 import com.hpe.adm.octane.ideplugins.intellij.util.ExceptionHandler;
+import com.hpe.adm.octane.ideplugins.intellij.util.HtmlTextEditor;
 import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
 import com.hpe.adm.octane.ideplugins.services.CommentService;
 import com.hpe.adm.octane.ideplugins.services.EntityService;
 import com.hpe.adm.octane.ideplugins.services.MetadataService;
-import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.nonentity.ImageService;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
+import com.intellij.ide.ui.LafManagerListener;
+import com.intellij.ide.ui.laf.LafManagerImpl;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.diagnostic.Logger;
@@ -111,7 +112,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                         entityModel.setValue(new StringFieldModel(DetailsViewDefaultFields.FIELD_DESCRIPTION, description));
 
                         return entityModel;
-                    } catch (ServiceException ex) {
+                    } catch (OctaneException ex) {
                         ExceptionHandler exceptionHandler = new ExceptionHandler(ex, project);
                         exceptionHandler.showErrorNotification();
                         entityDetailView.setErrorMessage(ex.getMessage());
@@ -124,6 +125,12 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                         entityDetailView.createDetailsPanel(entityModel, fields);
                         entityDetailView.setSaveSelectedPhaseButton(new SaveSelectedPhaseAction());
                         entityDetailView.setRefreshEntityButton(new EntityRefreshAction());
+
+                        //look and feel change listener
+                        LafManagerListener lafManagerListener = eventSource -> refreshView();
+                        LafManagerImpl.getInstance().addLafManagerListener(lafManagerListener);
+
+
                         if (entityType != TASK) {
                             entityDetailView.setCommentsEntityButton(new EntityCommentsAction());
                             setComments(entityModel);
@@ -173,8 +180,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
         }
 
         public void actionPerformed(AnActionEvent e) {
-            entityDetailView.doRefresh();
-            setEntity(entityType, entityId);
+            refreshView();
         }
     }
 
@@ -275,4 +281,8 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
         });
     }
 
+    private void refreshView(){
+        entityDetailView.doRefresh();
+        setEntity(entityType, entityId);
+    }
 }
