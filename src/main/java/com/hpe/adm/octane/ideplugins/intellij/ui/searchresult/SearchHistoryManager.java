@@ -35,7 +35,7 @@ public class SearchHistoryManager {
     public SearchHistoryManager(){
     }
 
-    public void saveSearchHistory() {
+    private void saveSearchHistory() {
         JSONArray jsonArray = new JSONArray();
         searchHistory.forEach(searchQuery -> jsonArray.put(searchQuery));
         JSONObject jsonObject = new JSONObject();
@@ -54,13 +54,15 @@ public class SearchHistoryManager {
         if (searchHistory.size() > HISTORY_SIZE) {
             searchHistory.remove(HISTORY_SIZE);
         }
+        saveSearchHistory();
     }
 
     public List<String> getSearchHistory(){
+        loadSearchHistory();
         return searchHistory;
     }
 
-    public void loadSearchHistory(){
+    private void loadSearchHistory(){
         JSONObject jsonObject = idePluginPersistentState.loadState(IdePluginPersistentState.Key.SEARCH_HISTORY);
         if (jsonObject == null)
             return;
