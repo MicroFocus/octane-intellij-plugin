@@ -189,7 +189,7 @@ public class FieldsSelectFrame extends JFrame {
             resetButton.setEnabled(true);
             if(selectedFields.size()==0){
                 selectNoneButton.setEnabled(false);
-            } else if(selectedFields.containsAll(allFields.stream().map(f -> f.getName()).collect(Collectors.toList()))){
+            } else if(selectedFields.size() == allFields.size()){
                 selectAllButton.setEnabled(false);
             }
         }
