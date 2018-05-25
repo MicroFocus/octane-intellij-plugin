@@ -32,7 +32,7 @@ public class SearchHistoryManager {
 
     private final int HISTORY_SIZE = 5;
 
-    public SearchHistoryManager(){
+    public SearchHistoryManager() {
     }
 
     private void saveSearchHistory() {
@@ -47,26 +47,27 @@ public class SearchHistoryManager {
     }
 
     public void addToSearchHistory(String string) {
-        if(searchHistory != null){
-            if (searchHistory.contains(string)) {
-                searchHistory.remove(string);
-            }
-            searchHistory.add(0, string);
-            if (searchHistory.size() > HISTORY_SIZE) {
-                searchHistory.remove(HISTORY_SIZE);
-            }
-            saveSearchHistory();
+        if (searchHistory == null) {
+            loadSearchHistory();
         }
+        if (searchHistory.contains(string)) {
+            searchHistory.remove(string);
+        }
+        searchHistory.add(0, string);
+        if (searchHistory.size() > HISTORY_SIZE) {
+            searchHistory.remove(HISTORY_SIZE);
+        }
+        saveSearchHistory();
     }
 
-    public List<String> getSearchHistory(){
-        if(searchHistory == null){
+    public List<String> getSearchHistory() {
+        if (searchHistory == null) {
             loadSearchHistory();
         }
         return searchHistory;
     }
 
-    private void loadSearchHistory(){
+    private void loadSearchHistory() {
         JSONObject jsonObject = idePluginPersistentState.loadState(IdePluginPersistentState.Key.SEARCH_HISTORY);
         if (jsonObject == null)
             return;
@@ -77,7 +78,7 @@ public class SearchHistoryManager {
         }
     }
 
-    public void clearSearchHistory(){
+    public void clearSearchHistory() {
         searchHistory = new ArrayList<>();
         saveSearchHistory();
     }
