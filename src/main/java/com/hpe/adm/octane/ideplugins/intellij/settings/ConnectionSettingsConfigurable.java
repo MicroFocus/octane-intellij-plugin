@@ -149,9 +149,7 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
         try {
             newConnectionSettings = testConnection();
             //We should not have search history from any previous workspaces
-            new Thread(()-> {
-                searchManager.clearSearchHistory();
-            }).start();
+            searchManager.clearSearchHistory();
         } catch (Exception ex){
             ExceptionHandler exceptionHandler = new ExceptionHandler(ex, currentProject);
             exceptionHandler.showErrorNotification();
