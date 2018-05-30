@@ -27,6 +27,7 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityCategory;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeView;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
+import com.hpe.adm.octane.ideplugins.intellij.util.ExceptionHandler;
 import com.hpe.adm.octane.ideplugins.services.EntityService;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.mywork.MyWorkService;
@@ -97,7 +98,7 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
 
             public void run(@NotNull ProgressIndicator indicator) {
                 entityTreeView.setLoading(true);
-                searchResults = entitySearchService.searchGlobal(query, 1000, searchEntityTypes);
+                searchResults = entitySearchService.searchGlobal(query, 20, searchEntityTypes);
             }
 
             public void onSuccess() {
@@ -108,8 +109,10 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
 
             public void onError(@NotNull Exception ex) {
                 entityTreeView.setLoading(false);
-                String message = ex.getMessage();
-                entityTreeView.setErrorMessage("Search failed <br>" + message);
+                ExceptionHandler exceptionHandler = new ExceptionHandler(ex, myProject);
+                exceptionHandler.showErrorNotification();
+                entityTreeView.setTreeModel(createEmptyEntityTreeModel(new ArrayList<>()));
+
             }
         };
 
