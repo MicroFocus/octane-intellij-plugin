@@ -18,6 +18,7 @@ import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
+import com.hpe.adm.octane.ideplugins.intellij.ui.detail.actions.SelectFieldsAction;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
@@ -293,7 +294,7 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         commentsDetails.setVisible(!commentsDetails.isVisible());
     }
 
-    public void setFieldSelectButton(EntityDetailPresenter.SelectFieldsAction fieldSelectButton) {
+    public void setFieldSelectButton(SelectFieldsAction fieldSelectButton) {
         headerPanel.setFieldSelectButton(fieldSelectButton);
         fieldsPopup = new FieldsSelectFrame(defaultFields.get(Entity.getEntityType(entityModel)),
                 fields.stream().filter(e -> !Arrays.asList("phase", "name", "subtype", "description").contains(e.getName())).collect(Collectors.toList()),

@@ -18,6 +18,7 @@ import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.View;
 import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.LoadingWidget;
+import com.hpe.adm.octane.ideplugins.intellij.ui.detail.actions.SelectFieldsAction;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.ui.components.JBScrollPane;
@@ -125,7 +126,7 @@ public class EntityDetailView implements View {
         entityDetailsPanel.addSendNewCommentAction(actionListener);
     }
 
-    public void setFieldSelectButton(EntityDetailPresenter.SelectFieldsAction fieldSelectButton) {
+    public void setFieldSelectButton(SelectFieldsAction fieldSelectButton) {
         entityDetailsPanel.setFieldSelectButton(fieldSelectButton);
     }
 

@@ -23,6 +23,7 @@ import com.hpe.adm.nga.sdk.model.ReferenceFieldModel;
 import com.hpe.adm.nga.sdk.model.StringFieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
+import com.hpe.adm.octane.ideplugins.intellij.ui.detail.actions.SelectFieldsAction;
 import com.hpe.adm.octane.ideplugins.intellij.util.ExceptionHandler;
 import com.hpe.adm.octane.ideplugins.intellij.util.HtmlTextEditor;
 import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
@@ -135,7 +136,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                             entityDetailView.removeSaveSelectedPhaseButton();
                             entityDetailView.setPhaseInHeader(false);
                         }
-                        entityDetailView.setFieldSelectButton(new SelectFieldsAction());
+                        entityDetailView.setFieldSelectButton(new SelectFieldsAction(entityDetailView));
                         //Title goes to browser
                         entityDetailView.setEntityNameClickHandler(() -> entityService.openInBrowser(entityModel));
                     }
@@ -184,31 +185,6 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
         public void actionPerformed(AnActionEvent e) {
             entityDetailView.getEntityDetailsPanel().activateCommentsCollapsible();
 
-        }
-    }
-
-    public final class SelectFieldsAction extends AnAction {
-
-        private boolean defaultfields = true;
-
-        public void setDefaultFieldsIcon(boolean defaultfields) {
-            this.defaultfields = defaultfields;
-        }
-
-        public SelectFieldsAction() {
-            super("Select fields for this entity type", "Select fields popup", IconLoader.findIcon(Constants.IMG_FIELD_SELECTION_DEFAULT));
-        }
-
-        public void actionPerformed(AnActionEvent e) {
-            entityDetailView.getEntityDetailsPanel().activateFieldsSettings();
-        }
-
-        public void update(AnActionEvent e) {
-            if (defaultfields) {
-                e.getPresentation().setIcon(IconLoader.findIcon(Constants.IMG_FIELD_SELECTION_DEFAULT));
-            } else {
-                e.getPresentation().setIcon(IconLoader.findIcon(Constants.IMG_FIELD_SELECTION_NON_DEFAULT));
-            }
         }
     }
 
