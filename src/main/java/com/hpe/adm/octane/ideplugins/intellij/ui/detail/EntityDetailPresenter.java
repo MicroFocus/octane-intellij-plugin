@@ -124,6 +124,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                         entityDetailView.createDetailsPanel(entityModel, fields);
                         entityDetailView.setSaveSelectedPhaseButton(new SaveSelectedPhaseAction());
                         entityDetailView.setRefreshEntityButton(new EntityRefreshAction());
+                        entityDetailView.setOpenInBrowserButton(new EntityOpenInBrowser());
                         if (entityType != TASK) {
                             entityDetailView.setCommentsEntityButton(new EntityCommentsAction());
                             setComments(entityModel);
@@ -131,14 +132,14 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                         }
                         if (entityType != MANUAL_TEST_RUN && entityType != TEST_SUITE_RUN) {
                             setPossibleTransitions(entityModel);
-                            entityDetailView.setPhaseInHeader(true);
+//                            entityDetailView.setPhaseInHeader(true);
                         } else {
                             entityDetailView.removeSaveSelectedPhaseButton();
-                            entityDetailView.setPhaseInHeader(false);
+//                            entityDetailView.setPhaseInHeader(false);
                         }
                         entityDetailView.setFieldSelectButton(new SelectFieldsAction(entityDetailView));
                         //Title goes to browser
-                        entityDetailView.setEntityNameClickHandler(() -> entityService.openInBrowser(entityModel));
+//                        entityDetailView.setEntityNameClickHandler(() -> entityService.openInBrowser(entityModel));
                     }
                 },
                 null,
@@ -153,10 +154,10 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
         }, (possibleTransitions) -> {
             if (possibleTransitions.isEmpty()) {
                 possibleTransitions.add(new EntityModel("target_phase", "No transition"));
-                entityDetailView.setPossiblePhasesForEntity(possibleTransitions);
+//                entityDetailView.setPossiblePhasesForEntity(possibleTransitions);
                 entityDetailView.removeSaveSelectedPhaseButton();
             } else {
-                entityDetailView.setPossiblePhasesForEntity(possibleTransitions);
+//                entityDetailView.setPossiblePhasesForEntity(possibleTransitions);
             }
         }, null, "Failed to get possible transitions", "fetching possible transitions");
     }
@@ -174,6 +175,16 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
         public void actionPerformed(AnActionEvent e) {
             entityDetailView.doRefresh();
             setEntity(entityType, entityId);
+        }
+    }
+    
+    private final class EntityOpenInBrowser extends AnAction{
+        public EntityOpenInBrowser() {
+            super ("Open in browser the current entity", "Open in browser", IconLoader.findIcon(Constants.IMG_BROWSER_ICON));
+        }
+        
+        public void actionPerformed(AnActionEvent e) {
+            entityService.openInBrowser(entityModel);
         }
     }
 
@@ -195,11 +206,12 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
 
         public void actionPerformed(AnActionEvent e) {
             RestUtil.runInBackground(() -> {
-                EntityModel selectedTransition = entityDetailView.getSelectedTransition();
-                return (ReferenceFieldModel) selectedTransition.getValue("target_phase");
+//                EntityModel selectedTransition = entityDetailView.getSelectedTransition();
+//                return (ReferenceFieldModel) selectedTransition.getValue("target_phase");
+                return null;
             }, (nextPhase) -> {
                 try {
-                    entityService.updateEntityPhase(entityDetailView.getEntityModel(), nextPhase);
+//                    entityService.updateEntityPhase(entityDetailView.getEntityModel(), nextPhase);
                 } catch (OctaneException ex) {
                     if (ex.getMessage().contains("400")) {
                         String errorMessage = "Failed to change phase";

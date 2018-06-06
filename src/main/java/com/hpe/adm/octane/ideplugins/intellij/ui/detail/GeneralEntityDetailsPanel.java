@@ -213,7 +213,7 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         final String descriptionContent = Util.getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_DESCRIPTION));
 
         //Setting header phase
-        headerPanel.setPhaseDetails(Util.getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_PHASE)));
+//        headerPanel.setPhaseDetails(Util.getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_PHASE)));
 
         //Setting description content
         Platform.runLater(() -> descriptionDetails.setContent(descriptionContent));
@@ -221,9 +221,9 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
     }
 
 
-    public void setEntityNameClickHandler(Runnable runnable) {
-        headerPanel.setActionToEntityLink(runnable);
-    }
+//    public void setEntityNameClickHandler(Runnable runnable) {
+//        headerPanel.setActionToEntityLink(runnable);
+//    }
 
     public void setRefreshButton(AnAction refreshButton) {
         headerPanel.setRefreshButton(refreshButton);
@@ -234,20 +234,24 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
     }
 
     public void setSaveSelectedPhaseButton(AnAction saveSelectedPhaseAction) {
-        headerPanel.setSaveSelectedPhaseButton(saveSelectedPhaseAction);
+        headerPanel.setSaveButton(saveSelectedPhaseAction);
     }
 
     public void removeSaveSelectedPhaseButton() {
         headerPanel.removeSaveSelectedPhaseButton();
     }
-
-    public void setPhaseInHeader(boolean showPhase) {
-        headerPanel.setPhaseInHeader(showPhase);
+    
+    public void openInBrowserButton(AnAction openInBrowserAction) {
+        headerPanel.setOpenInBrowserButton(openInBrowserAction);
     }
 
-    public EntityModel getSelectedTransition() {
-        return headerPanel.getSelectedTransition();
-    }
+//    public void setPhaseInHeader(boolean showPhase) {
+//        headerPanel.setPhaseInHeader(showPhase);
+//    }
+
+//    public EntityModel getSelectedTransition() {
+//        return headerPanel.getSelectedTransition();
+//    }
 
     private void drawSpecificDetailsForEntity(EntityModel entityModel) {
         EntityIconFactory entityIconFactory = new EntityIconFactory(26, 26, 12);
@@ -258,9 +262,9 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
     }
 
 
-    public void setPossiblePhasesForEntity(Collection<EntityModel> phasesList) {
-        headerPanel.setPossiblePhasesForEntity(phasesList);
-    }
+//    public void setPossiblePhasesForEntity(Collection<EntityModel> phasesList) {
+//        headerPanel.setPossiblePhasesForEntity(phasesList);
+//    }
 
     public void setComments(Collection<EntityModel> comments) {
         commentsListPanel.clearCurrentComments();
