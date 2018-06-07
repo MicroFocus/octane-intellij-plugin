@@ -213,7 +213,7 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         final String descriptionContent = Util.getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_DESCRIPTION));
 
         //Setting header phase
-//        headerPanel.setPhaseDetails(Util.getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_PHASE)));
+        headerPanel.setPhaseDetails(Util.getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_PHASE)));
 
         //Setting description content
         Platform.runLater(() -> descriptionDetails.setContent(descriptionContent));
@@ -245,14 +245,14 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         headerPanel.setOpenInBrowserButton(openInBrowserAction);
     }
 
-//    public void setPhaseInHeader(boolean showPhase) {
-//        headerPanel.setPhaseInHeader(showPhase);
-//    }
+    public void setPhaseInHeader(boolean showPhase) {
+        headerPanel.setPhaseInHeader(showPhase);
+    }
 
-//    public EntityModel getSelectedTransition() {
-//        return headerPanel.getSelectedTransition();
-//    }
-
+    public EntityModel getSelectedTransition() {
+        return headerPanel.getSelectedTransition();
+    }
+    
     private void drawSpecificDetailsForEntity(EntityModel entityModel) {
         EntityIconFactory entityIconFactory = new EntityIconFactory(26, 26, 12);
         headerPanel.setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(Entity.getEntityType(entityModel))));
@@ -261,10 +261,9 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         createSectionWithEntityDetails(entityModel, selectedFields.get(Entity.getEntityType(entityModel)));
     }
 
-
-//    public void setPossiblePhasesForEntity(Collection<EntityModel> phasesList) {
-//        headerPanel.setPossiblePhasesForEntity(phasesList);
-//    }
+    public void setPossiblePhasesForEntity(Collection<EntityModel> phasesList) {
+        headerPanel.setPossiblePhasesForEntity(phasesList);
+    }
 
     public void setComments(Collection<EntityModel> comments) {
         commentsListPanel.clearCurrentComments();

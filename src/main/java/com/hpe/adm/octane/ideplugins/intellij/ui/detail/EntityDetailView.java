@@ -93,21 +93,21 @@ public class EntityDetailView implements View {
         entityDetailsPanel.openInBrowserButton(openInBrowserAction);
     }
 
-//    public void setPhaseInHeader(boolean showPhase) {
-//        entityDetailsPanel.setPhaseInHeader(showPhase);
-//    }
+    public void setPhaseInHeader(boolean showPhase) {
+        entityDetailsPanel.setPhaseInHeader(showPhase);
+    }
 
     public void doRefresh() {
         component.setViewportView(new JBScrollPane(new LoadingWidget()));
     }
 
-//    public void setPossiblePhasesForEntity(Collection<EntityModel> phasesList) {
-//        entityDetailsPanel.setPossiblePhasesForEntity(phasesList);
-//    }
-
-//    public EntityModel getSelectedTransition() {
-//        return entityDetailsPanel.getSelectedTransition();
-//    }
+    public void setPossiblePhasesForEntity(Collection<EntityModel> phasesList) {
+        entityDetailsPanel.setPossiblePhasesForEntity(phasesList);
+    }
+    
+    public EntityModel getSelectedTransition() {
+        return entityDetailsPanel.getSelectedTransition();
+    }
 
     public EntityModel getEntityModel() {
         return this.entityModel;

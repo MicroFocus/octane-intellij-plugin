@@ -132,10 +132,10 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                         }
                         if (entityType != MANUAL_TEST_RUN && entityType != TEST_SUITE_RUN) {
                             setPossibleTransitions(entityModel);
-//                            entityDetailView.setPhaseInHeader(true);
+                            entityDetailView.setPhaseInHeader(true);
                         } else {
                             entityDetailView.removeSaveSelectedPhaseButton();
-//                            entityDetailView.setPhaseInHeader(false);
+                            entityDetailView.setPhaseInHeader(false);
                         }
                         entityDetailView.setFieldSelectButton(new SelectFieldsAction(entityDetailView));
                         //Title goes to browser
@@ -154,10 +154,10 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
         }, (possibleTransitions) -> {
             if (possibleTransitions.isEmpty()) {
                 possibleTransitions.add(new EntityModel("target_phase", "No transition"));
-//                entityDetailView.setPossiblePhasesForEntity(possibleTransitions);
+                entityDetailView.setPossiblePhasesForEntity(possibleTransitions);
                 entityDetailView.removeSaveSelectedPhaseButton();
             } else {
-//                entityDetailView.setPossiblePhasesForEntity(possibleTransitions);
+                entityDetailView.setPossiblePhasesForEntity(possibleTransitions);
             }
         }, null, "Failed to get possible transitions", "fetching possible transitions");
     }
@@ -206,12 +206,11 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
 
         public void actionPerformed(AnActionEvent e) {
             RestUtil.runInBackground(() -> {
-//                EntityModel selectedTransition = entityDetailView.getSelectedTransition();
-//                return (ReferenceFieldModel) selectedTransition.getValue("target_phase");
-                return null;
+                EntityModel selectedTransition = entityDetailView.getSelectedTransition();
+                return (ReferenceFieldModel) selectedTransition.getValue("target_phase");
             }, (nextPhase) -> {
                 try {
-//                    entityService.updateEntityPhase(entityDetailView.getEntityModel(), nextPhase);
+                    entityService.updateEntityPhase(entityDetailView.getEntityModel(), nextPhase);
                 } catch (OctaneException ex) {
                     if (ex.getMessage().contains("400")) {
                         String errorMessage = "Failed to change phase";
