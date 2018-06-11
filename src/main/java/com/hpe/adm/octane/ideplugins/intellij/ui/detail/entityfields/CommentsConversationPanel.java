@@ -11,8 +11,9 @@
  * limitations under the License.
  */
 
-package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
+package com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields;
 
+import com.hpe.adm.octane.ideplugins.intellij.ui.detail.HTMLPresenterFXPanel;
 import com.intellij.util.ui.UIUtil;
 import javafx.application.Platform;
 import org.apache.commons.lang.StringUtils;
@@ -32,10 +33,8 @@ public class CommentsConversationPanel extends JPanel {
     private HTMLPresenterFXPanel chatBox;
     private String commentContent = "";
     private ActionListener addCommentActionListener;
-    private String baseUrl;
 
     public CommentsConversationPanel(String baseUrl) {
-        this.baseUrl = baseUrl;
         setLayout(new BorderLayout());
 
         JPanel southPanel = new JPanel();
@@ -75,7 +74,6 @@ public class CommentsConversationPanel extends JPanel {
 
 
         chatBox = new HTMLPresenterFXPanel(baseUrl);
-        chatBox.setOpaque(false);
         chatBox.setBorder(null);
         chatBox.setFont(new Font("Arial", Font.PLAIN, 11));
         chatBox.addEventActions();
@@ -102,11 +100,11 @@ public class CommentsConversationPanel extends JPanel {
         enableButton();
     }
 
-    void addExistingComment(String commentPostDate, String username, String message) {
+    public void addExistingComment(String commentPostDate, String username, String message) {
         commentContent += commentPostDate + " <b>" + username + ":</b> <br>" + message + "<hr>";
     }
 
-    void setChatBoxScene() {
+    public void setChatBoxScene() {
         Platform.runLater(() -> chatBox.setContent(commentContent));
         Platform.runLater(() -> chatBox.initFX());
     }

@@ -19,6 +19,8 @@ import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.actions.SelectFieldsAction;
+import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.CommentsConversationPanel;
+import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.HeaderPanel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
@@ -182,7 +184,7 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
 
 
         GridBagConstraints gbc_commentsPanel = new GridBagConstraints();
-        gbc_commentsPanel.fill = GridBagConstraints.BOTH;
+        gbc_commentsPanel.fill = GridBagConstraints.VERTICAL;
         gbc_commentsPanel.gridx = 1;
         gbc_commentsPanel.gridy = 0;
         entityDetailsAndCommentsPanel.add(commentsDetails, gbc_commentsPanel);
@@ -219,11 +221,6 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         Platform.runLater(() -> descriptionDetails.setContent(descriptionContent));
         Platform.runLater(() -> descriptionDetails.initFX());
     }
-
-
-//    public void setEntityNameClickHandler(Runnable runnable) {
-//        headerPanel.setActionToEntityLink(runnable);
-//    }
 
     public void setRefreshButton(AnAction refreshButton) {
         headerPanel.setRefreshButton(refreshButton);

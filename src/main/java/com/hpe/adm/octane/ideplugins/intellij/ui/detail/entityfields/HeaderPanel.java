@@ -12,7 +12,7 @@
  *
  */
 
-package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
+package com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields;
 
 import java.awt.BorderLayout;
 import java.awt.Component;

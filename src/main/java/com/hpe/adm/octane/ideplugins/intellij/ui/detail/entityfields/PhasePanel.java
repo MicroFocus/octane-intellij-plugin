@@ -1,4 +1,4 @@
-package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
+package com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields;
 
 import java.awt.Dimension;
 import java.awt.Font;

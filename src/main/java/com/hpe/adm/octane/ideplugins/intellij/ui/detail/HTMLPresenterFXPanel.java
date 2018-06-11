@@ -47,7 +47,7 @@ public class HTMLPresenterFXPanel extends JFXPanel {
     private String commentContent;
     private String baseUrl;
 
-    HTMLPresenterFXPanel(String baseUrl) {
+    public HTMLPresenterFXPanel(String baseUrl) {
         UIManager.addPropertyChangeListener(evt -> {
             if ("lookAndFeel".equals(evt.getPropertyName())) {
                 Platform.runLater(() -> setContent(getCommentContent()));
@@ -88,7 +88,7 @@ public class HTMLPresenterFXPanel extends JFXPanel {
      * When a new state was succesfully transitioned to, mouse events are caught and handled accordingly.
      * P.S. For this use case mouseover and mouseout event were not required to be handled.
      */
-    void initFX() {
+    public void initFX() {
 
         webView = getWebView();
 
