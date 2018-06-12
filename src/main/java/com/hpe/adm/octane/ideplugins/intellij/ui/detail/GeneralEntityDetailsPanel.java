@@ -124,7 +124,7 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         gbc_headerPanel.gridy = 0;
         rootPanel.add(headerPanel, gbc_headerPanel);
 
-        entityFieldsPanel = new EntityFieldsPanel(entityModel, fields);
+        entityFieldsPanel = new EntityFieldsPanel(fields);
         drawSpecificDetailsForEntity(entityModel);
 
         JXPanel entityDetailsAndCommentsPanel = new JXPanel();
@@ -168,10 +168,10 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
 
         label = new JXLabel();
         label.setText("Description");
-        label.setFont(new Font("Arial", Font.BOLD, 15));
+        label.setFont(new Font("Arial", Font.BOLD, 18));
         GridBagConstraints gbc_label = new GridBagConstraints();
         gbc_label.fill = GridBagConstraints.HORIZONTAL;
-        gbc_label.insets = new Insets(0, 0, 5, 0);
+        gbc_label.insets = new Insets(5, 0, 5, 0);
         gbc_label.gridx = 0;
         gbc_label.gridy = 2;
         rootPanel.add(label, gbc_label);

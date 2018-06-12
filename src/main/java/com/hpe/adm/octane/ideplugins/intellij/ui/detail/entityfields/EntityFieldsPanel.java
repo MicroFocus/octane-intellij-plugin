@@ -23,25 +23,24 @@ import com.intellij.ui.JBColor;
 @SuppressWarnings("serial")
 public class EntityFieldsPanel extends JXPanel {
 
-    private EntityModel entityModel;
     private Collection<FieldMetadata> fields;
     private JXPanel detailsRightPanel;
     private JXPanel detailsLeftPanel;
     private JXLabel generalLabel;
 
-    public EntityFieldsPanel(EntityModel entityModel, Collection<FieldMetadata> fields) {
+    public EntityFieldsPanel(Collection<FieldMetadata> fields) {
         GridBagLayout gridBagLayout = new GridBagLayout();
-        gridBagLayout.columnWidths = new int[]{0, 0, 0};
+        gridBagLayout.columnWidths = new int[]{0, 0, 0, 0, 0};
         gridBagLayout.rowHeights = new int[]{0, 0, 0};
-        gridBagLayout.columnWeights = new double[]{1.0, 1.0, Double.MIN_VALUE};
+        gridBagLayout.columnWeights = new double[]{0.0, 1.0, 0.0, 1.0, Double.MIN_VALUE};
         gridBagLayout.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
         setLayout(gridBagLayout);
         
         generalLabel = new JXLabel("General");
         generalLabel.setFont(new Font("Arial", Font.BOLD, 18));
         GridBagConstraints gbc_generalLabel = new GridBagConstraints();
-        gbc_generalLabel.insets = new Insets(5, 10, 5, 0);
-        gbc_generalLabel.gridwidth = 2;
+        gbc_generalLabel.insets = new Insets(5, 0, 5, 0);
+        gbc_generalLabel.gridwidth = 4;
         gbc_generalLabel.fill = GridBagConstraints.HORIZONTAL;
         gbc_generalLabel.gridx = 0;
         gbc_generalLabel.gridy = 0;
@@ -49,36 +48,27 @@ public class EntityFieldsPanel extends JXPanel {
         
         detailsLeftPanel = new JXPanel();
         GridBagConstraints gbc_detailsLeftPanel = new GridBagConstraints();
+        gbc_detailsLeftPanel.gridwidth = 2;
         gbc_detailsLeftPanel.anchor = GridBagConstraints.NORTH;
-        gbc_detailsLeftPanel.insets = new Insets(5, 5, 5, 5);
+        gbc_detailsLeftPanel.insets = new Insets(0, 10, 5, 5);
         gbc_detailsLeftPanel.fill = GridBagConstraints.BOTH;
         gbc_detailsLeftPanel.gridx = 0;
         gbc_detailsLeftPanel.gridy = 1;
         add(detailsLeftPanel, gbc_detailsLeftPanel);
         GridBagLayout gbl_detailsLeftPanel = new GridBagLayout();
-        gbl_detailsLeftPanel.columnWidths = new int[]{0};
-        gbl_detailsLeftPanel.rowHeights = new int[]{0};
-        gbl_detailsLeftPanel.columnWeights = new double[]{Double.MIN_VALUE};
-        gbl_detailsLeftPanel.rowWeights = new double[]{Double.MIN_VALUE};
         detailsLeftPanel.setLayout(gbl_detailsLeftPanel);
         
         detailsRightPanel = new JXPanel();
         GridBagConstraints gbc_detailsRightPanel = new GridBagConstraints();
-        gbc_detailsRightPanel.anchor = GridBagConstraints.NORTH;
-        gbc_detailsRightPanel.insets = new Insets(5, 5, 5, 5);
+        gbc_detailsRightPanel.gridwidth = 2;
+        gbc_detailsRightPanel.insets = new Insets(0, 5, 5, 0);
         gbc_detailsRightPanel.fill = GridBagConstraints.BOTH;
-        gbc_detailsRightPanel.gridx = 1;
+        gbc_detailsRightPanel.gridx = 2;
         gbc_detailsRightPanel.gridy = 1;
         add(detailsRightPanel, gbc_detailsRightPanel);
         GridBagLayout gbl_detailsRightPanel = new GridBagLayout();
-        gbl_detailsRightPanel.columnWidths = new int[]{0};
-        gbl_detailsRightPanel.rowHeights = new int[]{0};
-        gbl_detailsRightPanel.columnWeights = new double[]{Double.MIN_VALUE};
-        gbl_detailsRightPanel.rowWeights = new double[]{Double.MIN_VALUE};
         detailsRightPanel.setLayout(gbl_detailsRightPanel);
         
-        
-        this.entityModel = entityModel;
         this.fields = fields;
         addComponentListener(detailsLeftPanel, detailsRightPanel);
 
@@ -112,7 +102,7 @@ public class EntityFieldsPanel extends JXPanel {
                 fieldLabel.setFont(new Font("Arial", Font.BOLD, 12));
                 fieldLabel.setText(fieldMetadata.getLabel());
                 GridBagConstraints gbc1 = new GridBagConstraints();
-                gbc1.anchor = GridBagConstraints.SOUTHWEST;
+                gbc1.anchor = GridBagConstraints.FIRST_LINE_START;
                 gbc1.insets = new Insets(10, 0, 0, 0);
                 gbc1.fill = GridBagConstraints.HORIZONTAL;
                 gbc1.gridx = 0;
@@ -136,10 +126,11 @@ public class EntityFieldsPanel extends JXPanel {
                 fieldValueLabel.setToolTipText(fieldValue);
                 GridBagConstraints gbc2 = new GridBagConstraints();
                 gbc2.insets = new Insets(10, 10, 0, 5);
-                gbc2.anchor = GridBagConstraints.SOUTHWEST;
-                gbc2.fill = GridBagConstraints.HORIZONTAL;
+                gbc2.anchor = GridBagConstraints.FIRST_LINE_START;
+                gbc2.fill = GridBagConstraints.BOTH;
                 gbc2.gridx = 1;
                 gbc2.gridy = i;
+                gbc2.weightx = 1.0;
 
                 if (fieldCount % 2 == 0) {
                     detailsLeftPanel.add(fieldLabel, gbc1);
