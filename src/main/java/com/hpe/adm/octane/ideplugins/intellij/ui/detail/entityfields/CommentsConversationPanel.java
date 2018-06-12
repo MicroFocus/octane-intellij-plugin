@@ -13,19 +13,27 @@
 
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields;
 
-import com.hpe.adm.octane.ideplugins.intellij.ui.detail.HTMLPresenterFXPanel;
-import com.intellij.util.ui.UIUtil;
-import javafx.application.Platform;
-import org.apache.commons.lang.StringUtils;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+
+import org.apache.commons.lang.StringUtils;
+
+import com.intellij.util.ui.UIUtil;
+
+import javafx.application.Platform;
 
 public class CommentsConversationPanel extends JPanel {
     private JButton sendMessageButton;

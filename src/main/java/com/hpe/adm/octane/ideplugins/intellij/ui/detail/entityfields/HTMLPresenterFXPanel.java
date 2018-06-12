@@ -11,10 +11,27 @@
  * limitations under the License.
  */
 
-package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
+package com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields;
+
+import java.awt.Desktop;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+
+import javax.swing.UIManager;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.events.EventListener;
+import org.w3c.dom.events.EventTarget;
 
 import com.hpe.adm.octane.ideplugins.intellij.util.HtmlTextEditor;
 import com.intellij.openapi.diagnostic.Logger;
+
 import javafx.application.Platform;
 import javafx.concurrent.Worker.State;
 import javafx.embed.swing.JFXPanel;
@@ -22,20 +39,6 @@ import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.events.EventListener;
-import org.w3c.dom.events.EventTarget;
-
-import javax.swing.*;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
-import java.awt.*;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 
 public class HTMLPresenterFXPanel extends JFXPanel {
     private static final Logger log = Logger.getInstance(HTMLPresenterFXPanel.class);
