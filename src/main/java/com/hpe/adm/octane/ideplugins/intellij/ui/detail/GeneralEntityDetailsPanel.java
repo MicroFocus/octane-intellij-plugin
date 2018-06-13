@@ -104,7 +104,6 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
 
         entityFieldsPanel = new EntityFieldsPanel(fields);
         GridBagConstraints gbc_entityFieldsPanel = new GridBagConstraints();
-        gbc_entityFieldsPanel.weightx = 6.0;
         gbc_entityFieldsPanel.fill = GridBagConstraints.BOTH;
         gbc_entityFieldsPanel.insets = new Insets(0, 5, 0, 5);
         gbc_entityFieldsPanel.gridx = 0;
@@ -113,28 +112,28 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
 
         commentsPanel = new CommentsConversationPanel(baseUrl);
         GridBagConstraints gbc_commentsPanel = new GridBagConstraints();
-        gbc_commentsPanel.weightx = 2.0;
         gbc_commentsPanel.gridheight = 3;
         gbc_commentsPanel.fill = GridBagConstraints.BOTH;
         gbc_commentsPanel.insets = new Insets(0, 5, 0, 5);
         gbc_commentsPanel.gridx = 1;
         gbc_commentsPanel.gridy = 1;
         add(commentsPanel, gbc_commentsPanel);
+        commentsPanel.setMaximumSize(new Dimension(350, getHeight()));
+        commentsPanel.setMinimumSize(new Dimension(350, getHeight()));
+        commentsPanel.setSize(new Dimension(350, getHeight()));
         commentsPanel.setVisible(false);
 
         descriptionLabel = new JLabel("Description");
         descriptionLabel.setFont(new Font("Arial", Font.BOLD, 18));
         GridBagConstraints gbc_descriptionLabel = new GridBagConstraints();
         gbc_descriptionLabel.fill = GridBagConstraints.HORIZONTAL;
-        gbc_descriptionLabel.weightx = 6.0;
-        gbc_descriptionLabel.insets = new Insets(5, 5, 5, 5);
+        gbc_descriptionLabel.insets = new Insets(10, 5, 5, 5);
         gbc_descriptionLabel.gridx = 0;
         gbc_descriptionLabel.gridy = 2;
         add(descriptionLabel, gbc_descriptionLabel);
 
         descriptionPanel = new HTMLPresenterFXPanel(baseUrl);
         GridBagConstraints gbc_descriptionPanel = new GridBagConstraints();
-        gbc_descriptionPanel.weightx = 6.0;
         gbc_descriptionPanel.fill = GridBagConstraints.BOTH;
         gbc_descriptionPanel.insets = new Insets(0, 0, 0, 5);
         gbc_descriptionPanel.gridx = 0;
@@ -230,6 +229,7 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
 
     public void activateCommentsCollapsible() {
         commentsPanel.setVisible(!commentsPanel.isVisible());
+
     }
 
     public void setFieldSelectButton(SelectFieldsAction fieldSelectButton) {
