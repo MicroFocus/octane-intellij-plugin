@@ -13,6 +13,21 @@
 
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
+import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
+import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.event.ActionListener;
+import java.util.Collection;
+import java.util.Set;
+
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+
 import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.View;
@@ -20,15 +35,6 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.LoadingWidget;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.actions.SelectFieldsAction;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.ui.components.JBScrollPane;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionListener;
-import java.util.Collection;
-import java.util.Set;
-
-import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
-import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS;
 
 public class EntityDetailView implements View {
 
