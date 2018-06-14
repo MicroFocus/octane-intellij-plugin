@@ -138,8 +138,6 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                             entityDetailView.setPhaseInHeader(false);
                         }
                         entityDetailView.setFieldSelectButton(new SelectFieldsAction(entityDetailView));
-                        //Title goes to browser
-//                        entityDetailView.setEntityNameClickHandler(() -> entityService.openInBrowser(entityModel));
                     }
                 },
                 null,

@@ -119,10 +119,6 @@ public class EntityDetailView implements View {
         return this.entityModel;
     }
 
-//    public void setEntityNameClickHandler(Runnable runnable) {
-//        entityDetailsPanel.setEntityNameClickHandler(runnable);
-//    }
-
     public void setComments(Collection<EntityModel> comments) {
         entityDetailsPanel.setComments(comments);
     }

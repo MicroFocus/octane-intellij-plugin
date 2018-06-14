@@ -54,6 +54,7 @@ public class EntityFieldsPanel extends JXPanel {
         gbc_detailsLeftPanel.fill = GridBagConstraints.BOTH;
         gbc_detailsLeftPanel.gridx = 0;
         gbc_detailsLeftPanel.gridy = 1;
+        gbc_detailsLeftPanel.weightx = 1.0;
         add(detailsLeftPanel, gbc_detailsLeftPanel);
         GridBagLayout gbl_detailsLeftPanel = new GridBagLayout();
         detailsLeftPanel.setLayout(gbl_detailsLeftPanel);
@@ -65,6 +66,7 @@ public class EntityFieldsPanel extends JXPanel {
         gbc_detailsRightPanel.fill = GridBagConstraints.BOTH;
         gbc_detailsRightPanel.gridx = 2;
         gbc_detailsRightPanel.gridy = 1;
+        gbc_detailsRightPanel.weightx = 1.0;
         add(detailsRightPanel, gbc_detailsRightPanel);
         GridBagLayout gbl_detailsRightPanel = new GridBagLayout();
         detailsRightPanel.setLayout(gbl_detailsRightPanel);
@@ -139,9 +141,22 @@ public class EntityFieldsPanel extends JXPanel {
                     detailsRightPanel.add(fieldLabel, gbc1);
                     detailsRightPanel.add(fieldValueLabel, gbc2);
                 }
+                
                 i++;
                 fieldCount++;
             }
+        }
+        if (fieldCount % 2==1) {
+            JXLabel emptyLabel = new JXLabel();
+            emptyLabel.setFont(new Font("Arial", Font.BOLD, 12));
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.insets = new Insets(20, 10, 0, 5);
+            gbc.anchor = GridBagConstraints.CENTER;
+            gbc.fill = GridBagConstraints.BOTH;
+            gbc.gridx = 0;
+            gbc.gridy = i;
+            gbc.gridwidth = 2;
+            detailsRightPanel.add(emptyLabel, gbc);
         }
         detailsLeftPanel.repaint();
         detailsLeftPanel.revalidate();
