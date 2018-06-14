@@ -32,7 +32,7 @@ public class EntityFieldsPanel extends JXPanel {
         GridBagLayout gridBagLayout = new GridBagLayout();
         gridBagLayout.columnWidths = new int[]{0, 0, 0, 0, 0};
         gridBagLayout.rowHeights = new int[]{0, 0, 0};
-        gridBagLayout.columnWeights = new double[]{0.0, 1.0, 0.0, 1.0, Double.MIN_VALUE};
+        gridBagLayout.columnWeights = new double[]{1.0, 1.0, 1.0, 1.0, Double.MIN_VALUE};
         gridBagLayout.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
         setLayout(gridBagLayout);
         
@@ -49,12 +49,10 @@ public class EntityFieldsPanel extends JXPanel {
         detailsLeftPanel = new JXPanel();
         GridBagConstraints gbc_detailsLeftPanel = new GridBagConstraints();
         gbc_detailsLeftPanel.gridwidth = 2;
-        gbc_detailsLeftPanel.anchor = GridBagConstraints.NORTH;
         gbc_detailsLeftPanel.insets = new Insets(0, 10, 5, 5);
         gbc_detailsLeftPanel.fill = GridBagConstraints.BOTH;
         gbc_detailsLeftPanel.gridx = 0;
         gbc_detailsLeftPanel.gridy = 1;
-        gbc_detailsLeftPanel.weightx = 1.0;
         add(detailsLeftPanel, gbc_detailsLeftPanel);
         GridBagLayout gbl_detailsLeftPanel = new GridBagLayout();
         detailsLeftPanel.setLayout(gbl_detailsLeftPanel);
@@ -66,7 +64,6 @@ public class EntityFieldsPanel extends JXPanel {
         gbc_detailsRightPanel.fill = GridBagConstraints.BOTH;
         gbc_detailsRightPanel.gridx = 2;
         gbc_detailsRightPanel.gridy = 1;
-        gbc_detailsRightPanel.weightx = 1.0;
         add(detailsRightPanel, gbc_detailsRightPanel);
         GridBagLayout gbl_detailsRightPanel = new GridBagLayout();
         detailsRightPanel.setLayout(gbl_detailsRightPanel);
@@ -82,8 +79,9 @@ public class EntityFieldsPanel extends JXPanel {
                 int halfWidth = getWidth() / 2;
                 int height = getHeight();
                 if (halfWidth != 0 && height != 0) {
-                    detailsLeftPanel.setPreferredSize(new Dimension((int) halfWidth, height));
-                    detailsRightPanel.setPreferredSize(new Dimension((int) halfWidth, height));
+                    Dimension halfSizeFields =new Dimension((int) halfWidth, height);
+                    detailsLeftPanel.setPreferredSize(halfSizeFields);
+                    detailsRightPanel.setPreferredSize(halfSizeFields);
                     updateUI();
                     repaint();
                 }
@@ -126,6 +124,7 @@ public class EntityFieldsPanel extends JXPanel {
                 fieldValueLabel.setText(fieldValue);
                 fieldValueLabel.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
                 fieldValueLabel.setToolTipText(fieldValue);
+                fieldValueLabel.setLineWrap(false);
                 GridBagConstraints gbc2 = new GridBagConstraints();
                 gbc2.insets = new Insets(10, 10, 0, 5);
                 gbc2.anchor = GridBagConstraints.FIRST_LINE_START;
