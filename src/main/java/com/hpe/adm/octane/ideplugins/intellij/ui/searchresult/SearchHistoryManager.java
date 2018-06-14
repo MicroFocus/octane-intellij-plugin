@@ -69,12 +69,15 @@ public class SearchHistoryManager {
 
     private void loadSearchHistory() {
         JSONObject jsonObject = idePluginPersistentState.loadState(IdePluginPersistentState.Key.SEARCH_HISTORY);
-        if (jsonObject == null)
-            return;
-        JSONArray jsonArray = jsonObject.getJSONArray(IdePluginPersistentState.Key.SEARCH_HISTORY.name());
         searchHistory = new ArrayList<>();
-        for (int i = 0; i < jsonArray.length(); i++) {
-            searchHistory.add(jsonArray.getString(i));
+
+        // If the history is not present, it's because the plugin is being upgraded from a version that did not have the persistent history feature,
+        // in this case we just leave the searchHistory list empty to avoid a null pointer exception
+        if (jsonObject != null) {
+            JSONArray jsonArray = jsonObject.getJSONArray(IdePluginPersistentState.Key.SEARCH_HISTORY.name());
+            for (int i = 0; i < jsonArray.length(); i++) {
+                searchHistory.add(jsonArray.getString(i));
+            }
         }
     }
 
