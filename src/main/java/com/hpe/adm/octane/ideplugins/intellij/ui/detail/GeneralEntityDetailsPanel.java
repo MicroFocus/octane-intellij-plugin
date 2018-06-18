@@ -89,7 +89,7 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         gridBagLayout.columnWidths = new int[] { 0, 0, 0 };
         gridBagLayout.rowHeights = new int[] { 0, 0, 0, 0, 0 };
         gridBagLayout.columnWeights = new double[] { 1.0, 0.0, Double.MIN_VALUE };
-        gridBagLayout.rowWeights = new double[] { 0.0, 1.0, 0.0, 1.0, Double.MIN_VALUE };
+        gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE };  
         setLayout(gridBagLayout);
 
         headerPanel = new HeaderPanel();
@@ -127,6 +127,7 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         descriptionLabel = new JLabel("Description");
         descriptionLabel.setFont(new Font("Arial", Font.BOLD, 18));
         GridBagConstraints gbc_descriptionLabel = new GridBagConstraints();
+        gbc_descriptionLabel.anchor = GridBagConstraints.NORTH;
         gbc_descriptionLabel.fill = GridBagConstraints.HORIZONTAL;
         gbc_descriptionLabel.insets = new Insets(10, 5, 5, 5);
         gbc_descriptionLabel.gridx = 0;
@@ -161,7 +162,7 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
 
     private void drawSpecificDetailsForEntity(EntityModel entityModel) {
         EntityIconFactory entityIconFactory = new EntityIconFactory(26, 26, 12);
-//        headerPanel.setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(Entity.getEntityType(entityModel))));
+        headerPanel.setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(Entity.getEntityType(entityModel))));
         headerPanel.setId(Util.getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_ID)));
         headerPanel.setNameDetails(Util.getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_NAME)));
         entityFieldsPanel.createSectionWithEntityDetails(entityModel, selectedFields.get(Entity.getEntityType(entityModel)));
