@@ -112,6 +112,7 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         add(entityFieldsPanel, gbc_entityFieldsPanel);
 
         commentsPanel = new CommentsConversationPanel(baseUrl);
+        commentsPanel.setBorder(new MatteBorder(0, 1, 0, 0, (Color) new Color(0, 0, 0)));
         GridBagConstraints gbc_commentsPanel = new GridBagConstraints();
         gbc_commentsPanel.gridheight = 3;
         gbc_commentsPanel.fill = GridBagConstraints.BOTH;
