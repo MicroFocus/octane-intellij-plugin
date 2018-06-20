@@ -1,21 +1,13 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields;
 
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.util.Collection;
-
-import javax.swing.JPanel;
-import javax.swing.JSeparator;
-import javax.swing.SwingConstants;
-import javax.swing.border.EmptyBorder;
-
-import org.jdesktop.swingx.JXLabel;
-
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.PhaseComboBox;
+import org.jdesktop.swingx.JXLabel;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
+import java.util.Collection;
 
 public class PhasePanel extends JPanel {
 
@@ -32,15 +24,13 @@ public class PhasePanel extends JPanel {
         setToolTipText("");
         setBorder(null);
         GridBagLayout gbl_phasePanel = new GridBagLayout();
-        gbl_phasePanel.columnWidths = new int[] { 88, 44, 0, 51, 200 };
-        gbl_phasePanel.rowHeights = new int[] { 16, 0 };
-        gbl_phasePanel.columnWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 1.0 };
-        gbl_phasePanel.rowWeights = new double[] { 1.0, Double.MIN_VALUE };
+        gbl_phasePanel.columnWidths = new int[] { 0, 0, 0, 0, 0 };
+        gbl_phasePanel.columnWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0 };
         setLayout(gbl_phasePanel);
 
         currentPhaseLabel = new JXLabel();
         currentPhaseLabel.setText("Current phase:");
-        currentPhaseLabel.setFont(new Font("Arial", Font.BOLD, 13));
+        currentPhaseLabel.setFont(new Font("Arial", Font.BOLD, 14));
         currentPhaseLabel.setBorder(new EmptyBorder(0, 0, 0, 5));
         GridBagConstraints gbc_currentPhaseLabel = new GridBagConstraints();
         gbc_currentPhaseLabel.anchor = GridBagConstraints.WEST;
@@ -50,7 +40,7 @@ public class PhasePanel extends JPanel {
 
         phaseDetails = new JXLabel();
         phaseDetails.setText("phase");
-        phaseDetails.setFont(new Font("Arial", Font.PLAIN, 13));
+        phaseDetails.setFont(new Font("Arial", Font.PLAIN, 14));
         phaseDetails.setBorder(new EmptyBorder(0, 0, 0, 10));
         GridBagConstraints gbc_phaseDetails = new GridBagConstraints();
         gbc_phaseDetails.anchor = GridBagConstraints.WEST;
@@ -60,15 +50,14 @@ public class PhasePanel extends JPanel {
 
         separatorPhasePanel = new JSeparator(SwingConstants.VERTICAL);
         GridBagConstraints gbc_separator3 = new GridBagConstraints();
-        gbc_separator3.insets = new Insets(10, 0, 10, 5);
+        gbc_separator3.insets = new Insets(5, 0, 5, 5);
         gbc_separator3.gridx = 2;
         gbc_separator3.fill = GridBagConstraints.VERTICAL;
-        gbc_separator3.weighty = 1;
         add(separatorPhasePanel, gbc_separator3);
 
         moveToLabel = new JXLabel();
         moveToLabel.setText("Move to:");
-        moveToLabel.setFont(new Font("Arial", Font.BOLD, 13));
+        moveToLabel.setFont(new Font("Arial", Font.BOLD, 14));
         moveToLabel.setBorder(new EmptyBorder(0, 0, 0, 5));
         GridBagConstraints gbc_moveToLabel = new GridBagConstraints();
         gbc_moveToLabel.anchor = GridBagConstraints.WEST;
@@ -77,7 +66,6 @@ public class PhasePanel extends JPanel {
         add(moveToLabel, gbc_moveToLabel);
 
         phaseComboBox = new PhaseComboBox();
-        phaseComboBox.setPreferredSize(new Dimension(150, 30));
         phaseComboBox.setEditable(true);
         GridBagConstraints gbc_phaseComboBox = new GridBagConstraints();
         gbc_phaseComboBox.fill = GridBagConstraints.HORIZONTAL;

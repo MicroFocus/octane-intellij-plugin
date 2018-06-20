@@ -24,8 +24,6 @@ import com.intellij.util.ui.UIUtil;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.util.Collection;
 
 public class HeaderPanel extends JPanel {
@@ -34,6 +32,7 @@ public class HeaderPanel extends JPanel {
     private JTextField entityId;
     private JSeparator separatorIdName;
     private JSeparator separatorNamePhase;
+    private JSeparator separatorPhaseButtons;
     private JTextField entityName;
 
     private AnAction saveSelectedPhaseAction;
@@ -49,11 +48,12 @@ public class HeaderPanel extends JPanel {
         UIManager.put("ComboBox.selectionBackground", JBColor.background());
         UIManager.put("ComboBox.selectionForeground", JBColor.foreground());
 
+        //setBackground(Color.GREEN);
         setToolTipText("");
         setBorder(null);
         GridBagLayout gridBagLayout = new GridBagLayout();
-        gridBagLayout.columnWidths = new int[] { 0, 0, 0, 0, 0, 0, 0, 0 };
-        gridBagLayout.columnWeights = new double[] { 0.0, 0.0, 0.0, 0.2, 0.2, 0.0, 0.1, 0.0 };
+        gridBagLayout.columnWidths = new int[]{0, 0, 0, 0, 0, 0, 0};
+        gridBagLayout.columnWeights = new double[] { 0.0, 0.0, 0.0, 0.5, 0.5, 0.0, 0.0, 0.0, 0.0 };
         setLayout(gridBagLayout);
 
         entityIconLabel = new JLabel();
@@ -61,6 +61,7 @@ public class HeaderPanel extends JPanel {
         GridBagConstraints gbc_entityIconLabel = new GridBagConstraints();
         gbc_entityIconLabel.insets = new Insets(0, 10, 5, 5);
         gbc_entityIconLabel.gridx = 0;
+        gbc_entityIconLabel.anchor = GridBagConstraints.WEST;
         add(entityIconLabel, gbc_entityIconLabel);
 
         entityId = new JTextField();
@@ -71,63 +72,60 @@ public class HeaderPanel extends JPanel {
         GridBagConstraints gbc_entityId = new GridBagConstraints();
         gbc_entityId.insets = new Insets(0, 0, 5, 5);
         gbc_entityId.gridx = 1;
+        gbc_entityId.anchor = GridBagConstraints.WEST;
         add(entityId, gbc_entityId);
 
         separatorIdName = new JSeparator(SwingConstants.VERTICAL);
         GridBagConstraints gbc_separator1 = new GridBagConstraints();
         gbc_separator1.gridx = 2;
-        gbc_separator1.insets = new Insets(10, 0, 10, 5);
+        gbc_separator1.insets = new Insets(5, 0, 5, 5);
         gbc_separator1.fill = GridBagConstraints.VERTICAL;
         add(separatorIdName, gbc_separator1);
 
-//        JPanel pan = new JPanel(new GridBagLayout());
-//        pan.setBackground(Color.GREEN);
         entityName = new JTextField();
         entityName.setBorder(BorderFactory.createEmptyBorder());
         entityName.setBackground(UIUtil.getLabelBackground());
-        entityName.setFont(new Font("Tahoma", Font.PLAIN, 12));
-//        GridBagConstraints gbc = new GridBagConstraints();
-//        gbc.fill = GridBagConstraints.HORIZONTAL;
-//        pan.add(entityName, gbc);
+        entityName.setFont(new Font("Tahoma", Font.PLAIN, 14));
         GridBagConstraints gbc_entityName = new GridBagConstraints();
         gbc_entityName.gridx = 3;
-        gbc_entityName.weightx = 2;
-        gbc_entityName.insets = new Insets(0, 5, 5, 5);
+        gbc_entityName.gridwidth = 2;
+        gbc_entityName.insets = new Insets(5, 5, 5, 5);
         gbc_entityName.anchor = GridBagConstraints.WEST;
         add(entityName, gbc_entityName);
 
         separatorNamePhase = new JSeparator(SwingConstants.VERTICAL);
         GridBagConstraints gbc_separator2 = new GridBagConstraints();
         gbc_separator2.gridx = 5;
-        gbc_separator2.insets = new Insets(10, 0, 10, 5);
+        gbc_separator2.insets = new Insets(5, 5, 5, 5);
         gbc_separator2.fill = GridBagConstraints.VERTICAL;
         add(separatorNamePhase, gbc_separator2);
-
-        panelControls = new JPanel(new GridBagLayout());
-        GridBagConstraints gbc_panelControls = new GridBagConstraints();
-        gbc_panelControls.insets = new Insets(0, 0, 5, 0);
-        gbc_panelControls.fill = GridBagConstraints.BOTH;
-        gbc_panelControls.gridx = 6;
-        gbc_panelControls.gridy = 0;
-        add(panelControls, gbc_panelControls);
 
         phasePanel = new PhasePanel();
         phasePanel.setVisible(true);
         GridBagConstraints gbc_phasePanel = new GridBagConstraints();
-        gbc_phasePanel.insets = new Insets(0, 0, 5, 0);
-        gbc_phasePanel.fill = GridBagConstraints.HORIZONTAL;
-        gbc_phasePanel.gridx = 0;
-        panelControls.add(phasePanel, gbc_phasePanel);
+        gbc_phasePanel.insets = new Insets(0, 0, 0, 0);
+        gbc_phasePanel.gridx = 6;
+        gbc_phasePanel.anchor = GridBagConstraints.WEST;
+        add(phasePanel, gbc_phasePanel);
+
+        separatorPhaseButtons = new JSeparator(SwingConstants.VERTICAL);
+        GridBagConstraints gbc_separator3 = new GridBagConstraints();
+        gbc_separator3.gridx = 7;
+        gbc_separator3.insets = new Insets(5, 5, 7, 5);
+        gbc_separator3.fill = GridBagConstraints.VERTICAL;
+        add(separatorPhaseButtons, gbc_separator3);
 
         buttonActionGroup = new DefaultActionGroup();
+        panelControls = new JPanel(new BorderLayout());
+        panelControls.setMinimumSize(new Dimension(175, 25));
         actionToolBar = ActionManager.getInstance().createActionToolbar("save | refresh | fields | open in browser | comments ", buttonActionGroup,
                 true);
         GridBagConstraints gbc_actionButtons = new GridBagConstraints();
         gbc_actionButtons.insets = new Insets(0, 0, 5, 0);
-        gbc_actionButtons.fill = GridBagConstraints.HORIZONTAL;
-        gbc_actionButtons.gridx = 1;
-        panelControls.add(actionToolBar.getComponent(),gbc_actionButtons);
-
+        gbc_actionButtons.gridx = 8;
+        gbc_actionButtons.anchor = GridBagConstraints.EAST;
+        panelControls.add(actionToolBar.getComponent(), BorderLayout.CENTER);
+        add(panelControls, gbc_actionButtons);
     }
 
     public void setEntityIcon(ImageIcon entityIcon) {
@@ -137,7 +135,7 @@ public class HeaderPanel extends JPanel {
     public void setId(String id) {
         entityId.setText(id);
         entityId.setColumns(id.length());
-        entityId.setMinimumSize(new Dimension((int) (getPreferredSize().getWidth() * 0.1), (int) getPreferredSize().getHeight()));
+        entityId.setMinimumSize(entityId.getPreferredSize());
     }
 
     public void setNameDetails(String nameDetails) {
@@ -179,11 +177,11 @@ public class HeaderPanel extends JPanel {
     public void setPhaseDetails(String phaseDetails) {
         phasePanel.setPhaseDetails(phaseDetails);
     }
-    
+
     public void setPhaseInHeader(boolean showPhase) {
         phasePanel.setPhaseInHeader(showPhase);
     }
-    
+
     public EntityModel getSelectedTransition() {
         return phasePanel.getSelectedTransition();
     }
