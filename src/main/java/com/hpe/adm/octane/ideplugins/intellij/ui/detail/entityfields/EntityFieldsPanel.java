@@ -38,12 +38,12 @@ public class EntityFieldsPanel extends JXPanel {
         add(generalLabel, "cell 0 0 3 1,growx,aligny center");
         
         detailsLeftPanel = new JXPanel();
-        add(detailsLeftPanel, "cell 0 1,alignx leading,growy");
+        add(detailsLeftPanel, "cell 0 1,width 50%!,growy");
         GridBagLayout gbl_detailsLeftPanel = new GridBagLayout();
         detailsLeftPanel.setLayout(gbl_detailsLeftPanel);
         
         detailsRightPanel = new JXPanel();
-        add(detailsRightPanel, "cell 2 1,alignx leading,growy");
+        add(detailsRightPanel, "cell 2 1,width 50%!,growy");
         GridBagLayout gbl_detailsRightPanel = new GridBagLayout();
         detailsRightPanel.setLayout(gbl_detailsRightPanel);
         
@@ -103,7 +103,7 @@ public class EntityFieldsPanel extends JXPanel {
                 fieldValueLabel.setText(fieldValue);
                 fieldValueLabel.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
                 fieldValueLabel.setToolTipText(fieldValue);
-                fieldValueLabel.setLineWrap(true);
+                fieldValueLabel.setLineWrap(false);
                 GridBagConstraints gbc2 = new GridBagConstraints();
                 gbc2.insets = new Insets(10, 10, 0, 5);
                 gbc2.anchor = GridBagConstraints.FIRST_LINE_START;
