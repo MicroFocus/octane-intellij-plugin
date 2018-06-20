@@ -48,7 +48,6 @@ public class HeaderPanel extends JPanel {
         UIManager.put("ComboBox.selectionBackground", JBColor.background());
         UIManager.put("ComboBox.selectionForeground", JBColor.foreground());
 
-        //setBackground(Color.GREEN);
         setToolTipText("");
         setBorder(null);
         GridBagLayout gridBagLayout = new GridBagLayout();
