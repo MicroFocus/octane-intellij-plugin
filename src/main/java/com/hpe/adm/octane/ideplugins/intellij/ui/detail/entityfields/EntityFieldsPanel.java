@@ -1,5 +1,6 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -19,6 +20,7 @@ import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
 import com.intellij.ui.JBColor;
+import net.miginfocom.swing.MigLayout;
 
 @SuppressWarnings("serial")
 public class EntityFieldsPanel extends JXPanel {
@@ -29,47 +31,24 @@ public class EntityFieldsPanel extends JXPanel {
     private JXLabel generalLabel;
 
     public EntityFieldsPanel(Collection<FieldMetadata> fields) {
-        GridBagLayout gridBagLayout = new GridBagLayout();
-        gridBagLayout.columnWidths = new int[]{0, 0, 0, 0, 0};
-        gridBagLayout.rowHeights = new int[]{0, 0, 0};
-        gridBagLayout.columnWeights = new double[]{1.0, 1.0, 1.0, 1.0, Double.MIN_VALUE};
-        gridBagLayout.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
-        setLayout(gridBagLayout);
+        setLayout(new MigLayout("", "[pref!][10px][pref!]", "[23px,top][263px]"));
         
         generalLabel = new JXLabel("General");
         generalLabel.setFont(new Font("Arial", Font.BOLD, 18));
-        GridBagConstraints gbc_generalLabel = new GridBagConstraints();
-        gbc_generalLabel.insets = new Insets(5, 0, 5, 0);
-        gbc_generalLabel.gridwidth = 4;
-        gbc_generalLabel.fill = GridBagConstraints.HORIZONTAL;
-        gbc_generalLabel.gridx = 0;
-        gbc_generalLabel.gridy = 0;
-        add(generalLabel, gbc_generalLabel);
+        add(generalLabel, "cell 0 0 3 1,growx,aligny center");
         
         detailsLeftPanel = new JXPanel();
-        GridBagConstraints gbc_detailsLeftPanel = new GridBagConstraints();
-        gbc_detailsLeftPanel.gridwidth = 2;
-        gbc_detailsLeftPanel.insets = new Insets(0, 10, 5, 5);
-        gbc_detailsLeftPanel.fill = GridBagConstraints.BOTH;
-        gbc_detailsLeftPanel.gridx = 0;
-        gbc_detailsLeftPanel.gridy = 1;
-        add(detailsLeftPanel, gbc_detailsLeftPanel);
+        add(detailsLeftPanel, "cell 0 1,width 50%!,growy");
         GridBagLayout gbl_detailsLeftPanel = new GridBagLayout();
         detailsLeftPanel.setLayout(gbl_detailsLeftPanel);
         
         detailsRightPanel = new JXPanel();
-        GridBagConstraints gbc_detailsRightPanel = new GridBagConstraints();
-        gbc_detailsRightPanel.gridwidth = 2;
-        gbc_detailsRightPanel.insets = new Insets(0, 5, 5, 0);
-        gbc_detailsRightPanel.fill = GridBagConstraints.BOTH;
-        gbc_detailsRightPanel.gridx = 2;
-        gbc_detailsRightPanel.gridy = 1;
-        add(detailsRightPanel, gbc_detailsRightPanel);
+        add(detailsRightPanel, "cell 2 1,width 50%!,growy");
         GridBagLayout gbl_detailsRightPanel = new GridBagLayout();
         detailsRightPanel.setLayout(gbl_detailsRightPanel);
         
         this.fields = fields;
-        addComponentListener(detailsLeftPanel, detailsRightPanel);
+        addComponentListener(detailsLeftPanel, detailsRightPanel); 
 
     }
     

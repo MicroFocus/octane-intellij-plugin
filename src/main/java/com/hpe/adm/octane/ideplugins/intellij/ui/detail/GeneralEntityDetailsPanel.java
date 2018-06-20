@@ -89,7 +89,7 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         gridBagLayout.columnWidths = new int[] { 0, 0, 0 };
         gridBagLayout.rowHeights = new int[] { 0, 0, 0, 0, 0 };
         gridBagLayout.columnWeights = new double[] { 1.0, 0.0, Double.MIN_VALUE };
-        gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE };
+        gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE };  
         setLayout(gridBagLayout);
 
         headerPanel = new HeaderPanel();
@@ -104,13 +104,15 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
 
         entityFieldsPanel = new EntityFieldsPanel(fields);
         GridBagConstraints gbc_entityFieldsPanel = new GridBagConstraints();
-        gbc_entityFieldsPanel.fill = GridBagConstraints.BOTH;
+        gbc_entityFieldsPanel.anchor = GridBagConstraints.NORTH;
+        gbc_entityFieldsPanel.fill = GridBagConstraints.HORIZONTAL;
         gbc_entityFieldsPanel.insets = new Insets(0, 5, 0, 5);
         gbc_entityFieldsPanel.gridx = 0;
         gbc_entityFieldsPanel.gridy = 1;
         add(entityFieldsPanel, gbc_entityFieldsPanel);
 
         commentsPanel = new CommentsConversationPanel(baseUrl);
+        commentsPanel.setBorder(new MatteBorder(0, 1, 0, 0, (Color) new Color(0, 0, 0)));
         GridBagConstraints gbc_commentsPanel = new GridBagConstraints();
         gbc_commentsPanel.gridheight = 3;
         gbc_commentsPanel.fill = GridBagConstraints.BOTH;
@@ -126,6 +128,7 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         descriptionLabel = new JLabel("Description");
         descriptionLabel.setFont(new Font("Arial", Font.BOLD, 18));
         GridBagConstraints gbc_descriptionLabel = new GridBagConstraints();
+        gbc_descriptionLabel.anchor = GridBagConstraints.NORTH;
         gbc_descriptionLabel.fill = GridBagConstraints.HORIZONTAL;
         gbc_descriptionLabel.insets = new Insets(10, 5, 5, 5);
         gbc_descriptionLabel.gridx = 0;
