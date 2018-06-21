@@ -15,16 +15,24 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.treetable;
 
 import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.model.EntityModel;
+import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
+import com.hpe.adm.octane.ideplugins.intellij.settings.ConnectionSettingsConfigurable;
 import com.hpe.adm.octane.ideplugins.intellij.ui.View;
 import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.LoadingWidget;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.nowork.NoWorkPanel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.EntityContextMenuFactory;
+import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.options.ShowSettingsUtil;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.wm.impl.ToolWindowManagerImpl;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBScrollPane;
+
+import org.jdesktop.swingx.JXHyperlink;
 import org.jdesktop.swingx.JXLabel;
 
 import javax.inject.Provider;
@@ -227,14 +235,27 @@ public class EntityTreeView implements View {
         });
     }
 
-    public void setErrorMessage(String errorMessage) {
-        JPanel errorPanel = new JPanel(new BorderLayout(0, 0));
+    public void setErrorMessage(String errorMessage, Project project) {
+        JPanel errorPanel = new JPanel();
+        errorPanel.setLayout(new GridBagLayout());
         JXLabel errorLabel = new JXLabel("<html><center>" + errorMessage + "</center></html>");
-        errorLabel.setVerticalAlignment(SwingConstants.CENTER);
-        errorLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        errorPanel.add(errorLabel, BorderLayout.CENTER);
+        errorLabel.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+        errorLabel.setAlignmentY(JComponent.CENTER_ALIGNMENT);
         errorLabel.setForeground(Color.RED);
+        GridBagConstraints gbc1 = new GridBagConstraints();
+        gbc1.gridy = 1;
+        errorPanel.add(errorLabel, gbc1);
         scrollPane.setViewportView(errorPanel);
+        
+        JXHyperlink hyperlinkRetry = new JXHyperlink();
+        hyperlinkRetry.setText("Something went wrong!!! Click here to go to Settings.");
+        hyperlinkRetry.addActionListener(event -> ShowSettingsUtil.getInstance().showSettingsDialog(project, ConnectionSettingsConfigurable.class));
+        hyperlinkRetry.setFont(new Font(hyperlinkRetry.getFont().getFontName(),Font.PLAIN,18));
+        hyperlinkRetry.setAlignmentY(JComponent.CENTER_ALIGNMENT);
+        hyperlinkRetry.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+        GridBagConstraints gbc2 = new GridBagConstraints();
+        gbc2.gridy = 2;
+        errorPanel.add(hyperlinkRetry, gbc2);
     }
 
     public EntityTreeModel getTreeModel() {

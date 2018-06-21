@@ -112,7 +112,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
                 } catch (Exception ex) {
                     entityTreeTableView.setLoading(false);
                     String message = ex.getMessage();
-                    entityTreeTableView.setErrorMessage("Failed to load \"My work\" <br>" + message);
+                    entityTreeTableView.setErrorMessage("Failed to load \"My work\" <br>" + message, project);
                 }
             }
         };
