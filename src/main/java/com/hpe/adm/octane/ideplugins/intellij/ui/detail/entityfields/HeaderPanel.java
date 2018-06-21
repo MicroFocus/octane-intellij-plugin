@@ -82,6 +82,7 @@ public class HeaderPanel extends JPanel {
         add(separatorIdName, gbc_separator1);
 
         entityName = new JTextField();
+        entityName.setColumns(110);
         entityName.setBorder(BorderFactory.createEmptyBorder());
         entityName.setBackground(UIUtil.getLabelBackground());
         entityName.setFont(new Font("Tahoma", Font.PLAIN, 14));
