@@ -20,6 +20,7 @@ import javax.swing.JPanel;
 import javax.swing.Scrollable;
 import javax.swing.border.MatteBorder;
 
+import com.hpe.adm.nga.sdk.model.FieldModel;
 import org.json.JSONObject;
 
 import com.google.inject.Inject;
@@ -152,7 +153,7 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         final String descriptionContent = Util.getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_DESCRIPTION));
 
         // Setting header phase
-        headerPanel.setPhaseDetails(Util.getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_PHASE)));
+        headerPanel.setPhaseDetails(entityModel.getValue(DetailsViewDefaultFields.FIELD_PHASE));
 
         // Setting description content
         Platform.runLater(() -> descriptionPanel.setContent(descriptionContent));
@@ -193,7 +194,7 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         headerPanel.setPhaseInHeader(showPhase);
     }
 
-    public EntityModel getSelectedTransition() {
+    public FieldModel getSelectedTransition() {
         return headerPanel.getSelectedTransition();
     }
     

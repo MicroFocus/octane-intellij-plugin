@@ -19,6 +19,7 @@ import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.exception.OctaneException;
 import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
 import com.hpe.adm.nga.sdk.model.EntityModel;
+import com.hpe.adm.nga.sdk.model.FieldModel;
 import com.hpe.adm.nga.sdk.model.ReferenceFieldModel;
 import com.hpe.adm.nga.sdk.model.StringFieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
@@ -204,8 +205,8 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
 
         public void actionPerformed(AnActionEvent e) {
             RestUtil.runInBackground(() -> {
-                EntityModel selectedTransition = entityDetailView.getSelectedTransition();
-                return (ReferenceFieldModel) selectedTransition.getValue("target_phase");
+                ReferenceFieldModel selectedTransition = (ReferenceFieldModel) entityDetailView.getSelectedTransition();
+                return selectedTransition;
             }, (nextPhase) -> {
                 try {
                     entityService.updateEntityPhase(entityDetailView.getEntityModel(), nextPhase);

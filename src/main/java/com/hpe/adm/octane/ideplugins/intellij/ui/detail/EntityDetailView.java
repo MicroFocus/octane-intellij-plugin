@@ -30,6 +30,7 @@ import javax.swing.SwingConstants;
 
 import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
 import com.hpe.adm.nga.sdk.model.EntityModel;
+import com.hpe.adm.nga.sdk.model.FieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.View;
 import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.LoadingWidget;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.actions.SelectFieldsAction;
@@ -111,7 +112,7 @@ public class EntityDetailView implements View {
         entityDetailsPanel.setPossiblePhasesForEntity(phasesList);
     }
     
-    public EntityModel getSelectedTransition() {
+    public FieldModel getSelectedTransition() {
         return entityDetailsPanel.getSelectedTransition();
     }
 

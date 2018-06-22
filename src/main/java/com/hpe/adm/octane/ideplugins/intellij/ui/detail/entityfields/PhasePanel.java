@@ -1,12 +1,15 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields;
 
 import com.hpe.adm.nga.sdk.model.EntityModel;
-import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.PhaseComboBox;
+import com.hpe.adm.nga.sdk.model.FieldModel;
+import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.PhaseDropDownMenu;
+import com.hpe.adm.octane.ideplugins.services.util.Util;
 import org.jdesktop.swingx.JXLabel;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Collection;
 
 public class PhasePanel extends JPanel {
@@ -15,7 +18,7 @@ public class PhasePanel extends JPanel {
     private JXLabel currentPhaseLabel;
     private JXLabel moveToLabel;
 
-    private PhaseComboBox phaseComboBox;
+    private PhaseDropDownMenu phaseDropDownMenu;
 
     private JSeparator separatorPhasePanel;
 
@@ -50,45 +53,30 @@ public class PhasePanel extends JPanel {
 
         separatorPhasePanel = new JSeparator(SwingConstants.VERTICAL);
         GridBagConstraints gbc_separator3 = new GridBagConstraints();
-        gbc_separator3.insets = new Insets(5, 0, 5, 5);
+        gbc_separator3.insets = new Insets(0, 0, 0, 5);
         gbc_separator3.gridx = 2;
         gbc_separator3.fill = GridBagConstraints.VERTICAL;
         add(separatorPhasePanel, gbc_separator3);
 
-        moveToLabel = new JXLabel();
-        moveToLabel.setText("Move to:");
-        moveToLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        moveToLabel.setBorder(new EmptyBorder(0, 0, 0, 5));
-        GridBagConstraints gbc_moveToLabel = new GridBagConstraints();
-        gbc_moveToLabel.anchor = GridBagConstraints.WEST;
-        gbc_moveToLabel.insets = new Insets(0, 0, 0, 5);
-        gbc_moveToLabel.gridx = 3;
-        add(moveToLabel, gbc_moveToLabel);
-
-        phaseComboBox = new PhaseComboBox();
-        phaseComboBox.setEditable(true);
+        phaseDropDownMenu = new PhaseDropDownMenu();
         GridBagConstraints gbc_phaseComboBox = new GridBagConstraints();
         gbc_phaseComboBox.fill = GridBagConstraints.HORIZONTAL;
-        gbc_phaseComboBox.gridx = 4;
-        add(phaseComboBox, gbc_phaseComboBox);
+        gbc_phaseComboBox.anchor = GridBagConstraints.WEST;
+        gbc_phaseComboBox.gridx = 3;
+        add(phaseDropDownMenu, gbc_phaseComboBox);
     }
 
-    public void setPhaseDetails(String phaseDetails) {
-        this.phaseDetails.setText(phaseDetails);
+    public void setPhaseDetails(FieldModel phaseDetails) {
+        this.phaseDetails.setText(Util.getUiDataFromModel(phaseDetails));
+        this.phaseDropDownMenu.setPhaseDetails(phaseDetails);
     }
 
     public void setPossiblePhasesForEntity(Collection<EntityModel> phasesList) {
-        phaseComboBox.addItems(phasesList);
-        if (phasesList.size() == 1) {
-            phaseComboBox.setEnabled(false);
-        } else {
-            phaseComboBox.setEnabled(true);
-        }
+        phaseDropDownMenu.addItems((ArrayList) phasesList);
     }
 
-    public EntityModel getSelectedTransition() {
-        EntityModel selectedTransition = (EntityModel) phaseComboBox.getSelectedItem();
-        return selectedTransition;
+    public FieldModel getSelectedTransition() {
+        return phaseDropDownMenu.getSelectedItem();
     }
 
     public void setPhaseInHeader(boolean showPhase) {

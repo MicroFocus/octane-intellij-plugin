@@ -15,6 +15,7 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields;
 
 import com.hpe.adm.nga.sdk.model.EntityModel;
+import com.hpe.adm.nga.sdk.model.FieldModel;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -89,7 +90,7 @@ public class HeaderPanel extends JPanel {
         GridBagConstraints gbc_entityName = new GridBagConstraints();
         gbc_entityName.gridx = 3;
         gbc_entityName.gridwidth = 2;
-        gbc_entityName.insets = new Insets(5, 5, 5, 5);
+        gbc_entityName.insets = new Insets(0, 0, 0, 5);
         gbc_entityName.anchor = GridBagConstraints.WEST;
         add(entityName, gbc_entityName);
 
@@ -174,7 +175,7 @@ public class HeaderPanel extends JPanel {
         buttonActionGroup.add(commentAction);
     }
 
-    public void setPhaseDetails(String phaseDetails) {
+    public void setPhaseDetails(FieldModel phaseDetails) {
         phasePanel.setPhaseDetails(phaseDetails);
     }
 
@@ -182,7 +183,7 @@ public class HeaderPanel extends JPanel {
         phasePanel.setPhaseInHeader(showPhase);
     }
 
-    public EntityModel getSelectedTransition() {
+    public FieldModel getSelectedTransition() {
         return phasePanel.getSelectedTransition();
     }
 
