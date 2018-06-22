@@ -91,7 +91,7 @@ public class HTMLPresenterFXPanel extends JFXPanel {
      * When a new state was succesfully transitioned to, mouse events are caught and handled accordingly.
      * P.S. For this use case mouseover and mouseout event were not required to be handled.
      */
-    public void initFX() {
+    private void initFX() {
 
         webView = getWebView();
 
@@ -137,6 +137,7 @@ public class HTMLPresenterFXPanel extends JFXPanel {
     }
 
     public void setContent(final String commentContent) {
+        initFX();
         final String strippedContent = HtmlTextEditor.removeHtmlStructure(commentContent);
         final StackPane root = new StackPane();
         final Scene scene = new Scene(root);

@@ -114,7 +114,6 @@ public class CommentsConversationPanel extends JPanel {
 
     public void setChatBoxScene() {
         Platform.runLater(() -> chatBox.setContent(commentContent));
-        Platform.runLater(() -> chatBox.initFX());
     }
 
 

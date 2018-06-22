@@ -157,7 +157,6 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
 
         // Setting description content
         Platform.runLater(() -> descriptionPanel.setContent(descriptionContent));
-        Platform.runLater(() -> descriptionPanel.initFX());
         drawSpecificDetailsForEntity(entityModel);
 
     }
