@@ -1,15 +1,30 @@
+/*
+ * © 2017 EntIT Software LLC, a Micro Focus company, L.P.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
 package com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents;
 
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.nga.sdk.model.FieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
+import com.intellij.openapi.ui.JBPopupMenu;
 import com.intellij.openapi.util.IconLoader;
-import com.intellij.util.ui.UIUtil;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,7 +39,7 @@ public class PhaseDropDownMenu extends JPanel {
 
     private JLabel targetPhaseLabel;
     private JLabel arrow;
-    private JPopupMenu popupMenu;
+    private JBPopupMenu popupMenu;
 
     private Map<JMenuItem, FieldModel> labelPhaseMap;
 
@@ -61,17 +76,20 @@ public class PhaseDropDownMenu extends JPanel {
         targetPhaseLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                selectedPhase = labelPhaseMap.values().stream().filter(en ->
-                    (Util.getUiDataFromModel((FieldModel) en, "name").equals(targetPhaseLabel.getText()))).collect(Collectors.toList()).get(0);
+                selectedPhase = phasesList.stream().filter(en ->
+                        (targetPhaseLabel.getText().contains(Util.getUiDataFromModel( en.getValue("target_phase"), "name")))).collect(Collectors.toList()).get(0).getValue("target_phase");
                 targetPhaseLabel.setText(MOVED_TO + Util.getUiDataFromModel(selectedPhase, "name"));
                 targetPhaseLabel.setToolTipText(TOOLTIP_BLOCKED_PHASE);
                 targetPhaseLabel.setEnabled(false);
+                if(arrow != null){
+                    remove(arrow);
+                }
             }
         });
         phasesList.stream().forEach(e -> {
             String phase = Util.getUiDataFromModel(e.getValue("target_phase"), "name");
             //don't put the phase which is already in the target label into the popup menu
-            if(!targetPhaseLabel.getText().equals(phase)){
+            if (!targetPhaseLabel.getText().contains(phase)) {
                 JMenuItem menuItem = new JMenuItem(phase);
                 labelPhaseMap.put(menuItem, e.getValue("target_phase"));
             }
@@ -85,10 +103,9 @@ public class PhaseDropDownMenu extends JPanel {
             arrow.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    super.mouseClicked(e);
-                    popupMenu.setVisible(true);
-                    popupMenu.setLocation(arrow.getLocationOnScreen().x + (int) arrow.getPreferredSize().getWidth() - (int) popupMenu.getPreferredSize().getWidth(),
-                            arrow.getLocationOnScreen().y + (int) arrow.getPreferredSize().getHeight());
+                    popupMenu.show(arrow,
+                            0,
+                            arrow.getHeight());
                 }
             });
             GridBagConstraints gbc_arrow = new GridBagConstraints();
@@ -98,26 +115,22 @@ public class PhaseDropDownMenu extends JPanel {
             gbc_arrow.insets = new Insets(0, 5, 0, 5);
             add(arrow, gbc_arrow);
 
-            //create the popup frame
-            popupMenu = new JPopupMenu();
+            //create the popup
+            popupMenu = new JBPopupMenu();
 
             JPanel rootPanel = new JPanel();
             rootPanel.setLayout(new BoxLayout(rootPanel, BoxLayout.Y_AXIS));
             List<JMenuItem> labels = new ArrayList<>(labelPhaseMap.keySet());
-            for (int i = 1; i < phasesList.size(); i++) {
+            for (int i = 0; i < labelPhaseMap.keySet().size(); i++) {
                 JMenuItem lbl = labels.get(i);
                 popupMenu.add(lbl);
-                lbl.addMouseListener(new MouseAdapter() {
-                    @Override
-                    public void mouseClicked(MouseEvent e) {
-                        super.mouseClicked(e);
-                        selectedPhase = labelPhaseMap.get(lbl);
-                        targetPhaseLabel.setText(MOVED_TO + Util.getUiDataFromModel(selectedPhase, "name"));
-                        targetPhaseLabel.setToolTipText(TOOLTIP_BLOCKED_PHASE);
-                        targetPhaseLabel.setEnabled(false);
-                        remove(arrow);
-                        popupMenu.setVisible(false);
-                    }
+                lbl.addActionListener((a)->{
+                    selectedPhase = labelPhaseMap.get(lbl);
+                    targetPhaseLabel.setText(MOVED_TO + Util.getUiDataFromModel(selectedPhase, "name"));
+                    targetPhaseLabel.setToolTipText(TOOLTIP_BLOCKED_PHASE);
+                    targetPhaseLabel.setEnabled(false);
+                    remove(arrow);
+                    popupMenu.setVisible(false);
                 });
             }
         }
