@@ -1,6 +1,5 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -18,8 +17,10 @@ import org.jdesktop.swingx.JXPanel;
 
 import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
 import com.hpe.adm.nga.sdk.model.EntityModel;
+import com.hpe.adm.octane.ideplugins.intellij.ui.detail.DetailsViewDefaultFields;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
 import com.intellij.ui.JBColor;
+
 import net.miginfocom.swing.MigLayout;
 
 @SuppressWarnings("serial")
@@ -32,33 +33,33 @@ public class EntityFieldsPanel extends JXPanel {
 
     public EntityFieldsPanel(Collection<FieldMetadata> fields) {
         setLayout(new MigLayout("", "[pref!][10px][pref!]", "[23px,top][263px]"));
-        
+
         generalLabel = new JXLabel("General");
         generalLabel.setFont(new Font("Arial", Font.BOLD, 18));
         add(generalLabel, "cell 0 0 3 1,growx,aligny center");
-        
+
         detailsLeftPanel = new JXPanel();
         add(detailsLeftPanel, "cell 0 1,width 50%!,growy");
         GridBagLayout gbl_detailsLeftPanel = new GridBagLayout();
         detailsLeftPanel.setLayout(gbl_detailsLeftPanel);
-        
+
         detailsRightPanel = new JXPanel();
         add(detailsRightPanel, "cell 2 1,width 50%!,growy");
         GridBagLayout gbl_detailsRightPanel = new GridBagLayout();
         detailsRightPanel.setLayout(gbl_detailsRightPanel);
-        
+
         this.fields = fields;
-        addComponentListener(detailsLeftPanel, detailsRightPanel); 
+        addComponentListener(detailsLeftPanel, detailsRightPanel);
 
     }
-    
+
     public void addComponentListener(JXPanel detailsLeftPanel, JXPanel detailsRightPanel) {
         addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent e) {
                 int halfWidth = getWidth() / 2;
                 int height = getHeight();
                 if (halfWidth != 0 && height != 0) {
-                    Dimension halfSizeFields =new Dimension((int) halfWidth, height);
+                    Dimension halfSizeFields = new Dimension((int) halfWidth, height);
                     detailsLeftPanel.setPreferredSize(halfSizeFields);
                     detailsRightPanel.setPreferredSize(halfSizeFields);
                     updateUI();
@@ -67,7 +68,7 @@ public class EntityFieldsPanel extends JXPanel {
             }
         });
     }
-    
+
     public void createSectionWithEntityDetails(EntityModel entityModel, Set<String> fieldNames) {
         detailsLeftPanel.removeAll();
         detailsRightPanel.removeAll();
@@ -89,15 +90,16 @@ public class EntityFieldsPanel extends JXPanel {
 
                 String fieldValue = null;
 
-                if ("owner".equals(fieldName)
-                        || "author".equals(fieldName)
-                        || "run_by".equals(fieldName)
-                        || "detected_by".equals(fieldName)) {
+                if (DetailsViewDefaultFields.FIELD_OWNER.equals(fieldName)
+                        || DetailsViewDefaultFields.FIELD_AUTHOR.equals(fieldName)
+                        || DetailsViewDefaultFields.FIELD_TEST_RUN_RUN_BY.equals(fieldName)
+                        || DetailsViewDefaultFields.FIELD_DETECTEDBY.equals(fieldName)) {
                     fieldValue = Util.getUiDataFromModel(entityModel.getValue(fieldName),
-                            "full_name");
+                            DetailsViewDefaultFields.FIELD_FULL_NAME);
                 } else {
                     fieldValue = Util.getUiDataFromModel(entityModel.getValue(fieldName));
                 }
+                
                 JXLabel fieldValueLabel = new JXLabel();
                 fieldValueLabel.setFont(new Font("Arial", Font.PLAIN, 12));
                 fieldValueLabel.setText(fieldValue);
@@ -119,12 +121,12 @@ public class EntityFieldsPanel extends JXPanel {
                     detailsRightPanel.add(fieldLabel, gbc1);
                     detailsRightPanel.add(fieldValueLabel, gbc2);
                 }
-                
                 i++;
                 fieldCount++;
             }
         }
-        if (fieldCount % 2==1) {
+
+        if (fieldCount % 2 == 1) {
             JXLabel emptyLabel = new JXLabel();
             emptyLabel.setFont(new Font("Arial", Font.BOLD, 12));
             GridBagConstraints gbc = new GridBagConstraints();
