@@ -29,7 +29,6 @@ public class PhasePanel extends JPanel {
 
     private JXLabel phaseDetails;
     private JXLabel currentPhaseLabel;
-    private JXLabel moveToLabel;
 
     private PhaseDropDownMenu phaseDropDownMenu;
 
