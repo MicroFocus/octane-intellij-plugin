@@ -102,7 +102,6 @@ public class HeaderPanel extends JPanel {
         add(separatorNamePhase, gbc_separator2);
 
         phasePanel = new PhasePanel();
-        phasePanel.setVisible(true);
         GridBagConstraints gbc_phasePanel = new GridBagConstraints();
         gbc_phasePanel.insets = new Insets(0, 0, 0, 0);
         gbc_phasePanel.gridx = 6;

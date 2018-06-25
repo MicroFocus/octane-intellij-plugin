@@ -117,9 +117,7 @@ public class PhaseDropDownMenu extends JPanel {
             arrow.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    popupMenu.show(arrow,
-                            0,
-                            arrow.getHeight());
+                    popupMenu.show(arrow, 0, arrow.getHeight());
                 }
             });
             GridBagConstraints gbc_arrow = new GridBagConstraints();
