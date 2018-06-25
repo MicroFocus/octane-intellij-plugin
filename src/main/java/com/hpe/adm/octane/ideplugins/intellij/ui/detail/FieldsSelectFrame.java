@@ -16,6 +16,7 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.FieldMenuItem;
+import com.hpe.adm.octane.ideplugins.intellij.ui.detail.actions.SelectFieldsAction;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.util.DefaultEntityFieldsUtil;
 import com.intellij.ui.JBColor;
@@ -61,7 +62,7 @@ public class FieldsSelectFrame extends JFrame {
     private JScrollPane fieldsScrollPanel;
     private JPanel fieldsRootPanel;
     private JXTextField searchField;
-    private EntityDetailPresenter.SelectFieldsAction fieldsActionButton;
+    private SelectFieldsAction fieldsActionButton;
     private JPanel fieldsPanel;
     private JXButton resetButton;
     private JXButton selectNoneButton;
@@ -69,7 +70,7 @@ public class FieldsSelectFrame extends JFrame {
 
     private List<SelectionListener> listeners = new ArrayList<>();
 
-    public FieldsSelectFrame(Set<String> defaultFields, Collection<FieldMetadata> allFields, Map<Entity, Set<String>> selectedFieldsMap, Entity entityType, IdePluginPersistentState idePluginPersistentState, EntityDetailPresenter.SelectFieldsAction fieldsButton) {
+    public FieldsSelectFrame(Set<String> defaultFields, Collection<FieldMetadata> allFields, Map<Entity, Set<String>> selectedFieldsMap, Entity entityType, IdePluginPersistentState idePluginPersistentState, SelectFieldsAction fieldsButton) {
         this.defaultFields = defaultFields;
         this.allFields = allFields;
         this.selectedFieldsMap = selectedFieldsMap;

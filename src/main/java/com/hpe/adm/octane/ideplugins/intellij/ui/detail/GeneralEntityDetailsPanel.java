@@ -13,11 +13,39 @@
 
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Rectangle;
+import java.awt.event.ActionListener;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.Scrollable;
+import javax.swing.border.MatteBorder;
+
+import com.hpe.adm.nga.sdk.model.FieldModel;
+import org.json.JSONObject;
+
 import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
+import com.hpe.adm.octane.ideplugins.intellij.ui.detail.actions.SelectFieldsAction;
+import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.CommentsConversationPanel;
+import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.EntityFieldsPanel;
+import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.HTMLPresenterFXPanel;
+import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.HeaderPanel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
@@ -28,53 +56,29 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.DataKeys;
 import com.intellij.openapi.project.Project;
-import com.intellij.ui.JBColor;
+
 import javafx.application.Platform;
-import org.jdesktop.swingx.JXLabel;
-import org.jdesktop.swingx.JXPanel;
-import org.json.JSONObject;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.MatteBorder;
-import java.awt.*;
-import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import static com.intellij.icons.AllIcons.Json.Array;
 
 public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
+
+    private HeaderPanel headerPanel;
+    private EntityFieldsPanel entityFieldsPanel;
+    private CommentsConversationPanel commentsPanel;
+    private HTMLPresenterFXPanel descriptionPanel;
+    private FieldsSelectFrame fieldsPopup;
+    private FieldsSelectFrame.SelectionListener selectionListener;
 
     @Inject
     private IdePluginPersistentState idePluginPersistentState;
 
     private Map<Entity, Set<String>> defaultFields = DefaultEntityFieldsUtil.getDefaultFields();
     private Map<Entity, Set<String>> selectedFields;
-    private JXPanel entityDetailsPanel;
-    private JXPanel commentsDetails;
-    private FieldsSelectFrame fieldsPopup;
-    private JXPanel detailsPanelLeft;
-    private JXPanel detailsPanelRight;
-    private HTMLPresenterFXPanel descriptionDetails;
-    private EntityModel entityModel;
     private Collection<FieldMetadata> fields;
-    private HeaderPanel headerPanel;
-    private CommentsConversationPanel commentsListPanel;
-    private JXLabel label;
     private String baseUrl;
-
-    private FieldsSelectFrame.SelectionListener selectionListener;
-
+    private EntityModel entityModel;
+    private JLabel descriptionLabel;
 
     public GeneralEntityDetailsPanel(EntityModel entityModel, Collection<FieldMetadata> fields) {
-        setLayout(new BorderLayout(0, 0));
-
         this.entityModel = entityModel;
         this.fields = fields;
 
@@ -95,135 +99,87 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
             }
         }
 
-        JPanel rootPanel = new JPanel();
-        rootPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-        add(rootPanel, BorderLayout.CENTER);
-        GridBagLayout gbl_rootPanel = new GridBagLayout();
-        gbl_rootPanel.columnWidths = new int[]{0, 0};
-        gbl_rootPanel.rowHeights = new int[]{0, 0, 0, 0};
-        gbl_rootPanel.columnWeights = new double[]{1.0, Double.MIN_VALUE};
-        gbl_rootPanel.rowWeights = new double[]{0.0, 0.0, 0.0, 1.0};
-        rootPanel.setLayout(gbl_rootPanel);
+        GridBagLayout gridBagLayout = new GridBagLayout();
+        gridBagLayout.columnWidths = new int[] { 0, 0, 0 };
+        gridBagLayout.rowHeights = new int[] { 0, 0, 0, 0, 0 };
+        gridBagLayout.columnWeights = new double[] { 1.0, 0.0, Double.MIN_VALUE };
+        gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE };  
+        setLayout(gridBagLayout);
 
         headerPanel = new HeaderPanel();
-        headerPanel.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
+        headerPanel.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
         GridBagConstraints gbc_headerPanel = new GridBagConstraints();
-        gbc_headerPanel.insets = new Insets(0, 0, 5, 0);
+        gbc_headerPanel.gridwidth = 2;
         gbc_headerPanel.fill = GridBagConstraints.HORIZONTAL;
+        gbc_headerPanel.insets = new Insets(5, 0, 5, 5);
         gbc_headerPanel.gridx = 0;
         gbc_headerPanel.gridy = 0;
-        rootPanel.add(headerPanel, gbc_headerPanel);
+        add(headerPanel, gbc_headerPanel);
 
+        entityFieldsPanel = new EntityFieldsPanel(fields);
+        GridBagConstraints gbc_entityFieldsPanel = new GridBagConstraints();
+        gbc_entityFieldsPanel.anchor = GridBagConstraints.NORTH;
+        gbc_entityFieldsPanel.fill = GridBagConstraints.HORIZONTAL;
+        gbc_entityFieldsPanel.insets = new Insets(0, 5, 0, 5);
+        gbc_entityFieldsPanel.gridx = 0;
+        gbc_entityFieldsPanel.gridy = 1;
+        add(entityFieldsPanel, gbc_entityFieldsPanel);
 
-        entityDetailsPanel = createMainPanel();
-
-        detailsPanelLeft = createLeftPanel(entityDetailsPanel);
-        detailsPanelRight = createRightPanel(entityDetailsPanel);
-        addComponentListener(entityDetailsPanel, detailsPanelLeft, detailsPanelRight);
-        drawSpecificDetailsForEntity(entityModel);
-        entityDetailsPanel.setBorder(new EmptyBorder(0, 0, 0, 10));
-
-        JPanel paddingPanel = new JPanel();
-        paddingPanel.setMinimumSize(new Dimension(50, 50));
-        GridBagConstraints gbc_paddingPanel = new GridBagConstraints();
-        gbc_paddingPanel.anchor = GridBagConstraints.SOUTHWEST;
-        gbc_paddingPanel.insets = new Insets(0, 0, 0, 0);
-        gbc_paddingPanel.gridx = 0;
-        gbc_paddingPanel.gridy = 2;
-        gbc_paddingPanel.gridwidth = 2;
-        entityDetailsPanel.add(paddingPanel, gbc_paddingPanel);
-
-
-        JXLabel sectionTitle = new JXLabel();
-        sectionTitle.setFont(new Font("Arial", Font.BOLD, 18));
-        sectionTitle.setText("General");
-        GridBagConstraints gbc_title = new GridBagConstraints();
-        gbc_title.anchor = GridBagConstraints.SOUTHWEST;
-        gbc_title.insets = new Insets(0, 0, 0, 0);
-        gbc_title.gridx = 0;
-        gbc_title.gridy = 0;
-        entityDetailsPanel.add(sectionTitle, gbc_title);
-
-        JXPanel entityDetailsAndCommentsPanel = new JXPanel();
-        GridBagConstraints gbc_entityDetailsAndCommentsPanel = new GridBagConstraints();
-        gbc_entityDetailsAndCommentsPanel.insets = new Insets(10, 10, 5, 0);
-        gbc_entityDetailsAndCommentsPanel.fill = GridBagConstraints.BOTH;
-        gbc_entityDetailsAndCommentsPanel.gridx = 0;
-        gbc_entityDetailsAndCommentsPanel.gridy = 1;
-        rootPanel.add(entityDetailsAndCommentsPanel, gbc_entityDetailsAndCommentsPanel);
-        GridBagLayout gbl_entityDetailsAndCommentsPanel = new GridBagLayout();
-        gbl_entityDetailsAndCommentsPanel.columnWidths = new int[]{0, 0, 0};
-        gbl_entityDetailsAndCommentsPanel.rowHeights = new int[]{0, 0};
-        gbl_entityDetailsAndCommentsPanel.columnWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};
-        gbl_entityDetailsAndCommentsPanel.rowWeights = new double[]{0.0, Double.MIN_VALUE};
-        entityDetailsAndCommentsPanel.setLayout(gbl_entityDetailsAndCommentsPanel);
-        GridBagConstraints gbc_entityDetailsPanel = new GridBagConstraints();
-        gbc_entityDetailsPanel.fill = GridBagConstraints.BOTH;
-        gbc_entityDetailsPanel.gridx = 0;
-        gbc_entityDetailsPanel.gridy = 0;
-        entityDetailsAndCommentsPanel.add(entityDetailsPanel, gbc_entityDetailsPanel);
-
-        GridBagConstraints gbc_descriptionDetails_1 = new GridBagConstraints();
-        gbc_descriptionDetails_1.insets = new Insets(0, 10, 5, 0);
-        gbc_descriptionDetails_1.fill = GridBagConstraints.BOTH;
-        gbc_descriptionDetails_1.gridx = 0;
-        gbc_descriptionDetails_1.gridy = 1;
-
-        commentsDetails = new JXPanel();
-        commentsDetails.setVisible(false);
-        commentsDetails.setLayout(new BorderLayout());
-        commentsDetails.setMinimumSize(new Dimension(400,200));
-        commentsDetails.setScrollableTracksViewportWidth(false);
-
-        commentsListPanel = new CommentsConversationPanel(baseUrl);
-        commentsListPanel.setPreferredSize(new Dimension(400, (int) entityDetailsPanel.getPreferredSize().getHeight() + 50));
-        commentsListPanel.setMaximumSize(new Dimension(400, 200));
-        commentsListPanel.setBorder(new MatteBorder(1, 1, 1, 1, JBColor.border()));
-        commentsDetails.add(commentsListPanel);
-
-
+        commentsPanel = new CommentsConversationPanel(baseUrl);
+        commentsPanel.setBorder(new MatteBorder(0, 1, 0, 0, (Color) new Color(0, 0, 0)));
         GridBagConstraints gbc_commentsPanel = new GridBagConstraints();
+        gbc_commentsPanel.gridheight = 3;
         gbc_commentsPanel.fill = GridBagConstraints.BOTH;
+        gbc_commentsPanel.insets = new Insets(0, 5, 0, 5);
         gbc_commentsPanel.gridx = 1;
-        gbc_commentsPanel.gridy = 0;
-        entityDetailsAndCommentsPanel.add(commentsDetails, gbc_commentsPanel);
+        gbc_commentsPanel.gridy = 1;
+        add(commentsPanel, gbc_commentsPanel);
+        commentsPanel.setMaximumSize(new Dimension(350, getHeight()));
+        commentsPanel.setMinimumSize(new Dimension(350, getHeight()));
+        commentsPanel.setSize(new Dimension(350, getHeight()));
+        commentsPanel.setVisible(false);
 
-        label = new JXLabel();
-        label.setText("Description");
-        label.setFont(new Font("Arial", Font.BOLD, 15));
-        GridBagConstraints gbc_label = new GridBagConstraints();
-        gbc_label.fill = GridBagConstraints.HORIZONTAL;
-        gbc_label.insets = new Insets(0, 0, 5, 0);
-        gbc_label.gridx = 0;
-        gbc_label.gridy = 2;
-        rootPanel.add(label, gbc_label);
+        descriptionLabel = new JLabel("Description");
+        descriptionLabel.setFont(new Font("Arial", Font.BOLD, 18));
+        GridBagConstraints gbc_descriptionLabel = new GridBagConstraints();
+        gbc_descriptionLabel.anchor = GridBagConstraints.NORTH;
+        gbc_descriptionLabel.fill = GridBagConstraints.HORIZONTAL;
+        gbc_descriptionLabel.insets = new Insets(10, 12, 5, 5);
+        gbc_descriptionLabel.gridx = 0;
+        gbc_descriptionLabel.gridy = 2;
+        add(descriptionLabel, gbc_descriptionLabel);
 
-        descriptionDetails = new HTMLPresenterFXPanel(baseUrl);
-        descriptionDetails.setPreferredSize(new Dimension(0, 120));
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.gridx = 0;
-        gbc.gridy = 3;
-        rootPanel.add(descriptionDetails, gbc);
+        descriptionPanel = new HTMLPresenterFXPanel(baseUrl);
+        GridBagConstraints gbc_descriptionPanel = new GridBagConstraints();
+        gbc_descriptionPanel.fill = GridBagConstraints.BOTH;
+        gbc_descriptionPanel.insets = new Insets(0, 5, 0, 5);
+        gbc_descriptionPanel.gridx = 0;
+        gbc_descriptionPanel.gridy = 3;
+        add(descriptionPanel, gbc_descriptionPanel);
 
         drawGeneralDetailsForEntity(entityModel);
-        descriptionDetails.addEventActions();
+        descriptionPanel.addEventActions();
+
     }
 
     private void drawGeneralDetailsForEntity(EntityModel entityModel) {
         final String descriptionContent = Util.getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_DESCRIPTION));
 
-        //Setting header phase
-        headerPanel.setPhaseDetails(Util.getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_PHASE)));
+        // Setting header phase
+        headerPanel.setPhaseDetails(entityModel.getValue(DetailsViewDefaultFields.FIELD_PHASE));
 
-        //Setting description content
-        Platform.runLater(() -> descriptionDetails.setContent(descriptionContent));
-        Platform.runLater(() -> descriptionDetails.initFX());
+        // Setting description content
+        Platform.runLater(() -> descriptionPanel.setContent(descriptionContent));
+        drawSpecificDetailsForEntity(entityModel);
+
     }
 
-
-    public void setEntityNameClickHandler(Runnable runnable) {
-        headerPanel.setActionToEntityLink(runnable);
+    private void drawSpecificDetailsForEntity(EntityModel entityModel) {
+        EntityIconFactory entityIconFactory = new EntityIconFactory(26, 26, 12);
+        headerPanel.setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(Entity.getEntityType(entityModel))));
+        headerPanel.setId(Util.getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_ID)));
+        headerPanel.setNameDetails(Util.getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_NAME)));
+        entityFieldsPanel.createSectionWithEntityDetails(entityModel, selectedFields.get(Entity.getEntityType(entityModel)));
     }
 
     public void setRefreshButton(AnAction refreshButton) {
@@ -235,212 +191,86 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
     }
 
     public void setSaveSelectedPhaseButton(AnAction saveSelectedPhaseAction) {
-        headerPanel.setSaveSelectedPhaseButton(saveSelectedPhaseAction);
+        headerPanel.setSaveButton(saveSelectedPhaseAction);
     }
 
     public void removeSaveSelectedPhaseButton() {
         headerPanel.removeSaveSelectedPhaseButton();
     }
 
+    public void openInBrowserButton(AnAction openInBrowserAction) {
+        headerPanel.setOpenInBrowserButton(openInBrowserAction);
+    }
+
     public void setPhaseInHeader(boolean showPhase) {
         headerPanel.setPhaseInHeader(showPhase);
     }
 
-    public EntityModel getSelectedTransition() {
+    public FieldModel getSelectedTransition() {
         return headerPanel.getSelectedTransition();
     }
-
-    private void drawSpecificDetailsForEntity(EntityModel entityModel) {
-        EntityIconFactory entityIconFactory = new EntityIconFactory(26, 26, 12);
-        headerPanel.setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(Entity.getEntityType(entityModel))));
-        headerPanel.setId(Util.getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_ID)));
-        headerPanel.setNameDetails(Util.getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_NAME)));
-        createSectionWithEntityDetails(entityModel, selectedFields.get(Entity.getEntityType(entityModel)));
-    }
-
-
+    
     public void setPossiblePhasesForEntity(Collection<EntityModel> phasesList) {
         headerPanel.setPossiblePhasesForEntity(phasesList);
     }
 
     public void setComments(Collection<EntityModel> comments) {
-        commentsListPanel.clearCurrentComments();
+        commentsPanel.clearCurrentComments();
         for (EntityModel comment : comments) {
             String commentsPostTime = Util.getUiDataFromModel(comment.getValue(DetailsViewDefaultFields.FIELD_CREATION_TIME));
             String userName = Util.getUiDataFromModel(comment.getValue(DetailsViewDefaultFields.FIELD_AUTHOR), "full_name");
             String commentLine = Util.getUiDataFromModel(comment.getValue(DetailsViewDefaultFields.FIELD_COMMENT_TEXT));
-            commentsListPanel.addExistingComment(commentsPostTime, userName, commentLine);
+            commentsPanel.addExistingComment(commentsPostTime, userName, commentLine);
         }
-        commentsListPanel.setChatBoxScene();
+        commentsPanel.setChatBoxScene();
     }
 
     public void addSendNewCommentAction(ActionListener actionListener) {
-        commentsListPanel.addSendNewCommentAction(actionListener);
+        commentsPanel.addSendNewCommentAction(actionListener);
     }
 
     public void activateFieldsSettings() {
-        fieldsPopup.setLocation(headerPanel.getFieldsPopupLocation().x - (int) fieldsPopup.getPreferredSize().getWidth(), headerPanel.getFieldsPopupLocation().y);
+        fieldsPopup.setLocation(headerPanel.getFieldsPopupLocation().x - (int) fieldsPopup.getPreferredSize().getWidth(),
+                headerPanel.getFieldsPopupLocation().y);
         fieldsPopup.setVisible(!fieldsPopup.isVisible());
     }
 
     public void setCommentMessageBoxText(String t) {
-        commentsListPanel.setCommentMessageBoxText(t);
+        commentsPanel.setCommentMessageBoxText(t);
     }
 
     public String getCommentMessageBoxText() {
-        return commentsListPanel.getCommentMessageBoxText();
+        return commentsPanel.getCommentMessageBoxText();
     }
 
     public void activateCommentsCollapsible() {
-        commentsDetails.setVisible(!commentsDetails.isVisible());
+        commentsPanel.setVisible(!commentsPanel.isVisible());
+
     }
 
-    public void setFieldSelectButton(EntityDetailPresenter.SelectFieldsAction fieldSelectButton) {
+    public void setFieldSelectButton(SelectFieldsAction fieldSelectButton) {
         headerPanel.setFieldSelectButton(fieldSelectButton);
         fieldsPopup = new FieldsSelectFrame(defaultFields.get(Entity.getEntityType(entityModel)),
-                fields.stream().filter(e -> !Arrays.asList("phase", "name", "subtype", "description").contains(e.getName())).collect(Collectors.toList()),
+                fields.stream()
+                        .filter(e -> !Arrays.asList("phase", "name", "subtype", "description").contains(e.getName()))
+                        .collect(Collectors.toList()),
                 selectedFields,
                 Entity.getEntityType(entityModel),
                 idePluginPersistentState,
                 fieldSelectButton);
-        fieldsPopup.addSelectionListener(e -> createSectionWithEntityDetails(entityModel, fieldsPopup.getSelectedFields()));
+        fieldsPopup.addSelectionListener(e -> entityFieldsPanel.createSectionWithEntityDetails(entityModel, fieldsPopup.getSelectedFields()));
         fieldsPopup.addSelectionListener(selectionListener);
     }
 
-    public void addFieldSelectListener(FieldsSelectFrame.SelectionListener selectionListener){
+    public void addFieldSelectListener(FieldsSelectFrame.SelectionListener selectionListener) {
         this.selectionListener = selectionListener;
     }
 
-    public void createSectionWithEntityDetails(EntityModel entityModel, Set<String> fieldNames) {
-        detailsPanelLeft.removeAll();
-        detailsPanelRight.removeAll();
-
-        int fieldCount = 0;
-        int i = 0;
-        for (FieldMetadata fieldMetadata : fields) {
-            if (fieldNames.contains(fieldMetadata.getName())) {
-                String fieldName = fieldMetadata.getName();
-                JXLabel fieldLabel = new JXLabel();
-                fieldLabel.setFont(new Font("Arial", Font.BOLD, 12));
-                fieldLabel.setText(fieldMetadata.getLabel());
-                GridBagConstraints gbc1 = new GridBagConstraints();
-                gbc1.anchor = GridBagConstraints.SOUTHWEST;
-                gbc1.insets = new Insets(10, 0, 0, 0);
-                gbc1.fill = GridBagConstraints.HORIZONTAL;
-                gbc1.gridx = 0;
-                gbc1.gridy = i;
-
-                String fieldValue = null;
-
-                if ("owner".equals(fieldName)
-                        || "author".equals(fieldName)
-                        || "run_by".equals(fieldName)
-                        || "detected_by".equals(fieldName)) {
-                    fieldValue = Util.getUiDataFromModel(entityModel.getValue(fieldName),
-                            "full_name");
-                } else {
-                    fieldValue = Util.getUiDataFromModel(entityModel.getValue(fieldName));
-                }
-                JXLabel fieldValueLabel = new JXLabel();
-                fieldValueLabel.setFont(new Font("Arial", Font.PLAIN, 12));
-                fieldValueLabel.setText(fieldValue);
-                fieldValueLabel.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
-                fieldValueLabel.setToolTipText(fieldValue);
-                GridBagConstraints gbc2 = new GridBagConstraints();
-                gbc2.insets = new Insets(10, 10, 0, 5);
-                gbc2.anchor = GridBagConstraints.SOUTHWEST;
-                gbc2.fill = GridBagConstraints.HORIZONTAL;
-                gbc2.gridx = 1;
-                gbc2.gridy = i;
-
-                if (fieldCount % 2 == 0) {
-                    detailsPanelLeft.add(fieldLabel, gbc1);
-                    detailsPanelLeft.add(fieldValueLabel, gbc2);
-                } else {
-                    detailsPanelRight.add(fieldLabel, gbc1);
-                    detailsPanelRight.add(fieldValueLabel, gbc2);
-                }
-                i++;
-                fieldCount++;
-            }
-        }
-        detailsPanelLeft.repaint();
-        detailsPanelLeft.revalidate();
-        detailsPanelRight.repaint();
-        detailsPanelRight.revalidate();
-    }
-
-
-    private JXPanel createLeftPanel(JXPanel mainPanel) {
-        JXPanel detailsPanelLeft = new JXPanel();
-        detailsPanelLeft.setBorder(null);
-        GridBagConstraints gbc1 = new GridBagConstraints();
-        gbc1.anchor = GridBagConstraints.NORTH;
-        gbc1.fill = GridBagConstraints.HORIZONTAL;
-        gbc1.insets = new Insets(10, 0, 15, 0);
-        gbc1.gridx = 0;
-        gbc1.gridy = 1;
-        mainPanel.add(detailsPanelLeft, gbc1);
-        GridBagLayout gbl_detailsPanelLeft = new GridBagLayout();
-        gbl_detailsPanelLeft.columnWidths = new int[]{0, 0};
-        gbl_detailsPanelLeft.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-        gbl_detailsPanelLeft.columnWeights = new double[]{0.0, 1.0};
-        gbl_detailsPanelLeft.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
-        detailsPanelLeft.setLayout(gbl_detailsPanelLeft);
-        return detailsPanelLeft;
-    }
-
-    private JXPanel createRightPanel(JXPanel mainPanel) {
-        JXPanel detailsPanelRight = new JXPanel();
-        detailsPanelRight.setBorder(null);
-        GridBagConstraints gbc1 = new GridBagConstraints();
-        gbc1.anchor = GridBagConstraints.NORTH;
-        gbc1.insets = new Insets(10, 10, 15, 0);
-        gbc1.gridx = 1;
-        gbc1.gridy = 1;
-        gbc1.fill = GridBagConstraints.HORIZONTAL;
-        mainPanel.add(detailsPanelRight, gbc1);
-        GridBagLayout gbl_detailsPanelRight = new GridBagLayout();
-        gbl_detailsPanelRight.columnWidths = new int[]{0, 0};
-        gbl_detailsPanelRight.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-        gbl_detailsPanelRight.columnWeights = new double[]{0.0, 1.0};
-        gbl_detailsPanelRight.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
-        detailsPanelRight.setLayout(gbl_detailsPanelRight);
-        return detailsPanelRight;
-    }
-
-    private void addComponentListener(JXPanel mainPanel, JXPanel leftPanel, JXPanel rightPanel) {
-        mainPanel.addComponentListener(new ComponentAdapter() {
-            public void componentResized(ComponentEvent e) {
-                int halfWidth = mainPanel.getWidth() / 2;
-                int height = mainPanel.getHeight();
-                if (halfWidth != 0 && height != 0) {
-                    leftPanel.setPreferredSize(new Dimension((int) halfWidth, height));
-                    rightPanel.setPreferredSize(new Dimension((int) halfWidth, height));
-                    mainPanel.updateUI();
-                    mainPanel.repaint();
-                }
-            }
-        });
-    }
-
-    private JXPanel createMainPanel() {
-        JXPanel detailsPanelMain = new JXPanel();
-        detailsPanelMain.setBorder(null);
-        GridBagLayout mainPaneGrid = new GridBagLayout();
-        mainPaneGrid.columnWidths = new int[]{0, 0};
-        mainPaneGrid.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-        mainPaneGrid.columnWeights = new double[]{0.5, 0.5};
-        mainPaneGrid.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
-        detailsPanelMain.setLayout(mainPaneGrid);
-        return detailsPanelMain;
-    }
-
-    public Set<String> getSelectedFields(){
+    public Set<String> getSelectedFields() {
         return fieldsPopup.getSelectedFields();
     }
 
-    public void setSelectedFields(Set<String> selectedFields){
+    public void setSelectedFields(Set<String> selectedFields) {
         fieldsPopup.setSelectedFieldsFromOtherTab(selectedFields);
     }
 

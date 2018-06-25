@@ -81,3 +81,10 @@ intellij {
     downloadSources Boolean.valueOf(downloadIdeaSources)
     sandboxDirectory project.rootDir.canonicalPath + "/.sandbox"
 }
+
+tasks.withType(JavaExec) {
+    if (System.getProperty('DEBUG', 'false') == 'true') {
+        jvmArgs '-Xdebug', '-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=9099'
+    }
+}
+

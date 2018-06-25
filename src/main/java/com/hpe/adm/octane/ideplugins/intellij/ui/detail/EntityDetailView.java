@@ -13,23 +13,29 @@
 
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
-import com.google.inject.Inject;
-import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
-import com.hpe.adm.nga.sdk.model.EntityModel;
-import com.hpe.adm.octane.ideplugins.intellij.ui.View;
-import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.LoadingWidget;
-import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.ui.components.JBScrollPane;
+import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
+import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.ActionListener;
 import java.util.Collection;
 import java.util.Set;
 
-import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
-import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+
+import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
+import com.hpe.adm.nga.sdk.model.EntityModel;
+import com.hpe.adm.nga.sdk.model.FieldModel;
+import com.hpe.adm.octane.ideplugins.intellij.ui.View;
+import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.LoadingWidget;
+import com.hpe.adm.octane.ideplugins.intellij.ui.detail.actions.SelectFieldsAction;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.ui.components.JBScrollPane;
 
 public class EntityDetailView implements View {
 
@@ -37,9 +43,6 @@ public class EntityDetailView implements View {
     private JBScrollPane component = new JBScrollPane(new LoadingWidget());
     private GeneralEntityDetailsPanel entityDetailsPanel;
     private FieldsSelectFrame.SelectionListener selectionListener;
-
-    @Inject
-    private ConnectionSettingsProvider connectionSettingsProvider;
 
     public EntityDetailView() {
 
@@ -92,6 +95,10 @@ public class EntityDetailView implements View {
     public void removeSaveSelectedPhaseButton() {
         entityDetailsPanel.removeSaveSelectedPhaseButton();
     }
+    
+    public void setOpenInBrowserButton(AnAction openInBrowserAction) {
+        entityDetailsPanel.openInBrowserButton(openInBrowserAction);
+    }
 
     public void setPhaseInHeader(boolean showPhase) {
         entityDetailsPanel.setPhaseInHeader(showPhase);
@@ -104,17 +111,13 @@ public class EntityDetailView implements View {
     public void setPossiblePhasesForEntity(Collection<EntityModel> phasesList) {
         entityDetailsPanel.setPossiblePhasesForEntity(phasesList);
     }
-
-    public EntityModel getSelectedTransition() {
+    
+    public FieldModel getSelectedTransition() {
         return entityDetailsPanel.getSelectedTransition();
     }
 
     public EntityModel getEntityModel() {
         return this.entityModel;
-    }
-
-    public void setEntityNameClickHandler(Runnable runnable) {
-        entityDetailsPanel.setEntityNameClickHandler(runnable);
     }
 
     public void setComments(Collection<EntityModel> comments) {
@@ -125,7 +128,7 @@ public class EntityDetailView implements View {
         entityDetailsPanel.addSendNewCommentAction(actionListener);
     }
 
-    public void setFieldSelectButton(EntityDetailPresenter.SelectFieldsAction fieldSelectButton) {
+    public void setFieldSelectButton(SelectFieldsAction fieldSelectButton) {
         entityDetailsPanel.setFieldSelectButton(fieldSelectButton);
     }
 

@@ -19,10 +19,12 @@ import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.exception.OctaneException;
 import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
 import com.hpe.adm.nga.sdk.model.EntityModel;
+import com.hpe.adm.nga.sdk.model.FieldModel;
 import com.hpe.adm.nga.sdk.model.ReferenceFieldModel;
 import com.hpe.adm.nga.sdk.model.StringFieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
+import com.hpe.adm.octane.ideplugins.intellij.ui.detail.actions.SelectFieldsAction;
 import com.hpe.adm.octane.ideplugins.intellij.util.ExceptionHandler;
 import com.hpe.adm.octane.ideplugins.intellij.util.HtmlTextEditor;
 import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
@@ -123,6 +125,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                         entityDetailView.createDetailsPanel(entityModel, fields);
                         entityDetailView.setSaveSelectedPhaseButton(new SaveSelectedPhaseAction());
                         entityDetailView.setRefreshEntityButton(new EntityRefreshAction());
+                        entityDetailView.setOpenInBrowserButton(new EntityOpenInBrowser());
                         if (entityType != TASK) {
                             entityDetailView.setCommentsEntityButton(new EntityCommentsAction());
                             setComments(entityModel);
@@ -135,9 +138,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                             entityDetailView.removeSaveSelectedPhaseButton();
                             entityDetailView.setPhaseInHeader(false);
                         }
-                        entityDetailView.setFieldSelectButton(new SelectFieldsAction());
-                        //Title goes to browser
-                        entityDetailView.setEntityNameClickHandler(() -> entityService.openInBrowser(entityModel));
+                        entityDetailView.setFieldSelectButton(new SelectFieldsAction(entityDetailView));
                     }
                 },
                 null,
@@ -146,7 +147,6 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
     }
 
     private void setPossibleTransitions(EntityModel entityModel) {
-        Set<EntityModel> result = new HashSet<>();
         RestUtil.runInBackground(() -> {
             String currentPhaseId = Util.getUiDataFromModel(entityModel.getValue("phase"), "id");
             return entityService.findPossibleTransitionFromCurrentPhase(Entity.getEntityType(entityModel), currentPhaseId);
@@ -176,6 +176,16 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
             setEntity(entityType, entityId);
         }
     }
+    
+    private final class EntityOpenInBrowser extends AnAction{
+        public EntityOpenInBrowser() {
+            super ("Open in browser the current entity", "Open in browser", IconLoader.findIcon(Constants.IMG_BROWSER_ICON));
+        }
+        
+        public void actionPerformed(AnActionEvent e) {
+            entityService.openInBrowser(entityModel);
+        }
+    }
 
     private final class EntityCommentsAction extends AnAction {
         public EntityCommentsAction() {
@@ -188,41 +198,15 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
         }
     }
 
-    public final class SelectFieldsAction extends AnAction {
-
-        private boolean defaultfields = true;
-
-        public void setDefaultFieldsIcon(boolean defaultfields) {
-            this.defaultfields = defaultfields;
-        }
-
-        public SelectFieldsAction() {
-            super("Select fields for this entity type", "Select fields popup", IconLoader.findIcon(Constants.IMG_FIELD_SELECTION_DEFAULT));
-        }
-
-        public void actionPerformed(AnActionEvent e) {
-            entityDetailView.getEntityDetailsPanel().activateFieldsSettings();
-        }
-
-        public void update(AnActionEvent e) {
-            if (defaultfields) {
-                e.getPresentation().setIcon(IconLoader.findIcon(Constants.IMG_FIELD_SELECTION_DEFAULT));
-            } else {
-                e.getPresentation().setIcon(IconLoader.findIcon(Constants.IMG_FIELD_SELECTION_NON_DEFAULT));
-            }
-        }
-    }
-
     private final class SaveSelectedPhaseAction extends AnAction {
         public SaveSelectedPhaseAction() {
             super("Save selected phase", "Save changes to entity phase", IconLoader.findIcon("/actions/menu-saveall.png"));
         }
 
         public void actionPerformed(AnActionEvent e) {
-            RestUtil.runInBackground(() -> {
-                EntityModel selectedTransition = entityDetailView.getSelectedTransition();
-                return (ReferenceFieldModel) selectedTransition.getValue("target_phase");
-            }, (nextPhase) -> {
+            RestUtil.runInBackground(() ->
+                 (ReferenceFieldModel) entityDetailView.getSelectedTransition()
+            , (nextPhase) -> {
                 try {
                     entityService.updateEntityPhase(entityDetailView.getEntityModel(), nextPhase);
                 } catch (OctaneException ex) {
