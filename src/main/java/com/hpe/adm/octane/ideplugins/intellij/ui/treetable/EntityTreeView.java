@@ -248,7 +248,7 @@ public class EntityTreeView implements View {
         scrollPane.setViewportView(errorPanel);
         
         JXHyperlink hyperlinkRetry = new JXHyperlink();
-        hyperlinkRetry.setText("Something went wrong!!! Click here to go to Settings.");
+        hyperlinkRetry.setText("Something went wrong! Click here to go to Settings.");
         hyperlinkRetry.addActionListener(event -> ShowSettingsUtil.getInstance().showSettingsDialog(project, ConnectionSettingsConfigurable.class));
         hyperlinkRetry.setFont(new Font(hyperlinkRetry.getFont().getFontName(),Font.PLAIN,18));
         hyperlinkRetry.setAlignmentY(JComponent.CENTER_ALIGNMENT);
