@@ -144,7 +144,7 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         GridBagConstraints gbc_descriptionLabel = new GridBagConstraints();
         gbc_descriptionLabel.anchor = GridBagConstraints.NORTH;
         gbc_descriptionLabel.fill = GridBagConstraints.HORIZONTAL;
-        gbc_descriptionLabel.insets = new Insets(10, 5, 5, 5);
+        gbc_descriptionLabel.insets = new Insets(10, 12, 5, 5);
         gbc_descriptionLabel.gridx = 0;
         gbc_descriptionLabel.gridy = 2;
         add(descriptionLabel, gbc_descriptionLabel);
@@ -152,7 +152,7 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
         descriptionPanel = new HTMLPresenterFXPanel(baseUrl);
         GridBagConstraints gbc_descriptionPanel = new GridBagConstraints();
         gbc_descriptionPanel.fill = GridBagConstraints.BOTH;
-        gbc_descriptionPanel.insets = new Insets(0, 0, 0, 5);
+        gbc_descriptionPanel.insets = new Insets(0, 5, 0, 5);
         gbc_descriptionPanel.gridx = 0;
         gbc_descriptionPanel.gridy = 3;
         add(descriptionPanel, gbc_descriptionPanel);
