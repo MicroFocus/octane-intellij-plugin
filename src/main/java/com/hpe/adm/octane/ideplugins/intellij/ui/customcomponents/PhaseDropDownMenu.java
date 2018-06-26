@@ -58,7 +58,7 @@ public class PhaseDropDownMenu extends JPanel {
         gbl_phasePanel.columnWeights = new double[] { 0.0, 0.0 };
         setLayout(gbl_phasePanel);
         labelPhaseMap = new HashMap<>();
-       
+
         targetPhaseLabel = new JLabel(MOVE_TO + "Loading phase ...");
         targetPhaseLabel.setForeground(new Color(30, 144, 255));
         targetPhaseLabel.setFont(new Font("Arial", Font.BOLD, 14));
@@ -79,24 +79,29 @@ public class PhaseDropDownMenu extends JPanel {
 
         // need to add the first item from the list to the target phase and
         // create the popup from the rest
-        targetPhaseLabel.setText(MOVE_TO + Util.getUiDataFromModel(phasesList.get(0).getValue("target_phase"), "name"));
-        targetPhaseLabel.setForeground(new Color(30, 144, 255));
-        targetPhaseLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        targetPhaseLabel.setToolTipText(TOOLTIP_CLICKABLE_PHASE);
-        targetPhaseLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                selectedPhase = phasesList.stream()
-                        .filter(en -> (targetPhaseLabel.getText().contains(Util.getUiDataFromModel(en.getValue("target_phase"), "name"))))
-                        .collect(Collectors.toList()).get(0).getValue("target_phase");
-                targetPhaseLabel.setText(MOVED_TO + Util.getUiDataFromModel(selectedPhase, "name"));
-                targetPhaseLabel.setToolTipText(TOOLTIP_BLOCKED_PHASE);
-                targetPhaseLabel.setEnabled(false);
-                if (arrow != null) {
-                    remove(arrow);
+        if ("No transition".equals(Util.getUiDataFromModel(phasesList.get(0).getValue("target_phase")))) {
+            targetPhaseLabel.setText("No transition");
+            targetPhaseLabel.setEnabled(false);
+        } else {
+            targetPhaseLabel.setText(MOVE_TO + Util.getUiDataFromModel(phasesList.get(0).getValue("target_phase"), "name"));
+            targetPhaseLabel.setForeground(new Color(30, 144, 255));
+            targetPhaseLabel.setFont(new Font("Arial", Font.BOLD, 14));
+            targetPhaseLabel.setToolTipText(TOOLTIP_CLICKABLE_PHASE);
+            targetPhaseLabel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    selectedPhase = phasesList.stream()
+                            .filter(en -> (targetPhaseLabel.getText().contains(Util.getUiDataFromModel(en.getValue("target_phase"), "name"))))
+                            .collect(Collectors.toList()).get(0).getValue("target_phase");
+                    targetPhaseLabel.setText(MOVED_TO + Util.getUiDataFromModel(selectedPhase, "name"));
+                    targetPhaseLabel.setToolTipText(TOOLTIP_BLOCKED_PHASE);
+                    targetPhaseLabel.setEnabled(false);
+                    if (arrow != null) {
+                        remove(arrow);
+                    }
                 }
-            }
-        });
+            });
+        }
         phasesList.stream().forEach(e -> {
             String phase = Util.getUiDataFromModel(e.getValue("target_phase"), "name");
             // don't put the phase which is already in the target label into the
