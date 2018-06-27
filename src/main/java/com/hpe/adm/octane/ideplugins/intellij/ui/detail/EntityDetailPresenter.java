@@ -135,7 +135,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                             setPossibleTransitions(entityModel);
                             entityDetailView.setPhaseInHeader(true);
                         } else {
-                            entityDetailView.removeSaveSelectedPhaseButton();
+//                            entityDetailView.removeSaveSelectedPhaseButton();
                             entityDetailView.setPhaseInHeader(false);
                         }
                         entityDetailView.setFieldSelectButton(new SelectFieldsAction(entityDetailView));
@@ -154,7 +154,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
             if (possibleTransitions.isEmpty()) {
                 possibleTransitions.add(new EntityModel("target_phase", "No transition"));
                 entityDetailView.setPossiblePhasesForEntity(possibleTransitions);
-                entityDetailView.removeSaveSelectedPhaseButton();
+//                entityDetailView.removeSaveSelectedPhaseButton();
             } else {
                 entityDetailView.setPossiblePhasesForEntity(possibleTransitions);
             }
