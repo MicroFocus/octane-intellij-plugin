@@ -12,12 +12,15 @@
  */
 package com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents;
 
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import com.hpe.adm.nga.sdk.model.EntityModel;
+import com.hpe.adm.nga.sdk.model.FieldModel;
+import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
+import com.hpe.adm.octane.ideplugins.services.util.Util;
+import com.intellij.openapi.ui.JBPopupMenu;
+import com.intellij.openapi.util.IconLoader;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -25,18 +28,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import javax.swing.BoxLayout;
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-
-import com.hpe.adm.nga.sdk.model.EntityModel;
-import com.hpe.adm.nga.sdk.model.FieldModel;
-import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
-import com.hpe.adm.octane.ideplugins.services.util.Util;
-import com.intellij.openapi.ui.JBPopupMenu;
-import com.intellij.openapi.util.IconLoader;
 
 public class PhaseDropDownMenu extends JPanel {
     public static final String MOVE_TO = "Move to: ";
@@ -51,14 +42,14 @@ public class PhaseDropDownMenu extends JPanel {
     private Map<JMenuItem, FieldModel> labelPhaseMap;
 
     private FieldModel selectedPhase;
-
+    
     public PhaseDropDownMenu() {
         GridBagLayout gbl_phasePanel = new GridBagLayout();
         gbl_phasePanel.columnWidths = new int[] { 0, 0 };
         gbl_phasePanel.columnWeights = new double[] { 0.0, 0.0 };
         setLayout(gbl_phasePanel);
         labelPhaseMap = new HashMap<>();
-       
+
         targetPhaseLabel = new JLabel(MOVE_TO + "Loading phase ...");
         targetPhaseLabel.setForeground(new Color(30, 144, 255));
         targetPhaseLabel.setFont(new Font("Arial", Font.BOLD, 14));
@@ -79,24 +70,29 @@ public class PhaseDropDownMenu extends JPanel {
 
         // need to add the first item from the list to the target phase and
         // create the popup from the rest
-        targetPhaseLabel.setText(MOVE_TO + Util.getUiDataFromModel(phasesList.get(0).getValue("target_phase"), "name"));
-        targetPhaseLabel.setForeground(new Color(30, 144, 255));
-        targetPhaseLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        targetPhaseLabel.setToolTipText(TOOLTIP_CLICKABLE_PHASE);
-        targetPhaseLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                selectedPhase = phasesList.stream()
-                        .filter(en -> (targetPhaseLabel.getText().contains(Util.getUiDataFromModel(en.getValue("target_phase"), "name"))))
-                        .collect(Collectors.toList()).get(0).getValue("target_phase");
-                targetPhaseLabel.setText(MOVED_TO + Util.getUiDataFromModel(selectedPhase, "name"));
-                targetPhaseLabel.setToolTipText(TOOLTIP_BLOCKED_PHASE);
-                targetPhaseLabel.setEnabled(false);
-                if (arrow != null) {
-                    remove(arrow);
+        if ("No transition".equals(Util.getUiDataFromModel(phasesList.get(0).getValue("target_phase")))) {
+            targetPhaseLabel.setText("No transition");
+            targetPhaseLabel.setEnabled(false);
+        } else {
+            targetPhaseLabel.setText(MOVE_TO + Util.getUiDataFromModel(phasesList.get(0).getValue("target_phase"), "name"));
+            targetPhaseLabel.setForeground(new Color(30, 144, 255));
+            targetPhaseLabel.setFont(new Font("Arial", Font.BOLD, 14));
+            targetPhaseLabel.setToolTipText(TOOLTIP_CLICKABLE_PHASE);
+            targetPhaseLabel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    selectedPhase = phasesList.stream()
+                            .filter(en -> (targetPhaseLabel.getText().contains(Util.getUiDataFromModel(en.getValue("target_phase"), "name"))))
+                            .collect(Collectors.toList()).get(0).getValue("target_phase");
+                    targetPhaseLabel.setText(MOVED_TO + Util.getUiDataFromModel(selectedPhase, "name"));
+                    targetPhaseLabel.setToolTipText(TOOLTIP_BLOCKED_PHASE);
+                    targetPhaseLabel.setEnabled(false);
+                    if (arrow != null) {
+                        remove(arrow);
+                    }
                 }
-            }
-        });
+            });
+        }
         phasesList.stream().forEach(e -> {
             String phase = Util.getUiDataFromModel(e.getValue("target_phase"), "name");
             // don't put the phase which is already in the target label into the
@@ -113,11 +109,16 @@ public class PhaseDropDownMenu extends JPanel {
             arrow.setIcon(IconLoader.findIcon(Constants.IMG_PHASE_DROPDOWN));
             arrow.setToolTipText(TOOLTIP_CLICKABLE_PHASE);
             arrow.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            
 
             arrow.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    popupMenu.show(arrow, 0, arrow.getHeight());
+                    //first show computes the width of the popupMenu
+                    //second one shows it correctly - just dev stuff
+                    popupMenu.show(arrow, 0, arrow.getBounds().height);
+                    popupMenu.show(arrow, -popupMenu.getWidth() + arrow.getBounds().width/2, arrow.getBounds().height);
+                    popupMenu.applyComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
                 }
             });
             GridBagConstraints gbc_arrow = new GridBagConstraints();
