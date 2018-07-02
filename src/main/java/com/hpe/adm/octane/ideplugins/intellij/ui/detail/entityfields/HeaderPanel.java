@@ -117,7 +117,7 @@ public class HeaderPanel extends JPanel {
 
         buttonActionGroup = new DefaultActionGroup();
         panelControls = new JPanel(new BorderLayout());
-        panelControls.setMinimumSize(new Dimension(175, 25));
+        panelControls.setMinimumSize(new Dimension(175, 30));
         actionToolBar = ActionManager.getInstance().createActionToolbar("save | refresh | fields | open in browser | comments ", buttonActionGroup,
                 true);
         GridBagConstraints gbc_actionButtons = new GridBagConstraints();
