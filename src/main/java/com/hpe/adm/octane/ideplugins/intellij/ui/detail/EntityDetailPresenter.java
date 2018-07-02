@@ -19,7 +19,6 @@ import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.exception.OctaneException;
 import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
 import com.hpe.adm.nga.sdk.model.EntityModel;
-import com.hpe.adm.nga.sdk.model.FieldModel;
 import com.hpe.adm.nga.sdk.model.ReferenceFieldModel;
 import com.hpe.adm.nga.sdk.model.StringFieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
@@ -71,6 +70,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
     private Long entityId;
     private Entity entityType;
     private EntityModel entityModel;
+    private boolean isNoTransition = true;
     private Collection<FieldMetadata> fields;
 
     private EntityDetailView entityDetailView;
@@ -123,22 +123,24 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                     if (entityModel != null) {
                         this.entityModel = entityModel;
                         entityDetailView.createDetailsPanel(entityModel, fields);
+
+                        if (entityType != MANUAL_TEST_RUN && entityType != TEST_SUITE_RUN) {
+                            setPossibleTransitions(entityModel);
+                            entityDetailView.setPhaseInHeader(true);
+                        } else {
+                            entityDetailView.setPhaseInHeader(false);
+                        }
+
                         entityDetailView.setSaveSelectedPhaseButton(new SaveSelectedPhaseAction());
                         entityDetailView.setRefreshEntityButton(new EntityRefreshAction());
                         entityDetailView.setOpenInBrowserButton(new EntityOpenInBrowser());
+                        entityDetailView.setFieldSelectButton(new SelectFieldsAction(entityDetailView));
+
                         if (entityType != TASK) {
                             entityDetailView.setCommentsEntityButton(new EntityCommentsAction());
                             setComments(entityModel);
                             addSendNewCommentAction(entityModel);
                         }
-                        if (entityType != MANUAL_TEST_RUN && entityType != TEST_SUITE_RUN) {
-                            setPossibleTransitions(entityModel);
-                            entityDetailView.setPhaseInHeader(true);
-                        } else {
-                            entityDetailView.removeSaveSelectedPhaseButton();
-                            entityDetailView.setPhaseInHeader(false);
-                        }
-                        entityDetailView.setFieldSelectButton(new SelectFieldsAction(entityDetailView));
                     }
                 },
                 null,
@@ -154,9 +156,10 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
             if (possibleTransitions.isEmpty()) {
                 possibleTransitions.add(new EntityModel("target_phase", "No transition"));
                 entityDetailView.setPossiblePhasesForEntity(possibleTransitions);
-                entityDetailView.removeSaveSelectedPhaseButton();
+                isNoTransition = true;
             } else {
                 entityDetailView.setPossiblePhasesForEntity(possibleTransitions);
+                isNoTransition = false;
             }
         }, null, "Failed to get possible transitions", "fetching possible transitions");
     }
@@ -201,6 +204,10 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
     private final class SaveSelectedPhaseAction extends AnAction {
         public SaveSelectedPhaseAction() {
             super("Save selected phase", "Save changes to entity phase", IconLoader.findIcon("/actions/menu-saveall.png"));
+        }
+
+        public void update(AnActionEvent e) {
+            e.getPresentation().setEnabled(!isNoTransition);
         }
 
         public void actionPerformed(AnActionEvent e) {
