@@ -57,7 +57,8 @@ import com.intellij.util.ui.ConfirmationDialog;
 public class EntityDetailPresenter implements Presenter<EntityDetailView> {
 
     private static final Logger logger = Logger.getInstance(EntityDetailPresenter.class.getName());
-    private static final String GO_TO_BROWSER_DIALOG_MESSAGE = "\nYou can only provide a value for this field using ALM Octane in a browser."
+    private static final String GO_TO_BROWSER_DIALOG_MESSAGE = 
+            "\nYou can only provide a value for this field using ALM Octane in a browser."
             + "\nDo you want to do this now? ";
 
     @Inject
@@ -104,8 +105,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                         Set<String> requestedFields = fields.stream().map(FieldMetadata::getName).collect(Collectors.toSet());
                         entityModel = entityService.findEntity(this.entityType, this.entityId, requestedFields);
 
-                        // The subtype field is absolutely necessary, yet the
-                        // server sometimes has weird ideas, and doesn't return it
+                        // The subtype field is absolutely necessary, yet the server sometimes has weird ideas, and doesn't return it
                         if (entityType.isSubtype()) {
                             entityModel.setValue(new StringFieldModel(DetailsViewDefaultFields.FIELD_SUBTYPE, entityType.getSubtypeName()));
                         }
