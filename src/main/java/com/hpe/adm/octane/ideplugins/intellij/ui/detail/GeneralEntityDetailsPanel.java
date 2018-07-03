@@ -260,9 +260,9 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
 
     }
 
-    public void setFieldSelectButton(SelectFieldsAction fieldSelectButton) {
-        headerPanel.setFieldSelectButton(fieldSelectButton);
-        fieldSelectButtonAction = fieldSelectButton;
+    public void setFieldSelectButton(SelectFieldsAction fieldSelectAction) {
+        headerPanel.setFieldSelectButton(fieldSelectAction);
+        fieldSelectButtonAction = fieldSelectAction;
         
     }
 
