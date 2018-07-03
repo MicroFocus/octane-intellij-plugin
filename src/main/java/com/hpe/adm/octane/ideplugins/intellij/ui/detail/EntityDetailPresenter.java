@@ -13,6 +13,19 @@
 
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
+import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.MANUAL_TEST_RUN;
+import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.TASK;
+import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.TEST_SUITE_RUN;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.swing.UIManager;
+
+import org.jetbrains.annotations.Nullable;
+
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.inject.Inject;
@@ -40,19 +53,11 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vcs.VcsShowConfirmationOption;
 import com.intellij.util.ui.ConfirmationDialog;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.*;
 
 public class EntityDetailPresenter implements Presenter<EntityDetailView> {
 
     private static final Logger logger = Logger.getInstance(EntityDetailPresenter.class.getName());
-    private static final String GO_TO_BROWSER_DIALOG_MESSAGE =
+    private static final String GO_TO_BROWSER_DIALOG_MESSAGE = 
             "\nYou can only provide a value for this field using ALM Octane in a browser."
             + "\nDo you want to do this now? ";
 
@@ -100,12 +105,12 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                         Set<String> requestedFields = fields.stream().map(FieldMetadata::getName).collect(Collectors.toSet());
                         entityModel = entityService.findEntity(this.entityType, this.entityId, requestedFields);
 
-                        //The subtype field is absolutely necessary, yet the server sometimes has weird ideas, and doesn't return it
-                        if(entityType.isSubtype()){
+                        // The subtype field is absolutely necessary, yet the server sometimes has weird ideas, and doesn't return it
+                        if (entityType.isSubtype()) {
                             entityModel.setValue(new StringFieldModel(DetailsViewDefaultFields.FIELD_SUBTYPE, entityType.getSubtypeName()));
                         }
 
-                        //change relative urls with local paths to temp and download images
+                        // change relative urls with local paths to temp and download images
                         String description = Util.getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_DESCRIPTION));
                         description = HtmlTextEditor.removeHtmlStructure(description);
                         description = imageService.downloadPictures(description);
@@ -166,7 +171,8 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
 
     private void setComments(EntityModel entityModel) {
         Collection<EntityModel> result = new HashSet<>();
-        RestUtil.runInBackground(() -> commentService.getComments(entityModel), (comments) -> entityDetailView.setComments(comments), null, "Failed to get possible comments", "fetching comments");
+        RestUtil.runInBackground(() -> commentService.getComments(entityModel), (comments) -> entityDetailView.setComments(comments), null,
+                "Failed to get possible comments", "fetching comments");
     }
 
     private final class EntityRefreshAction extends AnAction {
@@ -179,12 +185,12 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
             setEntity(entityType, entityId);
         }
     }
-    
-    private final class EntityOpenInBrowser extends AnAction{
+
+    private final class EntityOpenInBrowser extends AnAction {
         public EntityOpenInBrowser() {
-            super ("Open in browser the current entity", "Open in browser", IconLoader.findIcon(Constants.IMG_BROWSER_ICON));
+            super("Open in browser the current entity", "Open in browser", IconLoader.findIcon(Constants.IMG_BROWSER_ICON));
         }
-        
+
         public void actionPerformed(AnActionEvent e) {
             entityService.openInBrowser(entityModel);
         }
@@ -211,9 +217,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
         }
 
         public void actionPerformed(AnActionEvent e) {
-            RestUtil.runInBackground(() ->
-                 (ReferenceFieldModel) entityDetailView.getSelectedTransition()
-            , (nextPhase) -> {
+            RestUtil.runInBackground(() -> (ReferenceFieldModel) entityDetailView.getSelectedTransition(), (nextPhase) -> {
                 try {
                     entityService.updateEntityPhase(entityDetailView.getEntityModel(), nextPhase);
                 } catch (OctaneException ex) {
@@ -239,10 +243,10 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                         if (dialog.showAndGet()) {
                             entityService.openInBrowser(entityModel);
                         }
-                    } else if(ex.getMessage().contains("403")){
-                      //User is not authorised to perform this operation
-                      ExceptionHandler exceptionHandler = new ExceptionHandler( ex, project);
-                      exceptionHandler.showErrorNotification();
+                    } else if (ex.getMessage().contains("403")) {
+                        // User is not authorised to perform this operation
+                        ExceptionHandler exceptionHandler = new ExceptionHandler(ex, project);
+                        exceptionHandler.showErrorNotification();
                     }
                 }
                 entityDetailView.doRefresh();
@@ -256,7 +260,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
         entityDetailView.addSendNewCommentAction(e -> {
             try {
                 commentService.postComment(entityModel, entityDetailView.getCommentMessageBoxText());
-            } catch (OctaneException oe){
+            } catch (OctaneException oe) {
                 ExceptionHandler exceptionHandler = new ExceptionHandler(oe, project);
                 exceptionHandler.showErrorNotification();
             }

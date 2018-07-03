@@ -14,6 +14,7 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -77,6 +78,7 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
     private String baseUrl;
     private EntityModel entityModel;
     private JLabel descriptionLabel;
+    private SelectFieldsAction fieldSelectButtonAction;
 
     public GeneralEntityDetailsPanel(EntityModel entityModel, Collection<FieldMetadata> fields) {
         this.entityModel = entityModel;
@@ -230,6 +232,16 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
     }
 
     public void activateFieldsSettings() {
+        fieldsPopup = new FieldsSelectFrame(defaultFields.get(Entity.getEntityType(entityModel)),
+                fields.stream()
+                        .filter(e -> !Arrays.asList("phase", "name", "subtype", "description").contains(e.getName()))
+                        .collect(Collectors.toList()),
+                selectedFields,
+                Entity.getEntityType(entityModel),
+                idePluginPersistentState,
+                fieldSelectButtonAction);
+        fieldsPopup.addSelectionListener(e -> entityFieldsPanel.createSectionWithEntityDetails(entityModel, fieldsPopup.getSelectedFields()));
+        fieldsPopup.addSelectionListener(selectionListener);
         fieldsPopup.setLocation(headerPanel.getFieldsPopupLocation().x - (int) fieldsPopup.getPreferredSize().getWidth(),
                 headerPanel.getFieldsPopupLocation().y);
         fieldsPopup.setVisible(!fieldsPopup.isVisible());
@@ -248,18 +260,10 @@ public class GeneralEntityDetailsPanel extends JPanel implements Scrollable {
 
     }
 
-    public void setFieldSelectButton(SelectFieldsAction fieldSelectButton) {
-        headerPanel.setFieldSelectButton(fieldSelectButton);
-        fieldsPopup = new FieldsSelectFrame(defaultFields.get(Entity.getEntityType(entityModel)),
-                fields.stream()
-                        .filter(e -> !Arrays.asList("phase", "name", "subtype", "description").contains(e.getName()))
-                        .collect(Collectors.toList()),
-                selectedFields,
-                Entity.getEntityType(entityModel),
-                idePluginPersistentState,
-                fieldSelectButton);
-        fieldsPopup.addSelectionListener(e -> entityFieldsPanel.createSectionWithEntityDetails(entityModel, fieldsPopup.getSelectedFields()));
-        fieldsPopup.addSelectionListener(selectionListener);
+    public void setFieldSelectButton(SelectFieldsAction fieldSelectAction) {
+        headerPanel.setFieldSelectButton(fieldSelectAction);
+        fieldSelectButtonAction = fieldSelectAction;
+        
     }
 
     public void addFieldSelectListener(FieldsSelectFrame.SelectionListener selectionListener) {
