@@ -140,12 +140,6 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                         entityDetailView.setRefreshEntityButton(new EntityRefreshAction());
                         entityDetailView.setOpenInBrowserButton(new EntityOpenInBrowser());
                         entityDetailView.setFieldSelectButton(new SelectFieldsAction(entityDetailView));
-                        UIManager.addPropertyChangeListener(evt -> {
-                            if ("lookAndFeel".equals(evt.getPropertyName())) {
-                                entityDetailView.doRefresh();
-                                setEntity(entityType, entityId);
-                            }
-                        });
 
                         if (entityType != TASK) {
                             entityDetailView.setCommentsEntityButton(new EntityCommentsAction());
