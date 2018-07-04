@@ -16,7 +16,6 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.exception.OctaneException;
 import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
-import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.nga.sdk.model.FieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
@@ -45,8 +44,6 @@ import org.json.JSONObject;
 import javax.swing.*;
 import javax.swing.border.MatteBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
@@ -185,12 +182,12 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
         component.setViewportView(this);
     }
 
-    private void setupDescription(EntityModelWrapper entityModelWrapper){
+    private void setupDescription(EntityModelWrapper entityModelWrapper) {
         String descriptionContent = Util.getUiDataFromModel(entityModelWrapper.getValue(DetailsViewDefaultFields.FIELD_DESCRIPTION));
         Platform.runLater(() -> descriptionPanel.setContent(descriptionContent));
     }
 
-    private void setupComments(EntityModelWrapper entityModelWrapper){
+    private void setupComments(EntityModelWrapper entityModelWrapper) {
         if (entityModelWrapper.getEntityType() != TASK) {
             headerPanel.setCommentButton(commentsAction);
             setComments(entityModelWrapper);
@@ -292,6 +289,7 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
         fieldsPopup.addSelectionListener(e -> entityFieldsPanel.setEntityModel(entityModelWrapper, fieldsPopup.getSelectedFields()));
         fieldsPopup.addSelectionListener(selectionListener);
     }
+
     /*
     TODO eliminate this mechanism, implement change listener on ide persistant state
      */

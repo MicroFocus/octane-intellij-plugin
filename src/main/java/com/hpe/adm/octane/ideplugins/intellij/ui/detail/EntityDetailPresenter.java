@@ -18,12 +18,10 @@ import com.google.gson.JsonParser;
 import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.exception.OctaneException;
 import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
-import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.nga.sdk.model.ReferenceFieldModel;
 import com.hpe.adm.nga.sdk.model.StringFieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
-import com.hpe.adm.octane.ideplugins.intellij.ui.detail.actions.SelectFieldsAction;
 import com.hpe.adm.octane.ideplugins.intellij.util.ExceptionHandler;
 import com.hpe.adm.octane.ideplugins.intellij.util.HtmlTextEditor;
 import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
@@ -44,11 +42,8 @@ import com.intellij.util.ui.ConfirmationDialog;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.*;
 
 public class EntityDetailPresenter implements Presenter<EntityDetailView> {
 
@@ -132,7 +127,6 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
     }
 
 
-
     private final class EntityRefreshAction extends AnAction {
         public EntityRefreshAction() {
             super("Refresh current entity", "Refresh entity details", IconLoader.findIcon(Constants.IMG_REFRESH_ICON));
@@ -190,7 +184,6 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
 
         }
     }
-
 
 
 }

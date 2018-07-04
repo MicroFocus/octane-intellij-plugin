@@ -19,7 +19,6 @@ import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.nga.sdk.model.FieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.DetailsViewDefaultFields;
-import com.hpe.adm.octane.ideplugins.intellij.ui.detail.actions.SelectFieldsAction;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
 import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
 import com.hpe.adm.octane.ideplugins.services.EntityService;
@@ -252,7 +251,7 @@ public class HeaderPanel extends JPanel {
         }
     }
 
-    public void setupPhaseDetails(){
+    public void setupPhaseDetails() {
         RestUtil.runInBackground(() -> {
             String currentPhaseId = Util.getUiDataFromModel(entityModelWrapper.getValue("phase"), "id");
             return entityService.findPossibleTransitionFromCurrentPhase(entityModelWrapper.getEntityType(), currentPhaseId);
