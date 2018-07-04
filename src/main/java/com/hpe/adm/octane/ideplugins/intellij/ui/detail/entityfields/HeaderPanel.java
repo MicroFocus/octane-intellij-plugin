@@ -16,6 +16,10 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields;
 
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.nga.sdk.model.FieldModel;
+import com.hpe.adm.octane.ideplugins.intellij.ui.detail.DetailsViewDefaultFields;
+import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
+import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
+import com.hpe.adm.octane.ideplugins.services.util.Util;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -37,6 +41,10 @@ public class HeaderPanel extends JPanel {
     private JTextField entityName;
 
     private AnAction saveSelectedPhaseAction;
+    private AnAction refreshAction;
+    private AnAction fieldsSelectAction;
+    private AnAction openInBrowserAction;
+    private AnAction commentAction;
     private ActionToolbar actionToolBar;
     private DefaultActionGroup buttonActionGroup;
     private JPanel panelControls;
@@ -53,7 +61,7 @@ public class HeaderPanel extends JPanel {
         setBorder(null);
         GridBagLayout gridBagLayout = new GridBagLayout();
         gridBagLayout.columnWidths = new int[]{0, 0, 0, 0, 0, 0, 0};
-        gridBagLayout.columnWeights = new double[] { 0.0, 0.0, 0.0, 0.5, 0.5, 0.0, 0.0, 0.0, 0.0 };
+        gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, 0.5, 0.5, 0.0, 0.0, 0.0, 0.0};
         setLayout(gridBagLayout);
 
         entityIconLabel = new JLabel();
@@ -128,26 +136,28 @@ public class HeaderPanel extends JPanel {
         add(panelControls, gbc_actionButtons);
     }
 
-    public void setEntityIcon(ImageIcon entityIcon) {
+    private void setEntityIcon(ImageIcon entityIcon) {
         entityIconLabel.setIcon(entityIcon);
     }
 
-    public void setId(String id) {
+    private void setId(String id) {
         entityId.setText(id);
         entityId.setColumns(id.length());
         entityId.setMinimumSize(entityId.getPreferredSize());
     }
 
-    public void setNameDetails(String nameDetails) {
+    private void setNameDetails(String nameDetails) {
         this.entityName.setText(nameDetails.trim());
         this.entityName.setCaretPosition(0);
         this.entityName.setMinimumSize(entityName.getPreferredSize());
     }
 
     public void setSaveButton(AnAction saveSelectedPhaseAction) {
-        buttonActionGroup.addSeparator();
-        buttonActionGroup.add(saveSelectedPhaseAction);
-        this.saveSelectedPhaseAction = saveSelectedPhaseAction;
+        if (this.saveSelectedPhaseAction == null) {
+            this.saveSelectedPhaseAction = saveSelectedPhaseAction;
+            buttonActionGroup.addSeparator();
+            buttonActionGroup.add(saveSelectedPhaseAction);
+        }
     }
 
     public void removeSaveSelectedPhaseButton() {
@@ -155,26 +165,38 @@ public class HeaderPanel extends JPanel {
     }
 
     public void setRefreshButton(AnAction refreshAction) {
-        buttonActionGroup.addSeparator();
-        buttonActionGroup.add(refreshAction);
+        if (this.refreshAction == null) {
+            this.refreshAction = refreshAction;
+            buttonActionGroup.addSeparator();
+            buttonActionGroup.add(refreshAction);
+        }
     }
 
     public void setFieldSelectButton(AnAction fieldsSelectAction) {
-        buttonActionGroup.addSeparator();
-        buttonActionGroup.add(fieldsSelectAction);
+        if (this.fieldsSelectAction == null) {
+            this.fieldsSelectAction = fieldsSelectAction;
+            buttonActionGroup.addSeparator();
+            buttonActionGroup.add(fieldsSelectAction);
+        }
     }
 
     public void setOpenInBrowserButton(AnAction openInBrowserAction) {
-        buttonActionGroup.addSeparator();
-        buttonActionGroup.add(openInBrowserAction);
+        if (this.openInBrowserAction == null) {
+            this.openInBrowserAction = openInBrowserAction;
+            buttonActionGroup.addSeparator();
+            buttonActionGroup.add(openInBrowserAction);
+        }
     }
 
     public void setCommentButton(AnAction commentAction) {
-        buttonActionGroup.addSeparator();
-        buttonActionGroup.add(commentAction);
+        if (this.commentAction == null) {
+            this.commentAction = commentAction;
+            buttonActionGroup.addSeparator();
+            buttonActionGroup.add(commentAction);
+        }
     }
 
-    public void setPhaseDetails(FieldModel phaseDetails) {
+    private void setPhaseDetails(FieldModel phaseDetails) {
         phasePanel.setPhaseDetails(phaseDetails);
     }
 
@@ -196,4 +218,15 @@ public class HeaderPanel extends JPanel {
                 button.getLocationOnScreen().y + (int) button.getPreferredSize().getHeight() + 8);
     }
 
+    public void setEntityModel(EntityModel entityModel) {
+        EntityIconFactory entityIconFactory = new EntityIconFactory(26, 26, 12);
+        // icon
+        setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(Entity.getEntityType(entityModel))));
+        // id
+        setId(Util.getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_ID)));
+        // name
+        setNameDetails(Util.getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_NAME)));
+        // phase
+        setPhaseDetails(entityModel.getValue(DetailsViewDefaultFields.FIELD_PHASE));
+    }
 }

@@ -13,36 +13,31 @@
 
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields;
 
-import java.awt.BorderLayout;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import com.google.inject.Inject;
+import com.intellij.util.ui.UIUtil;
+import javafx.application.Platform;
+import org.apache.commons.lang.StringUtils;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-
-import org.apache.commons.lang.StringUtils;
-
-import com.intellij.util.ui.UIUtil;
-
-import javafx.application.Platform;
-
 public class CommentsConversationPanel extends JPanel {
     private JButton sendMessageButton;
     private JTextField messageBox;
+
     private HTMLPresenterFXPanel chatBox;
     private String commentContent = "";
     private ActionListener addCommentActionListener;
 
-    public CommentsConversationPanel(String baseUrl) {
+    @Inject
+    public CommentsConversationPanel(HTMLPresenterFXPanel chatBox) {
+        this.chatBox = chatBox;
         setLayout(new BorderLayout());
 
         JPanel southPanel = new JPanel();
@@ -70,9 +65,9 @@ public class CommentsConversationPanel extends JPanel {
         messageBox.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                if(e.getKeyCode() == KeyEvent.VK_ENTER &&
+                if (e.getKeyCode() == KeyEvent.VK_ENTER &&
                         addCommentActionListener != null &&
-                        sendMessageButton.isEnabled()){
+                        sendMessageButton.isEnabled()) {
                     addCommentActionListener.actionPerformed(null);
                 }
             }
@@ -80,8 +75,7 @@ public class CommentsConversationPanel extends JPanel {
         sendMessageButton = new JButton("Add");
 
 
-
-        chatBox = new HTMLPresenterFXPanel(baseUrl);
+//        chatBox = new HTMLPresenterFXPanel();
         chatBox.setBorder(null);
         chatBox.setFont(new Font("Arial", Font.PLAIN, 11));
         chatBox.addEventActions();

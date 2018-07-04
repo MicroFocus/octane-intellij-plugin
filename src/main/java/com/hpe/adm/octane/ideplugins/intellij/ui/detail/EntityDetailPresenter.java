@@ -54,7 +54,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
     private static final Logger logger = Logger.getInstance(EntityDetailPresenter.class.getName());
     private static final String GO_TO_BROWSER_DIALOG_MESSAGE =
             "\nYou can only provide a value for this field using ALM Octane in a browser."
-            + "\nDo you want to do this now? ";
+                    + "\nDo you want to do this now? ";
 
     @Inject
     private Project project;
@@ -101,7 +101,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                         entityModel = entityService.findEntity(this.entityType, this.entityId, requestedFields);
 
                         //The subtype field is absolutely necessary, yet the server sometimes has weird ideas, and doesn't return it
-                        if(entityType.isSubtype()){
+                        if (entityType.isSubtype()) {
                             entityModel.setValue(new StringFieldModel(DetailsViewDefaultFields.FIELD_SUBTYPE, entityType.getSubtypeName()));
                         }
 
@@ -122,7 +122,6 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                 (entityModel) -> {
                     if (entityModel != null) {
                         this.entityModel = entityModel;
-                        entityDetailView.createDetailsPanel(entityModel, fields);
 
                         if (entityType != MANUAL_TEST_RUN && entityType != TEST_SUITE_RUN) {
                             setPossibleTransitions(entityModel);
@@ -130,7 +129,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                         } else {
                             entityDetailView.setPhaseInHeader(false);
                         }
-
+                        entityDetailView.setEntityModel(entityModel, fields);
                         entityDetailView.setSaveSelectedPhaseButton(new SaveSelectedPhaseAction());
                         entityDetailView.setRefreshEntityButton(new EntityRefreshAction());
                         entityDetailView.setOpenInBrowserButton(new EntityOpenInBrowser());
@@ -179,12 +178,12 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
             setEntity(entityType, entityId);
         }
     }
-    
-    private final class EntityOpenInBrowser extends AnAction{
+
+    private final class EntityOpenInBrowser extends AnAction {
         public EntityOpenInBrowser() {
-            super ("Open in browser the current entity", "Open in browser", IconLoader.findIcon(Constants.IMG_BROWSER_ICON));
+            super("Open in browser the current entity", "Open in browser", IconLoader.findIcon(Constants.IMG_BROWSER_ICON));
         }
-        
+
         public void actionPerformed(AnActionEvent e) {
             entityService.openInBrowser(entityModel);
         }
@@ -196,7 +195,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
         }
 
         public void actionPerformed(AnActionEvent e) {
-            entityDetailView.getEntityDetailsPanel().activateCommentsCollapsible();
+            entityDetailView.showCommentsPanel();
 
         }
     }
@@ -212,42 +211,42 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
 
         public void actionPerformed(AnActionEvent e) {
             RestUtil.runInBackground(() ->
-                 (ReferenceFieldModel) entityDetailView.getSelectedTransition()
-            , (nextPhase) -> {
-                try {
-                    entityService.updateEntityPhase(entityDetailView.getEntityModel(), nextPhase);
-                } catch (OctaneException ex) {
-                    if (ex.getMessage().contains("400")) {
-                        String errorMessage = "Failed to change phase";
+                            (ReferenceFieldModel) entityDetailView.getSelectedTransition()
+                    , (nextPhase) -> {
                         try {
-                            JsonParser jsonParser = new JsonParser();
-                            JsonObject jsonObject = (JsonObject) jsonParser.parse(ex.getMessage().substring(ex.getMessage().indexOf("{")));
-                            errorMessage = jsonObject.get("description_translated").getAsString();
-                        } catch (Exception e1) {
-                            logger.debug("Failed to get JSON message from Octane Server" + e1.getMessage());
-                        }
-                        ConfirmationDialog dialog = new ConfirmationDialog(
-                                project,
-                                "Server message: " + errorMessage + GO_TO_BROWSER_DIALOG_MESSAGE,
-                                "Business rule violation",
-                                null, VcsShowConfirmationOption.STATIC_SHOW_CONFIRMATION) {
-                            @Override
-                            public void setDoNotAskOption(@Nullable DoNotAskOption doNotAsk) {
-                                super.setDoNotAskOption(null);
+                            entityService.updateEntityPhase(entityDetailView.getEntityModel(), nextPhase);
+                        } catch (OctaneException ex) {
+                            if (ex.getMessage().contains("400")) {
+                                String errorMessage = "Failed to change phase";
+                                try {
+                                    JsonParser jsonParser = new JsonParser();
+                                    JsonObject jsonObject = (JsonObject) jsonParser.parse(ex.getMessage().substring(ex.getMessage().indexOf("{")));
+                                    errorMessage = jsonObject.get("description_translated").getAsString();
+                                } catch (Exception e1) {
+                                    logger.debug("Failed to get JSON message from Octane Server" + e1.getMessage());
+                                }
+                                ConfirmationDialog dialog = new ConfirmationDialog(
+                                        project,
+                                        "Server message: " + errorMessage + GO_TO_BROWSER_DIALOG_MESSAGE,
+                                        "Business rule violation",
+                                        null, VcsShowConfirmationOption.STATIC_SHOW_CONFIRMATION) {
+                                    @Override
+                                    public void setDoNotAskOption(@Nullable DoNotAskOption doNotAsk) {
+                                        super.setDoNotAskOption(null);
+                                    }
+                                };
+                                if (dialog.showAndGet()) {
+                                    entityService.openInBrowser(entityModel);
+                                }
+                            } else if (ex.getMessage().contains("403")) {
+                                //User is not authorised to perform this operation
+                                ExceptionHandler exceptionHandler = new ExceptionHandler(ex, project);
+                                exceptionHandler.showErrorNotification();
                             }
-                        };
-                        if (dialog.showAndGet()) {
-                            entityService.openInBrowser(entityModel);
                         }
-                    } else if(ex.getMessage().contains("403")){
-                      //User is not authorised to perform this operation
-                      ExceptionHandler exceptionHandler = new ExceptionHandler( ex, project);
-                      exceptionHandler.showErrorNotification();
-                    }
-                }
-                entityDetailView.doRefresh();
-                setEntity(entityType, entityId);
-            }, null, "Failed to move to next phase", "Moving to next phase");
+                        entityDetailView.doRefresh();
+                        setEntity(entityType, entityId);
+                    }, null, "Failed to move to next phase", "Moving to next phase");
 
         }
     }
@@ -256,7 +255,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
         entityDetailView.addSendNewCommentAction(e -> {
             try {
                 commentService.postComment(entityModel, entityDetailView.getCommentMessageBoxText());
-            } catch (OctaneException oe){
+            } catch (OctaneException oe) {
                 ExceptionHandler exceptionHandler = new ExceptionHandler(oe, project);
                 exceptionHandler.showErrorNotification();
             }

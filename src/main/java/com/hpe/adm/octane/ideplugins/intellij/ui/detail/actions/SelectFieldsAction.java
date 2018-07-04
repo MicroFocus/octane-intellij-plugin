@@ -34,7 +34,7 @@ public final class SelectFieldsAction extends AnAction {
     }
 
     public void actionPerformed(AnActionEvent e) {
-        entityDetailView.getEntityDetailsPanel().activateFieldsSettings();
+        entityDetailView.showFieldsSettings();
     }
 
     public void update(AnActionEvent e) {
