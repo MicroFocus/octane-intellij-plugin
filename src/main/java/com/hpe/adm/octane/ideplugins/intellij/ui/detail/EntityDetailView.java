@@ -26,6 +26,7 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.EntityField
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.HTMLPresenterFXPanel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.HeaderPanel;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
+import com.hpe.adm.octane.ideplugins.services.model.EntityModelWrapper;
 import com.hpe.adm.octane.ideplugins.services.util.DefaultEntityFieldsUtil;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -48,19 +49,12 @@ import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS;
 
 public class EntityDetailView extends JPanel implements View, Scrollable {
 
-    private EntityModel entityModel;
+    private EntityModelWrapper entityModelWrapper;
     private JBScrollPane component = new JBScrollPane(new LoadingWidget());
 
-
     private HeaderPanel headerPanel;
-
-
     private EntityFieldsPanel entityFieldsPanel;
-
-
     private CommentsConversationPanel commentsPanel;
-
-
     private HTMLPresenterFXPanel descriptionPanel;
 
     @Inject
@@ -151,24 +145,24 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
     }
 
 
-    public void setEntityModel(EntityModel entityModel, Collection<FieldMetadata> fields) {
-        this.entityModel = entityModel;
+    public void setEntityModel(EntityModelWrapper entityModelWrapper, Collection<FieldMetadata> fields) {
+        this.entityModelWrapper = entityModelWrapper;
         this.fields = fields;
         // set selected fields
         retrieveSelectedFieldsFromPersistentState();
         // set header data
-        headerPanel.setEntityModel(entityModel);
+        headerPanel.setEntityModel(entityModelWrapper);
         // set description data
-        final String descriptionContent = Util.getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_DESCRIPTION));
+        final String descriptionContent = Util.getUiDataFromModel(entityModelWrapper.getValue(DetailsViewDefaultFields.FIELD_DESCRIPTION));
         Platform.runLater(() -> descriptionPanel.setContent(descriptionContent));
         // set fields data
         entityFieldsPanel.setFields(fields);
-        entityFieldsPanel.setEntityModel(entityModel, selectedFields.get(Entity.getEntityType(entityModel)));
+        entityFieldsPanel.setEntityModel(entityModelWrapper, selectedFields.get(entityModelWrapper.getEntityType()));
         component.setViewportView(this);
     }
 
-    public EntityModel getEntityModel() {
-        return this.entityModel;
+    public EntityModelWrapper getEntityModelWrapper() {
+        return this.entityModelWrapper;
     }
 
     public void setErrorMessage(String error) {
@@ -198,7 +192,7 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
             selectedFields = defaultFields;
         } else {
             selectedFields = DefaultEntityFieldsUtil.entityFieldsFromJson(selectedFieldsJson.toString());
-            if (selectedFields.get(Entity.getEntityType(entityModel)) == null) {
+            if (selectedFields.get(entityModelWrapper.getEntityType()) == null) {
                 selectedFields = defaultFields;
             }
         }
@@ -267,15 +261,15 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
 
     public void setFieldSelectButton(SelectFieldsAction fieldSelectButton) {
         headerPanel.setFieldSelectButton(fieldSelectButton);
-        fieldsPopup = new FieldsSelectFrame(defaultFields.get(Entity.getEntityType(entityModel)),
+        fieldsPopup = new FieldsSelectFrame(defaultFields.get(entityModelWrapper.getEntityType()),
                 fields.stream()
                         .filter(e -> !Arrays.asList("phase", "name", "subtype", "description").contains(e.getName()))
                         .collect(Collectors.toList()),
                 selectedFields,
-                Entity.getEntityType(entityModel),
+                entityModelWrapper.getEntityType(),
                 idePluginPersistentState,
                 fieldSelectButton);
-        fieldsPopup.addSelectionListener(e -> entityFieldsPanel.setEntityModel(entityModel, fieldsPopup.getSelectedFields()));
+        fieldsPopup.addSelectionListener(e -> entityFieldsPanel.setEntityModel(entityModelWrapper, fieldsPopup.getSelectedFields()));
         fieldsPopup.addSelectionListener(selectionListener);
     }
 

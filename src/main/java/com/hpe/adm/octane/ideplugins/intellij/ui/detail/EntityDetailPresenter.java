@@ -31,6 +31,7 @@ import com.hpe.adm.octane.ideplugins.services.CommentService;
 import com.hpe.adm.octane.ideplugins.services.EntityService;
 import com.hpe.adm.octane.ideplugins.services.MetadataService;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
+import com.hpe.adm.octane.ideplugins.services.model.EntityModelWrapper;
 import com.hpe.adm.octane.ideplugins.services.nonentity.ImageService;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -69,7 +70,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
 
     private Long entityId;
     private Entity entityType;
-    private EntityModel entityModel;
+    private EntityModelWrapper entityModelWrapper;
     private boolean isNoTransition = true;
     private Collection<FieldMetadata> fields;
 
@@ -98,20 +99,20 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                         fields = metadataService.getVisibleFields(entityType);
 
                         Set<String> requestedFields = fields.stream().map(FieldMetadata::getName).collect(Collectors.toSet());
-                        entityModel = entityService.findEntity(this.entityType, this.entityId, requestedFields);
+                        entityModelWrapper = new EntityModelWrapper(entityService.findEntity(this.entityType, this.entityId, requestedFields));
 
                         //The subtype field is absolutely necessary, yet the server sometimes has weird ideas, and doesn't return it
                         if (entityType.isSubtype()) {
-                            entityModel.setValue(new StringFieldModel(DetailsViewDefaultFields.FIELD_SUBTYPE, entityType.getSubtypeName()));
+                            entityModelWrapper.setValue(new StringFieldModel(DetailsViewDefaultFields.FIELD_SUBTYPE, entityType.getSubtypeName()));
                         }
 
                         //change relative urls with local paths to temp and download images
-                        String description = Util.getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_DESCRIPTION));
+                        String description = Util.getUiDataFromModel(entityModelWrapper.getValue(DetailsViewDefaultFields.FIELD_DESCRIPTION));
                         description = HtmlTextEditor.removeHtmlStructure(description);
                         description = imageService.downloadPictures(description);
-                        entityModel.setValue(new StringFieldModel(DetailsViewDefaultFields.FIELD_DESCRIPTION, description));
+                        entityModelWrapper.setValue(new StringFieldModel(DetailsViewDefaultFields.FIELD_DESCRIPTION, description));
 
-                        return entityModel;
+                        return entityModelWrapper;
                     } catch (Exception ex) {
                         ExceptionHandler exceptionHandler = new ExceptionHandler(ex, project);
                         exceptionHandler.showErrorNotification();
@@ -121,15 +122,14 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                 },
                 (entityModel) -> {
                     if (entityModel != null) {
-                        this.entityModel = entityModel;
 
                         if (entityType != MANUAL_TEST_RUN && entityType != TEST_SUITE_RUN) {
-                            setPossibleTransitions(entityModel);
+                            setPossibleTransitions(entityModelWrapper);
                             entityDetailView.setPhaseInHeader(true);
                         } else {
                             entityDetailView.setPhaseInHeader(false);
                         }
-                        entityDetailView.setEntityModel(entityModel, fields);
+                        entityDetailView.setEntityModel(entityModelWrapper, fields);
                         entityDetailView.setSaveSelectedPhaseButton(new SaveSelectedPhaseAction());
                         entityDetailView.setRefreshEntityButton(new EntityRefreshAction());
                         entityDetailView.setOpenInBrowserButton(new EntityOpenInBrowser());
@@ -137,8 +137,8 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
 
                         if (entityType != TASK) {
                             entityDetailView.setCommentsEntityButton(new EntityCommentsAction());
-                            setComments(entityModel);
-                            addSendNewCommentAction(entityModel);
+                            setComments(entityModelWrapper);
+                            addSendNewCommentAction(entityModelWrapper);
                         }
                     }
                 },
@@ -147,10 +147,10 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                 "Loading entity " + entityType.name() + ": " + entityId);
     }
 
-    private void setPossibleTransitions(EntityModel entityModel) {
+    private void setPossibleTransitions(EntityModelWrapper entityModelWrapper) {
         RestUtil.runInBackground(() -> {
-            String currentPhaseId = Util.getUiDataFromModel(entityModel.getValue("phase"), "id");
-            return entityService.findPossibleTransitionFromCurrentPhase(Entity.getEntityType(entityModel), currentPhaseId);
+            String currentPhaseId = Util.getUiDataFromModel(entityModelWrapper.getValue("phase"), "id");
+            return entityService.findPossibleTransitionFromCurrentPhase(entityModelWrapper.getEntityType(), currentPhaseId);
         }, (possibleTransitions) -> {
             if (possibleTransitions.isEmpty()) {
                 possibleTransitions.add(new EntityModel("target_phase", "No transition"));
@@ -163,9 +163,9 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
         }, null, "Failed to get possible transitions", "fetching possible transitions");
     }
 
-    private void setComments(EntityModel entityModel) {
+    private void setComments(EntityModelWrapper entityModelWrapper) {
         Collection<EntityModel> result = new HashSet<>();
-        RestUtil.runInBackground(() -> commentService.getComments(entityModel), (comments) -> entityDetailView.setComments(comments), null, "Failed to get possible comments", "fetching comments");
+        RestUtil.runInBackground(() -> commentService.getComments(entityModelWrapper.getEntityModel()), (comments) -> entityDetailView.setComments(comments), null, "Failed to get possible comments", "fetching comments");
     }
 
     private final class EntityRefreshAction extends AnAction {
@@ -185,7 +185,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
         }
 
         public void actionPerformed(AnActionEvent e) {
-            entityService.openInBrowser(entityModel);
+            entityService.openInBrowser(entityModelWrapper.getEntityModel());
         }
     }
 
@@ -214,7 +214,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                             (ReferenceFieldModel) entityDetailView.getSelectedTransition()
                     , (nextPhase) -> {
                         try {
-                            entityService.updateEntityPhase(entityDetailView.getEntityModel(), nextPhase);
+                            entityService.updateEntityPhase(entityDetailView.getEntityModelWrapper(), nextPhase);
                         } catch (OctaneException ex) {
                             if (ex.getMessage().contains("400")) {
                                 String errorMessage = "Failed to change phase";
@@ -236,7 +236,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                                     }
                                 };
                                 if (dialog.showAndGet()) {
-                                    entityService.openInBrowser(entityModel);
+                                    entityService.openInBrowser(entityModelWrapper.getEntityModel());
                                 }
                             } else if (ex.getMessage().contains("403")) {
                                 //User is not authorised to perform this operation
@@ -251,16 +251,16 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
         }
     }
 
-    public void addSendNewCommentAction(EntityModel entityModel) {
+    public void addSendNewCommentAction(EntityModelWrapper entityModelWrapper) {
         entityDetailView.addSendNewCommentAction(e -> {
             try {
-                commentService.postComment(entityModel, entityDetailView.getCommentMessageBoxText());
+                commentService.postComment(entityModelWrapper.getEntityModel(), entityDetailView.getCommentMessageBoxText());
             } catch (OctaneException oe) {
                 ExceptionHandler exceptionHandler = new ExceptionHandler(oe, project);
                 exceptionHandler.showErrorNotification();
             }
             entityDetailView.setCommentMessageBoxText("");
-            setComments(entityModel);
+            setComments(entityModelWrapper);
         });
     }
 

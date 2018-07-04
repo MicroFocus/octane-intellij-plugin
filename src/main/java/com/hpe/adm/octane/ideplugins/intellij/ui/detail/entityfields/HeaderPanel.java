@@ -18,7 +18,7 @@ import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.nga.sdk.model.FieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.DetailsViewDefaultFields;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
-import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
+import com.hpe.adm.octane.ideplugins.services.model.EntityModelWrapper;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionToolbar;
@@ -218,15 +218,15 @@ public class HeaderPanel extends JPanel {
                 button.getLocationOnScreen().y + (int) button.getPreferredSize().getHeight() + 8);
     }
 
-    public void setEntityModel(EntityModel entityModel) {
+    public void setEntityModel(EntityModelWrapper entityModelWrapper) {
         EntityIconFactory entityIconFactory = new EntityIconFactory(26, 26, 12);
         // icon
-        setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(Entity.getEntityType(entityModel))));
+        setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(entityModelWrapper.getEntityType())));
         // id
-        setId(Util.getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_ID)));
+        setId(Util.getUiDataFromModel(entityModelWrapper.getValue(DetailsViewDefaultFields.FIELD_ID)));
         // name
-        setNameDetails(Util.getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_NAME)));
+        setNameDetails(Util.getUiDataFromModel(entityModelWrapper.getValue(DetailsViewDefaultFields.FIELD_NAME)));
         // phase
-        setPhaseDetails(entityModel.getValue(DetailsViewDefaultFields.FIELD_PHASE));
+        setPhaseDetails(entityModelWrapper.getValue(DetailsViewDefaultFields.FIELD_PHASE));
     }
 }

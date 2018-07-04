@@ -14,8 +14,8 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields;
 
 import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
-import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.DetailsViewDefaultFields;
+import com.hpe.adm.octane.ideplugins.services.model.EntityModelWrapper;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
 import com.intellij.ui.JBColor;
 import net.miginfocom.swing.MigLayout;
@@ -77,7 +77,7 @@ public class EntityFieldsPanel extends JXPanel {
         });
     }
 
-    public void setEntityModel(EntityModel entityModel, Set<String> fieldNames) {
+    public void setEntityModel(EntityModelWrapper entityModelWrapper, Set<String> fieldNames) {
         detailsLeftPanel.removeAll();
         detailsRightPanel.removeAll();
 
@@ -102,10 +102,10 @@ public class EntityFieldsPanel extends JXPanel {
                         || DetailsViewDefaultFields.FIELD_AUTHOR.equals(fieldName)
                         || DetailsViewDefaultFields.FIELD_TEST_RUN_RUN_BY.equals(fieldName)
                         || DetailsViewDefaultFields.FIELD_DETECTEDBY.equals(fieldName)) {
-                    fieldValue = Util.getUiDataFromModel(entityModel.getValue(fieldName),
+                    fieldValue = Util.getUiDataFromModel(entityModelWrapper.getValue(fieldName),
                             DetailsViewDefaultFields.FIELD_FULL_NAME);
                 } else {
-                    fieldValue = Util.getUiDataFromModel(entityModel.getValue(fieldName));
+                    fieldValue = Util.getUiDataFromModel(entityModelWrapper.getValue(fieldName));
                 }
 
                 JXLabel fieldValueLabel = new JXLabel();
