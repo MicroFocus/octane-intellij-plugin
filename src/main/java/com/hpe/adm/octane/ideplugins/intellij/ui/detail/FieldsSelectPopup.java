@@ -39,7 +39,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 
-public class FieldsSelectFrame extends JFrame {
+public class FieldsSelectPopup extends JFrame {
 
     public interface SelectionListener extends EventListener {
         void valueChanged(SelectionEvent e);
@@ -70,7 +70,7 @@ public class FieldsSelectFrame extends JFrame {
 
     private List<SelectionListener> listeners = new ArrayList<>();
 
-    public FieldsSelectFrame(Set<String> defaultFields, Collection<FieldMetadata> allFields, Map<Entity, Set<String>> selectedFieldsMap, Entity entityType, IdePluginPersistentState idePluginPersistentState, SelectFieldsAction fieldsButton) {
+    public FieldsSelectPopup(Set<String> defaultFields, Collection<FieldMetadata> allFields, Map<Entity, Set<String>> selectedFieldsMap, Entity entityType, IdePluginPersistentState idePluginPersistentState, SelectFieldsAction fieldsButton) {
         this.defaultFields = defaultFields;
         this.allFields = allFields;
         this.selectedFieldsMap = selectedFieldsMap;

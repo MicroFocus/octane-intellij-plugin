@@ -14,22 +14,28 @@
 
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields;
 
+import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.nga.sdk.model.FieldModel;
+import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.DetailsViewDefaultFields;
+import com.hpe.adm.octane.ideplugins.intellij.ui.detail.actions.SelectFieldsAction;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
+import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
+import com.hpe.adm.octane.ideplugins.services.EntityService;
 import com.hpe.adm.octane.ideplugins.services.model.EntityModelWrapper;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
-import com.intellij.openapi.actionSystem.ActionManager;
-import com.intellij.openapi.actionSystem.ActionToolbar;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ui.UIUtil;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.Collection;
+
+import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.MANUAL_TEST_RUN;
+import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.TEST_SUITE_RUN;
 
 public class HeaderPanel extends JPanel {
 
@@ -50,6 +56,11 @@ public class HeaderPanel extends JPanel {
     private JPanel panelControls;
 
     private PhasePanel phasePanel;
+
+    private EntityModelWrapper entityModelWrapper;
+
+    @Inject
+    private EntityService entityService;
 
     public HeaderPanel() {
         UIManager.put("ComboBox.background", JBColor.background());
@@ -181,11 +192,8 @@ public class HeaderPanel extends JPanel {
     }
 
     public void setOpenInBrowserButton(AnAction openInBrowserAction) {
-        if (this.openInBrowserAction == null) {
-            this.openInBrowserAction = openInBrowserAction;
-            buttonActionGroup.addSeparator();
-            buttonActionGroup.add(openInBrowserAction);
-        }
+        buttonActionGroup.addSeparator();
+        buttonActionGroup.add(openInBrowserAction);
     }
 
     public void setCommentButton(AnAction commentAction) {
@@ -219,6 +227,7 @@ public class HeaderPanel extends JPanel {
     }
 
     public void setEntityModel(EntityModelWrapper entityModelWrapper) {
+        this.entityModelWrapper = entityModelWrapper;
         EntityIconFactory entityIconFactory = new EntityIconFactory(26, 26, 12);
         // icon
         setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(entityModelWrapper.getEntityType())));
@@ -228,5 +237,44 @@ public class HeaderPanel extends JPanel {
         setNameDetails(Util.getUiDataFromModel(entityModelWrapper.getValue(DetailsViewDefaultFields.FIELD_NAME)));
         // phase
         setPhaseDetails(entityModelWrapper.getValue(DetailsViewDefaultFields.FIELD_PHASE));
+        //setup target phase
+        if (entityModelWrapper.getEntityType() != MANUAL_TEST_RUN && entityModelWrapper.getEntityType() != TEST_SUITE_RUN) {
+            setupPhaseDetails();
+            setPhaseInHeader(true);
+        } else {
+            setPhaseInHeader(false);
+        }
+        setupPhaseDetails();
+        // add action for opening in browser
+        if (openInBrowserAction == null) {
+            openInBrowserAction = new EntityOpenInBrowser();
+            setOpenInBrowserButton(openInBrowserAction);
+        }
+    }
+
+    public void setupPhaseDetails(){
+        RestUtil.runInBackground(() -> {
+            String currentPhaseId = Util.getUiDataFromModel(entityModelWrapper.getValue("phase"), "id");
+            return entityService.findPossibleTransitionFromCurrentPhase(entityModelWrapper.getEntityType(), currentPhaseId);
+        }, (possibleTransitions) -> {
+            if (possibleTransitions.isEmpty()) {
+                possibleTransitions.add(new EntityModel("target_phase", "No transition"));
+                setPossiblePhasesForEntity(possibleTransitions);
+                saveSelectedPhaseAction.getTemplatePresentation().setEnabled(false);
+            } else {
+                setPossiblePhasesForEntity(possibleTransitions);
+                saveSelectedPhaseAction.getTemplatePresentation().setEnabled(true);
+            }
+        }, null, "Failed to get possible transitions", "fetching possible transitions");
+    }
+
+    private final class EntityOpenInBrowser extends AnAction {
+        public EntityOpenInBrowser() {
+            super("Open in browser the current entity", "Open in browser", IconLoader.findIcon(Constants.IMG_BROWSER_ICON));
+        }
+
+        public void actionPerformed(AnActionEvent e) {
+            entityService.openInBrowser(entityModelWrapper.getEntityModel());
+        }
     }
 }

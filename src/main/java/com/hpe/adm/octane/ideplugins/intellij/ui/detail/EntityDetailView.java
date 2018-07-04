@@ -14,10 +14,12 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
 import com.google.inject.Inject;
+import com.hpe.adm.nga.sdk.exception.OctaneException;
 import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.nga.sdk.model.FieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
+import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.View;
 import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.LoadingWidget;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.actions.SelectFieldsAction;
@@ -25,11 +27,17 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.CommentsCon
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.EntityFieldsPanel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.HTMLPresenterFXPanel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.HeaderPanel;
+import com.hpe.adm.octane.ideplugins.intellij.util.ExceptionHandler;
+import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
+import com.hpe.adm.octane.ideplugins.services.CommentService;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.model.EntityModelWrapper;
 import com.hpe.adm.octane.ideplugins.services.util.DefaultEntityFieldsUtil;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
 import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.components.JBScrollPane;
 import javafx.application.Platform;
 import org.json.JSONObject;
@@ -37,6 +45,7 @@ import org.json.JSONObject;
 import javax.swing.*;
 import javax.swing.border.MatteBorder;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.Collection;
@@ -44,6 +53,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.TASK;
 import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
 import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS;
 
@@ -56,17 +66,25 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
     private EntityFieldsPanel entityFieldsPanel;
     private CommentsConversationPanel commentsPanel;
     private HTMLPresenterFXPanel descriptionPanel;
+    private FieldsSelectPopup fieldsPopup;
+
+    private SelectFieldsAction fieldsSelectAction;
+    private EntityCommentsAction commentsAction;
 
     @Inject
     private IdePluginPersistentState idePluginPersistentState;
 
-    private FieldsSelectFrame fieldsPopup;
+    @Inject
+    private CommentService commentService;
+
+    @Inject
+    private Project project;
 
     private Collection<FieldMetadata> fields;
     private Map<Entity, Set<String>> defaultFields;
     private Map<Entity, Set<String>> selectedFields;
 
-    private FieldsSelectFrame.SelectionListener selectionListener;
+    private FieldsSelectPopup.SelectionListener selectionListener;
 
     @Inject
     public EntityDetailView(HeaderPanel headerPanel, EntityFieldsPanel entityFieldsPanel, CommentsConversationPanel commentsPanel, HTMLPresenterFXPanel descriptionPanel) {
@@ -133,6 +151,9 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
         add(descriptionPanel, gbc_descriptionPanel);
 
         descriptionPanel.addEventActions();
+
+        fieldsSelectAction = new SelectFieldsAction(this);
+        commentsAction = new EntityCommentsAction();
     }
 
     @Override
@@ -140,7 +161,6 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
         component.setBorder(null);
         component.setVerticalScrollBarPolicy(VERTICAL_SCROLLBAR_ALWAYS);
         component.setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_NEVER);
-        component.setMinimumSize(new Dimension(0, 0));
         return component;
     }
 
@@ -148,21 +168,34 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
     public void setEntityModel(EntityModelWrapper entityModelWrapper, Collection<FieldMetadata> fields) {
         this.entityModelWrapper = entityModelWrapper;
         this.fields = fields;
-        // set selected fields
+        // get selected fields from persistence
         retrieveSelectedFieldsFromPersistentState();
         // set header data
         headerPanel.setEntityModel(entityModelWrapper);
-        // set description data
-        final String descriptionContent = Util.getUiDataFromModel(entityModelWrapper.getValue(DetailsViewDefaultFields.FIELD_DESCRIPTION));
-        Platform.runLater(() -> descriptionPanel.setContent(descriptionContent));
+        // add fields popup action - create it again every time in order to avoid UI problems when theme changes
+        setupFieldsSelectPopup(fieldsSelectAction);
+        // add comments action to header panel
+        setupComments(entityModelWrapper);
+        // add description data
+        setupDescription(entityModelWrapper);
         // set fields data
         entityFieldsPanel.setFields(fields);
         entityFieldsPanel.setEntityModel(entityModelWrapper, selectedFields.get(entityModelWrapper.getEntityType()));
+
         component.setViewportView(this);
     }
 
-    public EntityModelWrapper getEntityModelWrapper() {
-        return this.entityModelWrapper;
+    private void setupDescription(EntityModelWrapper entityModelWrapper){
+        String descriptionContent = Util.getUiDataFromModel(entityModelWrapper.getValue(DetailsViewDefaultFields.FIELD_DESCRIPTION));
+        Platform.runLater(() -> descriptionPanel.setContent(descriptionContent));
+    }
+
+    private void setupComments(EntityModelWrapper entityModelWrapper){
+        if (entityModelWrapper.getEntityType() != TASK) {
+            headerPanel.setCommentButton(commentsAction);
+            setComments(entityModelWrapper);
+            addSendNewCommentAction(entityModelWrapper);
+        }
     }
 
     public void setErrorMessage(String error) {
@@ -182,7 +215,11 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
         component.setViewportView(new JBScrollPane(new LoadingWidget()));
     }
 
-    public void addFieldSelectListener(FieldsSelectFrame.SelectionListener selectionListener) {
+
+    /*
+    TODO need to destroy this mechanism, implement instead listener on persistant state
+     */
+    public void addFieldSelectListener(FieldsSelectPopup.SelectionListener selectionListener) {
         this.selectionListener = selectionListener;
     }
 
@@ -202,43 +239,30 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
         headerPanel.setRefreshButton(refreshButton);
     }
 
-    public void setCommentsEntityButton(AnAction commentsButton) {
-        headerPanel.setCommentButton(commentsButton);
-    }
 
     public void setSaveSelectedPhaseButton(AnAction saveSelectedPhaseAction) {
         headerPanel.setSaveButton(saveSelectedPhaseAction);
-    }
-
-    public void setOpenInBrowserButton(AnAction openInBrowserAction) {
-        headerPanel.setOpenInBrowserButton(openInBrowserAction);
-    }
-
-    public void setPhaseInHeader(boolean showPhase) {
-        headerPanel.setPhaseInHeader(showPhase);
     }
 
     public FieldModel getSelectedTransition() {
         return headerPanel.getSelectedTransition();
     }
 
-    public void setPossiblePhasesForEntity(Collection<EntityModel> phasesList) {
-        headerPanel.setPossiblePhasesForEntity(phasesList);
+    private void setComments(EntityModelWrapper entityModelWrapper) {
+        RestUtil.runInBackground(() -> commentService.getComments(entityModelWrapper.getEntityModel()), (comments) -> commentsPanel.setComments(comments), null, "Failed to get possible comments", "fetching comments");
     }
 
-    public void setComments(Collection<EntityModel> comments) {
-        commentsPanel.clearCurrentComments();
-        for (EntityModel comment : comments) {
-            String commentsPostTime = Util.getUiDataFromModel(comment.getValue(DetailsViewDefaultFields.FIELD_CREATION_TIME));
-            String userName = Util.getUiDataFromModel(comment.getValue(DetailsViewDefaultFields.FIELD_AUTHOR), "full_name");
-            String commentLine = Util.getUiDataFromModel(comment.getValue(DetailsViewDefaultFields.FIELD_COMMENT_TEXT));
-            commentsPanel.addExistingComment(commentsPostTime, userName, commentLine);
-        }
-        commentsPanel.setChatBoxScene();
-    }
-
-    public void addSendNewCommentAction(ActionListener actionListener) {
-        commentsPanel.addSendNewCommentAction(actionListener);
+    private void addSendNewCommentAction(EntityModelWrapper entityModelWrapper) {
+        commentsPanel.addSendNewCommentAction(e -> {
+            try {
+                commentService.postComment(entityModelWrapper.getEntityModel(), getCommentMessageBoxText());
+            } catch (OctaneException oe) {
+                ExceptionHandler exceptionHandler = new ExceptionHandler(oe, project);
+                exceptionHandler.showErrorNotification();
+            }
+            commentsPanel.setCommentMessageBoxText("");
+            setComments(entityModelWrapper);
+        });
     }
 
     public void showFieldsSettings() {
@@ -247,21 +271,17 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
         fieldsPopup.setVisible(!fieldsPopup.isVisible());
     }
 
-    public void setCommentMessageBoxText(String t) {
-        commentsPanel.setCommentMessageBoxText(t);
-    }
-
-    public String getCommentMessageBoxText() {
+    private String getCommentMessageBoxText() {
         return commentsPanel.getCommentMessageBoxText();
     }
 
-    public void showCommentsPanel() {
+    private void showCommentsPanel() {
         commentsPanel.setVisible(!commentsPanel.isVisible());
     }
 
-    public void setFieldSelectButton(SelectFieldsAction fieldSelectButton) {
+    private void setupFieldsSelectPopup(SelectFieldsAction fieldSelectButton) {
         headerPanel.setFieldSelectButton(fieldSelectButton);
-        fieldsPopup = new FieldsSelectFrame(defaultFields.get(entityModelWrapper.getEntityType()),
+        fieldsPopup = new FieldsSelectPopup(defaultFields.get(entityModelWrapper.getEntityType()),
                 fields.stream()
                         .filter(e -> !Arrays.asList("phase", "name", "subtype", "description").contains(e.getName()))
                         .collect(Collectors.toList()),
@@ -272,12 +292,16 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
         fieldsPopup.addSelectionListener(e -> entityFieldsPanel.setEntityModel(entityModelWrapper, fieldsPopup.getSelectedFields()));
         fieldsPopup.addSelectionListener(selectionListener);
     }
-
-
+    /*
+    TODO eliminate this mechanism, implement change listener on ide persistant state
+     */
     public Set<String> getSelectedFields() {
         return fieldsPopup.getSelectedFields();
     }
 
+    /*
+   TODO eliminate this mechanism, implement change listener on ide persistant state
+    */
     public void setSelectedFields(Set<String> selectedFields) {
         fieldsPopup.setSelectedFieldsFromOtherTab(selectedFields);
     }
@@ -305,5 +329,15 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
     @Override
     public boolean getScrollableTracksViewportHeight() {
         return false;
+    }
+
+    private final class EntityCommentsAction extends AnAction {
+        public EntityCommentsAction() {
+            super("Show comments for current entity", "Show comments for current entity", IconLoader.findIcon(Constants.IMG_COMMENTS_ICON));
+        }
+
+        public void actionPerformed(AnActionEvent e) {
+            showCommentsPanel();
+        }
     }
 }

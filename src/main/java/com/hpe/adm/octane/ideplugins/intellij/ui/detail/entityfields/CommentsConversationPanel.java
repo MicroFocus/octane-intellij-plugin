@@ -14,6 +14,9 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields;
 
 import com.google.inject.Inject;
+import com.hpe.adm.nga.sdk.model.EntityModel;
+import com.hpe.adm.octane.ideplugins.intellij.ui.detail.DetailsViewDefaultFields;
+import com.hpe.adm.octane.ideplugins.services.util.Util;
 import com.intellij.util.ui.UIUtil;
 import javafx.application.Platform;
 import org.apache.commons.lang.StringUtils;
@@ -26,6 +29,7 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.Collection;
 
 public class CommentsConversationPanel extends JPanel {
     private JButton sendMessageButton;
@@ -113,7 +117,15 @@ public class CommentsConversationPanel extends JPanel {
 
     public void addSendNewCommentAction(ActionListener actionListener) {
         this.addCommentActionListener = actionListener;
+        removeAnyPreviousListener();
         sendMessageButton.addActionListener(actionListener);
+    }
+
+    private void removeAnyPreviousListener(){
+        ActionListener[] listeners = sendMessageButton.getActionListeners();
+        for (ActionListener listener : listeners) {
+            sendMessageButton.removeActionListener(listener);
+        }
     }
 
     private void enableButton() {
@@ -134,5 +146,16 @@ public class CommentsConversationPanel extends JPanel {
 
     public void clearCurrentComments() {
         commentContent = "";
+    }
+
+    public void setComments(Collection<EntityModel> comments) {
+        clearCurrentComments();
+        for (EntityModel comment : comments) {
+            String commentsPostTime = Util.getUiDataFromModel(comment.getValue(DetailsViewDefaultFields.FIELD_CREATION_TIME));
+            String userName = Util.getUiDataFromModel(comment.getValue(DetailsViewDefaultFields.FIELD_AUTHOR), "full_name");
+            String commentLine = Util.getUiDataFromModel(comment.getValue(DetailsViewDefaultFields.FIELD_COMMENT_TEXT));
+            addExistingComment(commentsPostTime, userName, commentLine);
+        }
+        setChatBoxScene();
     }
 }
