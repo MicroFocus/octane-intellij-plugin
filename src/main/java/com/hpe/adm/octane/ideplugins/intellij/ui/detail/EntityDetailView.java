@@ -91,7 +91,6 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
         gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
         setLayout(gridBagLayout);
 
-//      headerPanel = new HeaderPanel();
         headerPanel.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
         GridBagConstraints gbc_headerPanel = new GridBagConstraints();
         gbc_headerPanel.gridwidth = 2;
@@ -101,7 +100,6 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
         gbc_headerPanel.gridy = 0;
         add(headerPanel, gbc_headerPanel);
 
-//      entityFieldsPanel = new EntityFieldsPanel();
         GridBagConstraints gbc_entityFieldsPanel = new GridBagConstraints();
         gbc_entityFieldsPanel.anchor = GridBagConstraints.NORTH;
         gbc_entityFieldsPanel.fill = GridBagConstraints.HORIZONTAL;
@@ -110,7 +108,6 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
         gbc_entityFieldsPanel.gridy = 1;
         add(entityFieldsPanel, gbc_entityFieldsPanel);
 
-//      commentsPanel = new CommentsConversationPanel();
         commentsPanel.setBorder(new MatteBorder(0, 1, 0, 0, (Color) new Color(0, 0, 0)));
         GridBagConstraints gbc_commentsPanel = new GridBagConstraints();
         gbc_commentsPanel.gridheight = 3;
@@ -134,7 +131,6 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
         gbc_descriptionLabel.gridy = 2;
         add(descriptionLabel, gbc_descriptionLabel);
 
-//      descriptionPanel = new HTMLPresenterFXPanel();
         GridBagConstraints gbc_descriptionPanel = new GridBagConstraints();
         gbc_descriptionPanel.fill = GridBagConstraints.BOTH;
         gbc_descriptionPanel.insets = new Insets(0, 5, 0, 5);
