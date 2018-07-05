@@ -17,6 +17,7 @@ import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.exception.OctaneException;
 import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
 import com.hpe.adm.nga.sdk.model.FieldModel;
+import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.View;
 import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.LoadingWidget;
@@ -59,6 +60,8 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
     private CommentsConversationPanel commentsPanel;
     private HTMLPresenterFXPanel descriptionPanel;
     private SelectFieldsAction fieldsSelectAction;
+
+    private Collection<FieldMetadata> fields;
 
     @Inject
     private FieldsSelectPopup fieldsPopup;
@@ -144,11 +147,11 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 if ("lookAndFeel".equals(evt.getPropertyName())) {
-                    if(!fieldsPopup.isVisible()){
-                        //Todo test this functionality, not sure the popup gets destroyed after the user closes entity detail view
+                    if(!isShowing()){
                         UIManager.removePropertyChangeListener(this);
                     } else {
-                        setupFieldsSelectButton(fieldsSelectAction);
+                        fieldsPopup = PluginModule.getPluginModuleForProject(project).getInstance(FieldsSelectPopup.class);
+                        fieldsPopup.setEntityDetails(entityModelWrapper, fields, fieldsSelectAction);
                     }
                 }
             }
@@ -166,6 +169,7 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
 
     public void setEntityModel(EntityModelWrapper entityModelWrapper, Collection<FieldMetadata> fields) {
         this.entityModelWrapper = entityModelWrapper;
+        this.fields = fields;
         // set header data
         headerPanel.setEntityModel(entityModelWrapper);
         // set the fields popup data

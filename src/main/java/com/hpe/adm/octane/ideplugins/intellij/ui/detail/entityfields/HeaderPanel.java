@@ -222,7 +222,7 @@ public class HeaderPanel extends JPanel {
     }
 
     public Point getFieldsPopupLocation() {
-        Component button = actionToolBar.getComponent().getComponent(actionToolBar.getComponent().getComponents().length - 1);
+        Component button = actionToolBar.getComponent().getComponent(actionToolBar.getComponent().getComponents().length - 2);
         return new Point(button.getLocationOnScreen().x + (int) button.getPreferredSize().getWidth(),
                 button.getLocationOnScreen().y + (int) button.getPreferredSize().getHeight() + 8);
     }
