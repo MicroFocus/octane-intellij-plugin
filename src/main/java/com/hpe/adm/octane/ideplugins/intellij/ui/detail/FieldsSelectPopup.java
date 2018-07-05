@@ -13,11 +13,13 @@
 
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
+import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.FieldMenuItem;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.actions.SelectFieldsAction;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
+import com.hpe.adm.octane.ideplugins.services.model.EntityModelWrapper;
 import com.hpe.adm.octane.ideplugins.services.util.DefaultEntityFieldsUtil;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBScrollPane;
@@ -51,33 +53,28 @@ public class FieldsSelectPopup extends JFrame {
         }
     }
 
-    private Set<String> defaultFields;
-    private Map<Entity, Set<String>> selectedFieldsMap;
-    private Set<String> selectedFields;
     private Collection<FieldMetadata> allFields;
+    private Map<Entity, Set<String>> defaultFieldsMap;
+    private Map<Entity, Set<String>> selectedFieldsMap;
     private Map<String, String> prettyFields = new HashMap<>();
     private List<FieldMenuItem> menuItems;
-    private Entity entityType;
+
+    @Inject
     private IdePluginPersistentState idePluginPersistentState;
+
     private JScrollPane fieldsScrollPanel;
     private JPanel fieldsRootPanel;
     private JXTextField searchField;
-    private SelectFieldsAction fieldsActionButton;
+    private SelectFieldsAction selectFieldsAction;
     private JPanel fieldsPanel;
     private JXButton resetButton;
     private JXButton selectNoneButton;
     private JXButton selectAllButton;
+    private EntityModelWrapper entityModelWrapper;
 
     private List<SelectionListener> listeners = new ArrayList<>();
 
-    public FieldsSelectPopup(Set<String> defaultFields, Collection<FieldMetadata> allFields, Map<Entity, Set<String>> selectedFieldsMap, Entity entityType, IdePluginPersistentState idePluginPersistentState, SelectFieldsAction fieldsButton) {
-        this.defaultFields = defaultFields;
-        this.allFields = allFields;
-        this.selectedFieldsMap = selectedFieldsMap;
-        this.selectedFields = selectedFieldsMap.get(entityType);
-        this.idePluginPersistentState = idePluginPersistentState;
-        this.fieldsActionButton = fieldsButton;
-        this.entityType = entityType;
+    public FieldsSelectPopup() {
 
         setLayout(new BorderLayout());
         fieldsRootPanel = new JPanel();
@@ -162,7 +159,6 @@ public class FieldsSelectPopup extends JFrame {
         gbcSearchField.gridy = 0;
         fieldsRootPanel.add(searchField, gbcSearchField);
 
-        createCheckBoxMenuItems();
         fieldsScrollPanel = createFieldsPanel();
         GridBagConstraints gbc1 = new GridBagConstraints();
         gbc1.gridx = 0;
@@ -182,22 +178,51 @@ public class FieldsSelectPopup extends JFrame {
             }
         });
 
-        if (defaultFields.containsAll(selectedFields) && selectedFields.containsAll(defaultFields)) {
-            fieldsActionButton.setDefaultFieldsIcon(true);
-            resetButton.setEnabled(false);
-        } else {
-            fieldsActionButton.setDefaultFieldsIcon(false);
-            resetButton.setEnabled(true);
-            if(selectedFields.size()==0){
-                selectNoneButton.setEnabled(false);
-            } else if(selectedFields.size() == allFields.size()){
-                selectAllButton.setEnabled(false);
-            }
-        }
-
         setAlwaysOnTop(true);
         setUndecorated(true);
         pack();
+    }
+
+    private void setupPopupButtonState(){
+        if (defaultFieldsMap.get(entityModelWrapper.getEntityType()).containsAll(selectedFieldsMap.get(entityModelWrapper.getEntityType()))
+                && selectedFieldsMap.get(entityModelWrapper.getEntityType()).containsAll(defaultFieldsMap.get(entityModelWrapper.getEntityType()))) {
+            selectFieldsAction.setDefaultFieldsIcon(true);
+            resetButton.setEnabled(false);
+        } else {
+            selectFieldsAction.setDefaultFieldsIcon(false);
+            resetButton.setEnabled(true);
+            if(selectedFieldsMap.get(entityModelWrapper).size()==0){
+                selectNoneButton.setEnabled(false);
+            } else if(selectedFieldsMap.get(entityModelWrapper.getEntityType()).size() == allFields.size()){
+                selectAllButton.setEnabled(false);
+            }
+        }
+    }
+
+    private void retrieveSelectedFieldsFromPersistentState() {
+        defaultFieldsMap = DefaultEntityFieldsUtil.getDefaultFields();
+        JSONObject selectedFieldsJson = idePluginPersistentState.loadState(IdePluginPersistentState.Key.SELECTED_FIELDS);
+        if (selectedFieldsJson == null) {
+            selectedFieldsMap = defaultFieldsMap;
+        } else {
+            selectedFieldsMap = DefaultEntityFieldsUtil.entityFieldsFromJson(selectedFieldsJson.toString());
+            if (selectedFieldsMap == null) {
+                selectedFieldsMap = defaultFieldsMap;
+            }
+        }
+    }
+
+    public void setEntityDetails(EntityModelWrapper entityModelWrapper, Collection<FieldMetadata> allFields, SelectFieldsAction selectFieldsAction){
+        this.selectFieldsAction = selectFieldsAction;
+        this.allFields = allFields.stream()
+                .filter(e -> !Arrays.asList("phase", "name", "subtype", "description").contains(e.getName()))
+                .collect(Collectors.toList());
+        this.entityModelWrapper = entityModelWrapper;
+        retrieveSelectedFieldsFromPersistentState();
+        setupPopupButtonState();
+        createCheckBoxMenuItems();
+        //populate the popup with the selected fields
+        updateFieldsPanel(selectedFieldsMap.get(entityModelWrapper.getEntityType()), this.allFields);
     }
 
     private void clearSearchField(){
@@ -205,13 +230,13 @@ public class FieldsSelectPopup extends JFrame {
     }
 
     private void noneButtonClicked() {
-        selectedFields.removeAll(selectedFields);
+        selectedFieldsMap.get(entityModelWrapper.getEntityType()).removeAll(selectedFieldsMap.get(entityModelWrapper.getEntityType()));
         updateFieldsPanel(getSelectedFields(), allFields);
         fieldsPanel.repaint();
         listeners.forEach(listener -> listener.valueChanged(new SelectionEvent(this)));
-        selectedFieldsMap.replace(entityType, selectedFields);
+        selectedFieldsMap.replace(entityModelWrapper.getEntityType(), selectedFieldsMap.get(entityModelWrapper.getEntityType()));
         idePluginPersistentState.saveState(IdePluginPersistentState.Key.SELECTED_FIELDS, new JSONObject(DefaultEntityFieldsUtil.entityFieldsToJson(selectedFieldsMap)));
-        fieldsActionButton.setDefaultFieldsIcon(false);
+        selectFieldsAction.setDefaultFieldsIcon(false);
         selectNoneButton.transferFocusUpCycle();
         resetButton.setEnabled(true);
         selectNoneButton.setEnabled(false);
@@ -223,9 +248,9 @@ public class FieldsSelectPopup extends JFrame {
         updateFieldsPanel(getSelectedFields(), allFields);
         fieldsPanel.repaint();
         listeners.forEach(listener -> listener.valueChanged(new SelectionEvent(this)));
-        selectedFieldsMap.replace(entityType, selectedFields);
+        selectedFieldsMap.replace(entityModelWrapper.getEntityType(), selectedFieldsMap.get(entityModelWrapper.getEntityType()));
         idePluginPersistentState.saveState(IdePluginPersistentState.Key.SELECTED_FIELDS, new JSONObject(DefaultEntityFieldsUtil.entityFieldsToJson(selectedFieldsMap)));
-        fieldsActionButton.setDefaultFieldsIcon(false);
+        selectFieldsAction.setDefaultFieldsIcon(false);
         selectAllButton.transferFocusUpCycle();
         resetButton.setEnabled(true);
         selectNoneButton.setEnabled(true);
@@ -237,9 +262,9 @@ public class FieldsSelectPopup extends JFrame {
         updateFieldsPanel(getSelectedFields(), allFields);
         fieldsPanel.repaint();
         listeners.forEach(listener -> listener.valueChanged(new SelectionEvent(this)));
-        selectedFieldsMap.replace(entityType, selectedFields);
+        selectedFieldsMap.replace(entityModelWrapper.getEntityType(), selectedFieldsMap.get(entityModelWrapper.getEntityType()));
         idePluginPersistentState.saveState(IdePluginPersistentState.Key.SELECTED_FIELDS, new JSONObject(DefaultEntityFieldsUtil.entityFieldsToJson(selectedFieldsMap)));
-        fieldsActionButton.setDefaultFieldsIcon(true);
+        selectFieldsAction.setDefaultFieldsIcon(true);
         resetButton.transferFocusUpCycle();
         resetButton.setEnabled(false);
         selectNoneButton.setEnabled(true);
@@ -258,7 +283,7 @@ public class FieldsSelectPopup extends JFrame {
             searchfields = allFields;
         }
         if (searchfields.size() != 0) {
-            updateFieldsPanel(selectedFields, searchfields);
+            updateFieldsPanel(selectedFieldsMap.get(entityModelWrapper.getEntityType()), searchfields);
         } else {
             createNoResultsPanel();
         }
@@ -270,7 +295,6 @@ public class FieldsSelectPopup extends JFrame {
     private JScrollPane createFieldsPanel() {
         fieldsPanel = new JPanel();
         fieldsPanel.setLayout(new BoxLayout(fieldsPanel, BoxLayout.Y_AXIS));
-        updateFieldsPanel(selectedFields, allFields);
         fieldsPanel.revalidate();
         JScrollPane scrollPane = new JBScrollPane(fieldsPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setPreferredSize(new Dimension((int) searchField.getPreferredSize().getWidth(), 200));
@@ -287,38 +311,38 @@ public class FieldsSelectPopup extends JFrame {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         if (menuItem.isSelected()) {
-                            selectedFields.add(fieldMetadata.getName());
+                            selectedFieldsMap.get(entityModelWrapper.getEntityType()).add(fieldMetadata.getName());
                         } else {
-                            selectedFields.remove(fieldMetadata.getName());
+                            selectedFieldsMap.get(entityModelWrapper.getEntityType()).remove(fieldMetadata.getName());
                         }
                         listeners.forEach(listener -> listener.valueChanged(new SelectionEvent(this)));
-                        if (defaultFields.containsAll(selectedFields) && selectedFields.containsAll(defaultFields)) {
-                            fieldsActionButton.setDefaultFieldsIcon(true);
+                        if (defaultFieldsMap.get(entityModelWrapper.getEntityType()).containsAll(selectedFieldsMap.get(entityModelWrapper.getEntityType())) && selectedFieldsMap.get(entityModelWrapper.getEntityType()).containsAll(defaultFieldsMap.get(entityModelWrapper.getEntityType()))) {
+                            selectFieldsAction.setDefaultFieldsIcon(true);
                             resetButton.setEnabled(false);
                             selectNoneButton.setEnabled(true);
                             selectAllButton.setEnabled(true);
                         } else {
-                            fieldsActionButton.setDefaultFieldsIcon(false);
+                            selectFieldsAction.setDefaultFieldsIcon(false);
                             resetButton.setEnabled(true);
 
-                            if (selectedFields.size() == 0) {
+                            if (selectedFieldsMap.get(entityModelWrapper.getEntityType()).size() == 0) {
                                 selectNoneButton.setEnabled(false);
                             } else {
                                 selectNoneButton.setEnabled(true);
                             }
 
-                            if (selectedFields.containsAll(allFields.stream().map(FieldMetadata::getName).collect(Collectors.toSet()))) {
+                            if (selectedFieldsMap.get(entityModelWrapper.getEntityType()).containsAll(allFields.stream().map(FieldMetadata::getName).collect(Collectors.toSet()))) {
                                 selectAllButton.setEnabled(false);
                             } else {
                                 selectAllButton.setEnabled(true);
                             }
                         }
-                        selectedFieldsMap.replace(entityType, selectedFields);
+                        selectedFieldsMap.replace(entityModelWrapper.getEntityType(), selectedFieldsMap.get(entityModelWrapper.getEntityType()));
                         idePluginPersistentState.saveState(IdePluginPersistentState.Key.SELECTED_FIELDS, new JSONObject(DefaultEntityFieldsUtil.entityFieldsToJson(selectedFieldsMap)));
 
                     }
                 });
-                if (selectedFields.contains(fieldMetadata)) {
+                if (selectedFieldsMap.get(entityModelWrapper.getEntityType()).contains(fieldMetadata)) {
                     menuItem.setState(true);
                 }
                 menuItems.add(menuItem);
@@ -368,7 +392,7 @@ public class FieldsSelectPopup extends JFrame {
      * @return the default fields of the entity opened in detailed view
      */
     public Set<String> getDefaultFields() {
-        return defaultFields;
+        return defaultFieldsMap.get(entityModelWrapper.getEntityType());
     }
 
     /**
@@ -377,12 +401,12 @@ public class FieldsSelectPopup extends JFrame {
      * @return the selected fields
      */
     public Set<String> getSelectedFields() {
-        return selectedFields;
+        return selectedFieldsMap.get(entityModelWrapper.getEntityType());
     }
 
     private void setSelectedFields(Set<String> fields) {
-        selectedFields.removeAll(selectedFields);
-        selectedFields.addAll(fields);
+        selectedFieldsMap.get(entityModelWrapper.getEntityType()).removeAll(selectedFieldsMap.get(entityModelWrapper.getEntityType()));
+        selectedFieldsMap.get(entityModelWrapper.getEntityType()).addAll(fields);
     }
 
     /**
@@ -392,14 +416,14 @@ public class FieldsSelectPopup extends JFrame {
      */
     public void setSelectedFieldsFromOtherTab(Set<String> fields) {
         setSelectedFields(fields);
-        updateFieldsPanel(selectedFields, allFields);
+        updateFieldsPanel(selectedFieldsMap.get(entityModelWrapper.getEntityType()), allFields);
         fieldsPanel.repaint();
         listeners.get(0).valueChanged(new SelectionEvent(this));
-        if (defaultFields.containsAll(selectedFields) && selectedFields.containsAll(defaultFields)) {
-            fieldsActionButton.setDefaultFieldsIcon(true);
+        if (defaultFieldsMap.get(entityModelWrapper.getEntityType()).containsAll(selectedFieldsMap.get(entityModelWrapper.getEntityType())) && selectedFieldsMap.get(entityModelWrapper.getEntityType()).containsAll(defaultFieldsMap.get(entityModelWrapper.getEntityType()))) {
+            selectFieldsAction.setDefaultFieldsIcon(true);
             resetButton.setEnabled(false);
         } else {
-            fieldsActionButton.setDefaultFieldsIcon(false);
+            selectFieldsAction.setDefaultFieldsIcon(false);
             resetButton.setEnabled(true);
         }
 

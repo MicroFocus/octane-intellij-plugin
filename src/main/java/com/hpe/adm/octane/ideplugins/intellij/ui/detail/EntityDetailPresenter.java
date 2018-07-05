@@ -25,7 +25,6 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
 import com.hpe.adm.octane.ideplugins.intellij.util.ExceptionHandler;
 import com.hpe.adm.octane.ideplugins.intellij.util.HtmlTextEditor;
 import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
-import com.hpe.adm.octane.ideplugins.services.CommentService;
 import com.hpe.adm.octane.ideplugins.services.EntityService;
 import com.hpe.adm.octane.ideplugins.services.MetadataService;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
@@ -57,8 +56,6 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
     @Inject
     private EntityService entityService;
     @Inject
-    private CommentService commentService;
-    @Inject
     private MetadataService metadataService;
     @Inject
     private ImageService imageService;
@@ -81,6 +78,11 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
     @Inject
     public void setView(EntityDetailView entityDetailView) {
         this.entityDetailView = entityDetailView;
+        entityDetailView.setSaveSelectedPhaseButton(new SaveSelectedPhaseAction());
+        entityDetailView.setRefreshEntityButton(new EntityRefreshAction());
+        entityDetailView.setOpenInBrowserButton();
+        entityDetailView.setupFieldsSelectButton();
+        entityDetailView.setupCommentsButton();
     }
 
     public void setEntity(Entity entityType, Long entityId) {
@@ -116,8 +118,6 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                 },
                 (entityModelWrapper) -> {
                     if (entityModelWrapper != null) {
-                        entityDetailView.setSaveSelectedPhaseButton(new SaveSelectedPhaseAction());
-                        entityDetailView.setRefreshEntityButton(new EntityRefreshAction());
                         entityDetailView.setEntityModel(entityModelWrapper, fields);
                     }
                 },

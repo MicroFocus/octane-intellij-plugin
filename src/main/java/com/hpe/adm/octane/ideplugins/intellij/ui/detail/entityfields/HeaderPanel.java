@@ -31,6 +31,8 @@ import com.intellij.util.ui.UIUtil;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.Collection;
 
 import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.MANUAL_TEST_RUN;
@@ -190,9 +192,9 @@ public class HeaderPanel extends JPanel {
         }
     }
 
-    public void setOpenInBrowserButton(AnAction openInBrowserAction) {
+    public void setOpenInBrowserButton() {
         buttonActionGroup.addSeparator();
-        buttonActionGroup.add(openInBrowserAction);
+        buttonActionGroup.add(new EntityOpenInBrowser());
     }
 
     public void setCommentButton(AnAction commentAction) {
@@ -244,11 +246,6 @@ public class HeaderPanel extends JPanel {
             setPhaseInHeader(false);
         }
         setupPhaseDetails();
-        // add action for opening in browser
-        if (openInBrowserAction == null) {
-            openInBrowserAction = new EntityOpenInBrowser();
-            setOpenInBrowserButton(openInBrowserAction);
-        }
     }
 
     public void setupPhaseDetails() {
