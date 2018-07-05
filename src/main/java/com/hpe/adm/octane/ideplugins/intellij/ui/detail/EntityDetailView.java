@@ -44,7 +44,6 @@ import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Collection;
-import java.util.Set;
 
 import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.TASK;
 import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
@@ -147,7 +146,7 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 if ("lookAndFeel".equals(evt.getPropertyName())) {
-                    if(!isShowing()){
+                    if (!isShowing()) {
                         UIManager.removePropertyChangeListener(this);
                     } else {
                         fieldsPopup = PluginModule.getPluginModuleForProject(project).getInstance(FieldsSelectPopup.class);
@@ -231,7 +230,7 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
      * Comment action related functions
      */
 
-    public void setupCommentsButton(){
+    public void setupCommentsButton() {
         headerPanel.setCommentButton(new EntityCommentsAction());
     }
 
@@ -261,7 +260,7 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
     }
 
 
-    public void setOpenInBrowserButton(){
+    public void setOpenInBrowserButton() {
         headerPanel.setOpenInBrowserButton();
     }
 
@@ -269,13 +268,14 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
      * Field popup related functions
      */
 
-    public void setupFieldsSelectButton(){
+    public void setupFieldsSelectButton() {
         setupFieldsSelectButton(fieldsSelectAction);
     }
 
     private void setupFieldsSelectButton(SelectFieldsAction fieldSelectButton) {
         headerPanel.setFieldSelectButton(fieldSelectButton);
         fieldsPopup.addSelectionListener(e -> entityFieldsPanel.setEntityModel(entityModelWrapper, fieldsPopup.getSelectedFields()));
+        fieldsPopup.addPersistentStateListener();
     }
 
     public void showFieldsSettings() {
@@ -284,30 +284,8 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
         fieldsPopup.setVisible(!fieldsPopup.isVisible());
     }
 
-    /*
-    TODO need to destroy this mechanism, implement instead listener on persistant state
-     */
-    public void addFieldSelectListener(FieldsSelectPopup.SelectionListener selectionListener) {
-        this.selectionListener = selectionListener;
-    }
-
-    /*
-    TODO eliminate this mechanism, implement change listener on ide persistant state
-     */
-    public Set<String> getSelectedFields() {
-        return fieldsPopup.getSelectedFields();
-    }
-
-    /*
-   TODO eliminate this mechanism, implement change listener on ide persistant state
-    */
-    public void setSelectedFields(Set<String> selectedFields) {
-        fieldsPopup.setSelectedFieldsFromOtherTab(selectedFields);
-    }
-
     /**
      * Methods for the Scrollable interface
-     *
      */
 
     @Override

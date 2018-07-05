@@ -183,7 +183,7 @@ public class FieldsSelectPopup extends JFrame {
         pack();
     }
 
-    private void setupPopupButtonState(){
+    private void setupPopupButtonState() {
         if (defaultFieldsMap.get(entityModelWrapper.getEntityType()).containsAll(selectedFieldsMap.get(entityModelWrapper.getEntityType()))
                 && selectedFieldsMap.get(entityModelWrapper.getEntityType()).containsAll(defaultFieldsMap.get(entityModelWrapper.getEntityType()))) {
             selectFieldsAction.setDefaultFieldsIcon(true);
@@ -191,9 +191,9 @@ public class FieldsSelectPopup extends JFrame {
         } else {
             selectFieldsAction.setDefaultFieldsIcon(false);
             resetButton.setEnabled(true);
-            if(selectedFieldsMap.get(entityModelWrapper).size()==0){
+            if (selectedFieldsMap.get(entityModelWrapper.getEntityType()).size() == 0) {
                 selectNoneButton.setEnabled(false);
-            } else if(selectedFieldsMap.get(entityModelWrapper.getEntityType()).size() == allFields.size()){
+            } else if (selectedFieldsMap.get(entityModelWrapper.getEntityType()).size() == allFields.size()) {
                 selectAllButton.setEnabled(false);
             }
         }
@@ -212,7 +212,7 @@ public class FieldsSelectPopup extends JFrame {
         }
     }
 
-    public void setEntityDetails(EntityModelWrapper entityModelWrapper, Collection<FieldMetadata> allFields, SelectFieldsAction selectFieldsAction){
+    public void setEntityDetails(EntityModelWrapper entityModelWrapper, Collection<FieldMetadata> allFields, SelectFieldsAction selectFieldsAction) {
         this.selectFieldsAction = selectFieldsAction;
         this.allFields = allFields.stream()
                 .filter(e -> !Arrays.asList("phase", "name", "subtype", "description").contains(e.getName()))
@@ -225,7 +225,7 @@ public class FieldsSelectPopup extends JFrame {
         updateFieldsPanel(selectedFieldsMap.get(entityModelWrapper.getEntityType()), this.allFields);
     }
 
-    private void clearSearchField(){
+    private void clearSearchField() {
         searchField.setText("");
     }
 
@@ -409,23 +409,18 @@ public class FieldsSelectPopup extends JFrame {
         selectedFieldsMap.get(entityModelWrapper.getEntityType()).addAll(fields);
     }
 
-    /**
-     * Sets the fields in the current detailed view
-     *
-     * @param fields the fields from another detailed view tab with the same entity
-     */
-    public void setSelectedFieldsFromOtherTab(Set<String> fields) {
-        setSelectedFields(fields);
-        updateFieldsPanel(selectedFieldsMap.get(entityModelWrapper.getEntityType()), allFields);
-        fieldsPanel.repaint();
-        listeners.get(0).valueChanged(new SelectionEvent(this));
-        if (defaultFieldsMap.get(entityModelWrapper.getEntityType()).containsAll(selectedFieldsMap.get(entityModelWrapper.getEntityType())) && selectedFieldsMap.get(entityModelWrapper.getEntityType()).containsAll(defaultFieldsMap.get(entityModelWrapper.getEntityType()))) {
-            selectFieldsAction.setDefaultFieldsIcon(true);
-            resetButton.setEnabled(false);
-        } else {
-            selectFieldsAction.setDefaultFieldsIcon(false);
-            resetButton.setEnabled(true);
-        }
 
+    public void addPersistentStateListener() {
+        idePluginPersistentState.addStateChangedHandler(new IdePluginPersistentState.SettingsChangedHandler() {
+            @Override
+            public void stateChanged(IdePluginPersistentState.Key key, JSONObject value) {
+                if (key == IdePluginPersistentState.Key.SELECTED_FIELDS) {
+                    retrieveSelectedFieldsFromPersistentState();
+                    listeners.forEach(listener -> listener.valueChanged(new SelectionEvent(this)));
+                    updateFieldsPanel(selectedFieldsMap.get(entityModelWrapper.getEntityType()), allFields);
+                    setupPopupButtonState();
+                }
+            }
+        });
     }
 }
