@@ -78,8 +78,6 @@ public class CommentsConversationPanel extends JPanel {
         });
         sendMessageButton = new JButton("Add");
 
-
-//        chatBox = new HTMLPresenterFXPanel();
         chatBox.setBorder(null);
         chatBox.setFont(new Font("Arial", Font.PLAIN, 11));
         chatBox.addEventActions();
