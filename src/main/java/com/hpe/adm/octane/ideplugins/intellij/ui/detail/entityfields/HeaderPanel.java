@@ -31,8 +31,6 @@ import com.intellij.util.ui.UIUtil;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.Collection;
 
 import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.MANUAL_TEST_RUN;
@@ -50,7 +48,6 @@ public class HeaderPanel extends JPanel {
     private AnAction saveSelectedPhaseAction;
     private AnAction refreshAction;
     private AnAction fieldsSelectAction;
-    private AnAction openInBrowserAction;
     private AnAction commentAction;
     private ActionToolbar actionToolBar;
     private DefaultActionGroup buttonActionGroup;
@@ -131,7 +128,7 @@ public class HeaderPanel extends JPanel {
         separatorPhaseButtons = new JSeparator(SwingConstants.VERTICAL);
         GridBagConstraints gbc_separator3 = new GridBagConstraints();
         gbc_separator3.gridx = 7;
-        gbc_separator3.insets = new Insets(5, 5, 7, 5);
+        gbc_separator3.insets = new Insets(5, 5, 5, 5);
         gbc_separator3.fill = GridBagConstraints.VERTICAL;
         add(separatorPhaseButtons, gbc_separator3);
 
@@ -141,7 +138,7 @@ public class HeaderPanel extends JPanel {
         actionToolBar = ActionManager.getInstance().createActionToolbar("save | refresh | fields | open in browser | comments ", buttonActionGroup,
                 true);
         GridBagConstraints gbc_actionButtons = new GridBagConstraints();
-        gbc_actionButtons.insets = new Insets(0, 0, 5, 0);
+        gbc_actionButtons.insets = new Insets(0, 0, 0, 0);
         gbc_actionButtons.gridx = 8;
         gbc_actionButtons.anchor = GridBagConstraints.EAST;
         panelControls.add(actionToolBar.getComponent(), BorderLayout.CENTER);
@@ -244,6 +241,8 @@ public class HeaderPanel extends JPanel {
             setPhaseInHeader(true);
         } else {
             setPhaseInHeader(false);
+            //remove extra separator between phase and buttons
+            remove(separatorPhaseButtons);
         }
         setupPhaseDetails();
     }
