@@ -13,7 +13,7 @@ import javax.swing.text.NumberFormatter;
 import java.awt.*;
 import java.text.NumberFormat;
 
-public class NumericFieldEditor extends JPanel implements FieldEditor {
+public class NumericFieldEditor extends FieldEditor {
     private EntityModelWrapper entityModelWrapper;
     private String fieldName;
     private JFormattedTextField textField;
@@ -24,13 +24,13 @@ public class NumericFieldEditor extends JPanel implements FieldEditor {
     public NumericFieldEditor(boolean isRealNumber) {
         this.isRealNumber = isRealNumber;
         GridBagLayout layout = new GridBagLayout();
-        layout.columnWidths = new int[] { 0, 0};
-        layout.columnWeights = new double[] { 0.0, 0.0};
+        layout.columnWidths = new int[]{0, 0};
+        layout.columnWeights = new double[]{0.0, 0.0};
         setLayout(layout);
 
         NumberFormat format = NumberFormat.getInstance();
         NumberFormatter formatter = new NumberFormatter(format);
-        if(isRealNumber){
+        if (isRealNumber) {
             formatter.setValueClass(Float.class);
         } else {
             formatter.setValueClass(Integer.class);
@@ -39,7 +39,13 @@ public class NumericFieldEditor extends JPanel implements FieldEditor {
         formatter.setCommitsOnValidEdit(true);
 
         textField = new JFormattedTextField(formatter);
-        textField.setColumns(20);
+        GridBagConstraints gbc_valueTextField = new GridBagConstraints();
+        gbc_valueTextField.anchor = GridBagConstraints.WEST;
+        gbc_valueTextField.fill = GridBagConstraints.HORIZONTAL;
+        gbc_valueTextField.insets = new Insets(0, 0, 0, 5);
+        gbc_valueTextField.gridx = 0;
+        gbc_valueTextField.weightx = 1.0;
+        add(textField, gbc_valueTextField);
 
         modifyListener = new DocumentListener() {
             @Override
@@ -60,7 +66,7 @@ public class NumericFieldEditor extends JPanel implements FieldEditor {
     }
 
 
-    private void handleValueChange(){
+    private void handleValueChange() {
         if (textField.getText().isEmpty()) {
             entityModelWrapper.setValue(new ReferenceFieldModel(fieldName, null));
         } else {
@@ -81,7 +87,6 @@ public class NumericFieldEditor extends JPanel implements FieldEditor {
         }
     }
 
-    @Override
     public void setField(EntityModelWrapper entityModel, String fieldName) {
         this.entityModelWrapper = entityModel;
         this.fieldName = fieldName;

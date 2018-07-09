@@ -9,12 +9,12 @@ import com.hpe.adm.octane.ideplugins.services.model.EntityModelWrapper;
 
 public class FieldEditorFactory {
 
-    public static final String FIELD_APPMODULE = "product_areas";
+    private static final String FIELD_APPMODULE = "product_areas";
 
     @Inject
     private MetadataService metadataService;
 
-    public FieldEditorFactory(){
+    public FieldEditorFactory() {
 
     }
 
@@ -45,7 +45,7 @@ public class FieldEditorFactory {
                     fieldEditor = new ReadOnlyFieldEditor();
                     break;
                 case Reference:
-                      fieldEditor = new ReadOnlyFieldEditor();
+                    fieldEditor = new ReadOnlyFieldEditor();
                     break;
                 default:
                     fieldEditor = new ReadOnlyFieldEditor();

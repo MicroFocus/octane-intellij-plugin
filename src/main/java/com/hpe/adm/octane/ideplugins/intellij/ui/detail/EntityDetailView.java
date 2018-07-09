@@ -102,7 +102,7 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
         GridBagConstraints gbc_entityFieldsPanel = new GridBagConstraints();
         gbc_entityFieldsPanel.anchor = GridBagConstraints.NORTH;
         gbc_entityFieldsPanel.fill = GridBagConstraints.HORIZONTAL;
-        gbc_entityFieldsPanel.insets = new Insets(0, 5, 0, 5);
+        gbc_entityFieldsPanel.insets = new Insets(5, 10, 5, 5);
         gbc_entityFieldsPanel.gridx = 0;
         gbc_entityFieldsPanel.gridy = 1;
         add(entityFieldsPanel, gbc_entityFieldsPanel);
@@ -121,11 +121,11 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
         commentsPanel.setVisible(false);
 
         JLabel descriptionLabel = new JLabel("Description");
-        descriptionLabel.setFont(new Font("Arial", Font.BOLD, 18));
+        descriptionLabel.setFont(new Font(descriptionLabel.getFont().getName(), Font.BOLD, 18));
         GridBagConstraints gbc_descriptionLabel = new GridBagConstraints();
         gbc_descriptionLabel.anchor = GridBagConstraints.NORTH;
         gbc_descriptionLabel.fill = GridBagConstraints.HORIZONTAL;
-        gbc_descriptionLabel.insets = new Insets(10, 12, 5, 5);
+        gbc_descriptionLabel.insets = new Insets(10, 10, 5, 5);
         gbc_descriptionLabel.gridx = 0;
         gbc_descriptionLabel.gridy = 2;
         add(descriptionLabel, gbc_descriptionLabel);
