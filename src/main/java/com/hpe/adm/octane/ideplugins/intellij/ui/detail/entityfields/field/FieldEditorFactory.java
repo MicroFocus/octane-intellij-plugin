@@ -3,7 +3,6 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.field;
 
 import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
-import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.services.MetadataService;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.model.EntityModelWrapper;
@@ -20,8 +19,6 @@ public class FieldEditorFactory {
     }
 
     public FieldEditor createFieldEditor(EntityModelWrapper entityModelWrapper, String fieldName) {
-
-        EntityModel entityModel = entityModelWrapper.getReadOnlyEntityModel();
         Entity entityType = entityModelWrapper.getEntityType();
         FieldMetadata fieldMetadata = metadataService.getMetadata(entityType, fieldName);
 
@@ -33,11 +30,10 @@ public class FieldEditorFactory {
         } else {
             switch (fieldMetadata.getFieldType()) {
                 case Integer:
-                    fieldEditor = new NumericFieldEditor();
-//                    ((NumericFieldEditor) fieldEditor).setBounds(0, Long.MAX_VALUE);
+                    fieldEditor = new NumericFieldEditor(false);
                     break;
                 case Float:
-                    fieldEditor = new NumericFieldEditor();
+                    fieldEditor = new NumericFieldEditor(true);
                     break;
                 case String:
                     fieldEditor = new StringFieldEditor();
@@ -46,13 +42,9 @@ public class FieldEditorFactory {
                     fieldEditor = new BooleanFieldEditor();
                     break;
                 case DateTime:
-                    fieldEditor = new DateTimeFieldEditor();
+                    fieldEditor = new ReadOnlyFieldEditor();
                     break;
                 case Reference:
-//                    try {
-//                        fieldEditor = createReferenceFieldEditor(parent, entityModelWrapper, fieldMetadata);
-//                    } catch (Exception e) {
-//                        log.log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Failed to create reference field editor: " + e));
                       fieldEditor = new ReadOnlyFieldEditor();
                     break;
                 default:
