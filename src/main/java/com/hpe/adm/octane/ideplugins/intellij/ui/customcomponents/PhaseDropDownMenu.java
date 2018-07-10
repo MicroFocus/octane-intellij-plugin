@@ -21,8 +21,10 @@ import com.intellij.openapi.util.IconLoader;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -163,5 +165,9 @@ public class PhaseDropDownMenu extends JPanel {
 
     public FieldModel getSelectedItem() {
         return selectedPhase;
+    }
+
+    public void addPhaseChangeListener(MouseListener listener){
+        targetPhaseLabel.addMouseListener(listener);
     }
 }

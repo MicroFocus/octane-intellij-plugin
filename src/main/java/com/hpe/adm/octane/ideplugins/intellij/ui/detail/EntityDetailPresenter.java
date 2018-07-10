@@ -67,6 +67,8 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
 
     private EntityDetailView entityDetailView;
 
+    private boolean stateChanged = false;
+
     public EntityDetailPresenter() {
     }
 
@@ -78,7 +80,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
     @Inject
     public void setView(EntityDetailView entityDetailView) {
         this.entityDetailView = entityDetailView;
-        entityDetailView.setSaveSelectedPhaseButton(new SaveSelectedPhaseAction());
+        entityDetailView.setSaveSelectedPhaseButton(new SaveAction());
         entityDetailView.setRefreshEntityButton(new EntityRefreshAction());
         entityDetailView.setOpenInBrowserButton();
         entityDetailView.setupFieldsSelectButton();
@@ -108,6 +110,9 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                         description = imageService.downloadPictures(description);
                         entityModelWrapper.setValue(new StringFieldModel(DetailsViewDefaultFields.FIELD_DESCRIPTION, description));
 
+                        entityModelWrapper.addFieldModelChangedHandler((e)->{
+                            stateChanged = true;
+                        });
                         return entityModelWrapper;
                     } catch (Exception ex) {
                         ExceptionHandler exceptionHandler = new ExceptionHandler(ex, project);
@@ -138,9 +143,19 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
         }
     }
 
-    private final class SaveSelectedPhaseAction extends AnAction {
-        public SaveSelectedPhaseAction() {
+    private final class SaveAction extends AnAction {
+
+
+        public SaveAction() {
             super("Save selected phase", "Save changes to entity phase", IconLoader.findIcon("/actions/menu-saveall.png"));
+        }
+
+        public void update(AnActionEvent e){
+            if(stateChanged){
+                e.getPresentation().setEnabled(true);
+            } else {
+                e.getPresentation().setEnabled(false);
+            }
         }
 
         public void actionPerformed(AnActionEvent e) {
@@ -148,7 +163,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                             (ReferenceFieldModel) entityDetailView.getSelectedTransition()
                     , (nextPhase) -> {
                         try {
-                            entityService.updateEntityPhase(entityModelWrapper.getEntityModel(), nextPhase);
+                            entityService.updateEntity(entityModelWrapper.getEntityModel());
                         } catch (OctaneException ex) {
                             if (ex.getMessage().contains("400")) {
                                 String errorMessage = "Failed to change phase";

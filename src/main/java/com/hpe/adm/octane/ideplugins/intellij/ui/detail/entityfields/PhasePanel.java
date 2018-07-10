@@ -16,6 +16,7 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.nga.sdk.model.FieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.PhaseDropDownMenu;
+import com.hpe.adm.octane.ideplugins.services.model.EntityModelWrapper;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
 import org.jdesktop.swingx.JXLabel;
 
@@ -31,6 +32,8 @@ public class PhasePanel extends JPanel {
     private JXLabel currentPhaseLabel;
 
     private PhaseDropDownMenu phaseDropDownMenu;
+
+    private EntityModelWrapper entityModelWrapper;
 
     private JSeparator separatorPhasePanel;
 
@@ -81,6 +84,12 @@ public class PhasePanel extends JPanel {
     public void setPhaseDetails(FieldModel phaseDetails) {
         this.phaseDetails.setText(Util.getUiDataFromModel(phaseDetails));
         this.phaseDropDownMenu.setPhaseDetails(phaseDetails);
+    }
+
+    public void setEntityModelWrapper(EntityModelWrapper entityModelWrapper){
+        this.entityModelWrapper = entityModelWrapper;
+        //todo add listener for modelwrapper
+        //phaseDropDownMenu.addPhaseChangeListener()
     }
 
     public void setPossiblePhasesForEntity(Collection<EntityModel> phasesList) {

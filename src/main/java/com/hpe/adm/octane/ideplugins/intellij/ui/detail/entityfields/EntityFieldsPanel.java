@@ -18,7 +18,6 @@ import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.field.FieldEditor;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.field.FieldEditorFactory;
 import com.hpe.adm.octane.ideplugins.services.model.EntityModelWrapper;
-import net.miginfocom.swing.MigLayout;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
 
