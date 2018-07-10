@@ -9,12 +9,9 @@ import com.hpe.adm.octane.ideplugins.services.util.Util;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.text.NumberFormatter;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.text.NumberFormat;
 
 public class NumericFieldEditor extends FieldEditor {
     private EntityModelWrapper entityModelWrapper;
@@ -31,29 +28,19 @@ public class NumericFieldEditor extends FieldEditor {
         layout.columnWeights = new double[]{0.0, 0.0};
         setLayout(layout);
 
-//        NumberFormat format = NumberFormat.getInstance();
-//        NumberFormatter formatter = new NumberFormatter(format);
-//        if (isRealNumber) {
-//            formatter.setValueClass(Float.class);
-//        } else {
-//            formatter.setValueClass(Integer.class);
-//        }
-//        formatter.setAllowsInvalid(false);
-//        formatter.setCommitsOnValidEdit(true);
-
         textField = new JTextField();
         textField.addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
-                if(isRealNumber){
-                    if((e.getKeyChar() < '0' || e.getKeyChar() > '9') && e.getKeyChar() != '.'){
+                if (isRealNumber) {
+                    if ((e.getKeyChar() < '0' || e.getKeyChar() > '9') && e.getKeyChar() != '.') {
                         e.consume();
                     }
-                    if(textField.getText().contains(".")){
+                    if (textField.getText().contains(".")) {
                         e.consume();
                     }
                 } else {
-                    if(e.getKeyChar() < '0' || e.getKeyChar() > '9'){
+                    if (e.getKeyChar() < '0' || e.getKeyChar() > '9') {
                         e.consume();
                     }
                 }
