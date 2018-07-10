@@ -15,12 +15,10 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields;
 
 import com.google.inject.Inject;
-import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.nga.sdk.model.FieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.DetailsViewDefaultFields;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
-import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
 import com.hpe.adm.octane.ideplugins.services.EntityService;
 import com.hpe.adm.octane.ideplugins.services.model.EntityModelWrapper;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
@@ -31,7 +29,6 @@ import com.intellij.util.ui.UIUtil;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Collection;
 
 import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.MANUAL_TEST_RUN;
 import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.TEST_SUITE_RUN;
@@ -48,20 +45,22 @@ public class HeaderPanel extends JPanel {
     private AnAction saveSelectedPhaseAction;
     private AnAction refreshAction;
     private AnAction fieldsSelectAction;
-    private AnAction openInBrowserAction;
     private AnAction commentAction;
     private ActionToolbar actionToolBar;
     private DefaultActionGroup buttonActionGroup;
     private JPanel panelControls;
 
-    private PhasePanel phasePanel;
 
     private EntityModelWrapper entityModelWrapper;
+    private PhasePanel phasePanel;
 
     @Inject
     private EntityService entityService;
 
-    public HeaderPanel() {
+    @Inject
+    public HeaderPanel(PhasePanel phasePanel) {
+        this.phasePanel = phasePanel;
+
         UIManager.put("ComboBox.background", JBColor.background());
         UIManager.put("ComboBox.foreground", JBColor.foreground());
         UIManager.put("ComboBox.selectionBackground", JBColor.background());
@@ -119,7 +118,6 @@ public class HeaderPanel extends JPanel {
         gbc_separator2.fill = GridBagConstraints.VERTICAL;
         add(separatorNamePhase, gbc_separator2);
 
-        phasePanel = new PhasePanel();
         GridBagConstraints gbc_phasePanel = new GridBagConstraints();
         gbc_phasePanel.insets = new Insets(0, 0, 0, 0);
         gbc_phasePanel.gridx = 6;
@@ -170,10 +168,6 @@ public class HeaderPanel extends JPanel {
         }
     }
 
-    public void removeSaveSelectedPhaseButton() {
-        buttonActionGroup.remove(this.saveSelectedPhaseAction);
-    }
-
     public void setRefreshButton(AnAction refreshAction) {
         if (this.refreshAction == null) {
             this.refreshAction = refreshAction;
@@ -211,14 +205,6 @@ public class HeaderPanel extends JPanel {
         phasePanel.setPhaseInHeader(showPhase);
     }
 
-    public FieldModel getSelectedTransition() {
-        return phasePanel.getSelectedTransition();
-    }
-
-    public void setPossiblePhasesForEntity(Collection<EntityModel> phasesList) {
-        phasePanel.setPossiblePhasesForEntity(phasesList);
-    }
-
     public Point getFieldsPopupLocation() {
         Component button = actionToolBar.getComponent().getComponent(actionToolBar.getComponent().getComponents().length - 2);
         return new Point(button.getLocationOnScreen().x + (int) button.getPreferredSize().getWidth(),
@@ -238,28 +224,11 @@ public class HeaderPanel extends JPanel {
         setPhaseDetails(entityModelWrapper.getValue(DetailsViewDefaultFields.FIELD_PHASE));
         //setup target phase
         if (entityModelWrapper.getEntityType() != MANUAL_TEST_RUN && entityModelWrapper.getEntityType() != TEST_SUITE_RUN) {
-            setupPhaseDetails();
+            phasePanel.setEntityModelWrapper(entityModelWrapper);
             setPhaseInHeader(true);
         } else {
             setPhaseInHeader(false);
         }
-        setupPhaseDetails();
-    }
-
-    public void setupPhaseDetails() {
-        RestUtil.runInBackground(() -> {
-            String currentPhaseId = Util.getUiDataFromModel(entityModelWrapper.getValue("phase"), "id");
-            return entityService.findPossibleTransitionFromCurrentPhase(entityModelWrapper.getEntityType(), currentPhaseId);
-        }, (possibleTransitions) -> {
-            if (possibleTransitions.isEmpty()) {
-                possibleTransitions.add(new EntityModel("target_phase", "No transition"));
-                setPossiblePhasesForEntity(possibleTransitions);
-                saveSelectedPhaseAction.getTemplatePresentation().setEnabled(false);
-            } else {
-                setPossiblePhasesForEntity(possibleTransitions);
-                saveSelectedPhaseAction.getTemplatePresentation().setEnabled(true);
-            }
-        }, null, "Failed to get possible transitions", "fetching possible transitions");
     }
 
     private final class EntityOpenInBrowser extends AnAction {

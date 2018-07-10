@@ -75,6 +75,30 @@ public class RestUtil {
         });
     }
 
+    public static <T> void runInBackground(final Runnable runnable,
+                                           final Project project,
+                                           final String errorMessage,
+                                           final String loadingMessage) {
+        ApplicationManager.getApplication().invokeLater(() -> {
+            Task.Backgroundable backgroundTask = new Task.Backgroundable(project, loadingMessage, true) {
+                public void run(@NotNull ProgressIndicator indicator) {
+                    try {
+                        ApplicationManager.getApplication().invokeLater(() -> {
+                            runnable.run();
+                        });
+                    } catch (RuntimeException e) {
+                        if (errorMessage != null) {
+                            notifyError(e, errorMessage, project);
+                        } else {
+                            throw e;
+                        }
+                    }
+                }
+            };
+            backgroundTask.queue();
+        });
+    }
+
     private static void notifyError(Throwable throwable, String errorMessage, Project project) {
         NotificationBuilder notification = new NotificationBuilder(project, errorMessage, getErrorTextFromException(throwable));
         notificationService.notifyError(notification);

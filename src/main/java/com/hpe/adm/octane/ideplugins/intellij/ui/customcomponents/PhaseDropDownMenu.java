@@ -12,19 +12,22 @@
  */
 package com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents;
 
+import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.nga.sdk.model.FieldModel;
+import com.hpe.adm.nga.sdk.model.ReferenceFieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
+import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
+import com.hpe.adm.octane.ideplugins.services.EntityService;
+import com.hpe.adm.octane.ideplugins.services.model.EntityModelWrapper;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
 import com.intellij.openapi.ui.JBPopupMenu;
 import com.intellij.openapi.util.IconLoader;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -45,6 +48,11 @@ public class PhaseDropDownMenu extends JPanel {
     private List<EntityModel> phaseList;
     private FieldModel selectedPhase;
 
+    private EntityModelWrapper entityModelWrapper;
+
+    @Inject
+    private EntityService entityService;
+
     public PhaseDropDownMenu() {
         GridBagLayout gbl_phasePanel = new GridBagLayout();
         gbl_phasePanel.columnWidths = new int[]{0, 0};
@@ -54,7 +62,7 @@ public class PhaseDropDownMenu extends JPanel {
 
         targetPhaseLabel = new JLabel(MOVE_TO + "Loading phase ...");
         targetPhaseLabel.setForeground(new Color(30, 144, 255));
-        targetPhaseLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        targetPhaseLabel.setFont(new Font(targetPhaseLabel.getFont().getName(), Font.BOLD, 14));
         targetPhaseLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
         GridBagConstraints gbc_targetPhaseLabel = new GridBagConstraints();
         gbc_targetPhaseLabel.anchor = GridBagConstraints.WEST;
@@ -86,8 +94,8 @@ public class PhaseDropDownMenu extends JPanel {
             targetPhaseLabel.setEnabled(false);
         } else {
             targetPhaseLabel.setText(MOVE_TO + Util.getUiDataFromModel(phasesList.get(0).getValue("target_phase"), "name"));
-            targetPhaseLabel.setForeground(new Color(30, 144, 255));
-            targetPhaseLabel.setFont(new Font("Arial", Font.BOLD, 14));
+//            targetPhaseLabel.setForeground(new Color(30, 144, 255));
+//            targetPhaseLabel.setFont(new Font("Arial", Font.BOLD, 14));
             targetPhaseLabel.setToolTipText(TOOLTIP_CLICKABLE_PHASE);
             targetPhaseLabel.addMouseListener(new MouseAdapter() {
                 @Override
@@ -101,6 +109,7 @@ public class PhaseDropDownMenu extends JPanel {
                     if (arrow != null) {
                         remove(arrow);
                     }
+                    entityModelWrapper.setValue(new ReferenceFieldModel("phase", ((ReferenceFieldModel) selectedPhase).getValue()));
                 }
             });
         }
@@ -158,16 +167,28 @@ public class PhaseDropDownMenu extends JPanel {
                     targetPhaseLabel.setEnabled(false);
                     remove(arrow);
                     popupMenu.setVisible(false);
+                    entityModelWrapper.setValue(new ReferenceFieldModel("phase", ((ReferenceFieldModel) selectedPhase).getValue()));
                 });
             }
         }
     }
 
-    public FieldModel getSelectedItem() {
-        return selectedPhase;
+    public void setEntityModelWrapper(EntityModelWrapper entityModelWrapper) {
+        this.entityModelWrapper = entityModelWrapper;
+        setupPhaseDetails();
     }
 
-    public void addPhaseChangeListener(MouseListener listener){
-        targetPhaseLabel.addMouseListener(listener);
+    public void setupPhaseDetails() {
+        RestUtil.runInBackground(() -> {
+            String currentPhaseId = Util.getUiDataFromModel(entityModelWrapper.getValue("phase"), "id");
+            return entityService.findPossibleTransitionFromCurrentPhase(entityModelWrapper.getEntityType(), currentPhaseId);
+        }, (possibleTransitions) -> {
+            if (possibleTransitions.isEmpty()) {
+                possibleTransitions.add(new EntityModel("target_phase", "No transition"));
+                addItems((List<EntityModel>) possibleTransitions);
+            } else {
+                addItems((List<EntityModel>) possibleTransitions);
+            }
+        }, null, "Failed to get possible transitions", "fetching possible transitions");
     }
 }

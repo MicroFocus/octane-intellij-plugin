@@ -13,6 +13,7 @@
 
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields;
 
+import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.nga.sdk.model.FieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.PhaseDropDownMenu;
@@ -33,17 +34,16 @@ public class PhasePanel extends JPanel {
 
     private PhaseDropDownMenu phaseDropDownMenu;
 
-    private EntityModelWrapper entityModelWrapper;
-
     private JSeparator separatorPhasePanel;
 
-    public PhasePanel() {
-
+    @Inject
+    public PhasePanel(PhaseDropDownMenu phaseDropDownMenu) {
+        this.phaseDropDownMenu = phaseDropDownMenu;
         setToolTipText("");
         setBorder(null);
         GridBagLayout gbl_phasePanel = new GridBagLayout();
-        gbl_phasePanel.columnWidths = new int[] { 0, 0, 0, 0, 0 };
-        gbl_phasePanel.columnWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0 };
+        gbl_phasePanel.columnWidths = new int[]{0, 0, 0, 0, 0};
+        gbl_phasePanel.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0};
         setLayout(gbl_phasePanel);
 
         currentPhaseLabel = new JXLabel();
@@ -73,7 +73,6 @@ public class PhasePanel extends JPanel {
         gbc_separator3.fill = GridBagConstraints.VERTICAL;
         add(separatorPhasePanel, gbc_separator3);
 
-        phaseDropDownMenu = new PhaseDropDownMenu();
         GridBagConstraints gbc_phaseComboBox = new GridBagConstraints();
         gbc_phaseComboBox.fill = GridBagConstraints.HORIZONTAL;
         gbc_phaseComboBox.anchor = GridBagConstraints.WEST;
@@ -86,18 +85,12 @@ public class PhasePanel extends JPanel {
         this.phaseDropDownMenu.setPhaseDetails(phaseDetails);
     }
 
-    public void setEntityModelWrapper(EntityModelWrapper entityModelWrapper){
-        this.entityModelWrapper = entityModelWrapper;
-        //todo add listener for modelwrapper
-        //phaseDropDownMenu.addPhaseChangeListener()
+    public void setEntityModelWrapper(EntityModelWrapper entityModelWrapper) {
+        phaseDropDownMenu.setEntityModelWrapper(entityModelWrapper);
     }
 
     public void setPossiblePhasesForEntity(Collection<EntityModel> phasesList) {
         phaseDropDownMenu.addItems((ArrayList) phasesList);
-    }
-
-    public FieldModel getSelectedTransition() {
-        return phaseDropDownMenu.getSelectedItem();
     }
 
     public void setPhaseInHeader(boolean showPhase) {

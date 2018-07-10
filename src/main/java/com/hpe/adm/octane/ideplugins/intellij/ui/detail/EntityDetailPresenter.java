@@ -18,7 +18,6 @@ import com.google.gson.JsonParser;
 import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.exception.OctaneException;
 import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
-import com.hpe.adm.nga.sdk.model.ReferenceFieldModel;
 import com.hpe.adm.nga.sdk.model.StringFieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
@@ -110,9 +109,6 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                         description = imageService.downloadPictures(description);
                         entityModelWrapper.setValue(new StringFieldModel(DetailsViewDefaultFields.FIELD_DESCRIPTION, description));
 
-                        entityModelWrapper.addFieldModelChangedHandler((e)->{
-                            stateChanged = true;
-                        });
                         return entityModelWrapper;
                     } catch (Exception ex) {
                         ExceptionHandler exceptionHandler = new ExceptionHandler(ex, project);
@@ -125,6 +121,9 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                     if (entityModelWrapper != null) {
                         entityDetailView.setEntityModel(entityModelWrapper, fields);
                     }
+                    entityModelWrapper.addFieldModelChangedHandler((e)->{
+                        stateChanged = true;
+                    });
                 },
                 null,
                 null,
@@ -140,6 +139,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
         public void actionPerformed(AnActionEvent e) {
             entityDetailView.doRefresh();
             setEntity(entityType, entityId);
+            stateChanged = false;
         }
     }
 
@@ -148,6 +148,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
 
         public SaveAction() {
             super("Save selected phase", "Save changes to entity phase", IconLoader.findIcon("/actions/menu-saveall.png"));
+            getTemplatePresentation().setEnabled(false);
         }
 
         public void update(AnActionEvent e){
@@ -159,9 +160,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
         }
 
         public void actionPerformed(AnActionEvent e) {
-            RestUtil.runInBackground(() ->
-                            (ReferenceFieldModel) entityDetailView.getSelectedTransition()
-                    , (nextPhase) -> {
+            RestUtil.runInBackground(() -> {
                         try {
                             entityService.updateEntity(entityModelWrapper.getEntityModel());
                         } catch (OctaneException ex) {
@@ -195,7 +194,8 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                         }
                         entityDetailView.doRefresh();
                         setEntity(entityType, entityId);
-                    }, null, "Failed to move to next phase", "Moving to next phase");
+                        stateChanged = false;
+                    }, null, "Failed to save entity", "Saving entity");
 
         }
     }

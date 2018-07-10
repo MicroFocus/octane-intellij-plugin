@@ -71,8 +71,6 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
     @Inject
     private Project project;
 
-    private FieldsSelectPopup.SelectionListener selectionListener;
-
     @Inject
     public EntityDetailView(HeaderPanel headerPanel, EntityFieldsPanel entityFieldsPanel, CommentsConversationPanel commentsPanel, HTMLPresenterFXPanel descriptionPanel) {
 
@@ -220,10 +218,6 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
 
     public void setSaveSelectedPhaseButton(AnAction saveSelectedPhaseAction) {
         headerPanel.setSaveButton(saveSelectedPhaseAction);
-    }
-
-    public FieldModel getSelectedTransition() {
-        return headerPanel.getSelectedTransition();
     }
 
     /**
