@@ -11,12 +11,15 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.NumberFormatter;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.text.NumberFormat;
 
 public class NumericFieldEditor extends FieldEditor {
     private EntityModelWrapper entityModelWrapper;
     private String fieldName;
-    private JFormattedTextField textField;
+    private JTextField textField;
 
     private DocumentListener modifyListener;
     private boolean isRealNumber;
@@ -28,17 +31,44 @@ public class NumericFieldEditor extends FieldEditor {
         layout.columnWeights = new double[]{0.0, 0.0};
         setLayout(layout);
 
-        NumberFormat format = NumberFormat.getInstance();
-        NumberFormatter formatter = new NumberFormatter(format);
-        if (isRealNumber) {
-            formatter.setValueClass(Float.class);
-        } else {
-            formatter.setValueClass(Integer.class);
-        }
-        formatter.setAllowsInvalid(false);
-        formatter.setCommitsOnValidEdit(true);
+//        NumberFormat format = NumberFormat.getInstance();
+//        NumberFormatter formatter = new NumberFormatter(format);
+//        if (isRealNumber) {
+//            formatter.setValueClass(Float.class);
+//        } else {
+//            formatter.setValueClass(Integer.class);
+//        }
+//        formatter.setAllowsInvalid(false);
+//        formatter.setCommitsOnValidEdit(true);
 
-        textField = new JFormattedTextField(formatter);
+        textField = new JTextField();
+        textField.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                if(isRealNumber){
+                    if((e.getKeyChar() < '0' || e.getKeyChar() > '9') && e.getKeyChar() != '.'){
+                        e.consume();
+                    }
+                    if(textField.getText().contains(".")){
+                        e.consume();
+                    }
+                } else {
+                    if(e.getKeyChar() < '0' || e.getKeyChar() > '9'){
+                        e.consume();
+                    }
+                }
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+
+            }
+        });
         GridBagConstraints gbc_valueTextField = new GridBagConstraints();
         gbc_valueTextField.anchor = GridBagConstraints.WEST;
         gbc_valueTextField.fill = GridBagConstraints.HORIZONTAL;
@@ -74,13 +104,17 @@ public class NumericFieldEditor extends FieldEditor {
                 try {
                     Float value = Float.parseFloat(textField.getText());
                     entityModelWrapper.setValue(new FloatFieldModel(fieldName, value));
+                    textField.setForeground(getForeground());
                 } catch (Exception ignored) {
+                    textField.setForeground(Color.RED);
                 }
             } else {
                 try {
                     Long value = Long.parseLong(textField.getText());
                     entityModelWrapper.setValue(new LongFieldModel(fieldName, value));
+                    textField.setForeground(getForeground());
                 } catch (Exception ignored) {
+                    textField.setForeground(Color.RED);
                 }
             }
 
