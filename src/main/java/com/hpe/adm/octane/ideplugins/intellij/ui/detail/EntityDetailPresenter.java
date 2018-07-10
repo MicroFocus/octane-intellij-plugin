@@ -13,24 +13,20 @@
 
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.exception.OctaneException;
 import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
-import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.nga.sdk.model.ReferenceFieldModel;
 import com.hpe.adm.nga.sdk.model.StringFieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
-import com.hpe.adm.octane.ideplugins.intellij.ui.detail.actions.SelectFieldsAction;
 import com.hpe.adm.octane.ideplugins.intellij.util.ExceptionHandler;
 import com.hpe.adm.octane.ideplugins.intellij.util.HtmlTextEditor;
 import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
-import com.hpe.adm.octane.ideplugins.services.CommentService;
 import com.hpe.adm.octane.ideplugins.services.EntityService;
 import com.hpe.adm.octane.ideplugins.services.MetadataService;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
+import com.hpe.adm.octane.ideplugins.services.model.EntityModelWrapper;
 import com.hpe.adm.octane.ideplugins.services.nonentity.ImageService;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -43,25 +39,20 @@ import com.intellij.util.ui.ConfirmationDialog;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.*;
 
 public class EntityDetailPresenter implements Presenter<EntityDetailView> {
 
     private static final Logger logger = Logger.getInstance(EntityDetailPresenter.class.getName());
     private static final String GO_TO_BROWSER_DIALOG_MESSAGE =
             "\nYou can only provide a value for this field using ALM Octane in a browser."
-            + "\nDo you want to do this now? ";
+                    + "\nDo you want to do this now? ";
 
     @Inject
     private Project project;
     @Inject
     private EntityService entityService;
-    @Inject
-    private CommentService commentService;
     @Inject
     private MetadataService metadataService;
     @Inject
@@ -69,8 +60,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
 
     private Long entityId;
     private Entity entityType;
-    private EntityModel entityModel;
-    private boolean isNoTransition = true;
+    private EntityModelWrapper entityModelWrapper;
     private Collection<FieldMetadata> fields;
 
     private EntityDetailView entityDetailView;
@@ -86,6 +76,11 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
     @Inject
     public void setView(EntityDetailView entityDetailView) {
         this.entityDetailView = entityDetailView;
+        entityDetailView.setSaveSelectedPhaseButton(new SaveSelectedPhaseAction());
+        entityDetailView.setRefreshEntityButton(new EntityRefreshAction());
+        entityDetailView.setOpenInBrowserButton();
+        entityDetailView.setupFieldsSelectButton();
+        entityDetailView.setupCommentsButton();
     }
 
     public void setEntity(Entity entityType, Long entityId) {
@@ -98,20 +93,20 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                         fields = metadataService.getVisibleFields(entityType);
 
                         Set<String> requestedFields = fields.stream().map(FieldMetadata::getName).collect(Collectors.toSet());
-                        entityModel = entityService.findEntity(this.entityType, this.entityId, requestedFields);
+                        entityModelWrapper = new EntityModelWrapper(entityService.findEntity(this.entityType, this.entityId, requestedFields));
 
                         //The subtype field is absolutely necessary, yet the server sometimes has weird ideas, and doesn't return it
-                        if(entityType.isSubtype()){
-                            entityModel.setValue(new StringFieldModel(DetailsViewDefaultFields.FIELD_SUBTYPE, entityType.getSubtypeName()));
+                        if (entityType.isSubtype()) {
+                            entityModelWrapper.setValue(new StringFieldModel(DetailsViewDefaultFields.FIELD_SUBTYPE, entityType.getSubtypeName()));
                         }
 
                         //change relative urls with local paths to temp and download images
-                        String description = Util.getUiDataFromModel(entityModel.getValue(DetailsViewDefaultFields.FIELD_DESCRIPTION));
+                        String description = Util.getUiDataFromModel(entityModelWrapper.getValue(DetailsViewDefaultFields.FIELD_DESCRIPTION));
                         description = HtmlTextEditor.removeHtmlStructure(description);
                         description = imageService.downloadPictures(description);
-                        entityModel.setValue(new StringFieldModel(DetailsViewDefaultFields.FIELD_DESCRIPTION, description));
+                        entityModelWrapper.setValue(new StringFieldModel(DetailsViewDefaultFields.FIELD_DESCRIPTION, description));
 
-                        return entityModel;
+                        return entityModelWrapper;
                     } catch (Exception ex) {
                         ExceptionHandler exceptionHandler = new ExceptionHandler(ex, project);
                         exceptionHandler.showErrorNotification();
@@ -119,28 +114,9 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                         return null;
                     }
                 },
-                (entityModel) -> {
-                    if (entityModel != null) {
-                        this.entityModel = entityModel;
-                        entityDetailView.createDetailsPanel(entityModel, fields);
-
-                        if (entityType != MANUAL_TEST_RUN && entityType != TEST_SUITE_RUN) {
-                            setPossibleTransitions(entityModel);
-                            entityDetailView.setPhaseInHeader(true);
-                        } else {
-                            entityDetailView.setPhaseInHeader(false);
-                        }
-
-                        entityDetailView.setSaveSelectedPhaseButton(new SaveSelectedPhaseAction());
-                        entityDetailView.setRefreshEntityButton(new EntityRefreshAction());
-                        entityDetailView.setOpenInBrowserButton(new EntityOpenInBrowser());
-                        entityDetailView.setFieldSelectButton(new SelectFieldsAction(entityDetailView));
-
-                        if (entityType != TASK) {
-                            entityDetailView.setCommentsEntityButton(new EntityCommentsAction());
-                            setComments(entityModel);
-                            addSendNewCommentAction(entityModel);
-                        }
+                (entityModelWrapper) -> {
+                    if (entityModelWrapper != null) {
+                        entityDetailView.setEntityModel(entityModelWrapper, fields);
                     }
                 },
                 null,
@@ -148,26 +124,6 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                 "Loading entity " + entityType.name() + ": " + entityId);
     }
 
-    private void setPossibleTransitions(EntityModel entityModel) {
-        RestUtil.runInBackground(() -> {
-            String currentPhaseId = Util.getUiDataFromModel(entityModel.getValue("phase"), "id");
-            return entityService.findPossibleTransitionFromCurrentPhase(Entity.getEntityType(entityModel), currentPhaseId);
-        }, (possibleTransitions) -> {
-            if (possibleTransitions.isEmpty()) {
-                possibleTransitions.add(new EntityModel("target_phase", "No transition"));
-                entityDetailView.setPossiblePhasesForEntity(possibleTransitions);
-                isNoTransition = true;
-            } else {
-                entityDetailView.setPossiblePhasesForEntity(possibleTransitions);
-                isNoTransition = false;
-            }
-        }, null, "Failed to get possible transitions", "fetching possible transitions");
-    }
-
-    private void setComments(EntityModel entityModel) {
-        Collection<EntityModel> result = new HashSet<>();
-        RestUtil.runInBackground(() -> commentService.getComments(entityModel), (comments) -> entityDetailView.setComments(comments), null, "Failed to get possible comments", "fetching comments");
-    }
 
     private final class EntityRefreshAction extends AnAction {
         public EntityRefreshAction() {
@@ -179,90 +135,39 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
             setEntity(entityType, entityId);
         }
     }
-    
-    private final class EntityOpenInBrowser extends AnAction{
-        public EntityOpenInBrowser() {
-            super ("Open in browser the current entity", "Open in browser", IconLoader.findIcon(Constants.IMG_BROWSER_ICON));
-        }
-        
-        public void actionPerformed(AnActionEvent e) {
-            entityService.openInBrowser(entityModel);
-        }
-    }
-
-    private final class EntityCommentsAction extends AnAction {
-        public EntityCommentsAction() {
-            super("Show comments for current entity", "Show comments for current entity", IconLoader.findIcon(Constants.IMG_COMMENTS_ICON));
-        }
-
-        public void actionPerformed(AnActionEvent e) {
-            entityDetailView.getEntityDetailsPanel().activateCommentsCollapsible();
-
-        }
-    }
 
     private final class SaveSelectedPhaseAction extends AnAction {
         public SaveSelectedPhaseAction() {
             super("Save selected phase", "Save changes to entity phase", IconLoader.findIcon("/actions/menu-saveall.png"));
         }
 
-        public void update(AnActionEvent e) {
-            e.getPresentation().setEnabled(!isNoTransition);
-        }
-
         public void actionPerformed(AnActionEvent e) {
             RestUtil.runInBackground(() ->
-                 (ReferenceFieldModel) entityDetailView.getSelectedTransition()
-            , (nextPhase) -> {
-                try {
-                    entityService.updateEntityPhase(entityDetailView.getEntityModel(), nextPhase);
-                } catch (OctaneException ex) {
-                    if (ex.getMessage().contains("400")) {
-                        String errorMessage = "Failed to change phase";
+                            (ReferenceFieldModel) entityDetailView.getSelectedTransition()
+                    , (nextPhase) -> {
                         try {
-                            JsonParser jsonParser = new JsonParser();
-                            JsonObject jsonObject = (JsonObject) jsonParser.parse(ex.getMessage().substring(ex.getMessage().indexOf("{")));
-                            errorMessage = jsonObject.get("description_translated").getAsString();
-                        } catch (Exception e1) {
-                            logger.debug("Failed to get JSON message from Octane Server" + e1.getMessage());
-                        }
-                        ConfirmationDialog dialog = new ConfirmationDialog(
-                                project,
-                                "Server message: " + errorMessage + GO_TO_BROWSER_DIALOG_MESSAGE,
-                                "Business rule violation",
-                                null, VcsShowConfirmationOption.STATIC_SHOW_CONFIRMATION) {
-                            @Override
-                            public void setDoNotAskOption(@Nullable DoNotAskOption doNotAsk) {
-                                super.setDoNotAskOption(null);
+                            entityService.updateEntityPhase(entityModelWrapper.getEntityModel(), nextPhase);
+                        } catch (OctaneException ex) {
+                            ConfirmationDialog dialog = new ConfirmationDialog(
+                                    project,
+                                    "Server message: " + ex.getError().getValue("description") + GO_TO_BROWSER_DIALOG_MESSAGE,
+                                    "Business rule violation",
+                                    null, VcsShowConfirmationOption.STATIC_SHOW_CONFIRMATION) {
+                                @Override
+                                public void setDoNotAskOption(@Nullable DoNotAskOption doNotAsk) {
+                                    super.setDoNotAskOption(null);
+                                }
+                            };
+                            if (dialog.showAndGet()) {
+                                entityService.openInBrowser(entityModelWrapper.getEntityModel());
                             }
-                        };
-                        if (dialog.showAndGet()) {
-                            entityService.openInBrowser(entityModel);
                         }
-                    } else if(ex.getMessage().contains("403")){
-                      //User is not authorised to perform this operation
-                      ExceptionHandler exceptionHandler = new ExceptionHandler( ex, project);
-                      exceptionHandler.showErrorNotification();
-                    }
-                }
-                entityDetailView.doRefresh();
-                setEntity(entityType, entityId);
-            }, null, "Failed to move to next phase", "Moving to next phase");
+                        entityDetailView.doRefresh();
+                        setEntity(entityType, entityId);
+                    }, null, "Failed to move to next phase", "Moving to next phase");
 
         }
     }
 
-    public void addSendNewCommentAction(EntityModel entityModel) {
-        entityDetailView.addSendNewCommentAction(e -> {
-            try {
-                commentService.postComment(entityModel, entityDetailView.getCommentMessageBoxText());
-            } catch (OctaneException oe){
-                ExceptionHandler exceptionHandler = new ExceptionHandler(oe, project);
-                exceptionHandler.showErrorNotification();
-            }
-            entityDetailView.setCommentMessageBoxText("");
-            setComments(entityModel);
-        });
-    }
 
 }

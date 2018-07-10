@@ -14,18 +14,27 @@
 
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields;
 
+import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.nga.sdk.model.FieldModel;
-import com.intellij.openapi.actionSystem.ActionManager;
-import com.intellij.openapi.actionSystem.ActionToolbar;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
+import com.hpe.adm.octane.ideplugins.intellij.ui.detail.DetailsViewDefaultFields;
+import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
+import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
+import com.hpe.adm.octane.ideplugins.services.EntityService;
+import com.hpe.adm.octane.ideplugins.services.model.EntityModelWrapper;
+import com.hpe.adm.octane.ideplugins.services.util.Util;
+import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ui.UIUtil;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.Collection;
+
+import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.MANUAL_TEST_RUN;
+import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.TEST_SUITE_RUN;
 
 public class HeaderPanel extends JPanel {
 
@@ -37,11 +46,19 @@ public class HeaderPanel extends JPanel {
     private JTextField entityName;
 
     private AnAction saveSelectedPhaseAction;
+    private AnAction refreshAction;
+    private AnAction fieldsSelectAction;
+    private AnAction commentAction;
     private ActionToolbar actionToolBar;
     private DefaultActionGroup buttonActionGroup;
     private JPanel panelControls;
 
     private PhasePanel phasePanel;
+
+    private EntityModelWrapper entityModelWrapper;
+
+    @Inject
+    private EntityService entityService;
 
     public HeaderPanel() {
         UIManager.put("ComboBox.background", JBColor.background());
@@ -53,7 +70,7 @@ public class HeaderPanel extends JPanel {
         setBorder(null);
         GridBagLayout gridBagLayout = new GridBagLayout();
         gridBagLayout.columnWidths = new int[]{0, 0, 0, 0, 0, 0, 0};
-        gridBagLayout.columnWeights = new double[] { 0.0, 0.0, 0.0, 0.5, 0.5, 0.0, 0.0, 0.0, 0.0 };
+        gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, 0.5, 0.5, 0.0, 0.0, 0.0, 0.0};
         setLayout(gridBagLayout);
 
         entityIconLabel = new JLabel();
@@ -111,7 +128,7 @@ public class HeaderPanel extends JPanel {
         separatorPhaseButtons = new JSeparator(SwingConstants.VERTICAL);
         GridBagConstraints gbc_separator3 = new GridBagConstraints();
         gbc_separator3.gridx = 7;
-        gbc_separator3.insets = new Insets(5, 5, 7, 5);
+        gbc_separator3.insets = new Insets(5, 5, 5, 5);
         gbc_separator3.fill = GridBagConstraints.VERTICAL;
         add(separatorPhaseButtons, gbc_separator3);
 
@@ -121,33 +138,35 @@ public class HeaderPanel extends JPanel {
         actionToolBar = ActionManager.getInstance().createActionToolbar("save | refresh | fields | open in browser | comments ", buttonActionGroup,
                 true);
         GridBagConstraints gbc_actionButtons = new GridBagConstraints();
-        gbc_actionButtons.insets = new Insets(0, 0, 5, 0);
+        gbc_actionButtons.insets = new Insets(0, 0, 0, 0);
         gbc_actionButtons.gridx = 8;
         gbc_actionButtons.anchor = GridBagConstraints.EAST;
         panelControls.add(actionToolBar.getComponent(), BorderLayout.CENTER);
         add(panelControls, gbc_actionButtons);
     }
 
-    public void setEntityIcon(ImageIcon entityIcon) {
+    private void setEntityIcon(ImageIcon entityIcon) {
         entityIconLabel.setIcon(entityIcon);
     }
 
-    public void setId(String id) {
+    private void setId(String id) {
         entityId.setText(id);
         entityId.setColumns(id.length());
         entityId.setMinimumSize(entityId.getPreferredSize());
     }
 
-    public void setNameDetails(String nameDetails) {
+    private void setNameDetails(String nameDetails) {
         this.entityName.setText(nameDetails.trim());
         this.entityName.setCaretPosition(0);
         this.entityName.setMinimumSize(entityName.getPreferredSize());
     }
 
     public void setSaveButton(AnAction saveSelectedPhaseAction) {
-        buttonActionGroup.addSeparator();
-        buttonActionGroup.add(saveSelectedPhaseAction);
-        this.saveSelectedPhaseAction = saveSelectedPhaseAction;
+        if (this.saveSelectedPhaseAction == null) {
+            this.saveSelectedPhaseAction = saveSelectedPhaseAction;
+            buttonActionGroup.addSeparator();
+            buttonActionGroup.add(saveSelectedPhaseAction);
+        }
     }
 
     public void removeSaveSelectedPhaseButton() {
@@ -155,26 +174,35 @@ public class HeaderPanel extends JPanel {
     }
 
     public void setRefreshButton(AnAction refreshAction) {
-        buttonActionGroup.addSeparator();
-        buttonActionGroup.add(refreshAction);
+        if (this.refreshAction == null) {
+            this.refreshAction = refreshAction;
+            buttonActionGroup.addSeparator();
+            buttonActionGroup.add(refreshAction);
+        }
     }
 
     public void setFieldSelectButton(AnAction fieldsSelectAction) {
-        buttonActionGroup.addSeparator();
-        buttonActionGroup.add(fieldsSelectAction);
+        if (this.fieldsSelectAction == null) {
+            this.fieldsSelectAction = fieldsSelectAction;
+            buttonActionGroup.addSeparator();
+            buttonActionGroup.add(fieldsSelectAction);
+        }
     }
 
-    public void setOpenInBrowserButton(AnAction openInBrowserAction) {
+    public void setOpenInBrowserButton() {
         buttonActionGroup.addSeparator();
-        buttonActionGroup.add(openInBrowserAction);
+        buttonActionGroup.add(new EntityOpenInBrowser());
     }
 
     public void setCommentButton(AnAction commentAction) {
-        buttonActionGroup.addSeparator();
-        buttonActionGroup.add(commentAction);
+        if (this.commentAction == null) {
+            this.commentAction = commentAction;
+            buttonActionGroup.addSeparator();
+            buttonActionGroup.add(commentAction);
+        }
     }
 
-    public void setPhaseDetails(FieldModel phaseDetails) {
+    private void setPhaseDetails(FieldModel phaseDetails) {
         phasePanel.setPhaseDetails(phaseDetails);
     }
 
@@ -191,9 +219,57 @@ public class HeaderPanel extends JPanel {
     }
 
     public Point getFieldsPopupLocation() {
-        Component button = actionToolBar.getComponent().getComponent(actionToolBar.getComponent().getComponents().length - 1);
+        Component button = actionToolBar.getComponent().getComponent(actionToolBar.getComponent().getComponents().length - 2);
         return new Point(button.getLocationOnScreen().x + (int) button.getPreferredSize().getWidth(),
                 button.getLocationOnScreen().y + (int) button.getPreferredSize().getHeight() + 8);
     }
 
+    public void setEntityModel(EntityModelWrapper entityModelWrapper) {
+        this.entityModelWrapper = entityModelWrapper;
+        EntityIconFactory entityIconFactory = new EntityIconFactory(26, 26, 12);
+        // icon
+        setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(entityModelWrapper.getEntityType())));
+        // id
+        setId(Util.getUiDataFromModel(entityModelWrapper.getValue(DetailsViewDefaultFields.FIELD_ID)));
+        // name
+        setNameDetails(Util.getUiDataFromModel(entityModelWrapper.getValue(DetailsViewDefaultFields.FIELD_NAME)));
+        // phase
+        setPhaseDetails(entityModelWrapper.getValue(DetailsViewDefaultFields.FIELD_PHASE));
+        //setup target phase
+        if (entityModelWrapper.getEntityType() != MANUAL_TEST_RUN && entityModelWrapper.getEntityType() != TEST_SUITE_RUN) {
+            setupPhaseDetails();
+            setPhaseInHeader(true);
+        } else {
+            setPhaseInHeader(false);
+            //remove extra separator between phase and buttons
+            remove(separatorPhaseButtons);
+        }
+        setupPhaseDetails();
+    }
+
+    public void setupPhaseDetails() {
+        RestUtil.runInBackground(() -> {
+            String currentPhaseId = Util.getUiDataFromModel(entityModelWrapper.getValue("phase"), "id");
+            return entityService.findPossibleTransitionFromCurrentPhase(entityModelWrapper.getEntityType(), currentPhaseId);
+        }, (possibleTransitions) -> {
+            if (possibleTransitions.isEmpty()) {
+                possibleTransitions.add(new EntityModel("target_phase", "No transition"));
+                setPossiblePhasesForEntity(possibleTransitions);
+                saveSelectedPhaseAction.getTemplatePresentation().setEnabled(false);
+            } else {
+                setPossiblePhasesForEntity(possibleTransitions);
+                saveSelectedPhaseAction.getTemplatePresentation().setEnabled(true);
+            }
+        }, null, "Failed to get possible transitions", "fetching possible transitions");
+    }
+
+    private final class EntityOpenInBrowser extends AnAction {
+        public EntityOpenInBrowser() {
+            super("Open in browser the current entity", "Open in browser", IconLoader.findIcon(Constants.IMG_BROWSER_ICON));
+        }
+
+        public void actionPerformed(AnActionEvent e) {
+            entityService.openInBrowser(entityModelWrapper.getEntityModel());
+        }
+    }
 }

@@ -13,25 +13,10 @@
 
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields;
 
-import java.awt.Desktop;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-
-import javax.swing.UIManager;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.events.EventListener;
-import org.w3c.dom.events.EventTarget;
-
+import com.google.inject.Inject;
 import com.hpe.adm.octane.ideplugins.intellij.util.HtmlTextEditor;
+import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import com.intellij.openapi.diagnostic.Logger;
-
 import javafx.application.Platform;
 import javafx.concurrent.Worker.State;
 import javafx.embed.swing.JFXPanel;
@@ -39,6 +24,20 @@ import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.events.EventListener;
+import org.w3c.dom.events.EventTarget;
+
+import javax.swing.*;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
+import java.awt.*;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 
 public class HTMLPresenterFXPanel extends JFXPanel {
     private static final Logger log = Logger.getInstance(HTMLPresenterFXPanel.class);
@@ -48,16 +47,16 @@ public class HTMLPresenterFXPanel extends JFXPanel {
     private static final String HYPERLINK_TAG = "a";
     private WebView webView;
     private String commentContent;
-    private String baseUrl;
 
-    public HTMLPresenterFXPanel(String baseUrl) {
+    @Inject
+    private ConnectionSettingsProvider connectionSettingsProvider;
+
+    public HTMLPresenterFXPanel() {
         UIManager.addPropertyChangeListener(evt -> {
             if ("lookAndFeel".equals(evt.getPropertyName())) {
                 Platform.runLater(() -> setContent(getCommentContent()));
             }
         });
-
-        this.baseUrl = baseUrl;
     }
 
     private void addHyperlinkListener(HyperlinkListener listener) {
@@ -87,7 +86,7 @@ public class HTMLPresenterFXPanel extends JFXPanel {
      * From the webview object, the page engine is fetched together with it's worker(object
      * which keeps track of the progress of a task (FAILED, RUNNING, SUCCEEDED). A hyperlink
      * listener is then added to SUCCEEDED state property.
-     *
+     * <p>
      * When a new state was succesfully transitioned to, mouse events are caught and handled accordingly.
      * P.S. For this use case mouseover and mouseout event were not required to be handled.
      */
@@ -172,8 +171,8 @@ public class HTMLPresenterFXPanel extends JFXPanel {
                 //useful for checking whether relative or absolute url been given
                 try {
                     targetUrl = new URL(href);
-                } catch (MalformedURLException ex){
-                    targetUrl = new URL(baseUrl + href);
+                } catch (MalformedURLException ex) {
+                    targetUrl = new URL(connectionSettingsProvider.getConnectionSettings().getBaseUrl() + href);
                 }
                 targetUri = targetUrl.toURI();
                 if (HyperlinkEvent.EventType.ACTIVATED.equals(eventType)) {

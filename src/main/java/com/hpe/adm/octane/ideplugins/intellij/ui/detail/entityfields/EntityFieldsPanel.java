@@ -13,28 +13,21 @@
 
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields;
 
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
+import com.hpe.adm.octane.ideplugins.intellij.ui.detail.DetailsViewDefaultFields;
+import com.hpe.adm.octane.ideplugins.services.model.EntityModelWrapper;
+import com.hpe.adm.octane.ideplugins.services.util.Util;
+import com.intellij.ui.JBColor;
+import net.miginfocom.swing.MigLayout;
+import org.jdesktop.swingx.JXLabel;
+import org.jdesktop.swingx.JXPanel;
+
+import javax.swing.border.MatteBorder;
+import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.util.Collection;
 import java.util.Set;
-
-import javax.swing.border.MatteBorder;
-
-import org.jdesktop.swingx.JXLabel;
-import org.jdesktop.swingx.JXPanel;
-
-import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
-import com.hpe.adm.nga.sdk.model.EntityModel;
-import com.hpe.adm.octane.ideplugins.intellij.ui.detail.DetailsViewDefaultFields;
-import com.hpe.adm.octane.ideplugins.services.util.Util;
-import com.intellij.ui.JBColor;
-
-import net.miginfocom.swing.MigLayout;
 
 @SuppressWarnings("serial")
 public class EntityFieldsPanel extends JXPanel {
@@ -44,7 +37,7 @@ public class EntityFieldsPanel extends JXPanel {
     private JXPanel detailsLeftPanel;
     private JXLabel generalLabel;
 
-    public EntityFieldsPanel(Collection<FieldMetadata> fields) {
+    public EntityFieldsPanel() {
         setLayout(new MigLayout("", "[pref!][10px][pref!]", "[23px,top][263px]"));
 
         generalLabel = new JXLabel("General");
@@ -61,9 +54,11 @@ public class EntityFieldsPanel extends JXPanel {
         GridBagLayout gbl_detailsRightPanel = new GridBagLayout();
         detailsRightPanel.setLayout(gbl_detailsRightPanel);
 
-        this.fields = fields;
         addComponentListener(detailsLeftPanel, detailsRightPanel);
+    }
 
+    public void setFields(Collection<FieldMetadata> fields) {
+        this.fields = fields;
     }
 
     public void addComponentListener(JXPanel detailsLeftPanel, JXPanel detailsRightPanel) {
@@ -82,7 +77,7 @@ public class EntityFieldsPanel extends JXPanel {
         });
     }
 
-    public void createSectionWithEntityDetails(EntityModel entityModel, Set<String> fieldNames) {
+    public void setEntityModel(EntityModelWrapper entityModelWrapper, Set<String> fieldNames) {
         detailsLeftPanel.removeAll();
         detailsRightPanel.removeAll();
 
@@ -107,12 +102,12 @@ public class EntityFieldsPanel extends JXPanel {
                         || DetailsViewDefaultFields.FIELD_AUTHOR.equals(fieldName)
                         || DetailsViewDefaultFields.FIELD_TEST_RUN_RUN_BY.equals(fieldName)
                         || DetailsViewDefaultFields.FIELD_DETECTEDBY.equals(fieldName)) {
-                    fieldValue = Util.getUiDataFromModel(entityModel.getValue(fieldName),
+                    fieldValue = Util.getUiDataFromModel(entityModelWrapper.getValue(fieldName),
                             DetailsViewDefaultFields.FIELD_FULL_NAME);
                 } else {
-                    fieldValue = Util.getUiDataFromModel(entityModel.getValue(fieldName));
+                    fieldValue = Util.getUiDataFromModel(entityModelWrapper.getValue(fieldName));
                 }
-                
+
                 JXLabel fieldValueLabel = new JXLabel();
                 fieldValueLabel.setFont(new Font("Arial", Font.PLAIN, 12));
                 fieldValueLabel.setText(fieldValue);

@@ -30,8 +30,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class PhaseDropDownMenu extends JPanel {
-    public static final String MOVE_TO = "Move to: ";
-    public static final String MOVED_TO = "Moved to: ";
+    private static final String MOVE_TO = "Move to: ";
+    private static final String MOVED_TO = "Moved to: ";
     private static final String TOOLTIP_BLOCKED_PHASE = "You must save first before doing any more changes to phase";
     private static final String TOOLTIP_CLICKABLE_PHASE = "Click here to choose your desired next phase";
 
@@ -40,13 +40,13 @@ public class PhaseDropDownMenu extends JPanel {
     private JBPopupMenu popupMenu;
 
     private Map<JMenuItem, FieldModel> labelPhaseMap;
-
+    private List<EntityModel> phaseList;
     private FieldModel selectedPhase;
-    
+
     public PhaseDropDownMenu() {
         GridBagLayout gbl_phasePanel = new GridBagLayout();
-        gbl_phasePanel.columnWidths = new int[] { 0, 0 };
-        gbl_phasePanel.columnWeights = new double[] { 0.0, 0.0 };
+        gbl_phasePanel.columnWidths = new int[]{0, 0};
+        gbl_phasePanel.columnWeights = new double[]{0.0, 0.0};
         setLayout(gbl_phasePanel);
         labelPhaseMap = new HashMap<>();
 
@@ -62,12 +62,21 @@ public class PhaseDropDownMenu extends JPanel {
         add(targetPhaseLabel, gbc_targetPhaseLabel);
     }
 
+    /**
+     * This method will set the current phase as the one selected, in the case that user clicks save we don't want to
+     * change the phase also.
+     * Moreover after a save the targetPhaseLabel is activated again
+     *
+     * @param currentPhase - the current phase of the entity
+     */
     public void setPhaseDetails(FieldModel currentPhase) {
+        // re enable the target phase if the user changed the phase
+        targetPhaseLabel.setEnabled(true);
         this.selectedPhase = currentPhase;
     }
 
     public void addItems(List<EntityModel> phasesList) {
-
+        this.phaseList = phasesList;
         // need to add the first item from the list to the target phase and
         // create the popup from the rest
         if ("No transition".equals(Util.getUiDataFromModel(phasesList.get(0).getValue("target_phase")))) {
@@ -81,7 +90,7 @@ public class PhaseDropDownMenu extends JPanel {
             targetPhaseLabel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    selectedPhase = phasesList.stream()
+                    selectedPhase = phaseList.stream()
                             .filter(en -> (targetPhaseLabel.getText().contains(Util.getUiDataFromModel(en.getValue("target_phase"), "name"))))
                             .collect(Collectors.toList()).get(0).getValue("target_phase");
                     targetPhaseLabel.setText(MOVED_TO + Util.getUiDataFromModel(selectedPhase, "name"));
@@ -93,6 +102,7 @@ public class PhaseDropDownMenu extends JPanel {
                 }
             });
         }
+        labelPhaseMap.clear();
         phasesList.stream().forEach(e -> {
             String phase = Util.getUiDataFromModel(e.getValue("target_phase"), "name");
             // don't put the phase which is already in the target label into the
@@ -104,23 +114,25 @@ public class PhaseDropDownMenu extends JPanel {
         });
 
         if (phasesList.size() > 1) {
-            // create the arrow
-            arrow = new JLabel();
-            arrow.setIcon(IconLoader.findIcon(Constants.IMG_PHASE_DROPDOWN));
-            arrow.setToolTipText(TOOLTIP_CLICKABLE_PHASE);
-            arrow.setCursor(new Cursor(Cursor.HAND_CURSOR));
-            
+            // only create new arrow if there isn't one already
+            if (arrow == null) {
+                // create the arrow
+                arrow = new JLabel();
+                arrow.setIcon(IconLoader.findIcon(Constants.IMG_PHASE_DROPDOWN));
+                arrow.setToolTipText(TOOLTIP_CLICKABLE_PHASE);
+                arrow.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                arrow.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        //first show computes the width of the popupMenu
+                        //second one shows it correctly - just dev stuff
+                        popupMenu.show(arrow, 0, arrow.getBounds().height);
+                        popupMenu.show(arrow, -popupMenu.getWidth() + arrow.getBounds().width / 2, arrow.getBounds().height);
+                        popupMenu.applyComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
+                    }
+                });
+            }
 
-            arrow.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    //first show computes the width of the popupMenu
-                    //second one shows it correctly - just dev stuff
-                    popupMenu.show(arrow, 0, arrow.getBounds().height);
-                    popupMenu.show(arrow, -popupMenu.getWidth() + arrow.getBounds().width/2, arrow.getBounds().height);
-                    popupMenu.applyComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
-                }
-            });
             GridBagConstraints gbc_arrow = new GridBagConstraints();
             gbc_arrow.anchor = GridBagConstraints.WEST;
             gbc_arrow.gridx = 1;

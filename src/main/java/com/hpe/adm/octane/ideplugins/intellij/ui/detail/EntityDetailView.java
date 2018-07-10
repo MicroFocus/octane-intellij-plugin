@@ -13,39 +13,148 @@
 
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
-import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
-import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS;
-
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.event.ActionListener;
-import java.util.Collection;
-import java.util.Set;
-
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
-
+import com.google.inject.Inject;
+import com.hpe.adm.nga.sdk.exception.OctaneException;
 import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
-import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.nga.sdk.model.FieldModel;
+import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
+import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.View;
 import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.LoadingWidget;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.actions.SelectFieldsAction;
+import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.CommentsConversationPanel;
+import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.EntityFieldsPanel;
+import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.HTMLPresenterFXPanel;
+import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.HeaderPanel;
+import com.hpe.adm.octane.ideplugins.intellij.util.ExceptionHandler;
+import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
+import com.hpe.adm.octane.ideplugins.services.CommentService;
+import com.hpe.adm.octane.ideplugins.services.model.EntityModelWrapper;
+import com.hpe.adm.octane.ideplugins.services.util.Util;
 import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.components.JBScrollPane;
+import javafx.application.Platform;
 
-public class EntityDetailView implements View {
+import javax.swing.*;
+import javax.swing.border.MatteBorder;
+import java.awt.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.Collection;
 
-    private EntityModel entityModel;
+import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.TASK;
+import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
+import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS;
+
+public class EntityDetailView extends JPanel implements View, Scrollable {
+
+    private EntityModelWrapper entityModelWrapper;
     private JBScrollPane component = new JBScrollPane(new LoadingWidget());
-    private GeneralEntityDetailsPanel entityDetailsPanel;
-    private FieldsSelectFrame.SelectionListener selectionListener;
 
-    public EntityDetailView() {
+    private HeaderPanel headerPanel;
+    private EntityFieldsPanel entityFieldsPanel;
+    private CommentsConversationPanel commentsPanel;
+    private HTMLPresenterFXPanel descriptionPanel;
+    private SelectFieldsAction fieldsSelectAction;
 
+    private Collection<FieldMetadata> fields;
+
+    @Inject
+    private FieldsSelectPopup fieldsPopup;
+
+    @Inject
+    private CommentService commentService;
+
+    @Inject
+    private Project project;
+
+    private FieldsSelectPopup.SelectionListener selectionListener;
+
+    @Inject
+    public EntityDetailView(HeaderPanel headerPanel, EntityFieldsPanel entityFieldsPanel, CommentsConversationPanel commentsPanel, HTMLPresenterFXPanel descriptionPanel) {
+
+
+        this.headerPanel = headerPanel;
+        this.entityFieldsPanel = entityFieldsPanel;
+        this.commentsPanel = commentsPanel;
+        this.descriptionPanel = descriptionPanel;
+
+        //make UI
+        GridBagLayout gridBagLayout = new GridBagLayout();
+        gridBagLayout.columnWidths = new int[]{0, 0, 0};
+        gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0};
+        gridBagLayout.columnWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};
+        gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
+        setLayout(gridBagLayout);
+
+        headerPanel.setBorder(new MatteBorder(0, 0, 1, 0, new Color(0, 0, 0)));
+        GridBagConstraints gbc_headerPanel = new GridBagConstraints();
+        gbc_headerPanel.gridwidth = 2;
+        gbc_headerPanel.fill = GridBagConstraints.HORIZONTAL;
+        gbc_headerPanel.insets = new Insets(5, 0, 5, 5);
+        gbc_headerPanel.gridx = 0;
+        gbc_headerPanel.gridy = 0;
+        add(headerPanel, gbc_headerPanel);
+
+        GridBagConstraints gbc_entityFieldsPanel = new GridBagConstraints();
+        gbc_entityFieldsPanel.anchor = GridBagConstraints.NORTH;
+        gbc_entityFieldsPanel.fill = GridBagConstraints.HORIZONTAL;
+        gbc_entityFieldsPanel.insets = new Insets(0, 5, 0, 5);
+        gbc_entityFieldsPanel.gridx = 0;
+        gbc_entityFieldsPanel.gridy = 1;
+        add(entityFieldsPanel, gbc_entityFieldsPanel);
+
+        commentsPanel.setBorder(new MatteBorder(0, 1, 0, 0, new Color(0, 0, 0)));
+        GridBagConstraints gbc_commentsPanel = new GridBagConstraints();
+        gbc_commentsPanel.gridheight = 3;
+        gbc_commentsPanel.fill = GridBagConstraints.BOTH;
+        gbc_commentsPanel.insets = new Insets(0, 5, 0, 5);
+        gbc_commentsPanel.gridx = 1;
+        gbc_commentsPanel.gridy = 1;
+        add(commentsPanel, gbc_commentsPanel);
+        commentsPanel.setMaximumSize(new Dimension(350, getHeight()));
+        commentsPanel.setMinimumSize(new Dimension(350, getHeight()));
+        commentsPanel.setSize(new Dimension(350, getHeight()));
+        commentsPanel.setVisible(false);
+
+        JLabel descriptionLabel = new JLabel("Description");
+        descriptionLabel.setFont(new Font("Arial", Font.BOLD, 18));
+        GridBagConstraints gbc_descriptionLabel = new GridBagConstraints();
+        gbc_descriptionLabel.anchor = GridBagConstraints.NORTH;
+        gbc_descriptionLabel.fill = GridBagConstraints.HORIZONTAL;
+        gbc_descriptionLabel.insets = new Insets(10, 12, 5, 5);
+        gbc_descriptionLabel.gridx = 0;
+        gbc_descriptionLabel.gridy = 2;
+        add(descriptionLabel, gbc_descriptionLabel);
+
+        GridBagConstraints gbc_descriptionPanel = new GridBagConstraints();
+        gbc_descriptionPanel.fill = GridBagConstraints.BOTH;
+        gbc_descriptionPanel.insets = new Insets(0, 5, 0, 5);
+        gbc_descriptionPanel.gridx = 0;
+        gbc_descriptionPanel.gridy = 3;
+        add(descriptionPanel, gbc_descriptionPanel);
+
+        descriptionPanel.addEventActions();
+
+        fieldsSelectAction = new SelectFieldsAction(this);
+
+        // redraw the fields popup to handle theme change
+        UIManager.addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                if ("lookAndFeel".equals(evt.getPropertyName())) {
+                    if (!isShowing()) {
+                        UIManager.removePropertyChangeListener(this);
+                    } else {
+                        fieldsPopup = PluginModule.getPluginModuleForProject(project).getInstance(FieldsSelectPopup.class);
+                        fieldsPopup.setEntityDetails(entityModelWrapper, fields, fieldsSelectAction);
+                    }
+                }
+            }
+        });
     }
 
     @Override
@@ -53,18 +162,38 @@ public class EntityDetailView implements View {
         component.setBorder(null);
         component.setVerticalScrollBarPolicy(VERTICAL_SCROLLBAR_ALWAYS);
         component.setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_NEVER);
-        component.setMinimumSize(new Dimension(0, 0));
         return component;
     }
 
 
-    public void createDetailsPanel(EntityModel entityModel, Collection<FieldMetadata> fields) {
-        this.entityModel = entityModel;
-        entityDetailsPanel = new GeneralEntityDetailsPanel(entityModel, fields);
-        if(selectionListener != null){
-            entityDetailsPanel.addFieldSelectListener(selectionListener);
+    public void setEntityModel(EntityModelWrapper entityModelWrapper, Collection<FieldMetadata> fields) {
+        this.entityModelWrapper = entityModelWrapper;
+        this.fields = fields;
+        // set header data
+        headerPanel.setEntityModel(entityModelWrapper);
+        // set the fields popup data
+        fieldsPopup.setEntityDetails(entityModelWrapper, fields, fieldsSelectAction);
+        // add comments action to header panel
+        setupComments(entityModelWrapper);
+        // add description data
+        setupDescription(entityModelWrapper);
+        // set fields data
+        entityFieldsPanel.setFields(fields);
+        entityFieldsPanel.setEntityModel(entityModelWrapper, fieldsPopup.getSelectedFields());
+
+        component.setViewportView(this);
+    }
+
+    private void setupDescription(EntityModelWrapper entityModelWrapper) {
+        String descriptionContent = Util.getUiDataFromModel(entityModelWrapper.getValue(DetailsViewDefaultFields.FIELD_DESCRIPTION));
+        Platform.runLater(() -> descriptionPanel.setContent(descriptionContent));
+    }
+
+    private void setupComments(EntityModelWrapper entityModelWrapper) {
+        if (entityModelWrapper.getEntityType() != TASK) {
+            setComments(entityModelWrapper);
+            addSendNewCommentAction(entityModelWrapper);
         }
-        component.setViewportView(entityDetailsPanel);
     }
 
     public void setErrorMessage(String error) {
@@ -80,81 +209,117 @@ public class EntityDetailView implements View {
         component.setViewportView(errorPanel);
     }
 
-    public void setRefreshEntityButton(AnAction refreshAction) {
-        entityDetailsPanel.setRefreshButton(refreshAction);
-    }
-
-    public void setCommentsEntityButton(AnAction commentsAction) {
-        entityDetailsPanel.setCommentsButton(commentsAction);
-    }
-
-    public void setSaveSelectedPhaseButton(AnAction saveSelectedPhaseAction) {
-        entityDetailsPanel.setSaveSelectedPhaseButton(saveSelectedPhaseAction);
-    }
-
-    public void removeSaveSelectedPhaseButton() {
-        entityDetailsPanel.removeSaveSelectedPhaseButton();
-    }
-    
-    public void setOpenInBrowserButton(AnAction openInBrowserAction) {
-        entityDetailsPanel.openInBrowserButton(openInBrowserAction);
-    }
-
-    public void setPhaseInHeader(boolean showPhase) {
-        entityDetailsPanel.setPhaseInHeader(showPhase);
-    }
-
     public void doRefresh() {
         component.setViewportView(new JBScrollPane(new LoadingWidget()));
     }
 
-    public void setPossiblePhasesForEntity(Collection<EntityModel> phasesList) {
-        entityDetailsPanel.setPossiblePhasesForEntity(phasesList);
+    public void setRefreshEntityButton(AnAction refreshButton) {
+        headerPanel.setRefreshButton(refreshButton);
     }
-    
+
+
+    public void setSaveSelectedPhaseButton(AnAction saveSelectedPhaseAction) {
+        headerPanel.setSaveButton(saveSelectedPhaseAction);
+    }
+
     public FieldModel getSelectedTransition() {
-        return entityDetailsPanel.getSelectedTransition();
+        return headerPanel.getSelectedTransition();
     }
 
-    public EntityModel getEntityModel() {
-        return this.entityModel;
+    /**
+     * Comment action related functions
+     */
+
+    public void setupCommentsButton() {
+        headerPanel.setCommentButton(new EntityCommentsAction());
     }
 
-    public void setComments(Collection<EntityModel> comments) {
-        entityDetailsPanel.setComments(comments);
+    private String getCommentMessageBoxText() {
+        return commentsPanel.getCommentMessageBoxText();
     }
 
-    public void addSendNewCommentAction(ActionListener actionListener) {
-        entityDetailsPanel.addSendNewCommentAction(actionListener);
+    private void addSendNewCommentAction(EntityModelWrapper entityModelWrapper) {
+        commentsPanel.addSendNewCommentAction(e -> {
+            try {
+                commentService.postComment(entityModelWrapper.getEntityModel(), getCommentMessageBoxText());
+            } catch (OctaneException oe) {
+                ExceptionHandler exceptionHandler = new ExceptionHandler(oe, project);
+                exceptionHandler.showErrorNotification();
+            }
+            commentsPanel.setCommentMessageBoxText("");
+            setComments(entityModelWrapper);
+        });
     }
 
-    public void setFieldSelectButton(SelectFieldsAction fieldSelectButton) {
-        entityDetailsPanel.setFieldSelectButton(fieldSelectButton);
+    private void setComments(EntityModelWrapper entityModelWrapper) {
+        RestUtil.runInBackground(() -> commentService.getComments(entityModelWrapper.getEntityModel()), (comments) -> commentsPanel.setComments(comments), null, "Failed to get possible comments", "fetching comments");
     }
 
-    public void setCommentMessageBoxText(String t) {
-        entityDetailsPanel.setCommentMessageBoxText(t);
+    private void showCommentsPanel() {
+        commentsPanel.setVisible(!commentsPanel.isVisible());
     }
 
-    public String getCommentMessageBoxText() {
-        return entityDetailsPanel.getCommentMessageBoxText();
+
+    public void setOpenInBrowserButton() {
+        headerPanel.setOpenInBrowserButton();
     }
 
-    public GeneralEntityDetailsPanel getEntityDetailsPanel() {
-        return entityDetailsPanel;
+    /**
+     * Field popup related functions
+     */
+
+    public void setupFieldsSelectButton() {
+        setupFieldsSelectButton(fieldsSelectAction);
     }
 
-    public void addFieldSelectListener(FieldsSelectFrame.SelectionListener selectionListener){
-        this.selectionListener = selectionListener;
+    private void setupFieldsSelectButton(SelectFieldsAction fieldSelectButton) {
+        headerPanel.setFieldSelectButton(fieldSelectButton);
+        fieldsPopup.addSelectionListener(e -> entityFieldsPanel.setEntityModel(entityModelWrapper, fieldsPopup.getSelectedFields()));
+        fieldsPopup.addPersistentStateListener();
     }
 
-    public Set<String> getSelectedFields(){
-        return entityDetailsPanel.getSelectedFields();
+    public void showFieldsSettings() {
+        fieldsPopup.setLocation(headerPanel.getFieldsPopupLocation().x - (int) fieldsPopup.getPreferredSize().getWidth(),
+                headerPanel.getFieldsPopupLocation().y);
+        fieldsPopup.setVisible(!fieldsPopup.isVisible());
     }
 
-    public void setSelectedFields(Set<String> selectedFields){
-        entityDetailsPanel.setSelectedFields(selectedFields);
-        entityDetailsPanel.repaint();
+    /**
+     * Methods for the Scrollable interface
+     */
+
+    @Override
+    public Dimension getPreferredScrollableViewportSize() {
+        return getPreferredSize();
     }
 
+    @Override
+    public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
+        return (getHeight() - visibleRect.height) / 10;
+    }
+
+    @Override
+    public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
+        return getHeight() - visibleRect.height;
+    }
+
+    @Override
+    public boolean getScrollableTracksViewportWidth() {
+        return false;
+    }
+
+    @Override
+    public boolean getScrollableTracksViewportHeight() {
+        return false;
+    }
+
+    private final class EntityCommentsAction extends AnAction {
+        public EntityCommentsAction() {
+            super("Show comments for current entity", "Show comments for current entity", IconLoader.findIcon(Constants.IMG_COMMENTS_ICON));
+        }
+
+        public void actionPerformed(AnActionEvent e) {
+            showCommentsPanel();
+        }
+    }
 }

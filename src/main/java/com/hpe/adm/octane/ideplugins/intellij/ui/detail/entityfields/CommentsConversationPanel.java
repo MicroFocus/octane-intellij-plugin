@@ -13,36 +13,35 @@
 
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields;
 
-import java.awt.BorderLayout;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import com.google.inject.Inject;
+import com.hpe.adm.nga.sdk.model.EntityModel;
+import com.hpe.adm.octane.ideplugins.intellij.ui.detail.DetailsViewDefaultFields;
+import com.hpe.adm.octane.ideplugins.services.util.Util;
+import com.intellij.util.ui.UIUtil;
+import javafx.application.Platform;
+import org.apache.commons.lang.StringUtils;
 
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-
-import org.apache.commons.lang.StringUtils;
-
-import com.intellij.util.ui.UIUtil;
-
-import javafx.application.Platform;
+import java.awt.*;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.util.Collection;
 
 public class CommentsConversationPanel extends JPanel {
     private JButton sendMessageButton;
     private JTextField messageBox;
+
     private HTMLPresenterFXPanel chatBox;
     private String commentContent = "";
     private ActionListener addCommentActionListener;
 
-    public CommentsConversationPanel(String baseUrl) {
+    @Inject
+    public CommentsConversationPanel(HTMLPresenterFXPanel chatBox) {
+        this.chatBox = chatBox;
         setLayout(new BorderLayout());
 
         JPanel southPanel = new JPanel();
@@ -70,18 +69,15 @@ public class CommentsConversationPanel extends JPanel {
         messageBox.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                if(e.getKeyCode() == KeyEvent.VK_ENTER &&
+                if (e.getKeyCode() == KeyEvent.VK_ENTER &&
                         addCommentActionListener != null &&
-                        sendMessageButton.isEnabled()){
+                        sendMessageButton.isEnabled()) {
                     addCommentActionListener.actionPerformed(null);
                 }
             }
         });
         sendMessageButton = new JButton("Add");
 
-
-
-        chatBox = new HTMLPresenterFXPanel(baseUrl);
         chatBox.setBorder(null);
         chatBox.setFont(new Font("Arial", Font.PLAIN, 11));
         chatBox.addEventActions();
@@ -119,7 +115,15 @@ public class CommentsConversationPanel extends JPanel {
 
     public void addSendNewCommentAction(ActionListener actionListener) {
         this.addCommentActionListener = actionListener;
+        removeAnyPreviousListener();
         sendMessageButton.addActionListener(actionListener);
+    }
+
+    private void removeAnyPreviousListener(){
+        ActionListener[] listeners = sendMessageButton.getActionListeners();
+        for (ActionListener listener : listeners) {
+            sendMessageButton.removeActionListener(listener);
+        }
     }
 
     private void enableButton() {
@@ -140,5 +144,16 @@ public class CommentsConversationPanel extends JPanel {
 
     public void clearCurrentComments() {
         commentContent = "";
+    }
+
+    public void setComments(Collection<EntityModel> comments) {
+        clearCurrentComments();
+        for (EntityModel comment : comments) {
+            String commentsPostTime = Util.getUiDataFromModel(comment.getValue(DetailsViewDefaultFields.FIELD_CREATION_TIME));
+            String userName = Util.getUiDataFromModel(comment.getValue(DetailsViewDefaultFields.FIELD_AUTHOR), "full_name");
+            String commentLine = Util.getUiDataFromModel(comment.getValue(DetailsViewDefaultFields.FIELD_COMMENT_TEXT));
+            addExistingComment(commentsPostTime, userName, commentLine);
+        }
+        setChatBoxScene();
     }
 }
