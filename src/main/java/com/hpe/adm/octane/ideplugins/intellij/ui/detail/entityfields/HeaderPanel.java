@@ -84,7 +84,7 @@ public class HeaderPanel extends JPanel {
         entityId = new JTextField();
         entityId.setBorder(BorderFactory.createEmptyBorder());
         entityId.setHorizontalAlignment(SwingConstants.CENTER);
-        entityId.setFont(new Font("Tahoma", Font.BOLD, 14));
+        entityId.setFont(new Font(entityId.getFont().getName(), Font.BOLD, 14));
         entityId.setEditable(false);
         GridBagConstraints gbc_entityId = new GridBagConstraints();
         gbc_entityId.insets = new Insets(0, 0, 5, 5);
@@ -100,15 +100,16 @@ public class HeaderPanel extends JPanel {
         add(separatorIdName, gbc_separator1);
 
         entityName = new JTextField();
-        entityName.setColumns(110);
         entityName.setBorder(BorderFactory.createEmptyBorder());
         entityName.setBackground(UIUtil.getLabelBackground());
-        entityName.setFont(new Font("Tahoma", Font.PLAIN, 14));
+        entityName.setEditable(false);
+        entityName.setFont(new Font(entityName.getFont().getName(), Font.PLAIN, 14));
         GridBagConstraints gbc_entityName = new GridBagConstraints();
         gbc_entityName.gridx = 3;
         gbc_entityName.gridwidth = 2;
         gbc_entityName.insets = new Insets(0, 0, 0, 5);
         gbc_entityName.anchor = GridBagConstraints.WEST;
+        gbc_entityName.fill = GridBagConstraints.HORIZONTAL;
         add(entityName, gbc_entityName);
 
         separatorNamePhase = new JSeparator(SwingConstants.VERTICAL);
@@ -158,7 +159,7 @@ public class HeaderPanel extends JPanel {
     private void setNameDetails(String nameDetails) {
         this.entityName.setText(nameDetails.trim());
         this.entityName.setCaretPosition(0);
-        this.entityName.setMinimumSize(entityName.getPreferredSize());
+        this.entityName.setToolTipText(nameDetails);
     }
 
     public void setSaveButton(AnAction saveSelectedPhaseAction) {
