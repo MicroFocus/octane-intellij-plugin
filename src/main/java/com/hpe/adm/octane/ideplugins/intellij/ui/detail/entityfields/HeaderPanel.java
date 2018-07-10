@@ -103,7 +103,8 @@ public class HeaderPanel extends JPanel {
         entityName.setColumns(110);
         entityName.setBorder(BorderFactory.createEmptyBorder());
         entityName.setBackground(UIUtil.getLabelBackground());
-        entityName.setFont(new Font("Tahoma", Font.PLAIN, 14));
+        entityName.setEditable(false);
+        entityName.setFont(new Font(entityName.getFont().getName(), Font.PLAIN, 14));
         GridBagConstraints gbc_entityName = new GridBagConstraints();
         gbc_entityName.gridx = 3;
         gbc_entityName.gridwidth = 2;
@@ -158,6 +159,7 @@ public class HeaderPanel extends JPanel {
     private void setNameDetails(String nameDetails) {
         this.entityName.setText(nameDetails.trim());
         this.entityName.setCaretPosition(0);
+        this.entityName.setToolTipText(nameDetails);
         this.entityName.setMinimumSize(entityName.getPreferredSize());
     }
 
