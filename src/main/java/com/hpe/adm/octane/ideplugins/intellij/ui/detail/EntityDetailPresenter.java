@@ -13,8 +13,6 @@
 
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.exception.OctaneException;
 import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
@@ -164,32 +162,18 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                         try {
                             entityService.updateEntity(entityModelWrapper.getEntityModel());
                         } catch (OctaneException ex) {
-                            if (ex.getMessage().contains("400")) {
-                                String errorMessage = "Failed to change phase";
-                                try {
-                                    JsonParser jsonParser = new JsonParser();
-                                    JsonObject jsonObject = (JsonObject) jsonParser.parse(ex.getMessage().substring(ex.getMessage().indexOf("{")));
-                                    errorMessage = jsonObject.get("description_translated").getAsString();
-                                } catch (Exception e1) {
-                                    logger.debug("Failed to get JSON message from Octane Server" + e1.getMessage());
+                            ConfirmationDialog dialog = new ConfirmationDialog(
+                                    project,
+                                    "Server message: " + ex.getError().getValue("description") + GO_TO_BROWSER_DIALOG_MESSAGE,
+                                    "Business rule violation",
+                                    null, VcsShowConfirmationOption.STATIC_SHOW_CONFIRMATION) {
+                                @Override
+                                public void setDoNotAskOption(@Nullable DoNotAskOption doNotAsk) {
+                                    super.setDoNotAskOption(null);
                                 }
-                                ConfirmationDialog dialog = new ConfirmationDialog(
-                                        project,
-                                        "Server message: " + errorMessage + GO_TO_BROWSER_DIALOG_MESSAGE,
-                                        "Business rule violation",
-                                        null, VcsShowConfirmationOption.STATIC_SHOW_CONFIRMATION) {
-                                    @Override
-                                    public void setDoNotAskOption(@Nullable DoNotAskOption doNotAsk) {
-                                        super.setDoNotAskOption(null);
-                                    }
-                                };
-                                if (dialog.showAndGet()) {
-                                    entityService.openInBrowser(entityModelWrapper.getEntityModel());
-                                }
-                            } else if (ex.getMessage().contains("403")) {
-                                //User is not authorised to perform this operation
-                                ExceptionHandler exceptionHandler = new ExceptionHandler(ex, project);
-                                exceptionHandler.showErrorNotification();
+                            };
+                            if (dialog.showAndGet()) {
+                                entityService.openInBrowser(entityModelWrapper.getEntityModel());
                             }
                         }
                         entityDetailView.doRefresh();

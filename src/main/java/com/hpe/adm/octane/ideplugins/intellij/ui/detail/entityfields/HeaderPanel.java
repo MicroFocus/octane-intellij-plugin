@@ -228,6 +228,8 @@ public class HeaderPanel extends JPanel {
             setPhaseInHeader(true);
         } else {
             setPhaseInHeader(false);
+            //remove extra separator between phase and buttons
+            remove(separatorPhaseButtons);
         }
     }
 
