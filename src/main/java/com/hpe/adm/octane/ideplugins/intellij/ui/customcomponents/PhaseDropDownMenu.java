@@ -94,8 +94,6 @@ public class PhaseDropDownMenu extends JPanel {
             targetPhaseLabel.setEnabled(false);
         } else {
             targetPhaseLabel.setText(MOVE_TO + Util.getUiDataFromModel(phasesList.get(0).getValue("target_phase"), "name"));
-//            targetPhaseLabel.setForeground(new Color(30, 144, 255));
-//            targetPhaseLabel.setFont(new Font("Arial", Font.BOLD, 14));
             targetPhaseLabel.setToolTipText(TOOLTIP_CLICKABLE_PHASE);
             targetPhaseLabel.addMouseListener(new MouseAdapter() {
                 @Override

@@ -119,7 +119,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                     if (entityModelWrapper != null) {
                         entityDetailView.setEntityModel(entityModelWrapper, fields);
                     }
-                    entityModelWrapper.addFieldModelChangedHandler((e)->{
+                    entityModelWrapper.addFieldModelChangedHandler((e) -> {
                         stateChanged = true;
                     });
                 },
@@ -149,37 +149,34 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
             getTemplatePresentation().setEnabled(false);
         }
 
-        public void update(AnActionEvent e){
-            if(stateChanged){
-                e.getPresentation().setEnabled(true);
-            } else {
-                e.getPresentation().setEnabled(false);
-            }
+        public void update(AnActionEvent e) {
+            e.getPresentation().setEnabled(stateChanged);
+
         }
 
         public void actionPerformed(AnActionEvent e) {
             RestUtil.runInBackground(() -> {
-                        try {
-                            entityService.updateEntity(entityModelWrapper.getEntityModel());
-                        } catch (OctaneException ex) {
-                            ConfirmationDialog dialog = new ConfirmationDialog(
-                                    project,
-                                    "Server message: " + ex.getError().getValue("description") + GO_TO_BROWSER_DIALOG_MESSAGE,
-                                    "Business rule violation",
-                                    null, VcsShowConfirmationOption.STATIC_SHOW_CONFIRMATION) {
-                                @Override
-                                public void setDoNotAskOption(@Nullable DoNotAskOption doNotAsk) {
-                                    super.setDoNotAskOption(null);
-                                }
-                            };
-                            if (dialog.showAndGet()) {
-                                entityService.openInBrowser(entityModelWrapper.getEntityModel());
-                            }
+                try {
+                    entityService.updateEntity(entityModelWrapper.getEntityModel());
+                } catch (OctaneException ex) {
+                    ConfirmationDialog dialog = new ConfirmationDialog(
+                            project,
+                            "Server message: " + ex.getError().getValue("description") + GO_TO_BROWSER_DIALOG_MESSAGE,
+                            "Business rule violation",
+                            null, VcsShowConfirmationOption.STATIC_SHOW_CONFIRMATION) {
+                        @Override
+                        public void setDoNotAskOption(@Nullable DoNotAskOption doNotAsk) {
+                            super.setDoNotAskOption(null);
                         }
-                        entityDetailView.doRefresh();
-                        setEntity(entityType, entityId);
-                        stateChanged = false;
-                    }, null, "Failed to save entity", "Saving entity");
+                    };
+                    if (dialog.showAndGet()) {
+                        entityService.openInBrowser(entityModelWrapper.getEntityModel());
+                    }
+                }
+                entityDetailView.doRefresh();
+                setEntity(entityType, entityId);
+                stateChanged = false;
+            }, null, "Failed to save entity", "Saving entity");
 
         }
     }

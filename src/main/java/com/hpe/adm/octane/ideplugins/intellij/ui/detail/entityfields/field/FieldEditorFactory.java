@@ -56,15 +56,6 @@ public class FieldEditorFactory {
         try {
             fieldEditor.setField(entityModelWrapper, fieldName);
         } catch (Exception ex) {
-//            StringBuilder sbMessage = new StringBuilder();
-//            sbMessage.append("Faied to set field ")
-//                    .append(fieldName)
-//                    .append(" in detail tab for entity ")
-//                    .append(entityModel.getId())
-//                    .append(": ")
-//                    .append(ex.getMessage());
-//
-//            log.log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, sbMessage.toString()));
             fieldEditor = new ReadOnlyFieldEditor();
             fieldEditor.setField(entityModelWrapper, fieldName);
         }
