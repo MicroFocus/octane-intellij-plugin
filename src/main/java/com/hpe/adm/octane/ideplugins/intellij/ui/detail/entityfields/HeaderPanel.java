@@ -25,11 +25,14 @@ import com.hpe.adm.octane.ideplugins.services.EntityService;
 import com.hpe.adm.octane.ideplugins.services.model.EntityModelWrapper;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
 import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.actionSystem.impl.ActionToolbarImpl;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.JBColor;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.util.Collection;
 
 import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.MANUAL_TEST_RUN;
@@ -69,7 +72,7 @@ public class HeaderPanel extends JPanel {
         setBorder(null);
         GridBagLayout gridBagLayout = new GridBagLayout();
         gridBagLayout.columnWidths = new int[]{0, 0, 0, 0, 0, 0, 0};
-        gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, 0.3, 0.3, 0.0, 0.0, 0.0, 0.0};
+        gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, 0.5, 0.3, 0.0, 0.0, 0.0, 0.0};
         setLayout(gridBagLayout);
 
         entityIconLabel = new JLabel();
@@ -135,9 +138,17 @@ public class HeaderPanel extends JPanel {
 
         buttonActionGroup = new DefaultActionGroup();
         panelControls = new JPanel(new BorderLayout());
-        panelControls.setMinimumSize(new Dimension(175, 30));
-        actionToolBar = ActionManager.getInstance().createActionToolbar("save | refresh | fields | open in browser | comments ", buttonActionGroup,
-                true);
+        actionToolBar = ActionManager
+                .getInstance()
+                .createActionToolbar("save | refresh | fields | open in browser | comments ", buttonActionGroup,
+                        true);
+        actionToolBar.setLayoutPolicy(0);
+        ((ActionToolbarImpl) actionToolBar).addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                panelControls.setMinimumSize(((ActionToolbarImpl) actionToolBar).getPreferredSize());
+            }
+        });
         GridBagConstraints gbc_actionButtons = new GridBagConstraints();
         gbc_actionButtons.insets = new Insets(5, 0, 5, 5);
         gbc_actionButtons.gridx = 8;
