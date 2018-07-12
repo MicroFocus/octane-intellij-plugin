@@ -103,7 +103,13 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                         //change relative urls with local paths to temp and download images
                         String description = Util.getUiDataFromModel(entityModelWrapper.getValue(DetailsViewDefaultFields.FIELD_DESCRIPTION));
                         description = HtmlTextEditor.removeHtmlStructure(description);
-                        description = imageService.downloadPictures(description);
+                        try{
+                            description = imageService.downloadPictures(description);
+                        } catch (Exception ex){
+                            ExceptionHandler exceptionHandler = new ExceptionHandler(ex, project);
+                            exceptionHandler.showErrorNotification();
+                            entityDetailView.setErrorMessage(ex.getMessage());
+                        }
                         entityModelWrapper.setValue(new StringFieldModel(DetailsViewDefaultFields.FIELD_DESCRIPTION, description));
 
                         return entityModelWrapper;
