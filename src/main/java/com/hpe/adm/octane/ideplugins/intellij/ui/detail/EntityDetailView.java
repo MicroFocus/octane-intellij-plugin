@@ -73,6 +73,8 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
 
     private FieldsSelectPopup.SelectionListener selectionListener;
 
+    private Color separatorColor = UIManager.getColor("Separator.foreground");
+
     @Inject
     public EntityDetailView(HeaderPanel headerPanel, EntityFieldsPanel entityFieldsPanel, CommentsConversationPanel commentsPanel, HTMLPresenterFXPanel descriptionPanel) {
 
@@ -90,7 +92,7 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
         gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
         setLayout(gridBagLayout);
 
-        headerPanel.setBorder(new MatteBorder(0, 0, 1, 0, new Color(0, 0, 0)));
+        headerPanel.setBorder(new MatteBorder(0, 0, 1, 0, separatorColor));
         GridBagConstraints gbc_headerPanel = new GridBagConstraints();
         gbc_headerPanel.gridwidth = 2;
         gbc_headerPanel.fill = GridBagConstraints.HORIZONTAL;
@@ -107,7 +109,7 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
         gbc_entityFieldsPanel.gridy = 1;
         add(entityFieldsPanel, gbc_entityFieldsPanel);
 
-        commentsPanel.setBorder(new MatteBorder(0, 1, 0, 0, new Color(0, 0, 0)));
+        commentsPanel.setBorder(new MatteBorder(0, 1, 0, 0, separatorColor));
         GridBagConstraints gbc_commentsPanel = new GridBagConstraints();
         gbc_commentsPanel.gridheight = 3;
         gbc_commentsPanel.fill = GridBagConstraints.BOTH;
