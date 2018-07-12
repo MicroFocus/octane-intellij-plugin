@@ -96,7 +96,7 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
         GridBagConstraints gbc_headerPanel = new GridBagConstraints();
         gbc_headerPanel.gridwidth = 2;
         gbc_headerPanel.fill = GridBagConstraints.HORIZONTAL;
-        gbc_headerPanel.insets = new Insets(5, 0, 5, 5);
+        gbc_headerPanel.insets = new Insets(0, 5, 5, 5);
         gbc_headerPanel.gridx = 0;
         gbc_headerPanel.gridy = 0;
         add(headerPanel, gbc_headerPanel);

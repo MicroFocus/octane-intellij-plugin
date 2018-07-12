@@ -150,7 +150,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                         } catch (OctaneException ex) {
                             ConfirmationDialog dialog = new ConfirmationDialog(
                                     project,
-                                    "Server message: " + ex.getError().getValue("description") + GO_TO_BROWSER_DIALOG_MESSAGE,
+                                    "Server message: " + ex.getError().getValue("description_translated").getValue() + GO_TO_BROWSER_DIALOG_MESSAGE,
                                     "Business rule violation",
                                     null, VcsShowConfirmationOption.STATIC_SHOW_CONFIRMATION) {
                                 @Override
