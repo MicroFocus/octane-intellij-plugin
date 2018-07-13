@@ -16,6 +16,8 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields;
 
 import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.model.FieldModel;
+import com.hpe.adm.nga.sdk.model.ReferenceErrorModel;
+import com.hpe.adm.nga.sdk.model.StringFieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.DetailsViewDefaultFields;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
@@ -28,6 +30,8 @@ import com.intellij.ui.JBColor;
 import com.intellij.util.ui.UIUtil;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
 
 import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.MANUAL_TEST_RUN;
@@ -110,6 +114,22 @@ public class HeaderPanel extends JPanel {
         gbc_entityName.insets = new Insets(0, 0, 0, 5);
         gbc_entityName.anchor = GridBagConstraints.WEST;
         add(entityName, gbc_entityName);
+        entityName.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                handleNameChange();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                handleNameChange();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                handleNameChange();
+            }
+        });
 
         separatorNamePhase = new JSeparator(SwingConstants.VERTICAL);
         GridBagConstraints gbc_separator2 = new GridBagConstraints();
@@ -154,11 +174,23 @@ public class HeaderPanel extends JPanel {
         entityId.setMinimumSize(entityId.getPreferredSize());
     }
 
+    private void handleNameChange(){
+        String text = entityName.getText();
+        // whitespace is considered null
+        if (text.trim().isEmpty()) {
+            entityModelWrapper.setValue(new ReferenceErrorModel("name", null));
+        } else {
+            entityModelWrapper.setValue(new StringFieldModel("name", text));
+        }
+    }
+
     private void setNameDetails(String nameDetails) {
         this.entityName.setText(nameDetails.trim());
         this.entityName.setCaretPosition(0);
         this.entityName.setMinimumSize(entityName.getPreferredSize());
     }
+
+
 
     public void setSaveButton(AnAction saveSelectedPhaseAction) {
         if (this.saveSelectedPhaseAction == null) {
