@@ -52,13 +52,13 @@ public class PhaseDropDownMenu extends JPanel {
 
         targetPhaseLabel = new JLabel(MOVE_TO + "Loading phase ...");
         targetPhaseLabel.setForeground(new Color(30, 144, 255));
-        targetPhaseLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        targetPhaseLabel.setFont(new Font(targetPhaseLabel.getFont().getName(), Font.BOLD, 14));
         targetPhaseLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
         GridBagConstraints gbc_targetPhaseLabel = new GridBagConstraints();
         gbc_targetPhaseLabel.anchor = GridBagConstraints.WEST;
         gbc_targetPhaseLabel.weightx = 0.9;
         gbc_targetPhaseLabel.gridx = 0;
-        gbc_targetPhaseLabel.insets = new Insets(0, 5, 0, 5);
+        gbc_targetPhaseLabel.insets = new Insets(10, 5, 5, 5);
         add(targetPhaseLabel, gbc_targetPhaseLabel);
     }
 
@@ -137,7 +137,7 @@ public class PhaseDropDownMenu extends JPanel {
             gbc_arrow.anchor = GridBagConstraints.WEST;
             gbc_arrow.gridx = 1;
             gbc_arrow.weightx = 0.1;
-            gbc_arrow.insets = new Insets(0, 5, 0, 5);
+            gbc_arrow.insets = new Insets(5, 5, 5, 5);
             add(arrow, gbc_arrow);
 
             // create the popup
