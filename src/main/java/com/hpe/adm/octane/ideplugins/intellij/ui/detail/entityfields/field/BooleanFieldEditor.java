@@ -47,14 +47,6 @@ public class BooleanFieldEditor extends FieldEditor {
         booleanEntityComboBox.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         booleanEntityComboBox.setRenderer(new EntityModelRenderer());
-
-        booleanEntityComboBox.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                boolean newValue = booleanEntityComboBox.getSelectedItem() == ENTITY_TRUE ? true : false;
-                entityModelWrapper.setValue(new BooleanFieldModel(fieldName, newValue));
-            }
-        });
     }
 
     @Override
@@ -68,6 +60,13 @@ public class BooleanFieldEditor extends FieldEditor {
         } else {
             booleanEntityComboBox.setSelectedItem(ENTITY_FALSE);
         }
+        booleanEntityComboBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                boolean newValue = booleanEntityComboBox.getSelectedItem() == ENTITY_TRUE ? true : false;
+                entityModelWrapper.setValue(new BooleanFieldModel(fieldName, newValue));
+            }
+        });
     }
 
     public class EntityModelRenderer extends ListCellRendererWrapper {
