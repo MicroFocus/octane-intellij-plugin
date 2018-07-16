@@ -33,9 +33,6 @@ import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -60,16 +57,6 @@ public class HTMLPresenterFXPanel extends JFXPanel {
                 Platform.runLater(() -> setContent(getCommentContent()));
             }
         });
-
-        addMouseWheelListener(new MouseWheelListener() {
-            @Override
-            public void mouseWheelMoved(MouseWheelEvent e) {
-                Component source = (Component) e.getSource();
-                MouseEvent parentEvent = SwingUtilities.convertMouseEvent(source, e, source.getParent());
-                source.getParent().dispatchEvent(parentEvent);
-            }
-        });
-        setFocusable(false);
     }
 
     private void addHyperlinkListener(HyperlinkListener listener) {

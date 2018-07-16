@@ -71,8 +71,6 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
     @Inject
     private Project project;
 
-    private Color separatorColor = UIManager.getColor("Separator.foreground");
-
     @Inject
     public EntityDetailView(HeaderPanel headerPanel, EntityFieldsPanel entityFieldsPanel, CommentsConversationPanel commentsPanel, HTMLPresenterFXPanel descriptionPanel) {
 
@@ -90,11 +88,11 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
         gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
         setLayout(gridBagLayout);
 
-        headerPanel.setBorder(new MatteBorder(0, 0, 1, 0, separatorColor));
+        headerPanel.setBorder(new MatteBorder(0, 0, 1, 0, new Color(0, 0, 0)));
         GridBagConstraints gbc_headerPanel = new GridBagConstraints();
         gbc_headerPanel.gridwidth = 2;
         gbc_headerPanel.fill = GridBagConstraints.HORIZONTAL;
-        gbc_headerPanel.insets = new Insets(0, 5, 5, 5);
+        gbc_headerPanel.insets = new Insets(5, 0, 5, 5);
         gbc_headerPanel.gridx = 0;
         gbc_headerPanel.gridy = 0;
         add(headerPanel, gbc_headerPanel);
@@ -102,12 +100,12 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
         GridBagConstraints gbc_entityFieldsPanel = new GridBagConstraints();
         gbc_entityFieldsPanel.anchor = GridBagConstraints.NORTH;
         gbc_entityFieldsPanel.fill = GridBagConstraints.HORIZONTAL;
-        gbc_entityFieldsPanel.insets = new Insets(0, 5, 0, 5);
+        gbc_entityFieldsPanel.insets = new Insets(5, 10, 5, 5);
         gbc_entityFieldsPanel.gridx = 0;
         gbc_entityFieldsPanel.gridy = 1;
         add(entityFieldsPanel, gbc_entityFieldsPanel);
 
-        commentsPanel.setBorder(new MatteBorder(0, 1, 0, 0, separatorColor));
+        commentsPanel.setBorder(new MatteBorder(0, 1, 0, 0, new Color(0, 0, 0)));
         GridBagConstraints gbc_commentsPanel = new GridBagConstraints();
         gbc_commentsPanel.gridheight = 3;
         gbc_commentsPanel.fill = GridBagConstraints.BOTH;
