@@ -191,6 +191,8 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
         if (entityModelWrapper.getEntityType() != TASK) {
             setComments(entityModelWrapper);
             addSendNewCommentAction(entityModelWrapper);
+        } else {
+            headerPanel.removeCommentButton();
         }
     }
 

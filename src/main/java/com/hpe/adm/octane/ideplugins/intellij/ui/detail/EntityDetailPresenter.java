@@ -82,6 +82,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
         entityDetailView.setOpenInBrowserButton();
         entityDetailView.setupFieldsSelectButton();
         entityDetailView.setupCommentsButton();
+
     }
 
     public void setEntity(Entity entityType, Long entityId) {

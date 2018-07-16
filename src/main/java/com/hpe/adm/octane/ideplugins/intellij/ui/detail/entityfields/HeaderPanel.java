@@ -229,6 +229,12 @@ public class HeaderPanel extends JPanel {
         }
     }
 
+    public void removeCommentButton(){
+        if(commentAction != null){
+            buttonActionGroup.remove(commentAction);
+        }
+    }
+
     private void setPhaseDetails(FieldModel phaseDetails) {
         phasePanel.setPhaseDetails(phaseDetails);
     }
