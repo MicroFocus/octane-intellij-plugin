@@ -76,11 +76,6 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
     @Inject
     public void setView(EntityDetailView entityDetailView) {
         this.entityDetailView = entityDetailView;
-        entityDetailView.setSaveSelectedPhaseButton(new SaveSelectedPhaseAction());
-        entityDetailView.setRefreshEntityButton(new EntityRefreshAction());
-        entityDetailView.setOpenInBrowserButton();
-        entityDetailView.setupFieldsSelectButton();
-        entityDetailView.setupCommentsButton();
     }
 
     public void setEntity(Entity entityType, Long entityId) {
@@ -122,6 +117,13 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                 },
                 (entityModelWrapper) -> {
                     if (entityModelWrapper != null) {
+                        entityDetailView.setSaveSelectedPhaseButton(new SaveSelectedPhaseAction());
+                        entityDetailView.setRefreshEntityButton(new EntityRefreshAction());
+                        entityDetailView.setOpenInBrowserButton();
+                        entityDetailView.setupFieldsSelectButton();
+                        if(entityType != Entity.TASK){
+                            entityDetailView.setupCommentsButton();
+                        }
                         entityDetailView.setEntityModel(entityModelWrapper, fields);
                     }
                 },
