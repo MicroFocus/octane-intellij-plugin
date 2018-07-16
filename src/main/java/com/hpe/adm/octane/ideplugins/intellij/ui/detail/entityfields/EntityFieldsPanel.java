@@ -106,13 +106,12 @@ public class EntityFieldsPanel extends JXPanel {
     public void setEntityModel(EntityModelWrapper entityModelWrapper, Set<String> fieldNames) {
         detailsLeftPanel.removeAll();
         detailsRightPanel.removeAll();
-        JXLabel fieldLabel = null;
         int fieldCount = 0;
         int i = 0;
         for (FieldMetadata fieldMetadata : fields) {
             if (fieldNames.contains(fieldMetadata.getName())) {
                 String fieldName = fieldMetadata.getName();
-                fieldLabel = new JXLabel();
+                JXLabel fieldLabel = new JXLabel();
                 Font font = new Font(fieldLabel.getFont().getFontName(), Font.BOLD, fieldLabel.getFont().getSize());
                 fieldLabel.setFont(font);
                 fieldLabel.setText(fieldMetadata.getLabel());
