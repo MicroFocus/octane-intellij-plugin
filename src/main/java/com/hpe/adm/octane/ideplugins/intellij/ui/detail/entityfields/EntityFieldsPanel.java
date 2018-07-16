@@ -91,7 +91,7 @@ public class EntityFieldsPanel extends JXPanel {
         addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent e) {
                 int halfWidth = getWidth() / 2;
-                int height = getHeight();
+                int height = detailsLeftPanel.getHeight();
                 if (halfWidth != 0 && height != 0) {
                     Dimension halfSizeFields = new Dimension((int) halfWidth, height);
                     detailsLeftPanel.setPreferredSize(halfSizeFields);

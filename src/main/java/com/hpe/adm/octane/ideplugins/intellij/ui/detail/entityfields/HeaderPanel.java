@@ -115,6 +115,7 @@ public class HeaderPanel extends JPanel {
         gbc_entityName.gridwidth = 2;
         gbc_entityName.insets = new Insets(5, 0, 5, 5);
         gbc_entityName.anchor = GridBagConstraints.WEST;
+        gbc_entityName.fill = GridBagConstraints.BOTH;
         add(entityName, gbc_entityName);
         entityName.getDocument().addDocumentListener(new DocumentListener() {
             @Override
