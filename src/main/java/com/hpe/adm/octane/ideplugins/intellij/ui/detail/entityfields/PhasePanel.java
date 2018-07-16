@@ -22,7 +22,6 @@ import com.hpe.adm.octane.ideplugins.services.util.Util;
 import org.jdesktop.swingx.JXLabel;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -48,27 +47,25 @@ public class PhasePanel extends JPanel {
 
         currentPhaseLabel = new JXLabel();
         currentPhaseLabel.setText("Current phase:");
-        currentPhaseLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        currentPhaseLabel.setBorder(new EmptyBorder(0, 0, 0, 5));
+        currentPhaseLabel.setFont(new Font(currentPhaseLabel.getFont().getName(), Font.BOLD, 14));
         GridBagConstraints gbc_currentPhaseLabel = new GridBagConstraints();
         gbc_currentPhaseLabel.anchor = GridBagConstraints.WEST;
-        gbc_currentPhaseLabel.insets = new Insets(0, 0, 0, 5);
+        gbc_currentPhaseLabel.insets = new Insets(5, 0, 5, 5);
         gbc_currentPhaseLabel.gridx = 0;
         add(currentPhaseLabel, gbc_currentPhaseLabel);
 
         phaseDetails = new JXLabel();
         phaseDetails.setText("phase");
-        phaseDetails.setFont(new Font("Arial", Font.PLAIN, 14));
-        phaseDetails.setBorder(new EmptyBorder(0, 0, 0, 10));
+        phaseDetails.setFont(new Font(phaseDetails.getFont().getName(), Font.PLAIN, 14));
         GridBagConstraints gbc_phaseDetails = new GridBagConstraints();
         gbc_phaseDetails.anchor = GridBagConstraints.WEST;
-        gbc_phaseDetails.insets = new Insets(0, 0, 0, 5);
+        gbc_phaseDetails.insets = new Insets(5, 0, 5, 5);
         gbc_phaseDetails.gridx = 1;
         add(phaseDetails, gbc_phaseDetails);
 
         separatorPhasePanel = new JSeparator(SwingConstants.VERTICAL);
         GridBagConstraints gbc_separator3 = new GridBagConstraints();
-        gbc_separator3.insets = new Insets(0, 0, 0, 5);
+        gbc_separator3.insets = new Insets(5, 5, 5, 5);
         gbc_separator3.gridx = 2;
         gbc_separator3.fill = GridBagConstraints.VERTICAL;
         add(separatorPhasePanel, gbc_separator3);

@@ -104,7 +104,13 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                         //change relative urls with local paths to temp and download images
                         String description = Util.getUiDataFromModel(entityModelWrapper.getValue(DetailsViewDefaultFields.FIELD_DESCRIPTION));
                         description = HtmlTextEditor.removeHtmlStructure(description);
-                        description = imageService.downloadPictures(description);
+                        try{
+                            description = imageService.downloadPictures(description);
+                        } catch (Exception ex){
+                            ExceptionHandler exceptionHandler = new ExceptionHandler(ex, project);
+                            exceptionHandler.showErrorNotification();
+                            entityDetailView.setErrorMessage(ex.getMessage());
+                        }
                         entityModelWrapper.setValue(new StringFieldModel(DetailsViewDefaultFields.FIELD_DESCRIPTION, description));
 
                         return entityModelWrapper;
@@ -161,7 +167,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                 } catch (OctaneException ex) {
                     ConfirmationDialog dialog = new ConfirmationDialog(
                             project,
-                            "Server message: " + ex.getError().getValue("description") + GO_TO_BROWSER_DIALOG_MESSAGE,
+                            "Server message: " + ex.getError().getValue("description").getValue() + GO_TO_BROWSER_DIALOG_MESSAGE,
                             "Business rule violation",
                             null, VcsShowConfirmationOption.STATIC_SHOW_CONFIRMATION) {
                         @Override
