@@ -79,28 +79,10 @@ public class EntityFieldsPanel extends JXPanel {
         gbc_rightPanel.gridy = 1;
         gbc_rightPanel.weightx = 1.0;
         add(detailsRightPanel, gbc_rightPanel);
-
-        addComponentListener(detailsLeftPanel, detailsRightPanel);
     }
 
     public void setFields(Collection<FieldMetadata> fields) {
         this.fields = fields;
-    }
-
-    public void addComponentListener(JXPanel detailsLeftPanel, JXPanel detailsRightPanel) {
-        addComponentListener(new ComponentAdapter() {
-            public void componentResized(ComponentEvent e) {
-                int halfWidth = getWidth() / 2;
-                int height = detailsLeftPanel.getHeight();
-                if (halfWidth != 0 && height != 0) {
-                    Dimension halfSizeFields = new Dimension((int) halfWidth, height);
-                    detailsLeftPanel.setPreferredSize(halfSizeFields);
-                    detailsRightPanel.setPreferredSize(halfSizeFields);
-                    updateUI();
-                    repaint();
-                }
-            }
-        });
     }
 
     public void setEntityModel(EntityModelWrapper entityModelWrapper, Set<String> fieldNames) {
