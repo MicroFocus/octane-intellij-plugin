@@ -25,7 +25,6 @@ public class StringFieldEditor extends FieldEditor {
         setLayout(layout);
 
         fieldValue = new JXTextField();
-        fieldValue.setColumns(100);
         GridBagConstraints gbc_valueTextField = new GridBagConstraints();
         gbc_valueTextField.anchor = GridBagConstraints.WEST;
         gbc_valueTextField.fill = GridBagConstraints.HORIZONTAL;
