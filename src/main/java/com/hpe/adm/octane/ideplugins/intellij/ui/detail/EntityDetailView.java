@@ -16,7 +16,6 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.exception.OctaneException;
 import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
-import com.hpe.adm.nga.sdk.model.FieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.View;
@@ -37,6 +36,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.components.JBScrollPane;
 import javafx.application.Platform;
+import org.jdesktop.swingx.JXLabel;
 
 import javax.swing.*;
 import javax.swing.border.MatteBorder;
@@ -59,7 +59,7 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
     private CommentsConversationPanel commentsPanel;
     private HTMLPresenterFXPanel descriptionPanel;
     private SelectFieldsAction fieldsSelectAction;
-
+    private JXLabel generalLabel;
     private Collection<FieldMetadata> fields;
 
     @Inject
@@ -90,7 +90,7 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
         gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
         setLayout(gridBagLayout);
 
-        headerPanel.setBorder(new MatteBorder(0, 0, 1, 0,separatorColor));
+        headerPanel.setBorder(new MatteBorder(0, 0, 1, 0, separatorColor));
         GridBagConstraints gbc_headerPanel = new GridBagConstraints();
         gbc_headerPanel.gridwidth = 2;
         gbc_headerPanel.fill = GridBagConstraints.HORIZONTAL;
@@ -99,15 +99,24 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
         gbc_headerPanel.gridy = 0;
         add(headerPanel, gbc_headerPanel);
 
+        generalLabel = new JXLabel("General");
+        generalLabel.setFont(new Font(generalLabel.getFont().getName(), Font.BOLD, 18));
+        GridBagConstraints gbc_GeneralTitle = new GridBagConstraints();
+        gbc_GeneralTitle.anchor = GridBagConstraints.WEST;
+        gbc_GeneralTitle.insets = new Insets(5, 10, 10, 0);
+        gbc_GeneralTitle.gridx = 0;
+        gbc_GeneralTitle.gridy = 1;
+        add(generalLabel, gbc_GeneralTitle);
+
         GridBagConstraints gbc_entityFieldsPanel = new GridBagConstraints();
         gbc_entityFieldsPanel.anchor = GridBagConstraints.NORTH;
         gbc_entityFieldsPanel.fill = GridBagConstraints.HORIZONTAL;
-        gbc_entityFieldsPanel.insets = new Insets(0, 5, 0, 5);
+        gbc_entityFieldsPanel.insets = new Insets(0, 10, 0, 5);
         gbc_entityFieldsPanel.gridx = 0;
-        gbc_entityFieldsPanel.gridy = 1;
+        gbc_entityFieldsPanel.gridy = 2;
         add(entityFieldsPanel, gbc_entityFieldsPanel);
 
-        commentsPanel.setBorder(new MatteBorder(0, 1, 0, 0,separatorColor));
+        commentsPanel.setBorder(new MatteBorder(0, 1, 0, 0, separatorColor));
         GridBagConstraints gbc_commentsPanel = new GridBagConstraints();
         gbc_commentsPanel.gridheight = 3;
         gbc_commentsPanel.fill = GridBagConstraints.BOTH;
@@ -127,14 +136,14 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
         gbc_descriptionLabel.fill = GridBagConstraints.HORIZONTAL;
         gbc_descriptionLabel.insets = new Insets(10, 10, 5, 5);
         gbc_descriptionLabel.gridx = 0;
-        gbc_descriptionLabel.gridy = 2;
+        gbc_descriptionLabel.gridy = 3;
         add(descriptionLabel, gbc_descriptionLabel);
 
         GridBagConstraints gbc_descriptionPanel = new GridBagConstraints();
         gbc_descriptionPanel.fill = GridBagConstraints.BOTH;
         gbc_descriptionPanel.insets = new Insets(0, 5, 0, 5);
         gbc_descriptionPanel.gridx = 0;
-        gbc_descriptionPanel.gridy = 3;
+        gbc_descriptionPanel.gridy = 4;
         add(descriptionPanel, gbc_descriptionPanel);
 
         descriptionPanel.addEventActions();

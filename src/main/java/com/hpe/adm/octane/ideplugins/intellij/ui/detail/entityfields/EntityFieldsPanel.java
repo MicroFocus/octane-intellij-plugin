@@ -33,27 +33,18 @@ public class EntityFieldsPanel extends JXPanel {
     private Collection<FieldMetadata> fields;
     private JXPanel detailsRightPanel;
     private JXPanel detailsLeftPanel;
-    private JXLabel generalLabel;
+    private GridBagLayout gbl;
 
     @Inject
     private FieldEditorFactory fieldFactory;
 
     public EntityFieldsPanel() {
-        GridBagLayout gbl = new GridBagLayout();
+        gbl = new GridBagLayout();
         gbl.columnWidths = new int[]{0, 0};
-        gbl.columnWeights = new double[]{0.0, 0.0};
+        gbl.columnWeights = new double[]{0.5, 0.5};
         gbl.rowHeights = new int[]{0, 0};
         gbl.rowWeights = new double[]{0.0, 0.0};
         setLayout(gbl);
-
-        generalLabel = new JXLabel("General");
-        generalLabel.setFont(new Font(generalLabel.getFont().getName(), Font.BOLD, 18));
-        GridBagConstraints gbc_GeneralTitle = new GridBagConstraints();
-        gbc_GeneralTitle.anchor = GridBagConstraints.WEST;
-        gbc_GeneralTitle.insets = new Insets(5, 0, 10, 0);
-        gbc_GeneralTitle.gridx = 0;
-        gbc_GeneralTitle.gridy = 0;
-        add(generalLabel, gbc_GeneralTitle);
 
         detailsLeftPanel = new JXPanel();
         GridBagLayout gbl_detailsLeftPanel = new GridBagLayout();
@@ -64,9 +55,7 @@ public class EntityFieldsPanel extends JXPanel {
         gbc_leftPanel.anchor = GridBagConstraints.WEST;
         gbc_leftPanel.gridx = 0;
         gbc_leftPanel.gridy = 1;
-        gbc_leftPanel.weightx = 1.0;
         add(detailsLeftPanel, gbc_leftPanel);
-
 
         detailsRightPanel = new JXPanel();
         GridBagLayout gbl_detailsRightPanel = new GridBagLayout();
@@ -77,8 +66,22 @@ public class EntityFieldsPanel extends JXPanel {
         gbc_rightPanel.anchor = GridBagConstraints.NORTH;
         gbc_rightPanel.gridx = 1;
         gbc_rightPanel.gridy = 1;
-        gbc_rightPanel.weightx = 1.0;
         add(detailsRightPanel, gbc_rightPanel);
+
+        resizeHandler();
+    }
+
+    public void resizeHandler() {
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                super.componentResized(e);
+                gbl.columnWidths = new int[]{getWidth() / 2, getWidth() / 2};
+                updateUI();
+                revalidate();
+                repaint();
+            }
+        });
     }
 
     public void setFields(Collection<FieldMetadata> fields) {

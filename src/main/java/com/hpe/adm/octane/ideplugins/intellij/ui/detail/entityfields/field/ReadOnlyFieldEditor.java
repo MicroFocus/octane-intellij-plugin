@@ -5,7 +5,6 @@ import com.hpe.adm.octane.ideplugins.services.util.Util;
 import com.intellij.util.ui.UIUtil;
 import org.jdesktop.swingx.JXTextField;
 
-import javax.swing.*;
 import java.awt.*;
 
 public class ReadOnlyFieldEditor extends FieldEditor {
@@ -19,7 +18,6 @@ public class ReadOnlyFieldEditor extends FieldEditor {
         setLayout(layout);
 
         fieldValue = new JXTextField();
-        fieldValue.setHorizontalAlignment(SwingConstants.LEFT);
         fieldValue.setBackground(UIUtil.getLabelBackground());
         fieldValue.setEditable(false);
 
@@ -37,7 +35,7 @@ public class ReadOnlyFieldEditor extends FieldEditor {
         String fieldVal = Util.getUiDataFromModel(entityModelWrapper.getValue(fieldName));
         fieldValue.setText(fieldVal);
         fieldValue.setToolTipText(fieldVal);
-        //Removes a bunch of unnecessary listeners
+
         if (fieldValue.getText().isEmpty()) {
             fieldValue.setEnabled(false);
         } else {
