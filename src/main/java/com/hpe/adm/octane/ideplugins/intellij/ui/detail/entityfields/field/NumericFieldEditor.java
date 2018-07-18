@@ -10,8 +10,8 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 
 public class NumericFieldEditor extends FieldEditor {
     private EntityModelWrapper entityModelWrapper;
@@ -29,7 +29,7 @@ public class NumericFieldEditor extends FieldEditor {
         setLayout(layout);
 
         textField = new JTextField();
-        textField.addKeyListener(new KeyListener() {
+        textField.addKeyListener(new KeyAdapter() {
             @Override
             public void keyTyped(KeyEvent e) {
                 if (isRealNumber) {
@@ -44,16 +44,6 @@ public class NumericFieldEditor extends FieldEditor {
                         e.consume();
                     }
                 }
-            }
-
-            @Override
-            public void keyPressed(KeyEvent e) {
-
-            }
-
-            @Override
-            public void keyReleased(KeyEvent e) {
-
             }
         });
         GridBagConstraints gbc_valueTextField = new GridBagConstraints();
