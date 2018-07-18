@@ -179,10 +179,29 @@ public class DateTimeFieldEditor extends FieldEditor {
         entityModelWrapper.setValue(new DateFieldModel(fieldName, getZonedDateTime()));
     }
 
+    private boolean isleapYear(int year){
+        if(year % 4 != 0){
+            return false;
+        } else {
+            if(year % 100 != 0) {
+                return true;
+            } else {
+                if(year % 400 != 0){
+                    return false;
+                } else return true;
+            }
+        }
+
+    }
+
     private void changeDaySpinnerModel() {
         switch ((int) monthSpinner.getValue()) {
             case 2:
-                daySpinner.setModel(new SpinnerNumberModel(1, 1, 28, 1));
+                if(isleapYear((int) yearSpinner.getValue())){
+                    daySpinner.setModel(new SpinnerNumberModel(1, 1, 29, 1));
+                } else {
+                    daySpinner.setModel(new SpinnerNumberModel(1, 1, 29, 1));
+                }
                 break;
             case 4:
             case 6:
