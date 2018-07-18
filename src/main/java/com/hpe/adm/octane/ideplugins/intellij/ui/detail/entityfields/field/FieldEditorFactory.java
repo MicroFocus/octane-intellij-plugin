@@ -42,7 +42,7 @@ public class FieldEditorFactory {
                     fieldEditor = new BooleanFieldEditor();
                     break;
                 case DateTime:
-                    fieldEditor = new ReadOnlyFieldEditor();
+                    fieldEditor = new DateTimeFieldEditor();
                     break;
                 case Reference:
                     fieldEditor = new ReadOnlyFieldEditor();
