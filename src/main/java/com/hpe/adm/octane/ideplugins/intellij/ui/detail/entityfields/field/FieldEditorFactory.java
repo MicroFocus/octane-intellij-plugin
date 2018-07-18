@@ -45,7 +45,7 @@ public class FieldEditorFactory {
                     fieldEditor = new DateTimeFieldEditor();
                     break;
                 case Reference:
-                    fieldEditor = new ReadOnlyFieldEditor();
+                    fieldEditor = new ReferenceFieldEditor();
                     break;
                 default:
                     fieldEditor = new ReadOnlyFieldEditor();
