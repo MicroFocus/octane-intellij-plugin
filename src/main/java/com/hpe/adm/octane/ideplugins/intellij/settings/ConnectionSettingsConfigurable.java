@@ -22,7 +22,6 @@ import com.hpe.adm.octane.ideplugins.services.TestService;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
-import com.hpe.adm.octane.ideplugins.services.exception.ServiceRuntimeException;
 import com.hpe.adm.octane.ideplugins.services.nonentity.OctaneVersionService;
 import com.hpe.adm.octane.ideplugins.services.util.OctaneVersion;
 import com.hpe.adm.octane.ideplugins.services.util.UrlParser;
@@ -55,6 +54,15 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
     private SearchHistoryManager searchManager;
     private boolean pinMessage = false;
 
+    public ConnectionSettingsConfigurable(@NotNull final Project currentProject) {
+        PluginModule module = PluginModule.getPluginModuleForProject(currentProject);
+        connectionSettingsProvider = module.getInstance(ConnectionSettingsProvider.class);
+        testService = module.getInstance(TestService.class);
+        idePluginPersistentState = module.getInstance(IdePluginPersistentState.class);
+        searchManager = module.getInstance(SearchHistoryManager.class);
+        this.currentProject = currentProject;
+    }
+
     @NotNull
     @Override
     public String getId() {
@@ -77,15 +85,6 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
     @Override
     public String getHelpTopic() {
         return "settings.octane";
-    }
-
-    public ConnectionSettingsConfigurable(@NotNull final Project currentProject) {
-        PluginModule module = PluginModule.getPluginModuleForProject(currentProject);
-        connectionSettingsProvider = module.getInstance(ConnectionSettingsProvider.class);
-        testService = module.getInstance(TestService.class);
-        idePluginPersistentState = module.getInstance(IdePluginPersistentState.class);
-        searchManager = module.getInstance(SearchHistoryManager.class);
-        this.currentProject = currentProject;
     }
 
     @Nullable
@@ -150,7 +149,7 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
             newConnectionSettings = testConnection();
             //We should not have search history from any previous workspaces
             searchManager.clearSearchHistory();
-        } catch (Exception ex){
+        } catch (Exception ex) {
             ExceptionHandler exceptionHandler = new ExceptionHandler(ex, currentProject);
             exceptionHandler.showErrorNotification();
         }
@@ -229,11 +228,18 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
         try {
             testService.testConnection(newConnectionSettings);
             testOctaneVersion(newConnectionSettings);
-            SwingUtilities.invokeLater(() -> { if(connectionSettingsView != null) connectionSettingsView.setConnectionStatusSuccess(); });
-        } catch (ServiceException | ServiceRuntimeException ex) {
+            SwingUtilities.invokeLater(() -> {
+                if (connectionSettingsView != null) connectionSettingsView.setConnectionStatusSuccess();
+            });
+        } catch (Exception ex) {
             //handle case when ok button is pressed
             SwingUtilities.invokeLater(() -> {
-                if (connectionSettingsView != null) connectionSettingsView.setConnectionStatusError(ex.getMessage());
+                if (connectionSettingsView != null)
+                    if (ex.getMessage().contains("401")) {
+                        connectionSettingsView.setConnectionStatusError("Invalid username or password.");
+                    } else {
+                        connectionSettingsView.setConnectionStatusError(ex.getMessage());
+                    }
             });
             return null;
         }
