@@ -77,7 +77,10 @@ public class DateTimeFieldEditor extends FieldEditor {
 
         SpinnerModel daytimeSpinnerModel = new SpinnerListModel(Arrays.asList("AM", "PM"));
         dayTimeSpinner = new JSpinner(daytimeSpinnerModel);
-        ((JSpinner.DefaultEditor) dayTimeSpinner.getEditor()).getTextField().setEditable(false);
+        JTextField dayTimeSpinnerTextField = ((JSpinner.DefaultEditor) dayTimeSpinner.getEditor()).getTextField();
+        dayTimeSpinnerTextField.setEditable(false);
+        dayTimeSpinnerTextField.setColumns(3);
+        dayTimeSpinnerTextField.setHorizontalAlignment(JTextField.CENTER);
 
         linkToButtons = new JLabel("set date");
         linkToButtons.setForeground(UIManager.getColor("EditorPane.selectionBackground"));
@@ -94,7 +97,7 @@ public class DateTimeFieldEditor extends FieldEditor {
         GridBagConstraints gbc_valueTextField = new GridBagConstraints();
         gbc_valueTextField.anchor = GridBagConstraints.WEST;
         gbc_valueTextField.fill = GridBagConstraints.HORIZONTAL;
-        gbc_valueTextField.insets = new Insets(0, 0, 0, 5);
+        gbc_valueTextField.insets = new Insets(0, 5, 0, 5);
         gbc_valueTextField.gridx = 0;
         gbc_valueTextField.weightx = 1.0;
         add(linkToButtons, gbc_valueTextField);
@@ -149,7 +152,12 @@ public class DateTimeFieldEditor extends FieldEditor {
     }
 
     private void handleChange() {
-        entityModelWrapper.setValue(new DateFieldModel(fieldName, getZonedDateTime()));
+        ZonedDateTime zdt = getZonedDateTime();
+        if (zdt == null) {
+            entityModelWrapper.setValue(new ReferenceFieldModel(fieldName, null));
+        } else {
+            entityModelWrapper.setValue(new DateFieldModel(fieldName, getZonedDateTime()));
+        }
     }
 
     private void addElementToPosition(Component cmp, int x) {
@@ -172,13 +180,13 @@ public class DateTimeFieldEditor extends FieldEditor {
         addElementToPosition(secondsSpinner, 6);
         addElementToPosition(dayTimeSpinner, 7);
 
-        GridBagConstraints gbc_clearSelection = new GridBagConstraints();
-        gbc_clearSelection.anchor = GridBagConstraints.CENTER;
-        gbc_clearSelection.fill = GridBagConstraints.HORIZONTAL;
-        gbc_clearSelection.insets = new Insets(0, 0, 0, 5);
-        gbc_clearSelection.gridx = 8;
-        gbc_clearSelection.weightx = 1.0;
-        add(new JLabel(), gbc_clearSelection);
+        GridBagConstraints gbc_emptyPlaceHolder = new GridBagConstraints();
+        gbc_emptyPlaceHolder.anchor = GridBagConstraints.CENTER;
+        gbc_emptyPlaceHolder.fill = GridBagConstraints.HORIZONTAL;
+        gbc_emptyPlaceHolder.insets = new Insets(0, 0, 0, 5);
+        gbc_emptyPlaceHolder.gridx = 8;
+        gbc_emptyPlaceHolder.weightx = 1.0;
+        add(new JLabel(), gbc_emptyPlaceHolder);
 
         addElementToPosition(clearSelection, 9);
         revalidate();
@@ -189,7 +197,7 @@ public class DateTimeFieldEditor extends FieldEditor {
         GridBagConstraints gbc_linkToButtons = new GridBagConstraints();
         gbc_linkToButtons.anchor = GridBagConstraints.WEST;
         gbc_linkToButtons.fill = GridBagConstraints.HORIZONTAL;
-        gbc_linkToButtons.insets = new Insets(0, 0, 0, 5);
+        gbc_linkToButtons.insets = new Insets(0, 5, 0, 5);
         gbc_linkToButtons.gridx = 0;
         gbc_linkToButtons.weightx = 1.0;
         add(linkToButtons, gbc_linkToButtons);
@@ -228,6 +236,10 @@ public class DateTimeFieldEditor extends FieldEditor {
     }
 
     private ZonedDateTime getZonedDateTime() {
+        if (microbaDatePicker.getDate() == null) {
+            //user might click on none button in the date picker
+            return null;
+        }
         LocalDate localDate = microbaDatePicker.getDate()
                 .toInstant()
                 .atZone(ZoneId.systemDefault()).toLocalDate();
