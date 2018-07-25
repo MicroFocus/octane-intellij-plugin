@@ -68,7 +68,6 @@ public class PhasePanel extends JPanel {
 
         separatorPhasePanel = new JSeparator(SwingConstants.VERTICAL);
         GridBagConstraints gbc_separator3 = new GridBagConstraints();
-        gbc_separator3.insets = new Insets(5, 5, 5, 5);
         gbc_separator3.gridx = 2;
         gbc_separator3.fill = GridBagConstraints.VERTICAL;
         add(separatorPhasePanel, gbc_separator3);

@@ -103,6 +103,7 @@ public class DateTimeFieldEditor extends FieldEditor {
         add(linkToButtons, gbc_valueTextField);
 
         clearSelection = new JLabel();
+        clearSelection.setCursor(new Cursor(Cursor.HAND_CURSOR));
         clearSelection.setIcon(IconLoader.findIcon(Constants.IMG_REMOVE_SELECTION));
 
         // Nullify

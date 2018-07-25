@@ -68,7 +68,7 @@ public class PhaseDropDownMenu extends JPanel {
         gbc_targetPhaseLabel.anchor = GridBagConstraints.WEST;
         gbc_targetPhaseLabel.weightx = 0.9;
         gbc_targetPhaseLabel.gridx = 0;
-        gbc_targetPhaseLabel.insets = new Insets(10, 5, 5, 5);
+        gbc_targetPhaseLabel.insets = new Insets(5, 5, 5, 5);
         add(targetPhaseLabel, gbc_targetPhaseLabel);
     }
 
