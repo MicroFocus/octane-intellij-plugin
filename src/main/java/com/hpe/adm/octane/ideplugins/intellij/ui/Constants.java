@@ -32,6 +32,7 @@ public class Constants {
     public static final String IMG_NO_WORK_ROCKET = IMAGE_FOLDER_PATH + "s-rocket.png";
     public static final String IMG_PHASE_DROPDOWN = IMAGE_FOLDER_PATH + "drop-down.png";
     public static final String IMG_REMOVE_SELECTION = IMAGE_FOLDER_PATH + "octane_remove.png";
+    public static final String IMG_ENTITY_COMBOBOX_ARROW = IMAGE_FOLDER_PATH +"arrow.png";
 
     //Settings validation
     public static final String CORRECT_URL_FORMAT_MESSAGE = "Example: (http|https)://{serverurl[:port]}/?p={sharedspaceId}/{workspaceId}";
