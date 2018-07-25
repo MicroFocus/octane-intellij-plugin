@@ -62,18 +62,18 @@ public class DateTimeFieldEditor extends FieldEditor {
 
         SpinnerModel hourSpinnerModel = new SpinnerNumberModel(0, 0, 11, 1);
         hourSpinner = new JSpinner(hourSpinnerModel);
-        JFormattedTextField txt = ((JSpinner.NumberEditor) hourSpinner.getEditor()).getTextField();
-        ((NumberFormatter) txt.getFormatter()).setAllowsInvalid(false);
+        JFormattedTextField hourSpinnerTextField = ((JSpinner.NumberEditor) hourSpinner.getEditor()).getTextField();
+        ((NumberFormatter) hourSpinnerTextField.getFormatter()).setAllowsInvalid(false);
 
         SpinnerModel minuteSpinnerModel = new SpinnerNumberModel(0, 0, 59, 1);
         minuteSpinner = new JSpinner(minuteSpinnerModel);
-        JFormattedTextField txt1 = ((JSpinner.NumberEditor) minuteSpinner.getEditor()).getTextField();
-        ((NumberFormatter) txt1.getFormatter()).setAllowsInvalid(false);
+        JFormattedTextField minuteSpinnerTextField = ((JSpinner.NumberEditor) minuteSpinner.getEditor()).getTextField();
+        ((NumberFormatter) minuteSpinnerTextField.getFormatter()).setAllowsInvalid(false);
 
         SpinnerModel secondsSpinnerModel = new SpinnerNumberModel(0, 0, 59, 1);
         secondsSpinner = new JSpinner(secondsSpinnerModel);
-        JFormattedTextField txt2 = ((JSpinner.NumberEditor) minuteSpinner.getEditor()).getTextField();
-        ((NumberFormatter) txt2.getFormatter()).setAllowsInvalid(false);
+        JFormattedTextField secondsSpinnerTextField = ((JSpinner.NumberEditor) minuteSpinner.getEditor()).getTextField();
+        ((NumberFormatter) secondsSpinnerTextField.getFormatter()).setAllowsInvalid(false);
 
         SpinnerModel daytimeSpinnerModel = new SpinnerListModel(Arrays.asList("AM", "PM"));
         dayTimeSpinner = new JSpinner(daytimeSpinnerModel);
