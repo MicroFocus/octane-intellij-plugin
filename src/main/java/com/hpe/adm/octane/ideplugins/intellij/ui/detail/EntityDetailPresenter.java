@@ -168,7 +168,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                 } catch (OctaneException ex) {
                     ConfirmationDialog dialog = new ConfirmationDialog(
                             project,
-                            "Server message: " + ex.getError().getValue("description").getValue() + GO_TO_BROWSER_DIALOG_MESSAGE,
+                            "Server message: " + ex.getError().getValue("description").getValue() + "\nContinue to edit?",
                             "Business rule violation",
                             null, VcsShowConfirmationOption.STATIC_SHOW_CONFIRMATION) {
                         @Override
@@ -177,7 +177,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                         }
                     };
                     if (dialog.showAndGet()) {
-                        entityService.openInBrowser(entityModelWrapper.getEntityModel());
+                        return;
                     }
                 }
                 entityDetailView.doRefresh();
