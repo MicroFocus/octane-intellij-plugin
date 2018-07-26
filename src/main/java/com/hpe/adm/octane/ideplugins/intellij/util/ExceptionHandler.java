@@ -14,6 +14,7 @@
 package com.hpe.adm.octane.ideplugins.intellij.util;
 
 import com.hpe.adm.nga.sdk.exception.OctaneException;
+import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.project.Project;
@@ -31,7 +32,7 @@ public class ExceptionHandler {
         exceptionMessage = new StringBuilder();
         ex.getError().getValues().forEach( f -> {
             //display the messages as name - value pairs
-            String fieldName = convertFieldNameToLabel(f.getName());
+            String fieldName = UiUtil.convertFieldNameToLabel(f.getName());
             exceptionMessage.append(fieldName + ": " + f.getValue() + "<br/>");
         });
         notificationBuilder = new NotificationBuilder(project, "ALM Octane plugin error", exceptionMessage.toString());
@@ -41,16 +42,6 @@ public class ExceptionHandler {
         exceptionMessage = new StringBuilder();
         exceptionMessage.append(ex.getMessage());
         notificationBuilder = new NotificationBuilder(project, "ALM Octane plugin error", exceptionMessage.toString());
-    }
-
-    private String convertFieldNameToLabel(String fieldname) {
-        fieldname = fieldname.replace("_", " ");
-        fieldname = Arrays.stream(StringUtils.splitByCharacterTypeCamelCase(fieldname)).collect(Collectors.joining(" "));
-        fieldname = Arrays.stream(fieldname.split("\\s+"))
-                .map(str -> StringUtils.capitalize(str))
-                .collect(Collectors.joining(" "));
-        fieldname = fieldname + ": ";
-        return fieldname;
     }
 
     public void addAction(AnAction action){

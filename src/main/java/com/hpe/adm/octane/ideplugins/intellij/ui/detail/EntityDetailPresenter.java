@@ -19,6 +19,7 @@ import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
 import com.hpe.adm.nga.sdk.model.StringFieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
+import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.BusinessErrorReportingDialog;
 import com.hpe.adm.octane.ideplugins.intellij.util.ExceptionHandler;
 import com.hpe.adm.octane.ideplugins.intellij.util.HtmlTextEditor;
 import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
@@ -32,11 +33,17 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.DialogBuilder;
+import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vcs.VcsShowConfirmationOption;
+import com.intellij.ui.wizard.WizardDialog;
 import com.intellij.util.ui.ConfirmationDialog;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -166,23 +173,25 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                 try {
                     entityService.updateEntity(entityModelWrapper.getEntityModel());
                 } catch (OctaneException ex) {
-                    ConfirmationDialog dialog = new ConfirmationDialog(
-                            project,
-                            "Server message: " + ex.getError().getValue("description").getValue() + "\nContinue to edit?",
-                            "Business rule violation",
-                            null, VcsShowConfirmationOption.STATIC_SHOW_CONFIRMATION) {
-                        @Override
-                        public void setDoNotAskOption(@Nullable DoNotAskOption doNotAsk) {
-                            super.setDoNotAskOption(null);
+                    BusinessErrorReportingDialog berDialog = new BusinessErrorReportingDialog(project, ex);
+                    berDialog.show();
+
+                    switch (berDialog.getExitCode()) {
+                        case BusinessErrorReportingDialog.EXIT_CODE_OPEN_IN_BROWSER: {
+                            entityService.openInBrowser(entityModelWrapper.getEntityModel());
                         }
-                    };
-                    if (dialog.showAndGet()) {
-                        return;
+                        case BusinessErrorReportingDialog.EXIT_CODE_REFRESH: {
+                            entityDetailView.doRefresh();
+                            setEntity(entityType, entityId);
+                            stateChanged = false;
+                            break;
+                        }
+                        case BusinessErrorReportingDialog.EXIT_CODE_BACK:
+                        default:
                     }
                 }
-                entityDetailView.doRefresh();
-                setEntity(entityType, entityId);
-                stateChanged = false;
+
+
             }, null, "Failed to save entity", "Saving entity");
 
         }
