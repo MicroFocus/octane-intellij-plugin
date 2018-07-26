@@ -211,7 +211,7 @@ public class FieldsSelectPopup extends JFrame {
         this.selectFieldsAction = selectFieldsAction;
 
         this.allFields = allFields.stream()
-                .filter(e -> !Arrays.asList("phase", "name", "subtype", "description").contains(e.getName()))
+                .filter(e -> !Arrays.asList("phase", "name", "subtype", "description", "rank").contains(e.getName()) && e.getFieldType() != FieldMetadata.FieldType.Memo)
                 .collect(Collectors.toList());
 
         this.entityModelWrapper = entityModelWrapper;
