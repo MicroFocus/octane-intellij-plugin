@@ -172,6 +172,9 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
             RestUtil.runInBackground(() -> {
                 try {
                     entityService.updateEntity(entityModelWrapper.getEntityModel());
+                    entityDetailView.doRefresh();
+                    setEntity(entityType, entityId);
+                    stateChanged = false;
                 } catch (OctaneException ex) {
                     BusinessErrorReportingDialog berDialog = new BusinessErrorReportingDialog(project, ex);
                     berDialog.show();
@@ -190,7 +193,6 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                         default:
                     }
                 }
-
 
             }, null, "Failed to save entity", "Saving entity");
 

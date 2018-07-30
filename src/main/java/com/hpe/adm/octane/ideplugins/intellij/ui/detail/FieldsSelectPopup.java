@@ -18,6 +18,8 @@ import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.FieldMenuItem;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.actions.SelectFieldsAction;
+import com.hpe.adm.octane.ideplugins.intellij.ui.listeners.SelectionEvent;
+import com.hpe.adm.octane.ideplugins.intellij.ui.listeners.SelectionListener;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.model.EntityModelWrapper;
 import com.hpe.adm.octane.ideplugins.services.util.DefaultEntityFieldsUtil;
@@ -42,16 +44,6 @@ import java.util.stream.Collectors;
 
 
 public class FieldsSelectPopup extends JFrame {
-
-    public interface SelectionListener extends EventListener {
-        void valueChanged(SelectionEvent e);
-    }
-
-    public class SelectionEvent extends EventObject {
-        public SelectionEvent(Object source) {
-            super(source);
-        }
-    }
 
     private Collection<FieldMetadata> allFields;
     private Map<Entity, Set<String>> defaultFieldsMap;
@@ -216,8 +208,8 @@ public class FieldsSelectPopup extends JFrame {
         this.selectFieldsAction = selectFieldsAction;
         this.allFields = allFields.stream()
                 .filter(e ->
-                    !Arrays.asList("phase", "name", "subtype", "description", "rank").contains(e.getName())
-                            && e.getFieldType() != FieldMetadata.FieldType.Memo)
+                        !Arrays.asList("phase", "name", "subtype", "description", "rank").contains(e.getName())
+                                && e.getFieldType() != FieldMetadata.FieldType.Memo)
                 .collect(Collectors.toList());
         this.entityModelWrapper = entityModelWrapper;
         retrieveSelectedFieldsFromPersistentState();

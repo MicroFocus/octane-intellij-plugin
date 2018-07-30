@@ -15,12 +15,16 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields;
 
 import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
+import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.field.DateTimeFieldEditor;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.field.FieldEditor;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.field.FieldEditorFactory;
+import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.field.ReferenceFieldEditor;
 import com.hpe.adm.octane.ideplugins.services.model.EntityModelWrapper;
+import org.gradle.internal.impldep.org.joda.time.DateTimeField;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -109,7 +113,7 @@ public class EntityFieldsPanel extends JXPanel {
 
                 FieldEditor fieldValueLabel = fieldFactory.createFieldEditor(entityModelWrapper, fieldName);
                 GridBagConstraints gbc2 = new GridBagConstraints();
-                gbc2.insets = new Insets(0, 10, 5, 5);
+                gbc2.insets = new Insets(0, 10, 5, 0);
                 gbc2.anchor = GridBagConstraints.WEST;
                 gbc2.fill = GridBagConstraints.HORIZONTAL;
                 gbc2.gridx = 1;
@@ -119,9 +123,11 @@ public class EntityFieldsPanel extends JXPanel {
                 if (fieldCount % 2 == 0) {
                     detailsLeftPanel.add(fieldLabel, gbc1);
                     detailsLeftPanel.add(fieldValueLabel, gbc2);
+                    addClearButton(fieldValueLabel, detailsLeftPanel, i);
                 } else {
                     detailsRightPanel.add(fieldLabel, gbc1);
                     detailsRightPanel.add(fieldValueLabel, gbc2);
+                    addClearButton(fieldValueLabel, detailsRightPanel, i);
                 }
                 i++;
                 fieldCount++;
@@ -132,5 +138,23 @@ public class EntityFieldsPanel extends JXPanel {
         detailsLeftPanel.revalidate();
         detailsRightPanel.repaint();
         detailsRightPanel.revalidate();
+    }
+
+    private void addClearButton(FieldEditor fieldEditor, JPanel parent, int rowCount){
+        Component clearButton;
+        if(fieldEditor instanceof ReferenceFieldEditor){
+            clearButton = ((ReferenceFieldEditor) fieldEditor).getClearButton();
+        } else if(fieldEditor instanceof DateTimeFieldEditor){
+            clearButton = ((DateTimeFieldEditor) fieldEditor).getClearButton();
+        } else {
+            return;
+        }
+        GridBagConstraints gbc2 = new GridBagConstraints();
+        gbc2.insets = new Insets(0, 0, 0, 10);
+        gbc2.anchor = GridBagConstraints.WEST;
+        gbc2.fill = GridBagConstraints.HORIZONTAL;
+        gbc2.gridx = 2;
+        gbc2.gridy = rowCount;
+        parent.add(clearButton, gbc2);
     }
 }

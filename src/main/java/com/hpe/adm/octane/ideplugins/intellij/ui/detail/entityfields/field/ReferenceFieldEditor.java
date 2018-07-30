@@ -13,21 +13,40 @@
 
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.field;
 
+import com.hpe.adm.nga.sdk.model.FieldModel;
+import com.hpe.adm.nga.sdk.model.MultiReferenceFieldModel;
+import com.hpe.adm.nga.sdk.model.ReferenceFieldModel;
+import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.EntityComboBox;
 import com.hpe.adm.octane.ideplugins.services.model.EntityModelWrapper;
-import com.intellij.ide.ui.laf.darcula.ui.DarculaComboBoxUI;
-import com.intellij.openapi.ui.ComboBoxWithWidePopup;
-import com.intellij.openapi.ui.JBPopupMenu;
-import com.intellij.util.ui.UIUtil;
+import com.intellij.openapi.util.IconLoader;
 
 import javax.swing.*;
-import javax.swing.plaf.basic.BasicArrowButton;
-import javax.swing.plaf.basic.BasicComboBoxUI;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.Collections;
 
 public class ReferenceFieldEditor extends FieldEditor {
 
-    private JTextField selectionTextField;
+    private JLabel clearSelection;
+    private EntityComboBox entityComboBox;
+
+    private EntityModelWrapper entityModelWrapper;
+    private String fieldName;
+    private MouseAdapter mouseListener = new MouseAdapter() {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            if (entityComboBox.isMultiSelect()) {
+                entityModelWrapper.setValue(new MultiReferenceFieldModel(fieldName, Collections.emptyList()));
+            } else {
+                entityModelWrapper.setValue(new ReferenceFieldModel(fieldName, null));
+            }
+            entityComboBox.clearEditor();
+            clearSelection.setIcon(IconLoader.findIcon(Constants.IMG_REMOVE_SELECTION_DISABLED));
+            clearSelection.removeMouseListener(mouseListener);
+        }
+    };
 
     public ReferenceFieldEditor() {
         GridBagLayout layout = new GridBagLayout();
@@ -35,30 +54,78 @@ public class ReferenceFieldEditor extends FieldEditor {
         layout.columnWeights = new double[]{0.0, 0.0};
         setLayout(layout);
 
-        selectionTextField = new JTextField();
-        selectionTextField.setBackground(UIUtil.getLabelBackground());
-        selectionTextField.setEditable(false);
-        GridBagConstraints gbc_valueTextField = new GridBagConstraints();
-        gbc_valueTextField.anchor = GridBagConstraints.WEST;
-        gbc_valueTextField.fill = GridBagConstraints.HORIZONTAL;
-        gbc_valueTextField.insets = new Insets(0, 0, 0, 5);
-        gbc_valueTextField.gridx = 0;
-        gbc_valueTextField.weightx = 0.5;
-        //add(selectionTextField, gbc_valueTextField);
-
-
+        entityComboBox = new EntityComboBox();
+        entityComboBox.addSelectionListener(e -> {
+            if (entityComboBox.isMultiSelect()) {
+                entityModelWrapper.setValue(new MultiReferenceFieldModel(fieldName, entityComboBox.getSelectedEntities()));
+                if (entityComboBox.getSelectedEntities().size() == 0) {
+                    clearSelection.setIcon(IconLoader.findIcon(Constants.IMG_REMOVE_SELECTION_DISABLED));
+                    clearSelection.removeMouseListener(mouseListener);
+                } else {
+                    clearSelection.setIcon(IconLoader.findIcon(Constants.IMG_REMOVE_SELECTION));
+                    clearSelection.addMouseListener(mouseListener);
+                }
+            } else {
+                entityModelWrapper.setValue(new ReferenceFieldModel(fieldName, entityComboBox.getSelectedEntity()));
+                clearSelection.setIcon(IconLoader.findIcon(Constants.IMG_REMOVE_SELECTION));
+                clearSelection.addMouseListener(mouseListener);
+            }
+        });
         GridBagConstraints gbc_arrowButton = new GridBagConstraints();
         gbc_arrowButton.anchor = GridBagConstraints.WEST;
         gbc_arrowButton.fill = GridBagConstraints.HORIZONTAL;
-        gbc_arrowButton.insets = new Insets(0, 5, 0, 10);
-        gbc_arrowButton.gridx = 1;
+        gbc_arrowButton.insets = new Insets(0, 3, 0, 8);
+        gbc_arrowButton.gridx = 0;
         gbc_arrowButton.weightx = 1.0;
-        EntityComboBox ebb = new EntityComboBox();
-        add(ebb, gbc_arrowButton);
+        add(entityComboBox, gbc_arrowButton);
+
+        clearSelection = new JLabel();
+        clearSelection.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        clearSelection.setIcon(IconLoader.findIcon(Constants.IMG_REMOVE_SELECTION));
+        clearSelection.addMouseListener(mouseListener);
     }
 
     @Override
-    void setField(EntityModelWrapper entityModelWrapper, String fieldName) {
+    public void setField(EntityModelWrapper entityModelWrapper, String fieldName) {
+        this.entityModelWrapper = entityModelWrapper;
+        this.fieldName = fieldName;
 
+        FieldModel fieldModel = entityModelWrapper.getValue(fieldName);
+
+        boolean hasValue = fieldModel != null && fieldModel.getValue() != null;
+
+        //Additional check for MultiReferenceFieldModel
+        if (hasValue && fieldModel instanceof MultiReferenceFieldModel) {
+            hasValue = !((MultiReferenceFieldModel) fieldModel).getValue().isEmpty();
+        }
+
+        if (hasValue) {
+            if (fieldModel instanceof ReferenceFieldModel && !entityComboBox.isMultiSelect()) {
+                entityComboBox.setSelectedEntity(((ReferenceFieldModel) fieldModel).getValue());
+            } else if (fieldModel instanceof MultiReferenceFieldModel && entityComboBox.isMultiSelect()) {
+                entityComboBox.setSelectedEntities(((MultiReferenceFieldModel) fieldModel).getValue());
+            } else {
+                throw new RuntimeException("Failed to set value of the Reference field model, field value and metadata not compatible");
+            }
+            clearSelection.setIcon(IconLoader.findIcon(Constants.IMG_REMOVE_SELECTION));
+            clearSelection.addMouseListener(mouseListener);
+        } else {
+            clearSelection.setIcon(IconLoader.findIcon(Constants.IMG_REMOVE_SELECTION_DISABLED));
+            clearSelection.removeMouseListener(mouseListener);
+            entityComboBox.clearEditor();
+        }
     }
+
+    public void setEntityLoader(EntityComboBox.EntityLoader entityLoader) {
+        entityComboBox.setEntityLoader(entityLoader);
+    }
+
+    public void setMultiSelect(boolean multiSelect) {
+        entityComboBox.setMultiSelect(multiSelect);
+    }
+
+    public Component getClearButton(){
+        return clearSelection;
+    }
+
 }

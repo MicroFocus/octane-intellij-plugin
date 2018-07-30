@@ -202,12 +202,13 @@ public class DateTimeFieldEditor extends FieldEditor {
         gbc_emptyPlaceHolder.weightx = 1.0;
         add(new JLabel(), gbc_emptyPlaceHolder);
 
-        addElementToPosition(clearSelection, 9);
+        clearSelection.setEnabled(true);
         revalidate();
     }
 
     private void setLinkVisible() {
         removeAll();
+        clearSelection.setEnabled(false);
         GridBagConstraints gbc_linkToButtons = new GridBagConstraints();
         gbc_linkToButtons.anchor = GridBagConstraints.WEST;
         gbc_linkToButtons.fill = GridBagConstraints.HORIZONTAL;
@@ -281,5 +282,9 @@ public class DateTimeFieldEditor extends FieldEditor {
         } else {
             setZonedDateTime(null);
         }
+    }
+
+    public Component getClearButton(){
+        return clearSelection;
     }
 }
