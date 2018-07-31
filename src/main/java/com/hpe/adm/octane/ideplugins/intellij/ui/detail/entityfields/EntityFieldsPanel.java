@@ -149,8 +149,7 @@ public class EntityFieldsPanel extends JXPanel {
             return;
         }
         GridBagConstraints gbc2 = new GridBagConstraints();
-        gbc2.insets = new Insets(0, 5, 0, 10);
-        gbc2.anchor = GridBagConstraints.CENTER;
+        gbc2.insets = new Insets(5, 5, 10, 10);
         gbc2.fill = GridBagConstraints.HORIZONTAL;
         gbc2.gridx = 2;
         gbc2.gridy = rowCount;
