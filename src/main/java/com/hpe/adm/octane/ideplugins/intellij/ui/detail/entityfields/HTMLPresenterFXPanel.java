@@ -149,7 +149,6 @@ public class HTMLPresenterFXPanel extends JFXPanel {
         final WebEngine webEngine = webView.getEngine();
         final String coloredHtmlCode = HtmlTextEditor.getColoredHTML(strippedContent);
 
-        setCommentContent(strippedContent);
         root.getChildren().add(webView);
         webEngine.loadContent(coloredHtmlCode);
         this.setWebView(webView);
@@ -204,14 +203,5 @@ public class HTMLPresenterFXPanel extends JFXPanel {
     void setWebView(WebView webView) {
         this.webView = webView;
     }
-
-    private String getCommentContent() {
-        return commentContent;
-    }
-
-    private void setCommentContent(String commentContent) {
-        this.commentContent = commentContent;
-    }
-
 
 }
