@@ -15,6 +15,7 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.searchresult;
 
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
+import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import org.jdesktop.swingx.JXLabel;
 
@@ -58,7 +59,7 @@ public class SearchEntityModelRow extends JPanel{
         gbc_panelIcon.anchor = GridBagConstraints.SOUTH;
         gbc_panelIcon.gridheight = 2;
         gbc_panelIcon.fill = GridBagConstraints.HORIZONTAL;
-        gbc_panelIcon.insets = new Insets(5, 0, 5, 5);
+        gbc_panelIcon.insets = JBUI.insets(5, 0, 5, 5);
         gbc_panelIcon.gridx = 0;
         gbc_panelIcon.gridy = 0;
         add(panelIcon, gbc_panelIcon);
@@ -72,7 +73,7 @@ public class SearchEntityModelRow extends JPanel{
         GridBagConstraints gbc_lblEntityName = new GridBagConstraints();
         gbc_lblEntityName.anchor = GridBagConstraints.SOUTH;
         gbc_lblEntityName.fill = GridBagConstraints.HORIZONTAL;
-        gbc_lblEntityName.insets = new Insets(5, 0, 5, 0);
+        gbc_lblEntityName.insets = JBUI.insets(5, 0);
         gbc_lblEntityName.gridx = 1;
         gbc_lblEntityName.gridy = 0;
         add(lblEntityName, gbc_lblEntityName);
@@ -83,7 +84,7 @@ public class SearchEntityModelRow extends JPanel{
         GridBagConstraints gbc_lblEntityId = new GridBagConstraints();
         gbc_lblEntityId.anchor = GridBagConstraints.NORTH;
         gbc_lblEntityId.fill = GridBagConstraints.HORIZONTAL;
-        gbc_lblEntityId.insets = new Insets(0, 0, 5, 0);
+        gbc_lblEntityId.insets = JBUI.insetsBottom(5);
         gbc_lblEntityId.gridx = 1;
         gbc_lblEntityId.gridy = 1;
         add(lblEntityRelease, gbc_lblEntityId);

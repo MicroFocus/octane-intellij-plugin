@@ -15,6 +15,7 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.searchresult;
 
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.nowork.NoWorkPanel;
+import com.intellij.util.ui.JBUI;
 
 import javax.swing.*;
 import java.awt.*;
@@ -36,7 +37,7 @@ public class NoSearchResultsPanel extends JPanel {
         label.setIcon(new ImageIcon(NoWorkPanel.class.getResource(Constants.IMG_PLAIN_ROBOT)));
         GridBagConstraints gbc_label = new GridBagConstraints();
         gbc_label.anchor = GridBagConstraints.SOUTH;
-        gbc_label.insets = new Insets(0, 0, 5, 0);
+        gbc_label.insets = JBUI.insetsBottom(5);
         gbc_label.gridx = 0;
         gbc_label.gridy = 0;
         add(label, gbc_label);
@@ -44,7 +45,7 @@ public class NoSearchResultsPanel extends JPanel {
         JLabel lblCongratulationsForFinishing = new JLabel("No results");
         GridBagConstraints gbc_lblCongratulationsForFinishing = new GridBagConstraints();
         gbc_lblCongratulationsForFinishing.anchor = GridBagConstraints.NORTH;
-        gbc_lblCongratulationsForFinishing.insets = new Insets(0, 0, 5, 0);
+        gbc_lblCongratulationsForFinishing.insets = JBUI.insetsBottom(5);
         gbc_lblCongratulationsForFinishing.gridx = 0;
         gbc_lblCongratulationsForFinishing.gridy = 1;
         add(lblCongratulationsForFinishing, gbc_lblCongratulationsForFinishing);

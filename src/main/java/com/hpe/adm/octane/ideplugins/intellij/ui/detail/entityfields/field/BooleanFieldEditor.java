@@ -6,6 +6,7 @@ import com.hpe.adm.nga.sdk.model.StringFieldModel;
 import com.hpe.adm.octane.ideplugins.services.model.EntityModelWrapper;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.ui.ListCellRendererWrapper;
+import com.intellij.util.ui.JBUI;
 
 import javax.swing.*;
 import java.awt.*;
@@ -39,7 +40,7 @@ public class BooleanFieldEditor extends FieldEditor {
         GridBagConstraints gbc_valueTextField = new GridBagConstraints();
         gbc_valueTextField.anchor = GridBagConstraints.WEST;
         gbc_valueTextField.fill = GridBagConstraints.HORIZONTAL;
-        gbc_valueTextField.insets = new Insets(0, 0, 0, 5);
+        gbc_valueTextField.insets = JBUI.insetsRight(5);
         gbc_valueTextField.gridx = 0;
         gbc_valueTextField.weightx = 1.0;
         add(booleanEntityComboBox, gbc_valueTextField);

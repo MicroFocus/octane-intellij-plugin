@@ -23,6 +23,7 @@ import com.hpe.adm.octane.ideplugins.services.model.EntityModelWrapper;
 import com.hpe.adm.octane.ideplugins.services.util.DefaultEntityFieldsUtil;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBScrollPane;
+import com.intellij.util.ui.JBUI;
 import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.JXTextField;
 import org.json.JSONObject;
@@ -126,7 +127,7 @@ public class FieldsSelectPopup extends JFrame {
         buttonsPanel.add(resetButton);
 
         GridBagConstraints gbcButton = new GridBagConstraints();
-        gbcButton.insets = new Insets(10, 10, 10, 10);
+        gbcButton.insets = JBUI.insets(10);
         gbcButton.anchor = GridBagConstraints.NORTH;
         gbcButton.gridx = 0;
         gbcButton.gridy = 2;
@@ -153,7 +154,7 @@ public class FieldsSelectPopup extends JFrame {
         });
 
         GridBagConstraints gbcSearchField = new GridBagConstraints();
-        gbcSearchField.insets = new Insets(10, 10, 10, 10);
+        gbcSearchField.insets = JBUI.insets(10);
         gbcSearchField.anchor = GridBagConstraints.NORTH;
         gbcSearchField.gridx = 0;
         gbcSearchField.gridy = 0;

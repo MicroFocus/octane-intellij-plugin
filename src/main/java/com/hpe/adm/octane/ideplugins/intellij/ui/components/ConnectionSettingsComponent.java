@@ -18,11 +18,11 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.HasComponent;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
 import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
 import com.hpe.adm.octane.ideplugins.services.util.UrlParser;
+import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import org.apache.commons.lang.StringUtils;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
@@ -34,7 +34,7 @@ public class ConnectionSettingsComponent implements HasComponent {
 
     private static final String EMPTY_SERVER_URL_TEXT = "Copy paste your Octane URL from the browser here...";
     private static final String EMPTY_SHAREDSPACE_WORKSPACE_URL_TEXT = "Retrieved from server URL";
-    private static final Insets insets = new Insets(5,5,5,5);
+    private static final Insets insets = JBUI.insets(5);
     
     private JPanel rootPanel;
     private JTextField txtFieldServerUrl;
@@ -59,7 +59,7 @@ public class ConnectionSettingsComponent implements HasComponent {
         lblServerUrl.setHorizontalAlignment(SwingConstants.LEFT);
         GridBagConstraints gbc_lblServerUrl = new GridBagConstraints();
         gbc_lblServerUrl.fill = GridBagConstraints.HORIZONTAL;
-        gbc_lblServerUrl.insets = new Insets(5, 5, 5, 5);
+        gbc_lblServerUrl.insets = JBUI.insets(5);
         gbc_lblServerUrl.gridx = 0;
         gbc_lblServerUrl.gridy = 0;
         rootPanel.add(lblServerUrl, gbc_lblServerUrl);
@@ -68,7 +68,7 @@ public class ConnectionSettingsComponent implements HasComponent {
         GridBagConstraints gbc_txtFieldServerUrl = new GridBagConstraints();
         gbc_txtFieldServerUrl.gridwidth = 2;
         gbc_txtFieldServerUrl.fill = GridBagConstraints.HORIZONTAL;
-        gbc_txtFieldServerUrl.insets = new Insets(5, 5, 5, 0);
+        gbc_txtFieldServerUrl.insets = JBUI.insets(5, 5, 5, 0);
         gbc_txtFieldServerUrl.gridx = 0;
         gbc_txtFieldServerUrl.gridy = 1;
         rootPanel.add(txtFieldServerUrl, gbc_txtFieldServerUrl);
@@ -88,7 +88,7 @@ public class ConnectionSettingsComponent implements HasComponent {
         GridBagConstraints gbc_txtFieldSharedSpace = new GridBagConstraints();
         gbc_txtFieldSharedSpace.gridwidth = 2;
         gbc_txtFieldSharedSpace.fill = GridBagConstraints.HORIZONTAL;
-        gbc_txtFieldSharedSpace.insets = new Insets(5, 5, 5, 0);
+        gbc_txtFieldSharedSpace.insets = JBUI.insets(5, 5, 5, 0);
         gbc_txtFieldSharedSpace.gridx = 0;
         gbc_txtFieldSharedSpace.gridy = 3;
         rootPanel.add(txtFieldSharedSpace, gbc_txtFieldSharedSpace);
@@ -108,7 +108,7 @@ public class ConnectionSettingsComponent implements HasComponent {
         GridBagConstraints gbc_txtFieldWorkspace = new GridBagConstraints();
         gbc_txtFieldWorkspace.gridwidth = 2;
         gbc_txtFieldWorkspace.fill = GridBagConstraints.HORIZONTAL;
-        gbc_txtFieldWorkspace.insets = new Insets(5, 5, 5, 0);
+        gbc_txtFieldWorkspace.insets = JBUI.insets(5, 5, 5, 0);
         gbc_txtFieldWorkspace.gridx = 0;
         gbc_txtFieldWorkspace.gridy = 5;
         rootPanel.add(txtFieldWorkspace, gbc_txtFieldWorkspace);
@@ -118,7 +118,7 @@ public class ConnectionSettingsComponent implements HasComponent {
         GridBagConstraints gbc_separator1 = new GridBagConstraints();
         gbc_separator1.gridwidth = 2;
         gbc_separator1.fill = GridBagConstraints.HORIZONTAL;
-        gbc_separator1.insets = new Insets(5, 5, 5, 0);
+        gbc_separator1.insets = JBUI.insets(5, 5, 5, 0);
         gbc_separator1.gridx = 0;
         gbc_separator1.gridy = 6;
         rootPanel.add(separator1, gbc_separator1);
@@ -135,7 +135,7 @@ public class ConnectionSettingsComponent implements HasComponent {
         GridBagConstraints gbc_txtFieldUserName = new GridBagConstraints();
         gbc_txtFieldUserName.gridwidth = 2;
         gbc_txtFieldUserName.fill = GridBagConstraints.HORIZONTAL;
-        gbc_txtFieldUserName.insets = new Insets(5, 5, 5, 0);
+        gbc_txtFieldUserName.insets = JBUI.insets(5, 5, 5, 0);
         gbc_txtFieldUserName.gridx = 0;
         gbc_txtFieldUserName.gridy = 8;
         rootPanel.add(txtFieldUserName, gbc_txtFieldUserName);
@@ -153,7 +153,7 @@ public class ConnectionSettingsComponent implements HasComponent {
         GridBagConstraints gbc_passField = new GridBagConstraints();
         gbc_passField.gridwidth = 2;
         gbc_passField.fill = GridBagConstraints.HORIZONTAL;
-        gbc_passField.insets = new Insets(5, 5, 5, 0);
+        gbc_passField.insets = JBUI.insets(5, 5, 5, 0);
         gbc_passField.gridx = 0;
         gbc_passField.gridy = 10;
         rootPanel.add(passField, gbc_passField);
@@ -162,7 +162,7 @@ public class ConnectionSettingsComponent implements HasComponent {
         GridBagConstraints gbc_separator2 = new GridBagConstraints();
         gbc_separator2.gridwidth = 2;
         gbc_separator2.fill = GridBagConstraints.HORIZONTAL;
-        gbc_separator2.insets = new Insets(5, 5, 5, 0);
+        gbc_separator2.insets = JBUI.insets(5, 5, 5, 0);
         gbc_separator2.gridx = 0;
         gbc_separator2.gridy = 11;
         rootPanel.add(separator2, gbc_separator2);
@@ -170,7 +170,7 @@ public class ConnectionSettingsComponent implements HasComponent {
         btnTest = new JButton("Test connection");
         GridBagConstraints gbc_btnTest = new GridBagConstraints();
         gbc_btnTest.fill = GridBagConstraints.HORIZONTAL;
-        gbc_btnTest.insets = new Insets(5, 0, 5, 5);
+        gbc_btnTest.insets = JBUI.insets(5, 0, 5, 5);
         gbc_btnTest.gridx = 0;
         gbc_btnTest.gridy = 12;
         rootPanel.add(btnTest, gbc_btnTest);
@@ -180,7 +180,7 @@ public class ConnectionSettingsComponent implements HasComponent {
         GridBagConstraints gbc_label = new GridBagConstraints();
         gbc_label.fill = GridBagConstraints.BOTH;
         gbc_label.gridwidth = 2;
-        gbc_label.insets = new Insets(5, 5, 5, 0);
+        gbc_label.insets = JBUI.insets(5, 5, 5, 0);
         gbc_label.gridx = 0;
         gbc_label.gridy = 13;
         rootPanel.add(lblConnectionStatus, gbc_label);
@@ -188,7 +188,7 @@ public class ConnectionSettingsComponent implements HasComponent {
         btnClearSettings = new JButton("Clear settings");
         GridBagConstraints gbc_btnClearSettings = new GridBagConstraints();
         gbc_btnClearSettings.fill = GridBagConstraints.HORIZONTAL;
-        gbc_btnClearSettings.insets = new Insets(5, 0, 5, 5);
+        gbc_btnClearSettings.insets = JBUI.insets(5, 0, 5, 5);
         gbc_btnClearSettings.gridx = 0;
         gbc_btnClearSettings.gridy = 14;
         rootPanel.add(btnClearSettings, gbc_btnClearSettings);
@@ -265,7 +265,7 @@ public class ConnectionSettingsComponent implements HasComponent {
 
     @Override
     public JComponent getComponent() {
-        rootPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+        rootPanel.setBorder(JBUI.Borders.empty(10));
         return rootPanel;
     }
 

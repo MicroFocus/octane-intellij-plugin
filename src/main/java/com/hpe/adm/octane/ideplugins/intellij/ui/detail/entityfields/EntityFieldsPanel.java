@@ -18,6 +18,7 @@ import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.field.FieldEditor;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.field.FieldEditorFactory;
 import com.hpe.adm.octane.ideplugins.services.model.EntityModelWrapper;
+import com.intellij.util.ui.JBUI;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
 
@@ -33,7 +34,6 @@ public class EntityFieldsPanel extends JXPanel {
     private Collection<FieldMetadata> fields;
     private JXPanel detailsRightPanel;
     private JXPanel detailsLeftPanel;
-    private JXLabel generalLabel;
 
     @Inject
     private FieldEditorFactory fieldFactory;
@@ -46,11 +46,11 @@ public class EntityFieldsPanel extends JXPanel {
         gbl.rowWeights = new double[]{0.0,0.0};
         setLayout(gbl);
 
-        generalLabel = new JXLabel("General");
+        JXLabel generalLabel = new JXLabel("General");
         generalLabel.setFont(new Font(generalLabel.getFont().getName(), Font.BOLD, 18));
         GridBagConstraints gbc_GeneralTitle = new GridBagConstraints();
         gbc_GeneralTitle.anchor = GridBagConstraints.WEST;
-        gbc_GeneralTitle.insets = new Insets(5,0, 10, 0);
+        gbc_GeneralTitle.insets = JBUI.insets(5, 0, 10, 0);
         gbc_GeneralTitle.gridx = 0;
         gbc_GeneralTitle.gridy = 0;
         add(generalLabel, gbc_GeneralTitle);
@@ -119,13 +119,13 @@ public class EntityFieldsPanel extends JXPanel {
                 GridBagConstraints gbc1 = new GridBagConstraints();
                 gbc1.anchor = GridBagConstraints.WEST;
                 gbc1.fill = GridBagConstraints.HORIZONTAL;
-                gbc1.insets = new Insets(0,0,5, 0);
+                gbc1.insets = JBUI.insetsBottom(5);
                 gbc1.gridx = 0;
                 gbc1.gridy = i;
 
                 FieldEditor fieldValueLabel = fieldFactory.createFieldEditor(entityModelWrapper, fieldName);
                 GridBagConstraints gbc2 = new GridBagConstraints();
-                gbc2.insets = new Insets(0, 10, 5, 5);
+                gbc2.insets = JBUI.insets(0, 10, 5, 5);
                 gbc2.anchor = GridBagConstraints.WEST;
                 gbc2.fill = GridBagConstraints.HORIZONTAL;
                 gbc2.gridx = 1;
@@ -147,7 +147,7 @@ public class EntityFieldsPanel extends JXPanel {
         if (fieldCount % 2 == 1) {
             JXLabel emptyLabel = new JXLabel();
             GridBagConstraints gbc = new GridBagConstraints();
-            gbc.insets = new Insets(0, 10, 5, 5);
+            gbc.insets = JBUI.insets(0, 10, 5, 5);
             gbc.anchor = GridBagConstraints.CENTER;
             gbc.fill = GridBagConstraints.BOTH;
             gbc.gridx = 0;

@@ -15,6 +15,7 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.treetable.nowork;
 
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.nowork.snake.SnakeGame;
+import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import org.jdesktop.swingx.JXHyperlink;
 
@@ -54,7 +55,7 @@ public class NoWorkPanel extends JPanel {
 		label.setIcon(new ImageIcon(NoWorkPanel.class.getResource(Constants.IMG_NO_WORK_ROCKET)));
 		GridBagConstraints gbc_label = new GridBagConstraints();
 		gbc_label.anchor = GridBagConstraints.SOUTH;
-		gbc_label.insets = new Insets(0, 0, 5, 0);
+		gbc_label.insets = JBUI.insetsBottom(5);
 		gbc_label.gridx = 0;
 		gbc_label.gridy = 0;
 		panelNoWork.add(label, gbc_label);
@@ -62,7 +63,7 @@ public class NoWorkPanel extends JPanel {
 		JLabel lblCongratulationsForFinishing = new JLabel(NO_WORK_TEXT);
 		GridBagConstraints gbc_lblCongratulationsForFinishing = new GridBagConstraints();
 		gbc_lblCongratulationsForFinishing.anchor = GridBagConstraints.SOUTH;
-		gbc_lblCongratulationsForFinishing.insets = new Insets(0, 0, 5, 0);
+		gbc_lblCongratulationsForFinishing.insets = JBUI.insetsBottom(5);
 		gbc_lblCongratulationsForFinishing.gridx = 0;
 		gbc_lblCongratulationsForFinishing.gridy = 1;
 		panelNoWork.add(lblCongratulationsForFinishing, gbc_lblCongratulationsForFinishing);

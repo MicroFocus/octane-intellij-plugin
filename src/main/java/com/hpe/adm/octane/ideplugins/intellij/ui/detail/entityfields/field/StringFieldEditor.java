@@ -4,6 +4,7 @@ import com.hpe.adm.nga.sdk.model.ReferenceErrorModel;
 import com.hpe.adm.nga.sdk.model.StringFieldModel;
 import com.hpe.adm.octane.ideplugins.services.model.EntityModelWrapper;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
+import com.intellij.util.ui.JBUI;
 import org.jdesktop.swingx.JXTextField;
 
 import javax.swing.event.DocumentEvent;
@@ -29,7 +30,7 @@ public class StringFieldEditor extends FieldEditor {
         GridBagConstraints gbc_valueTextField = new GridBagConstraints();
         gbc_valueTextField.anchor = GridBagConstraints.WEST;
         gbc_valueTextField.fill = GridBagConstraints.HORIZONTAL;
-        gbc_valueTextField.insets = new Insets(0, 0, 0, 5);
+        gbc_valueTextField.insets = JBUI.insetsRight(5);
         gbc_valueTextField.gridx = 0;
         gbc_valueTextField.weightx = 1.0;
         add(fieldValue, gbc_valueTextField);

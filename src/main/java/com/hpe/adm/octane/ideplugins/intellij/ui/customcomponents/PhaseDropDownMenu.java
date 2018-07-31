@@ -23,6 +23,7 @@ import com.hpe.adm.octane.ideplugins.services.model.EntityModelWrapper;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
 import com.intellij.openapi.ui.JBPopupMenu;
 import com.intellij.openapi.util.IconLoader;
+import com.intellij.util.ui.JBUI;
 
 import javax.swing.*;
 import java.awt.*;
@@ -68,7 +69,7 @@ public class PhaseDropDownMenu extends JPanel {
         gbc_targetPhaseLabel.anchor = GridBagConstraints.WEST;
         gbc_targetPhaseLabel.weightx = 0.9;
         gbc_targetPhaseLabel.gridx = 0;
-        gbc_targetPhaseLabel.insets = new Insets(0, 5, 0, 5);
+        gbc_targetPhaseLabel.insets = JBUI.insets(0, 5);
         add(targetPhaseLabel, gbc_targetPhaseLabel);
     }
 
@@ -148,7 +149,7 @@ public class PhaseDropDownMenu extends JPanel {
             gbc_arrow.anchor = GridBagConstraints.WEST;
             gbc_arrow.gridx = 1;
             gbc_arrow.weightx = 0.1;
-            gbc_arrow.insets = new Insets(0, 5, 0, 5);
+            gbc_arrow.insets = JBUI.insets(0, 5);
             add(arrow, gbc_arrow);
 
             // create the popup

@@ -25,6 +25,7 @@ import com.hpe.adm.octane.ideplugins.services.util.Util;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.JBColor;
+import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 
 import javax.swing.*;
@@ -76,7 +77,7 @@ public class HeaderPanel extends JPanel {
         entityIconLabel = new JLabel();
         entityIconLabel.setHorizontalAlignment(SwingConstants.CENTER);
         GridBagConstraints gbc_entityIconLabel = new GridBagConstraints();
-        gbc_entityIconLabel.insets = new Insets(0, 10, 5, 5);
+        gbc_entityIconLabel.insets = JBUI.insets(0, 10, 5, 5);
         gbc_entityIconLabel.gridx = 0;
         gbc_entityIconLabel.anchor = GridBagConstraints.WEST;
         add(entityIconLabel, gbc_entityIconLabel);
@@ -87,7 +88,7 @@ public class HeaderPanel extends JPanel {
         entityId.setFont(new Font("Tahoma", Font.BOLD, 14));
         entityId.setEditable(false);
         GridBagConstraints gbc_entityId = new GridBagConstraints();
-        gbc_entityId.insets = new Insets(0, 0, 5, 5);
+        gbc_entityId.insets = JBUI.insets(0, 0, 5, 5);
         gbc_entityId.gridx = 1;
         gbc_entityId.anchor = GridBagConstraints.WEST;
         add(entityId, gbc_entityId);
@@ -95,7 +96,7 @@ public class HeaderPanel extends JPanel {
         separatorIdName = new JSeparator(SwingConstants.VERTICAL);
         GridBagConstraints gbc_separator1 = new GridBagConstraints();
         gbc_separator1.gridx = 2;
-        gbc_separator1.insets = new Insets(5, 0, 5, 5);
+        gbc_separator1.insets = JBUI.insets(5, 0, 5, 5);
         gbc_separator1.fill = GridBagConstraints.VERTICAL;
         add(separatorIdName, gbc_separator1);
 
@@ -107,19 +108,18 @@ public class HeaderPanel extends JPanel {
         GridBagConstraints gbc_entityName = new GridBagConstraints();
         gbc_entityName.gridx = 3;
         gbc_entityName.gridwidth = 2;
-        gbc_entityName.insets = new Insets(0, 0, 0, 5);
+        gbc_entityName.insets = JBUI.insetsRight(5);
         gbc_entityName.anchor = GridBagConstraints.WEST;
         add(entityName, gbc_entityName);
 
         separatorNamePhase = new JSeparator(SwingConstants.VERTICAL);
         GridBagConstraints gbc_separator2 = new GridBagConstraints();
         gbc_separator2.gridx = 5;
-        gbc_separator2.insets = new Insets(5, 5, 5, 5);
+        gbc_separator2.insets = JBUI.insets(5);
         gbc_separator2.fill = GridBagConstraints.VERTICAL;
         add(separatorNamePhase, gbc_separator2);
 
         GridBagConstraints gbc_phasePanel = new GridBagConstraints();
-        gbc_phasePanel.insets = new Insets(0, 0, 0, 0);
         gbc_phasePanel.gridx = 6;
         gbc_phasePanel.anchor = GridBagConstraints.WEST;
         add(phasePanel, gbc_phasePanel);
@@ -127,7 +127,7 @@ public class HeaderPanel extends JPanel {
         separatorPhaseButtons = new JSeparator(SwingConstants.VERTICAL);
         GridBagConstraints gbc_separator3 = new GridBagConstraints();
         gbc_separator3.gridx = 7;
-        gbc_separator3.insets = new Insets(5, 5, 7, 5);
+        gbc_separator3.insets = JBUI.insets(5, 5, 7, 5);
         gbc_separator3.fill = GridBagConstraints.VERTICAL;
         add(separatorPhaseButtons, gbc_separator3);
 
@@ -137,7 +137,7 @@ public class HeaderPanel extends JPanel {
         actionToolBar = ActionManager.getInstance().createActionToolbar("save | refresh | fields | open in browser | comments ", buttonActionGroup,
                 true);
         GridBagConstraints gbc_actionButtons = new GridBagConstraints();
-        gbc_actionButtons.insets = new Insets(0, 0, 5, 0);
+        gbc_actionButtons.insets = JBUI.insetsBottom(5);
         gbc_actionButtons.gridx = 8;
         gbc_actionButtons.anchor = GridBagConstraints.EAST;
         panelControls.add(actionToolBar.getComponent(), BorderLayout.CENTER);

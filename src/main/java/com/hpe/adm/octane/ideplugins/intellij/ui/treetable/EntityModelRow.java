@@ -16,6 +16,7 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.treetable;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.intellij.ui.JBColor;
+import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jdesktop.swingx.JXLabel;
@@ -59,7 +60,7 @@ public class EntityModelRow extends JPanel {
 		panelEntityIcon.setMaximumSize(new Dimension(40, 40));
 		GridBagConstraints gbc_panelEntityIcon = new GridBagConstraints();
 		gbc_panelEntityIcon.fill = GridBagConstraints.BOTH;
-		gbc_panelEntityIcon.insets = new Insets(0, 0, 0, 5);
+		gbc_panelEntityIcon.insets = JBUI.insetsRight(5);
 		gbc_panelEntityIcon.gridx = 0;
 		gbc_panelEntityIcon.gridy = 0;
 		add(panelEntityIcon, gbc_panelEntityIcon);
@@ -69,7 +70,7 @@ public class EntityModelRow extends JPanel {
 		panelEntityTitle.setOpaque(false);
 		GridBagConstraints gbc_panelEntityTitle = new GridBagConstraints();
 		gbc_panelEntityTitle.fill = GridBagConstraints.BOTH;
-		gbc_panelEntityTitle.insets = new Insets(0, 0, 0, 5);
+		gbc_panelEntityTitle.insets = JBUI.insetsRight(5);
 		gbc_panelEntityTitle.gridx = 1;
 		gbc_panelEntityTitle.gridy = 0;
 		add(panelEntityTitle, gbc_panelEntityTitle);
@@ -82,14 +83,14 @@ public class EntityModelRow extends JPanel {
 		
 		lblEntityId = createLabel("");
 		GridBagConstraints gbc_lblEntityId = new GridBagConstraints();
-		gbc_lblEntityId.insets = new Insets(5, 0, 3, 5);
+		gbc_lblEntityId.insets = JBUI.insets(5, 0, 3, 5);
 		gbc_lblEntityId.gridx = 0;
 		gbc_lblEntityId.gridy = 0;
 		panelEntityTitle.add(lblEntityId, gbc_lblEntityId);
 		
 		lblTitle = createLabel("");
 		GridBagConstraints gbc_lblTitle = new GridBagConstraints();
-		gbc_lblTitle.insets = new Insets(5, 0, 3, 0);
+		gbc_lblTitle.insets = JBUI.insets(5, 0, 3, 0);
 		gbc_lblTitle.fill = GridBagConstraints.HORIZONTAL;
 		gbc_lblTitle.gridx = 1;
 		gbc_lblTitle.gridy = 0;
@@ -97,7 +98,7 @@ public class EntityModelRow extends JPanel {
 		
 		lblSubtitle = createLabel("");
 		GridBagConstraints gbc_lblSubtitle = new GridBagConstraints();
-		gbc_lblSubtitle.insets = new Insets(0, 0, 5, 0);
+		gbc_lblSubtitle.insets = JBUI.insetsBottom(5);
 		gbc_lblSubtitle.fill = GridBagConstraints.HORIZONTAL;
 		gbc_lblSubtitle.gridwidth = 2;
 		gbc_lblSubtitle.gridx = 0;
@@ -107,7 +108,7 @@ public class EntityModelRow extends JPanel {
 		JPanel panelEntityDetails = new JPanel();
 		panelEntityDetails.setOpaque(false);
 		GridBagConstraints gbc_panelEntityDetails = new GridBagConstraints();
-		gbc_panelEntityDetails.insets = new Insets(0, 0, 0, 15);
+		gbc_panelEntityDetails.insets = JBUI.insetsRight(15);
 		gbc_panelEntityDetails.fill = GridBagConstraints.BOTH;
 		gbc_panelEntityDetails.gridx = 2;
 		gbc_panelEntityDetails.gridy = 0;
@@ -125,7 +126,7 @@ public class EntityModelRow extends JPanel {
 		flowLayout_1.setVgap(0);
 		flowLayout_1.setAlignment(FlowLayout.TRAILING);
 		GridBagConstraints gbc_panelDetailsTop = new GridBagConstraints();
-		gbc_panelDetailsTop.insets = new Insets(5, 0, 3, 0);
+		gbc_panelDetailsTop.insets = JBUI.insets(5, 0, 3, 0);
 		gbc_panelDetailsTop.fill = GridBagConstraints.BOTH;
 		gbc_panelDetailsTop.gridx = 0;
 		gbc_panelDetailsTop.gridy = 0;
@@ -137,7 +138,7 @@ public class EntityModelRow extends JPanel {
 		flowLayout.setVgap(0);
 		flowLayout.setAlignment(FlowLayout.TRAILING);
 		GridBagConstraints gbc_panelDetailsBottom = new GridBagConstraints();
-		gbc_panelDetailsBottom.insets = new Insets(0, 0, 5, 0);
+		gbc_panelDetailsBottom.insets = JBUI.insetsBottom(5);
 		gbc_panelDetailsBottom.fill = GridBagConstraints.BOTH;
 		gbc_panelDetailsBottom.gridx = 0;
 		gbc_panelDetailsBottom.gridy = 1;

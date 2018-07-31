@@ -29,6 +29,7 @@ import com.intellij.ui.tabs.UiDecorator;
 import com.intellij.ui.tabs.impl.JBEditorTabs;
 import com.intellij.ui.tabs.impl.TabLabel;
 import com.intellij.util.BitUtil;
+import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.TimedDeadzone;
 import org.jetbrains.annotations.NotNull;
 
@@ -61,7 +62,7 @@ public class TabbedPaneView implements View {
         editorTabs
                 .setTabDraggingEnabled(true)
                 .setUiDecorator(
-                () -> new UiDecorator.UiDecoration(null, new Insets(TabsUtil.TAB_VERTICAL_PADDING, 8, TabsUtil.TAB_VERTICAL_PADDING, 8)))
+                () -> new UiDecorator.UiDecoration(null, JBUI.insets(TabsUtil.TAB_VERTICAL_PADDING, 8)))
                 .setTabLabelActionsMouseDeadzone(TimedDeadzone.NULL)
                 .setGhostsAlwaysVisible(true)
                 .setTabLabelActionsAutoHide(false);

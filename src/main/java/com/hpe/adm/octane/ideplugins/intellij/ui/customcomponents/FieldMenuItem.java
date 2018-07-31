@@ -15,6 +15,8 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents;
 
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBLabel;
+import com.intellij.util.ui.JBUI;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -46,7 +48,7 @@ public class FieldMenuItem extends JPanel{
         label = new JBLabel(text);
         label.setHorizontalAlignment(SwingConstants.LEFT);
         GridBagConstraints gbcLabel = new GridBagConstraints();
-        gbcLabel.insets = new Insets(0, 10, 0, 0);
+        gbcLabel.insets = JBUI.insetsLeft(10);
         gbcLabel.anchor = GridBagConstraints.WEST;
         gbcLabel.gridx = 1;
         gbcLabel.gridy = 0;

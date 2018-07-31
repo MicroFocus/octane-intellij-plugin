@@ -16,7 +16,6 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.exception.OctaneException;
 import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
-import com.hpe.adm.nga.sdk.model.FieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.View;
@@ -36,6 +35,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.components.JBScrollPane;
+import com.intellij.util.ui.JBUI;
 import javafx.application.Platform;
 
 import javax.swing.*;
@@ -92,7 +92,7 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
         GridBagConstraints gbc_headerPanel = new GridBagConstraints();
         gbc_headerPanel.gridwidth = 2;
         gbc_headerPanel.fill = GridBagConstraints.HORIZONTAL;
-        gbc_headerPanel.insets = new Insets(5, 0, 5, 5);
+        gbc_headerPanel.insets = JBUI.insets(5, 0, 5, 5);
         gbc_headerPanel.gridx = 0;
         gbc_headerPanel.gridy = 0;
         add(headerPanel, gbc_headerPanel);
@@ -100,7 +100,7 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
         GridBagConstraints gbc_entityFieldsPanel = new GridBagConstraints();
         gbc_entityFieldsPanel.anchor = GridBagConstraints.NORTH;
         gbc_entityFieldsPanel.fill = GridBagConstraints.HORIZONTAL;
-        gbc_entityFieldsPanel.insets = new Insets(5, 10, 5, 5);
+        gbc_entityFieldsPanel.insets = JBUI.insets(5, 10, 5, 5);
         gbc_entityFieldsPanel.gridx = 0;
         gbc_entityFieldsPanel.gridy = 1;
         add(entityFieldsPanel, gbc_entityFieldsPanel);
@@ -109,7 +109,7 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
         GridBagConstraints gbc_commentsPanel = new GridBagConstraints();
         gbc_commentsPanel.gridheight = 3;
         gbc_commentsPanel.fill = GridBagConstraints.BOTH;
-        gbc_commentsPanel.insets = new Insets(0, 5, 0, 5);
+        gbc_commentsPanel.insets = JBUI.insets(0, 5);
         gbc_commentsPanel.gridx = 1;
         gbc_commentsPanel.gridy = 1;
         add(commentsPanel, gbc_commentsPanel);
@@ -123,14 +123,14 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
         GridBagConstraints gbc_descriptionLabel = new GridBagConstraints();
         gbc_descriptionLabel.anchor = GridBagConstraints.NORTH;
         gbc_descriptionLabel.fill = GridBagConstraints.HORIZONTAL;
-        gbc_descriptionLabel.insets = new Insets(10, 10, 5, 5);
+        gbc_descriptionLabel.insets = JBUI.insets(10, 10, 5, 5);
         gbc_descriptionLabel.gridx = 0;
         gbc_descriptionLabel.gridy = 2;
         add(descriptionLabel, gbc_descriptionLabel);
 
         GridBagConstraints gbc_descriptionPanel = new GridBagConstraints();
         gbc_descriptionPanel.fill = GridBagConstraints.BOTH;
-        gbc_descriptionPanel.insets = new Insets(0, 5, 0, 5);
+        gbc_descriptionPanel.insets = JBUI.insets(0, 5);
         gbc_descriptionPanel.gridx = 0;
         gbc_descriptionPanel.gridy = 3;
         add(descriptionPanel, gbc_descriptionPanel);

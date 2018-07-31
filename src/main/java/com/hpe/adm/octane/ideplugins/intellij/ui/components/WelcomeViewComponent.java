@@ -21,7 +21,9 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.nowork.NoWorkPanel;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
+import com.intellij.util.ui.JBUI;
 import org.jdesktop.swingx.JXHyperlink;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -78,7 +80,7 @@ public class WelcomeViewComponent extends JPanel implements HasComponent {
         GridBagConstraints gbc_lblCompany = new GridBagConstraints();
         gbc_lblCompany.anchor = GridBagConstraints.SOUTHEAST;
         gbc_lblCompany.fill = GridBagConstraints.VERTICAL;
-        gbc_lblCompany.insets = new Insets(0, 0, 10, 10);
+        gbc_lblCompany.insets = JBUI.insets(0, 0, 10, 10);
         gbc_lblCompany.gridx = 1;
         gbc_lblCompany.gridy = 5;
         add(lblCompany, gbc_lblCompany);
@@ -89,7 +91,7 @@ public class WelcomeViewComponent extends JPanel implements HasComponent {
         GridBagConstraints gbc_lblOctane = new GridBagConstraints();
         gbc_lblOctane.anchor = GridBagConstraints.CENTER;
         gbc_lblOctane.fill = GridBagConstraints.VERTICAL;
-        gbc_lblOctane.insets = new Insets(10, 0, 0, 0);
+        gbc_lblOctane.insets = JBUI.insetsTop(10);
         gbc_lblOctane.gridx = 1;
         gbc_lblOctane.gridy = 1;
         add(lblOctane, gbc_lblOctane);
@@ -99,7 +101,7 @@ public class WelcomeViewComponent extends JPanel implements HasComponent {
         lblMessage.setFont(lblMessageFont);
         GridBagConstraints gbc_lblMessage = new GridBagConstraints();
         gbc_lblMessage.anchor = GridBagConstraints.CENTER;
-        gbc_lblMessage.insets = new Insets(0, 0, 5, 0);
+        gbc_lblMessage.insets = JBUI.insetsBottom(5);
         gbc_lblMessage.gridx =1;
         gbc_lblMessage.gridy = 2;
         add(lblMessage, gbc_lblMessage);
@@ -110,7 +112,7 @@ public class WelcomeViewComponent extends JPanel implements HasComponent {
         hyperlinkSettings.setFont(hyperlinkSettingsFont);
         GridBagConstraints gbc_hyperlinkSettings = new GridBagConstraints();
         gbc_hyperlinkSettings.anchor = GridBagConstraints.CENTER;
-        gbc_hyperlinkSettings.insets = new Insets(0, 0, 5, 0);
+        gbc_hyperlinkSettings.insets = JBUI.insetsBottom(5);
         gbc_hyperlinkSettings.gridx = 1;
         gbc_hyperlinkSettings.gridy = 3;
         add(hyperlinkSettings, gbc_hyperlinkSettings);
