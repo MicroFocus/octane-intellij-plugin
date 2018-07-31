@@ -42,12 +42,13 @@ import java.net.URL;
 
 public class HTMLPresenterFXPanel extends JFXPanel {
     private static final Logger log = Logger.getInstance(HTMLPresenterFXPanel.class);
+
     private static final String EVENT_TYPE_CLICK = "click";
     private static final String EVENT_TYPE_MOUSEOVER = "mouseover";
     private static final String EVENT_TYPE_MOUSEOUT = "mouseclick";
     private static final String HYPERLINK_TAG = "a";
+
     private WebView webView;
-    private String commentContent;
 
     @Inject
     private ConnectionSettingsProvider connectionSettingsProvider;
@@ -66,10 +67,6 @@ public class HTMLPresenterFXPanel extends JFXPanel {
 
     private void addHyperlinkListener(HyperlinkListener listener) {
         listenerList.add(HyperlinkListener.class, listener);
-    }
-
-    public void removeHyperlinkListener(HyperlinkListener listener) {
-        listenerList.remove(HyperlinkListener.class, listener);
     }
 
     private void fireHyperlinkUpdate(HyperlinkEvent.EventType eventType, String desc) {
@@ -142,18 +139,19 @@ public class HTMLPresenterFXPanel extends JFXPanel {
 
     public void setContent(final String commentContent) {
         initFX();
-        final String strippedContent = HtmlTextEditor.removeHtmlStructure(commentContent);
-        final StackPane root = new StackPane();
-        final Scene scene = new Scene(root);
-        final WebView webView = getWebView();
-        final WebEngine webEngine = webView.getEngine();
-        final String coloredHtmlCode = HtmlTextEditor.getColoredHTML(strippedContent);
 
+        StackPane root = new StackPane();
+        Scene scene = new Scene(root);
+        WebView webView = getWebView();
         root.getChildren().add(webView);
+
+        String strippedContent = HtmlTextEditor.removeHtmlStructure(commentContent);
+        String coloredHtmlCode = HtmlTextEditor.getColoredHTML(strippedContent);
+
+        WebEngine webEngine = webView.getEngine();
         webEngine.loadContent(coloredHtmlCode);
-        this.setWebView(webView);
-        this.setScene(scene);
-        Platform.setImplicitExit(false);
+        setScene(scene);
+        Platform.setImplicitExit(true);
     }
 
     private void addEventListeners(EventTarget eventTarget, EventListener listener) {
@@ -181,10 +179,6 @@ public class HTMLPresenterFXPanel extends JFXPanel {
                 targetUri = targetUrl.toURI();
                 if (HyperlinkEvent.EventType.ACTIVATED.equals(eventType)) {
                     Desktop.getDesktop().browse(targetUri);
-                } else if (HyperlinkEvent.EventType.ENTERED.equals(eventType)) {
-                    //To be implemented if needed
-                } else if (HyperlinkEvent.EventType.EXITED.equals(eventType)) {
-                    //To be implemented if needed
                 }
             } catch (URISyntaxException | IOException e) {
                 log.error("URL parsing exception ", e);
@@ -192,16 +186,11 @@ public class HTMLPresenterFXPanel extends JFXPanel {
         });
     }
 
-    WebView getWebView() {
+    private WebView getWebView() {
         if (webView == null) {
             webView = new WebView();
         }
-
         return webView;
-    }
-
-    void setWebView(WebView webView) {
-        this.webView = webView;
     }
 
 }
