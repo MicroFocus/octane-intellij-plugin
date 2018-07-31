@@ -110,7 +110,7 @@ public class DateTimeFieldEditor extends FieldEditor {
         GridBagConstraints gbc_valueTextField = new GridBagConstraints();
         gbc_valueTextField.anchor = GridBagConstraints.WEST;
         gbc_valueTextField.fill = GridBagConstraints.HORIZONTAL;
-        gbc_valueTextField.insets = new Insets(0, 5, 0, 5);
+        gbc_valueTextField.insets = new Insets(0, 0, 0, 5);
         gbc_valueTextField.gridx = 0;
         gbc_valueTextField.weightx = 1.0;
         add(linkToButtons, gbc_valueTextField);
@@ -212,7 +212,7 @@ public class DateTimeFieldEditor extends FieldEditor {
         GridBagConstraints gbc_linkToButtons = new GridBagConstraints();
         gbc_linkToButtons.anchor = GridBagConstraints.WEST;
         gbc_linkToButtons.fill = GridBagConstraints.HORIZONTAL;
-        gbc_linkToButtons.insets = new Insets(0, 5, 0, 5);
+        gbc_linkToButtons.insets = new Insets(0, 0, 0, 5);
         gbc_linkToButtons.gridx = 0;
         gbc_linkToButtons.weightx = 1.0;
         add(linkToButtons, gbc_linkToButtons);
@@ -284,7 +284,7 @@ public class DateTimeFieldEditor extends FieldEditor {
         }
     }
 
-    public Component getClearButton(){
+    public Component getClearButton() {
         return clearSelection;
     }
 }

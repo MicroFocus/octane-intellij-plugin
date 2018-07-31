@@ -9,6 +9,7 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.listeners.SelectionListener;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.util.EntityUtil;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
+import com.intellij.openapi.ui.VerticalFlowLayout;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.RoundedLineBorder;
@@ -20,10 +21,7 @@ import javax.swing.border.MatteBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowFocusListener;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -69,7 +67,6 @@ public class EntityComboBox extends JPanel {
         GridBagConstraints gbc_editorLabel = new GridBagConstraints();
         gbc_editorLabel.anchor = GridBagConstraints.WEST;
         gbc_editorLabel.fill = GridBagConstraints.HORIZONTAL;
-        gbc_editorLabel.insets = new Insets(0, 0, 0, 0);
         gbc_editorLabel.gridx = 0;
         gbc_editorLabel.weightx = 1.0;
         add(editorLabel, gbc_editorLabel);
@@ -103,7 +100,11 @@ public class EntityComboBox extends JPanel {
         delayTimer = new Timer(500, e -> {
             showLoading();
             new Thread(() -> {
-                entities = entityLoader.loadEntities(searchField.getText());
+                if(filterable){
+                    entities = entityLoader.loadEntities(searchField.getText());
+                } else {
+                    entities = entityLoader.loadEntities("");
+                }
                 scrollRootPanel.removeAll();
                 if (entities == null || entities.isEmpty()) {
                     createNoResultsPanel();
@@ -122,7 +123,6 @@ public class EntityComboBox extends JPanel {
         entities.forEach(entityModel -> {
             JMenuItem menuItem = new JMenuItem();
             menuItem.setText(getLabelText(entityModel));
-
             menuItem.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
@@ -137,17 +137,18 @@ public class EntityComboBox extends JPanel {
                 public void mouseEntered(MouseEvent e) {
                     menuItem.setBackground((Color) UIManager.get("CheckBoxMenuItem.selectionBackground"));
                     menuItem.setForeground((Color) UIManager.get("CheckBoxMenuItem.selectionForeground"));
+                    menuItem.revalidate();
                 }
 
                 @Override
                 public void mouseExited(MouseEvent e) {
                     menuItem.setBackground((Color) UIManager.get("CheckBoxMenuItem.Background"));
                     menuItem.setForeground((Color) UIManager.get("CheckBoxMenuItem.Foreground"));
+                    menuItem.revalidate();
                 }
             });
             scrollRootPanel.add(menuItem);
         });
-        scrollRootPanel.add(Box.createRigidArea(new Dimension((int) searchField.getPreferredSize().getWidth(), entities.size() > 9 ? 0 : (190 - 20 * entities.size()))));
         scrollRootPanel.revalidate();
         scrollRootPanel.repaint();
     }
@@ -157,9 +158,10 @@ public class EntityComboBox extends JPanel {
         entities.forEach(entityModel -> {
             FieldMenuItem menuItem = new FieldMenuItem(getLabelText(entityModel));
             menuItem.setState(EntityUtil.containsEntityModel(selectedEntities, entityModel));
-            menuItem.addMouseListener(new MouseAdapter() {
+            menuItem.setPreferredSize(new Dimension((int) menuItem.getBounds().getHeight(), (int) scrollRootPanel.getPreferredSize().getWidth()));
+            menuItem.addActionListener(new ActionListener() {
                 @Override
-                public void mouseClicked(MouseEvent e) {
+                public void actionPerformed(ActionEvent e) {
                     // it's being selected
                     if (menuItem.isSelected() && !EntityUtil.containsEntityModel(selectedEntities, entityModel)) {
                         selectedEntities.add(entityModel);
@@ -171,22 +173,26 @@ public class EntityComboBox extends JPanel {
                     selectionListeners.forEach(l -> l.valueChanged(new SelectionEvent(e)));
                     setEditorText();
                 }
-
+            });
+            menuItem.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseEntered(MouseEvent e) {
                     menuItem.setBackground((Color) UIManager.get("CheckBoxMenuItem.selectionBackground"));
                     menuItem.setForeground((Color) UIManager.get("CheckBoxMenuItem.selectionForeground"));
+                    menuItem.revalidate();
                 }
 
                 @Override
                 public void mouseExited(MouseEvent e) {
                     menuItem.setBackground((Color) UIManager.get("CheckBoxMenuItem.Background"));
                     menuItem.setForeground((Color) UIManager.get("CheckBoxMenuItem.Foreground"));
+                    menuItem.revalidate();
                 }
             });
+
+
             scrollRootPanel.add(menuItem);
         });
-        scrollRootPanel.add(Box.createRigidArea(new Dimension((int) searchField.getPreferredSize().getWidth(), entities.size() > 9 ? 0 : (190 - 20 * entities.size()))));
         scrollRootPanel.revalidate();
         scrollRootPanel.repaint();
     }
@@ -196,10 +202,8 @@ public class EntityComboBox extends JPanel {
         JMenuItem noResults = new JMenuItem("No results");
         noResults.setForeground(Color.RED);
         scrollRootPanel.add(noResults);
-        scrollRootPanel.add(Box.createRigidArea(new Dimension((int) searchField.getPreferredSize().getWidth(), 190 - (int) noResults.getPreferredSize().getHeight())));
+        scrollRootPanel.revalidate();
         scrollRootPanel.repaint();
-        popupFrame.revalidate();
-        popupFrame.repaint();
     }
 
 
@@ -245,7 +249,7 @@ public class EntityComboBox extends JPanel {
             });
 
             GridBagConstraints gbcSearchField = new GridBagConstraints();
-            gbcSearchField.insets = new Insets(5, 5, 5, 5);
+            gbcSearchField.insets = new Insets(5, 5, 0, 5);
             gbcSearchField.anchor = GridBagConstraints.NORTH;
             gbcSearchField.fill = GridBagConstraints.HORIZONTAL;
             gbcSearchField.gridx = 0;
@@ -254,13 +258,12 @@ public class EntityComboBox extends JPanel {
         }
 
         scrollRootPanel = new JPanel();
-        scrollRootPanel.setLayout(new BoxLayout(scrollRootPanel, BoxLayout.Y_AXIS));
-        scrollPanel = new JBScrollPane(scrollRootPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        scrollPanel.setBackground(Color.green);
+        scrollRootPanel.setLayout(new VerticalFlowLayout(VerticalFlowLayout.TOP, 0, 5, true, false));
+        scrollPanel = new JBScrollPane(scrollRootPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPanel.setPreferredSize(new Dimension(200, 200));
         GridBagConstraints gbc1 = new GridBagConstraints();
         gbc1.fill = GridBagConstraints.BOTH;
-        gbc1.insets = new Insets(0, 5, 5, 5);
+        gbc1.insets = new Insets(5, 5, 5, 5);
         gbc1.gridx = 0;
         gbc1.gridy = 1;
         popupRootPanel.add(scrollPanel, gbc1);

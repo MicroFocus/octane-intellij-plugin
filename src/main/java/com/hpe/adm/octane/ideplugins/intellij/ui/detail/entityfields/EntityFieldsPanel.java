@@ -20,7 +20,6 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.field.Field
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.field.FieldEditorFactory;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.field.ReferenceFieldEditor;
 import com.hpe.adm.octane.ideplugins.services.model.EntityModelWrapper;
-import org.gradle.internal.impldep.org.joda.time.DateTimeField;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
 
@@ -113,7 +112,7 @@ public class EntityFieldsPanel extends JXPanel {
 
                 FieldEditor fieldValueLabel = fieldFactory.createFieldEditor(entityModelWrapper, fieldName);
                 GridBagConstraints gbc2 = new GridBagConstraints();
-                gbc2.insets = new Insets(0, 10, 5, 0);
+                gbc2.insets = new Insets(0, 10, 10, 0);
                 gbc2.anchor = GridBagConstraints.WEST;
                 gbc2.fill = GridBagConstraints.HORIZONTAL;
                 gbc2.gridx = 1;
@@ -140,18 +139,18 @@ public class EntityFieldsPanel extends JXPanel {
         detailsRightPanel.revalidate();
     }
 
-    private void addClearButton(FieldEditor fieldEditor, JPanel parent, int rowCount){
+    private void addClearButton(FieldEditor fieldEditor, JPanel parent, int rowCount) {
         Component clearButton;
-        if(fieldEditor instanceof ReferenceFieldEditor){
+        if (fieldEditor instanceof ReferenceFieldEditor) {
             clearButton = ((ReferenceFieldEditor) fieldEditor).getClearButton();
-        } else if(fieldEditor instanceof DateTimeFieldEditor){
+        } else if (fieldEditor instanceof DateTimeFieldEditor) {
             clearButton = ((DateTimeFieldEditor) fieldEditor).getClearButton();
         } else {
             return;
         }
         GridBagConstraints gbc2 = new GridBagConstraints();
-        gbc2.insets = new Insets(0, 0, 0, 10);
-        gbc2.anchor = GridBagConstraints.WEST;
+        gbc2.insets = new Insets(0, 5, 0, 10);
+        gbc2.anchor = GridBagConstraints.CENTER;
         gbc2.fill = GridBagConstraints.HORIZONTAL;
         gbc2.gridx = 2;
         gbc2.gridy = rowCount;

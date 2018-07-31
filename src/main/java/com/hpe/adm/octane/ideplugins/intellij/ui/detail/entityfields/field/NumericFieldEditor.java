@@ -18,6 +18,8 @@ import com.hpe.adm.nga.sdk.model.LongFieldModel;
 import com.hpe.adm.nga.sdk.model.ReferenceFieldModel;
 import com.hpe.adm.octane.ideplugins.services.model.EntityModelWrapper;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
+import com.intellij.ui.RoundedLineBorder;
+import org.jdesktop.swingx.JXTextField;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -29,7 +31,7 @@ import java.awt.event.KeyEvent;
 public class NumericFieldEditor extends FieldEditor {
     private EntityModelWrapper entityModelWrapper;
     private String fieldName;
-    private JTextField textField;
+    private JXTextField textField;
 
     private DocumentListener modifyListener;
     private boolean isRealNumber;
@@ -41,7 +43,10 @@ public class NumericFieldEditor extends FieldEditor {
         layout.columnWeights = new double[]{0.0, 0.0};
         setLayout(layout);
 
-        textField = new JTextField();
+        setBorder(new RoundedLineBorder(Color.GRAY, 5));
+
+        textField = new JXTextField();
+        textField.setBorder(BorderFactory.createEmptyBorder(2, 5, 2, 2));
         textField.addKeyListener(new KeyAdapter() {
             @Override
             public void keyTyped(KeyEvent e) {
@@ -62,7 +67,7 @@ public class NumericFieldEditor extends FieldEditor {
         GridBagConstraints gbc_valueTextField = new GridBagConstraints();
         gbc_valueTextField.anchor = GridBagConstraints.WEST;
         gbc_valueTextField.fill = GridBagConstraints.HORIZONTAL;
-        gbc_valueTextField.insets = new Insets(0, 0, 0, 5);
+        gbc_valueTextField.insets = new Insets(0, 0, 0, 0);
         gbc_valueTextField.gridx = 0;
         gbc_valueTextField.weightx = 1.0;
         add(textField, gbc_valueTextField);

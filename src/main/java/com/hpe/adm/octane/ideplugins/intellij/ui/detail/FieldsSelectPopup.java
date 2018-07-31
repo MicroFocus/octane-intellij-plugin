@@ -23,6 +23,7 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.listeners.SelectionListener;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.model.EntityModelWrapper;
 import com.hpe.adm.octane.ideplugins.services.util.DefaultEntityFieldsUtil;
+import com.intellij.openapi.ui.VerticalFlowLayout;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBScrollPane;
 import org.jdesktop.swingx.JXButton;
@@ -208,7 +209,7 @@ public class FieldsSelectPopup extends JFrame {
         this.selectFieldsAction = selectFieldsAction;
         this.allFields = allFields.stream()
                 .filter(e ->
-                        !Arrays.asList("phase", "name", "subtype", "description", "rank").contains(e.getName())
+                        !Arrays.asList("phase", "name", "subtype", "description", "rank", "id").contains(e.getName())
                                 && e.getFieldType() != FieldMetadata.FieldType.Memo)
                 .collect(Collectors.toList());
         this.entityModelWrapper = entityModelWrapper;
@@ -288,8 +289,7 @@ public class FieldsSelectPopup extends JFrame {
 
     private JScrollPane createFieldsPanel() {
         fieldsPanel = new JPanel();
-        fieldsPanel.setLayout(new BoxLayout(fieldsPanel, BoxLayout.Y_AXIS));
-        fieldsPanel.revalidate();
+        fieldsPanel.setLayout(new VerticalFlowLayout());
         JScrollPane scrollPane = new JBScrollPane(fieldsPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setPreferredSize(new Dimension((int) searchField.getPreferredSize().getWidth(), 200));
         scrollPane.getVerticalScrollBar().setUnitIncrement(10);
@@ -347,7 +347,6 @@ public class FieldsSelectPopup extends JFrame {
 
     private void updateFieldsPanel(Set<String> selectedFields, Collection<FieldMetadata> allFieldNames) {
         fieldsPanel.removeAll();
-        int rowCount = 0;
         for (FieldMenuItem checkBoxMenuItem : menuItems) {
 
             if (allFieldNames.stream().filter(e -> e.getLabel().equals(checkBoxMenuItem.getText())).count() == 1) {
@@ -357,10 +356,8 @@ public class FieldsSelectPopup extends JFrame {
                     checkBoxMenuItem.setState(false);
                 }
                 fieldsPanel.add(checkBoxMenuItem);
-                rowCount++;
             }
         }
-        fieldsPanel.add(Box.createRigidArea(new Dimension((int) searchField.getPreferredSize().getWidth(), rowCount > 9 ? 0 : (200 - 20 * rowCount))));
     }
 
     private void createNoResultsPanel() {
@@ -368,7 +365,6 @@ public class FieldsSelectPopup extends JFrame {
         JMenuItem noResults = new JMenuItem("No results");
         noResults.setForeground(Color.RED);
         fieldsPanel.add(noResults, BorderLayout.EAST);
-        fieldsPanel.add(Box.createRigidArea(new Dimension((int) searchField.getPreferredSize().getWidth(), 200 - (int) noResults.getPreferredSize().getHeight())));
     }
 
     /**

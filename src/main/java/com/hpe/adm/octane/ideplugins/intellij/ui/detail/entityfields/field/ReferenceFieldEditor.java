@@ -43,8 +43,7 @@ public class ReferenceFieldEditor extends FieldEditor {
                 entityModelWrapper.setValue(new ReferenceFieldModel(fieldName, null));
             }
             entityComboBox.clearEditor();
-            clearSelection.setIcon(IconLoader.findIcon(Constants.IMG_REMOVE_SELECTION_DISABLED));
-            clearSelection.removeMouseListener(mouseListener);
+            disableArrowButton();
         }
     };
 
@@ -59,25 +58,21 @@ public class ReferenceFieldEditor extends FieldEditor {
             if (entityComboBox.isMultiSelect()) {
                 entityModelWrapper.setValue(new MultiReferenceFieldModel(fieldName, entityComboBox.getSelectedEntities()));
                 if (entityComboBox.getSelectedEntities().size() == 0) {
-                    clearSelection.setIcon(IconLoader.findIcon(Constants.IMG_REMOVE_SELECTION_DISABLED));
-                    clearSelection.removeMouseListener(mouseListener);
+                    disableArrowButton();
                 } else {
-                    clearSelection.setIcon(IconLoader.findIcon(Constants.IMG_REMOVE_SELECTION));
-                    clearSelection.addMouseListener(mouseListener);
+                    enableArrowButton();
                 }
             } else {
                 entityModelWrapper.setValue(new ReferenceFieldModel(fieldName, entityComboBox.getSelectedEntity()));
-                clearSelection.setIcon(IconLoader.findIcon(Constants.IMG_REMOVE_SELECTION));
-                clearSelection.addMouseListener(mouseListener);
+                enableArrowButton();
             }
         });
-        GridBagConstraints gbc_arrowButton = new GridBagConstraints();
-        gbc_arrowButton.anchor = GridBagConstraints.WEST;
-        gbc_arrowButton.fill = GridBagConstraints.HORIZONTAL;
-        gbc_arrowButton.insets = new Insets(0, 3, 0, 8);
-        gbc_arrowButton.gridx = 0;
-        gbc_arrowButton.weightx = 1.0;
-        add(entityComboBox, gbc_arrowButton);
+        GridBagConstraints gbc_entityComboBox = new GridBagConstraints();
+        gbc_entityComboBox.anchor = GridBagConstraints.WEST;
+        gbc_entityComboBox.fill = GridBagConstraints.HORIZONTAL;
+        gbc_entityComboBox.gridx = 0;
+        gbc_entityComboBox.weightx = 1.0;
+        add(entityComboBox, gbc_entityComboBox);
 
         clearSelection = new JLabel();
         clearSelection.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -108,10 +103,10 @@ public class ReferenceFieldEditor extends FieldEditor {
                 throw new RuntimeException("Failed to set value of the Reference field model, field value and metadata not compatible");
             }
             clearSelection.setIcon(IconLoader.findIcon(Constants.IMG_REMOVE_SELECTION));
+            clearSelection.setCursor(new Cursor(Cursor.HAND_CURSOR));
             clearSelection.addMouseListener(mouseListener);
         } else {
-            clearSelection.setIcon(IconLoader.findIcon(Constants.IMG_REMOVE_SELECTION_DISABLED));
-            clearSelection.removeMouseListener(mouseListener);
+            disableArrowButton();
             entityComboBox.clearEditor();
         }
     }
@@ -124,8 +119,20 @@ public class ReferenceFieldEditor extends FieldEditor {
         entityComboBox.setMultiSelect(multiSelect);
     }
 
-    public Component getClearButton(){
+    public Component getClearButton() {
         return clearSelection;
+    }
+
+    private void disableArrowButton() {
+        clearSelection.setIcon(IconLoader.findIcon(Constants.IMG_REMOVE_SELECTION_DISABLED));
+        clearSelection.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+        clearSelection.removeMouseListener(mouseListener);
+    }
+
+    private void enableArrowButton() {
+        clearSelection.setIcon(IconLoader.findIcon(Constants.IMG_REMOVE_SELECTION));
+        clearSelection.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        clearSelection.addMouseListener(mouseListener);
     }
 
 }
