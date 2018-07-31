@@ -52,8 +52,6 @@ public class BooleanFieldEditor extends FieldEditor {
         gbc_valueTextField.gridx = 0;
         gbc_valueTextField.weightx = 1.0;
         add(booleanEntityComboBox, gbc_valueTextField);
-
-        booleanEntityComboBox.setCursor(new Cursor(Cursor.HAND_CURSOR));
     }
 
     @Override
