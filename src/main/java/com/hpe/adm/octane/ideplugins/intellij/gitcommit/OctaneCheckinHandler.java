@@ -63,7 +63,6 @@ public class OctaneCheckinHandler extends CheckinHandler {
         this.project = panel.getProject();
         this.commitMessageService = commitMessageService;
         this.entityService = entityService;
-        this.originalCommitMessage = panel.getCommitMessage();
     }
 
     private String getMessageForActivatedItem() {
