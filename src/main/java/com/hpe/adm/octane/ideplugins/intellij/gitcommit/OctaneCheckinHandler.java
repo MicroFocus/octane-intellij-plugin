@@ -27,6 +27,7 @@ import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.ui.popup.Balloon;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.vcs.CheckinProjectPanel;
+import com.intellij.openapi.vcs.changes.ui.CommitChangeListDialog;
 import com.intellij.openapi.vcs.checkin.CheckinHandler;
 import com.intellij.openapi.vcs.ui.RefreshableOnComponent;
 import com.intellij.openapi.wm.StatusBar;
@@ -39,6 +40,9 @@ import org.json.JSONObject;
 import javax.swing.*;
 import java.awt.event.ContainerEvent;
 import java.awt.event.ContainerListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStreamReader;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -63,6 +67,18 @@ public class OctaneCheckinHandler extends CheckinHandler {
         this.project = panel.getProject();
         this.commitMessageService = commitMessageService;
         this.entityService = entityService;
+        try {
+            //command that returns the last commit message
+            String command = "git log -1 --pretty=%B";
+            Process p = Runtime.getRuntime().exec(command, null, new File(project.getBasePath()));
+            BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            String line;
+            while ((line = input.readLine()) != null) {
+                originalCommitMessage += line;
+            }
+        } catch (Exception ex) {
+            originalCommitMessage = "";
+        }
     }
 
     private String getMessageForActivatedItem() {
