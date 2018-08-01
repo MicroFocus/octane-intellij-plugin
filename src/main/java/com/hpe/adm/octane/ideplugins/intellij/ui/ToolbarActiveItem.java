@@ -36,6 +36,7 @@ public class ToolbarActiveItem {
 
     private IdePluginPersistentState persistentState;
     private Project project;
+    private boolean shouldUpdatePresentation = true; //true for initial draw
 
     private class ActiveItemAction extends AnAction {
 
@@ -47,6 +48,7 @@ public class ToolbarActiveItem {
 
         public void setPartialEntity(PartialEntity partialEntity) {
             this.partialEntity = partialEntity;
+            shouldUpdatePresentation = true;
         }
 
         @Override
@@ -57,26 +59,36 @@ public class ToolbarActiveItem {
         @Override
         public void update(AnActionEvent e) {
             Project eventProject = e.getDataContext().getData(CommonDataKeys.PROJECT);
+
+            boolean isVisible = partialEntity != null;
+
             //Compare update actions source to the DI project
-            if(eventProject!=null && !eventProject.equals(ToolbarActiveItem.this.project)){
-                e.getPresentation().setVisible(false);
-            } else {
-                if(partialEntity!=null) {
-                    e.getPresentation().setVisible(true);
-                    e.getPresentation().setDescription(partialEntity.getEntityName());
-                    e.getPresentation().setText("");
-                    e.getPresentation().setText("#" + partialEntity.getEntityId());
-                    e.getPresentation().setIcon(new ImageIcon(entityIconFactory.getIconAsImage(partialEntity.getEntityType())));
-                } else {
-                    e.getPresentation().setVisible(false);
-                }
+            //This is to not show the active item of another project in the same IntelliJ toolbar
+            if (eventProject != null && !eventProject.equals(ToolbarActiveItem.this.project)) {
+                isVisible = false;
             }
+
+            //Update visibility
+            e.getPresentation().setVisible(isVisible);
+
+            //Only update the presentation when it's actually needed, to avoid spamming ImageIcon objects that need to be gc later
+            if(shouldUpdatePresentation && isVisible) {
+                updatePresentation(e.getPresentation());
+                shouldUpdatePresentation = false;
+            }
+        }
+
+        private void updatePresentation(Presentation presentation) {
+            presentation.setDescription(partialEntity.getEntityName());
+            presentation.setText("");
+            presentation.setText("#" + partialEntity.getEntityId());
+            presentation.setIcon(new ImageIcon(entityIconFactory.getIconAsImage(partialEntity.getEntityType())));
         }
 
         @Override
         public void actionPerformed(AnActionEvent e) {
             Project project = DataKeys.PROJECT.getData(e.getDataContext());
-            if(activeItemClickHandlers.containsKey(project)){
+            if (activeItemClickHandlers.containsKey(project)) {
                 activeItemClickHandlers.get(project).run();
             }
             ToolWindow octaneToolWindow = ToolWindowManager.getInstance(project).getToolWindow("ALM Octane");
@@ -88,14 +100,14 @@ public class ToolbarActiveItem {
     }
 
     @Inject
-    public ToolbarActiveItem(IdePluginPersistentState persistentState, Project project){
+    public ToolbarActiveItem(IdePluginPersistentState persistentState, Project project) {
         this.persistentState = persistentState;
         this.project = project;
 
         activeItemAction = new ActiveItemAction(getActiveItemFromPersistentState());
 
         persistentState.addStateChangedHandler((key, value) -> {
-            if(key == IdePluginPersistentState.Key.ACTIVE_WORK_ITEM){
+            if (key == IdePluginPersistentState.Key.ACTIVE_WORK_ITEM) {
                 activeItemAction.setPartialEntity(getActiveItemFromPersistentState());
             }
         });
@@ -106,7 +118,7 @@ public class ToolbarActiveItem {
 
         //Text color fix on LAF change
         UIManager.addPropertyChangeListener(evt -> {
-            if(evt.getPropertyName().equals("lookAndFeel")) {
+            if (evt.getPropertyName().equals("lookAndFeel")) {
                 defaultActionGroup.remove(activeItemAction);
                 activeItemAction = new ActiveItemAction(getActiveItemFromPersistentState());
                 defaultActionGroup.add(activeItemAction, Constraints.FIRST);
@@ -124,7 +136,7 @@ public class ToolbarActiveItem {
         }
     }
 
-    public static void setActiveItemClickHandler(Project project, Runnable runnable){
+    public static void setActiveItemClickHandler(Project project, Runnable runnable) {
         activeItemClickHandlers.put(project, runnable);
     }
 }

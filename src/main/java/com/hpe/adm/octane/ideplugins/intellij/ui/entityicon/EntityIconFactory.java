@@ -116,6 +116,9 @@ public class EntityIconFactory {
         Graphics g = image.createGraphics();
         lblIcon.paint(g);
 
+        //dispose the frame after the paint to free up OS User Objects
+        frame.dispose();
+
         return image;
     }
 
