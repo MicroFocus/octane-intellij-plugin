@@ -14,17 +14,24 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui;
 
 import com.google.inject.Inject;
+import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
+import com.hpe.adm.octane.ideplugins.intellij.gitcommit.CommitMessageUtils;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
+import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.util.PartialEntity;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectManagerListener;
+import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
 import org.json.JSONObject;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,6 +40,8 @@ public class ToolbarActiveItem {
     private static EntityIconFactory entityIconFactory = new EntityIconFactory(20, 20, 10, Color.WHITE);
     private static Map<Project, Runnable> activeItemClickHandlers = new HashMap<>();
     private ActiveItemAction activeItemAction;
+    private CopyCommitMessageAction copyCommitMessageAction;
+    private StopActiveItemAction stopActiveItemAction;
 
     private IdePluginPersistentState persistentState;
     private Project project;
@@ -64,15 +73,15 @@ public class ToolbarActiveItem {
 
             //Compare update actions source to the DI project
             //This is to not show the active item of another project in the same IntelliJ toolbar
-            if (eventProject != null && !eventProject.equals(ToolbarActiveItem.this.project)) {
-                isVisible = false;
-            }
+//            if (eventProject != null && !eventProject.equals(ToolbarActiveItem.this.project)) {
+//                isVisible = false;
+//            }
 
             //Update visibility
             e.getPresentation().setVisible(isVisible);
 
             //Only update the presentation when it's actually needed, to avoid spamming ImageIcon objects that need to be gc later
-            if(shouldUpdatePresentation && isVisible) {
+            if (shouldUpdatePresentation && isVisible) {
                 updatePresentation(e.getPresentation());
                 shouldUpdatePresentation = false;
             }
@@ -99,32 +108,119 @@ public class ToolbarActiveItem {
         }
     }
 
+    private class CopyCommitMessageAction extends AnAction {
+
+        PartialEntity partialEntity;
+        CommitMessageUtils commitMessageUtils;
+
+        public CopyCommitMessageAction(PartialEntity partialEntity) {
+            super("Copy commit message for active item", "Copies commit message for active item", IconLoader.findIcon(Constants.IMG_COPY_ICON));
+            this.partialEntity = partialEntity;
+            PluginModule pluginModule = PluginModule.getPluginModuleForProject(project);
+            commitMessageUtils = pluginModule.getInstance(CommitMessageUtils.class);
+        }
+
+        public void setPartialEntity(PartialEntity partialEntity) {
+            this.partialEntity = partialEntity;
+        }
+
+        @Override
+        public void update(AnActionEvent e) {
+            Project eventProject = e.getDataContext().getData(CommonDataKeys.PROJECT);
+
+            boolean isVisible = partialEntity != null;
+
+            //Compare update actions source to the DI project
+            //This is to not show the active item of another project in the same IntelliJ toolbar
+//            if (eventProject != null && !eventProject.equals(ToolbarActiveItem.this.project)) {
+//                isVisible = false;
+//            }
+
+            //Update visibility
+            e.getPresentation().setVisible(isVisible);
+        }
+
+
+        @Override
+        public void actionPerformed(AnActionEvent e) {
+            StringSelection selection = new StringSelection(commitMessageUtils.getCommitMessage(partialEntity));
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            clipboard.setContents(selection, selection);
+            commitMessageUtils.showCommitPatterns(partialEntity);
+        }
+    }
+
+    private class StopActiveItemAction extends AnAction {
+
+        PartialEntity partialEntity;
+        CommitMessageUtils commitMessageUtils;
+
+        public StopActiveItemAction(PartialEntity partialEntity) {
+            super("Stop work on the active item", "Stops work on active item", IconLoader.findIcon(Constants.IMG_STOP_TIMER));
+            this.partialEntity = partialEntity;
+            PluginModule pluginModule = PluginModule.getPluginModuleForProject(project);
+            commitMessageUtils = pluginModule.getInstance(CommitMessageUtils.class);
+        }
+
+        public void setPartialEntity(PartialEntity partialEntity) {
+            this.partialEntity = partialEntity;
+        }
+
+        @Override
+        public void update(AnActionEvent e) {
+            Project eventProject = e.getDataContext().getData(CommonDataKeys.PROJECT);
+
+            boolean isVisible = partialEntity != null;
+
+            //Compare update actions source to the DI project
+            //This is to not show the active item of another project in the same IntelliJ toolbar
+//            if (eventProject != null && !eventProject.equals(ToolbarActiveItem.this.project)) {
+//                isVisible = false;
+//            }
+
+            //Update visibility
+            e.getPresentation().setVisible(isVisible);
+        }
+
+
+        @Override
+        public void actionPerformed(AnActionEvent e) {
+            persistentState.clearState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM);
+        }
+    }
+
     @Inject
     public ToolbarActiveItem(IdePluginPersistentState persistentState, Project project) {
         this.persistentState = persistentState;
         this.project = project;
 
         activeItemAction = new ActiveItemAction(getActiveItemFromPersistentState());
+        copyCommitMessageAction = new CopyCommitMessageAction(getActiveItemFromPersistentState());
+        stopActiveItemAction = new StopActiveItemAction(getActiveItemFromPersistentState());
+
+        DefaultActionGroup defaultActionGroup = (DefaultActionGroup) ActionManager
+                .getInstance()
+                .getAction(
+                "ToolbarRunGroup");
+
+        DefaultActionGroup activeItemActionGroup = new DefaultActionGroup();
+
+        Separator first = Separator.create();
+        activeItemActionGroup.add(first, Constraints.FIRST);
+        activeItemActionGroup.add(stopActiveItemAction, Constraints.FIRST);
+        activeItemActionGroup.add(copyCommitMessageAction, Constraints.FIRST);
+        activeItemActionGroup.add(activeItemAction, Constraints.FIRST);
+
+        defaultActionGroup.add(activeItemActionGroup, Constraints.FIRST);
 
         persistentState.addStateChangedHandler((key, value) -> {
             if (key == IdePluginPersistentState.Key.ACTIVE_WORK_ITEM) {
-                activeItemAction.setPartialEntity(getActiveItemFromPersistentState());
+                PartialEntity newActiveItem = getActiveItemFromPersistentState();
+                activeItemAction.setPartialEntity(newActiveItem);
+                copyCommitMessageAction.setPartialEntity(newActiveItem);
+                stopActiveItemAction.setPartialEntity(newActiveItem);
             }
         });
-
-        DefaultActionGroup defaultActionGroup = (DefaultActionGroup) ActionManager.getInstance().getAction(
-                "ToolbarRunGroup");
-        defaultActionGroup.add(activeItemAction, Constraints.FIRST);
-
-        //Text color fix on LAF change
-        UIManager.addPropertyChangeListener(evt -> {
-            if (evt.getPropertyName().equals("lookAndFeel")) {
-                defaultActionGroup.remove(activeItemAction);
-                activeItemAction = new ActiveItemAction(getActiveItemFromPersistentState());
-                defaultActionGroup.add(activeItemAction, Constraints.FIRST);
-            }
-        });
-
     }
 
     private PartialEntity getActiveItemFromPersistentState() {

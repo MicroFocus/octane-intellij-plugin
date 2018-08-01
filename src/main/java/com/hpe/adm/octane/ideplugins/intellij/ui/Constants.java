@@ -31,6 +31,7 @@ public class Constants {
     public static final String IMG_FIELD_SELECTION_DEFAULT = IMAGE_FOLDER_PATH + "cus-off.png";
     public static final String IMG_NO_WORK_ROCKET = IMAGE_FOLDER_PATH + "s-rocket.png";
     public static final String IMG_PHASE_DROPDOWN = IMAGE_FOLDER_PATH + "drop-down.png";
+    public static final String IMG_COPY_ICON = IMAGE_FOLDER_PATH + "copy-icon.png";
 
     //Settings validation
     public static final String CORRECT_URL_FORMAT_MESSAGE = "Example: (http|https)://{serverurl[:port]}/?p={sharedspaceId}/{workspaceId}";
