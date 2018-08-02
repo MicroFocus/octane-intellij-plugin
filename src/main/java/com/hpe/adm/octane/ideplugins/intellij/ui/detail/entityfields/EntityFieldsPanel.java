@@ -26,8 +26,10 @@ import javax.swing.border.MatteBorder;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("serial")
 public class EntityFieldsPanel extends JXPanel {
@@ -83,7 +85,14 @@ public class EntityFieldsPanel extends JXPanel {
 
         int fieldCount = 0;
         int i = 0;
-        for (FieldMetadata fieldMetadata : fields) {
+
+        //This needs to be checked in case the user has memo fields selected from a previous version of the plugin
+        Collection<FieldMetadata> possibleFields = fields.stream()
+                .filter(e -> !Arrays.asList("phase", "name", "subtype", "description", "rank").contains(e.getName()))
+                .filter(e -> e.getFieldType() != FieldMetadata.FieldType.Memo)
+                .collect(Collectors.toList());
+
+        for (FieldMetadata fieldMetadata : possibleFields) {
             if (fieldNames.contains(fieldMetadata.getName())) {
                 String fieldName = fieldMetadata.getName();
                 JXLabel fieldLabel = new JXLabel();
@@ -96,7 +105,7 @@ public class EntityFieldsPanel extends JXPanel {
                 gbc1.gridx = 0;
                 gbc1.gridy = i;
 
-                String fieldValue = null;
+                String fieldValue;
 
                 if (DetailsViewDefaultFields.FIELD_OWNER.equals(fieldName)
                         || DetailsViewDefaultFields.FIELD_AUTHOR.equals(fieldName)
