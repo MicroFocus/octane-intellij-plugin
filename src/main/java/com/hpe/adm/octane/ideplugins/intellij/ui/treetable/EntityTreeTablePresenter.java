@@ -302,21 +302,21 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
                 });
                 popup.add(activateItem);
 
-                if (isActivated) {
-                    JMenuItem copyCommitMessage = new JBMenuItem("Copy Commit Message", IconLoader.findIcon(Constants.IMG_COPY_ICON));
-                    copyCommitMessage.addMouseListener(new MouseAdapter() {
-                        @Override
-                        public void mousePressed(MouseEvent e) {
-                            super.mousePressed(e);
-                            StringSelection selection = new StringSelection(commitMessageUtils.getCommitMessage(selectedItem));
-                            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                            clipboard.setContents(selection, selection);
-                            commitMessageUtils.showCommitPatterns(selectedItem);
-                        }
-                    });
-                    popup.add(copyCommitMessage);
 
-                }
+                JMenuItem copyCommitMessage = new JBMenuItem("Copy Commit Message", IconLoader.findIcon(Constants.IMG_COPY_ICON));
+                copyCommitMessage.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mousePressed(MouseEvent e) {
+                        super.mousePressed(e);
+                        StringSelection selection = new StringSelection(commitMessageUtils.getCommitMessage(selectedItem));
+                        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                        clipboard.setContents(selection, selection);
+                        commitMessageUtils.showCommitPatterns(selectedItem);
+                    }
+                });
+                popup.add(copyCommitMessage);
+
+
             }
 
             if (myWorkService.isAddingToMyWorkSupported(entityType) && MyWorkUtil.isUserItemDismissible(userItem)) {
