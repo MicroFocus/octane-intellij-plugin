@@ -308,14 +308,10 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
                     @Override
                     public void mousePressed(MouseEvent e) {
                         super.mousePressed(e);
-                        StringSelection selection = new StringSelection(commitMessageUtils.getCommitMessage(selectedItem));
-                        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                        clipboard.setContents(selection, selection);
-                        commitMessageUtils.showCommitPatterns(selectedItem);
+                        commitMessageUtils.asyncCopyCommitMessageToClipboard(selectedItem);
                     }
                 });
                 popup.add(copyCommitMessage);
-
 
             }
 

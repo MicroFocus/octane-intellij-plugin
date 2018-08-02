@@ -143,10 +143,7 @@ public class ToolbarActiveItem {
 
         @Override
         public void actionPerformed(AnActionEvent e) {
-            StringSelection selection = new StringSelection(commitMessageUtils.getCommitMessage(partialEntity));
-            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-            clipboard.setContents(selection, selection);
-            commitMessageUtils.showCommitPatterns(partialEntity);
+            commitMessageUtils.asyncCopyCommitMessageToClipboard(partialEntity);
         }
     }
 

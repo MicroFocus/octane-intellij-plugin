@@ -1,14 +1,26 @@
 package com.hpe.adm.octane.ideplugins.intellij.gitcommit;
 
 import com.google.inject.Inject;
+import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
 import com.hpe.adm.nga.sdk.model.EntityModel;
+import com.hpe.adm.nga.sdk.model.ReferenceFieldModel;
+import com.hpe.adm.nga.sdk.model.StringFieldModel;
 import com.hpe.adm.nga.sdk.query.Query;
 import com.hpe.adm.nga.sdk.query.QueryMethod;
+import com.hpe.adm.octane.ideplugins.intellij.ui.detail.DetailsViewDefaultFields;
 import com.hpe.adm.octane.ideplugins.intellij.util.ExceptionHandler;
+import com.hpe.adm.octane.ideplugins.intellij.util.HtmlTextEditor;
+import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
 import com.hpe.adm.octane.ideplugins.services.EntityService;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
+import com.hpe.adm.octane.ideplugins.services.model.EntityModelWrapper;
 import com.hpe.adm.octane.ideplugins.services.nonentity.CommitMessageService;
 import com.hpe.adm.octane.ideplugins.services.util.PartialEntity;
+import com.hpe.adm.octane.ideplugins.services.util.Util;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.ui.popup.Balloon;
@@ -16,15 +28,20 @@ import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.ui.awt.RelativePoint;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.util.*;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 public class CommitMessageUtils {
 
-    private PartialEntity activatedItem;
-    private EntityModel parentStory;
+    private static final Logger logger = Logger.getInstance(CommitMessageUtils.class);
 
     @Inject
     private CommitMessageService commitMessageService;
@@ -35,78 +52,126 @@ public class CommitMessageUtils {
     @Inject
     private EntityService entityService;
 
-    public CommitMessageUtils() {
+    public void copyCommitMessageToClipboard(PartialEntity partialEntity) {
 
-    }
+        EntityModel entityModel = PartialEntity.toEntityModel(partialEntity);
+        addReferenceFieldIfNeeded(entityModel);
 
-    public String getCommitMessage(PartialEntity activatedItem) {
+        String commitMessage = generateLocalCommitMessage(entityModel);
 
-        if (validate(activatedItem)) {
-            return getMessageForActivatedItem(activatedItem);
+        if(!isCommitMessageValid(entityModel, commitMessage)) {
+
+            ApplicationManager.getApplication().invokeLater(() -> showCommitPatternsWarning(entityModel));
         } else {
-            ExceptionHandler exceptionHandler = new ExceptionHandler(new Exception("Failed to validate commit message"), project);
-            return "";
+
+            StringSelection selection = new StringSelection(commitMessage);
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            clipboard.setContents(selection, selection);
+
+            ApplicationManager.getApplication().invokeLater(() ->
+                    showBalloon("Commit message copied to clipboard: \"" + commitMessage + "\"", MessageType.INFO)
+            );
         }
     }
 
-    private String getMessageForActivatedItem(PartialEntity activatedItem) {
+    public void asyncCopyCommitMessageToClipboard(PartialEntity partialEntity) {
+            Task.Backgroundable backgroundTask = new Task.Backgroundable(project, "Generating Commit Message...", true) {
+                public void run(@NotNull ProgressIndicator indicator) {
+                    copyCommitMessageToClipboard(partialEntity);
+                }
+            };
+            backgroundTask.queue();
+    }
+
+    public String generateLocalCommitMessage(EntityModel entityModel) {
+
+        String taskString = "";
+
+        if (Entity.getEntityType(entityModel) == Entity.TASK) {
+            taskString = ": task #" + entityModel.getId();
+
+            entityModel = addReferenceFieldIfNeeded(entityModel);
+            entityModel = (EntityModel) entityModel.getValue("story").getValue();
+        }
 
         StringBuilder messageBuilder = new StringBuilder();
-        Entity type = activatedItem.getEntityType() == Entity.TASK ? Entity.getEntityType(parentStory)
-                : activatedItem.getEntityType();
 
-        if (type != null) {
-            switch (type) {
-                case USER_STORY:
-                    messageBuilder.append("user story #");
-                    break;
-                case QUALITY_STORY:
-                    messageBuilder.append("quality story #");
-                    break;
-                case DEFECT:
-                    messageBuilder.append("defect #");
-                    break;
-            }
-        } else {
-            return null;
-        }
-        if (activatedItem.getEntityType() == Entity.TASK) {
-            messageBuilder.append(parentStory.getValue("id").getValue());
-            messageBuilder.append(": task #");
-        }
-        messageBuilder.append(activatedItem.getEntityId() + ": ");
+        String id = entityModel.getId();
+        Entity type = Entity.getEntityType(entityModel);
 
+        switch (type) {
+            case USER_STORY:
+                messageBuilder.append("user story #");
+                break;
+            case QUALITY_STORY:
+                messageBuilder.append("quality story #");
+                break;
+            case DEFECT:
+                messageBuilder.append("defect #");
+                break;
+        }
+
+        messageBuilder.append(id);
+        messageBuilder.append(taskString);
         return messageBuilder.toString();
     }
 
-    private boolean validate(PartialEntity activatedItem) {
-        if (activatedItem.getEntityType() == Entity.TASK) {
-            Set<String> storyField = new HashSet<>(Arrays.asList("story"));
-            Query.QueryBuilder idQuery = Query.statement("id", QueryMethod.EqualTo, activatedItem.getEntityId());
-            Collection<EntityModel> results = entityService.findEntities(Entity.TASK, idQuery, storyField);
-            if (!results.isEmpty()) {
-                parentStory = (EntityModel) results.iterator().next().getValue("story").getValue();
-                return commitMessageService.validateCommitMessage(
-                        getMessageForActivatedItem(activatedItem),
-                        Entity.getEntityType(parentStory),
-                        Long.parseLong(parentStory.getValue("id").getValue().toString()));
-            } else {
-                return false;
-            }
-        }
-        return commitMessageService.validateCommitMessage(
-                getMessageForActivatedItem(activatedItem),
-                activatedItem.getEntityType(),
-                activatedItem.getEntityId());
+    public boolean isCommitMessageValid(EntityModel entityModel, String commitMessage) {
 
+        Long id;
+        Entity type;
+
+        if (Entity.getEntityType(entityModel) == Entity.TASK) {
+
+            entityModel = addReferenceFieldIfNeeded(entityModel);
+
+            EntityModel taskParent = (EntityModel) entityModel.getValue("story").getValue();
+            id = Long.parseLong(Objects.requireNonNull(taskParent.getId()));
+            type = Entity.getEntityType(taskParent);
+
+        } else {
+            id = Long.parseLong(Objects.requireNonNull(entityModel.getId()));
+            type = Entity.getEntityType(entityModel);
+
+        }
+
+        return commitMessageService.validateCommitMessage(commitMessage, type, id);
     }
 
-    public void showCommitPatterns(PartialEntity activatedItem) {
-        Entity type = activatedItem.getEntityType() == Entity.TASK ? Entity.getEntityType(parentStory)
-                : activatedItem.getEntityType();
+    private EntityModel addReferenceFieldIfNeeded(EntityModel entityModel) {
+        if (Entity.getEntityType(entityModel) == Entity.TASK && entityModel.getValue("story") == null) {
+            EntityModel taskParent = getTaskParent(entityModel.getId());
+            entityModel.setValue(new ReferenceFieldModel("story", taskParent));
+        }
+        return entityModel;
+    }
+
+    private EntityModel getTaskParent(String id) {
+        Set<String> storyField = new HashSet<>(Collections.singletonList("story"));
+        Query.QueryBuilder idQuery = Query.statement("id", QueryMethod.EqualTo, id);
+        Collection<EntityModel> results = entityService.findEntities(Entity.TASK, idQuery, storyField);
+
+        if (results.size() == 1) {
+            return (EntityModel) results.iterator().next().getValue("story").getValue();
+        } else {
+            return null;
+        }
+    }
+
+    private void showCommitPatternsWarning(EntityModel entityModel) {
+
+        Entity type;
+
+        if(Entity.getEntityType(entityModel) == Entity.TASK) {
+            entityModel = addReferenceFieldIfNeeded(entityModel);
+            type = Entity.getEntityType((EntityModel) entityModel.getValue("story"));
+        } else {
+            type = Entity.getEntityType(entityModel);
+        }
+
         SwingWorker<List<String>, Void> fetchPatternsWorker = new SwingWorker<List<String>, Void>() {
             @Override
-            protected List<String> doInBackground() throws Exception {
+            protected List<String> doInBackground() {
                 return commitMessageService.getCommitPatternsForStoryType(type);
             }
 
@@ -115,9 +180,20 @@ public class CommitMessageUtils {
                 super.done();
                 try {
                     List<String> patterns = get();
-                    showWarningBalloon(patterns);
-                } catch (Exception e) {
-                    e.printStackTrace();
+
+                    StringBuilder messageBuilder =
+                            new StringBuilder("Cannot generate a valid commit message locally,\n please make sure your commit message matches one of the following patterns: ");
+
+                    String patternsString = patterns.stream()
+                            .map((pattern) -> "<b>" + pattern + "</b>")
+                            .collect(Collectors.joining(", "));
+
+                    messageBuilder.append(patternsString);
+
+                    showBalloon(messageBuilder.toString(), MessageType.WARNING);
+
+                } catch (InterruptedException | ExecutionException ex) {
+                    logger.error("Failed to fetch commit patterns from the server: " + ex);
                 }
             }
         };
@@ -125,20 +201,12 @@ public class CommitMessageUtils {
         fetchPatternsWorker.execute();
     }
 
-    private void showWarningBalloon(List<String> commitPatterns) {
+    private void showBalloon(String message, MessageType messageType) {
 
         StatusBar statusBar = WindowManager.getInstance().getStatusBar(project);
 
-        StringBuilder messageBuilder = new StringBuilder("Please make sure your commit message " +
-                "matches one of the follwing patterns: ");
-
-        String patternsString = commitPatterns.stream()
-                .map((pattern) -> "<b>" + pattern + "</b>")
-                .collect(Collectors.joining(", "));
-        messageBuilder.append(patternsString);
-
-        Balloon balloon = JBPopupFactory.getInstance().createHtmlTextBalloonBuilder(messageBuilder.toString(),
-                MessageType.WARNING, null)
+        Balloon balloon = JBPopupFactory.getInstance().createHtmlTextBalloonBuilder(message,
+                messageType, null)
                 .setCloseButtonEnabled(true)
                 .createBalloon();
 
