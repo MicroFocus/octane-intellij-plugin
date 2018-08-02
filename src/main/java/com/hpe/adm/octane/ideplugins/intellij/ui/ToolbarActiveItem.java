@@ -73,9 +73,9 @@ public class ToolbarActiveItem {
 
             //Compare update actions source to the DI project
             //This is to not show the active item of another project in the same IntelliJ toolbar
-//            if (eventProject != null && !eventProject.equals(ToolbarActiveItem.this.project)) {
-//                isVisible = false;
-//            }
+            if (eventProject != null && !eventProject.equals(ToolbarActiveItem.this.project)) {
+                isVisible = false;
+            }
 
             //Update visibility
             e.getPresentation().setVisible(isVisible);
@@ -132,9 +132,9 @@ public class ToolbarActiveItem {
 
             //Compare update actions source to the DI project
             //This is to not show the active item of another project in the same IntelliJ toolbar
-//            if (eventProject != null && !eventProject.equals(ToolbarActiveItem.this.project)) {
-//                isVisible = false;
-//            }
+            if (eventProject != null && !eventProject.equals(ToolbarActiveItem.this.project)) {
+                isVisible = false;
+            }
 
             //Update visibility
             e.getPresentation().setVisible(isVisible);
@@ -174,9 +174,9 @@ public class ToolbarActiveItem {
 
             //Compare update actions source to the DI project
             //This is to not show the active item of another project in the same IntelliJ toolbar
-//            if (eventProject != null && !eventProject.equals(ToolbarActiveItem.this.project)) {
-//                isVisible = false;
-//            }
+            if (eventProject != null && !eventProject.equals(ToolbarActiveItem.this.project)) {
+                isVisible = false;
+            }
 
             //Update visibility
             e.getPresentation().setVisible(isVisible);
@@ -202,7 +202,6 @@ public class ToolbarActiveItem {
                 .getInstance()
                 .getAction(
                 "ToolbarRunGroup");
-
         DefaultActionGroup activeItemActionGroup = new DefaultActionGroup();
 
         Separator first = Separator.create();
