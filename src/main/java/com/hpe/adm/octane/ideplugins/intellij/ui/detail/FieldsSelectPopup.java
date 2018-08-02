@@ -201,9 +201,6 @@ public class FieldsSelectPopup extends JFrame {
             selectedFieldsMap = defaultFieldsMap;
         } else {
             selectedFieldsMap = DefaultEntityFieldsUtil.entityFieldsFromJson(selectedFieldsJson.toString());
-            if (selectedFieldsMap == null) {
-                selectedFieldsMap = defaultFieldsMap;
-            }
         }
     }
 
