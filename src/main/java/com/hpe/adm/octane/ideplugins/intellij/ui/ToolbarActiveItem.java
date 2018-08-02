@@ -18,11 +18,9 @@ import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.gitcommit.CommitMessageUtils;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
-import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.util.PartialEntity;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectManagerListener;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
@@ -201,7 +199,7 @@ public class ToolbarActiveItem {
         DefaultActionGroup defaultActionGroup = (DefaultActionGroup) ActionManager
                 .getInstance()
                 .getAction(
-                "ToolbarRunGroup");
+                        "ToolbarRunGroup");
         DefaultActionGroup activeItemActionGroup = new DefaultActionGroup();
 
         Separator first = Separator.create();
