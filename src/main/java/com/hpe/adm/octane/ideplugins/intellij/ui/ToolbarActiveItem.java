@@ -21,6 +21,8 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
 import com.hpe.adm.octane.ideplugins.services.util.PartialEntity;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectManager;
+import com.intellij.openapi.project.ProjectManagerListener;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
@@ -216,6 +218,15 @@ public class ToolbarActiveItem {
                 activeItemAction.setPartialEntity(newActiveItem);
                 copyCommitMessageAction.setPartialEntity(newActiveItem);
                 stopActiveItemAction.setPartialEntity(newActiveItem);
+            }
+        });
+
+        ProjectManager.getInstance().addProjectManagerListener(project, new ProjectManagerListener() {
+            @Override
+            public void projectClosing(Project project) {
+                if (project.equals(ToolbarActiveItem.this.project)) {
+                    defaultActionGroup.remove(activeItemActionGroup);
+                }
             }
         });
     }
