@@ -182,7 +182,7 @@ public class CommitMessageUtils {
                     List<String> patterns = get();
 
                     StringBuilder messageBuilder =
-                            new StringBuilder("Cannot generate a valid commit message locally,\n please make sure your commit message matches one of the following patterns: ");
+                            new StringBuilder("Cannot generate a valid commit message locally.\nMake sure it matches one of the following patterns: ");
 
                     String patternsString = patterns.stream()
                             .map((pattern) -> "<b>" + pattern + "</b>")
