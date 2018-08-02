@@ -94,31 +94,22 @@ public class FieldsSelectPopup extends JFrame {
 
 
         selectNoneButton = new JXButton("None");
-        selectNoneButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                clearSearchField();
-                noneButtonClicked();
-            }
+        selectNoneButton.addActionListener(e -> {
+            clearSearchField();
+            noneButtonClicked();
         });
 
         selectAllButton = new JXButton("All");
         selectAllButton.setPreferredSize(selectNoneButton.getPreferredSize());
-        selectAllButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                clearSearchField();
-                allButtonClicked();
-            }
+        selectAllButton.addActionListener(e -> {
+            clearSearchField();
+            allButtonClicked();
         });
 
         resetButton = new JXButton("Reset");
-        resetButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                clearSearchField();
-                resetButtonClicked();
-            }
+        resetButton.addActionListener(e -> {
+            clearSearchField();
+            resetButtonClicked();
         });
 
         buttonsPanel.add(selectAllButton);
@@ -218,9 +209,11 @@ public class FieldsSelectPopup extends JFrame {
 
     public void setEntityDetails(EntityModelWrapper entityModelWrapper, Collection<FieldMetadata> allFields, SelectFieldsAction selectFieldsAction) {
         this.selectFieldsAction = selectFieldsAction;
+
         this.allFields = allFields.stream()
-                .filter(e -> !Arrays.asList("phase", "name", "subtype", "description").contains(e.getName()))
+                .filter(e -> !Arrays.asList("phase", "name", "subtype", "description", "rank").contains(e.getName()) && e.getFieldType() != FieldMetadata.FieldType.Memo)
                 .collect(Collectors.toList());
+
         this.entityModelWrapper = entityModelWrapper;
         retrieveSelectedFieldsFromPersistentState();
         setupPopupButtonState();
