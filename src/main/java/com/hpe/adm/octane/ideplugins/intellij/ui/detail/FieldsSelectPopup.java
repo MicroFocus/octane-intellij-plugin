@@ -188,13 +188,17 @@ public class FieldsSelectPopup extends JFrame {
                 && selectedFieldsMap.get(entityModelWrapper.getEntityType()).containsAll(defaultFieldsMap.get(entityModelWrapper.getEntityType()))) {
             selectFieldsAction.setDefaultFieldsIcon(true);
             resetButton.setEnabled(false);
+            selectAllButton.setEnabled(true);
+            selectNoneButton.setEnabled(true);
         } else {
             selectFieldsAction.setDefaultFieldsIcon(false);
             resetButton.setEnabled(true);
             if (selectedFieldsMap.get(entityModelWrapper.getEntityType()).size() == 0) {
                 selectNoneButton.setEnabled(false);
+                selectAllButton.setEnabled(true);
             } else if (selectedFieldsMap.get(entityModelWrapper.getEntityType()).size() == allFields.size()) {
                 selectAllButton.setEnabled(false);
+                selectNoneButton.setEnabled(true);
             }
         }
     }
