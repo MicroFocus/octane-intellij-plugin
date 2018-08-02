@@ -17,6 +17,7 @@ import com.hpe.adm.nga.sdk.model.ReferenceErrorModel;
 import com.hpe.adm.nga.sdk.model.StringFieldModel;
 import com.hpe.adm.octane.ideplugins.services.model.EntityModelWrapper;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
+import com.intellij.ui.JBColor;
 import com.intellij.ui.RoundedLineBorder;
 import org.jdesktop.swingx.JXTextField;
 
@@ -39,7 +40,7 @@ public class StringFieldEditor extends FieldEditor {
         layout.columnWeights = new double[]{0.0, 0.0};
         setLayout(layout);
 
-        setBorder(new RoundedLineBorder(Color.GRAY, 5));
+        setBorder(new RoundedLineBorder(JBColor.GRAY, 5));
 
         fieldValue = new JXTextField();
         fieldValue.setBorder(BorderFactory.createEmptyBorder(2, 5, 2, 2));
@@ -69,7 +70,7 @@ public class StringFieldEditor extends FieldEditor {
 
     }
 
-    public void handleTextChange() {
+    private void handleTextChange() {
         String text = fieldValue.getText();
         // whitespace is considered null
         if (text.trim().isEmpty()) {

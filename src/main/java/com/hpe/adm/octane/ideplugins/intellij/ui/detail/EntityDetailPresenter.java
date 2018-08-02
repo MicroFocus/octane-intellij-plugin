@@ -51,9 +51,6 @@ import java.util.stream.Collectors;
 public class EntityDetailPresenter implements Presenter<EntityDetailView> {
 
     private static final Logger logger = Logger.getInstance(EntityDetailPresenter.class.getName());
-    private static final String GO_TO_BROWSER_DIALOG_MESSAGE =
-            "\nYou can only provide a value for this field using ALM Octane in a browser."
-                    + "\nDo you want to do this now? ";
 
     @Inject
     private Project project;

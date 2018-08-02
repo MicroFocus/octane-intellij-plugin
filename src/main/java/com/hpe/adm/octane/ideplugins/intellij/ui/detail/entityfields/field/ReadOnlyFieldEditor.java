@@ -15,6 +15,7 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.field;
 
 import com.hpe.adm.octane.ideplugins.services.model.EntityModelWrapper;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
+import com.intellij.ui.JBColor;
 import com.intellij.ui.RoundedLineBorder;
 import com.intellij.util.ui.UIUtil;
 import org.jdesktop.swingx.JXTextField;
@@ -32,7 +33,7 @@ public class ReadOnlyFieldEditor extends FieldEditor {
         layout.columnWeights = new double[]{0.0, 0.0};
         setLayout(layout);
 
-        setBorder(new RoundedLineBorder(Color.GRAY, 5));
+        setBorder(new RoundedLineBorder(JBColor.GRAY, 5));
 
         fieldValue = new JXTextField();
         fieldValue.setBackground(UIUtil.getLabelBackground());

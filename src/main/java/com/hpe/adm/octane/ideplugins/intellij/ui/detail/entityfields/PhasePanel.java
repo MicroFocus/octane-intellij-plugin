@@ -19,6 +19,7 @@ import com.hpe.adm.nga.sdk.model.FieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.PhaseDropDownMenu;
 import com.hpe.adm.octane.ideplugins.services.model.EntityModelWrapper;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
+import com.intellij.util.ui.JBUI;
 import org.jdesktop.swingx.JXLabel;
 
 import javax.swing.*;
@@ -30,11 +31,8 @@ import java.util.Collection;
 public class PhasePanel extends JPanel {
 
     private JXLabel phaseDetails;
-    private JXLabel currentPhaseLabel;
 
     private PhaseDropDownMenu phaseDropDownMenu;
-
-    private JSeparator separatorPhasePanel;
 
     @Inject
     public PhasePanel(PhaseDropDownMenu phaseDropDownMenu) {
@@ -46,27 +44,27 @@ public class PhasePanel extends JPanel {
         gbl_phasePanel.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0};
         setLayout(gbl_phasePanel);
 
-        currentPhaseLabel = new JXLabel();
+        JXLabel currentPhaseLabel = new JXLabel();
         currentPhaseLabel.setText("Current phase:");
         currentPhaseLabel.setFont(new Font(currentPhaseLabel.getFont().getName(), Font.BOLD, 14));
-        currentPhaseLabel.setBorder(new EmptyBorder(0, 0, 0, 5));
+        currentPhaseLabel.setBorder(JBUI.Borders.emptyRight(5));
         GridBagConstraints gbc_currentPhaseLabel = new GridBagConstraints();
         gbc_currentPhaseLabel.anchor = GridBagConstraints.WEST;
-        gbc_currentPhaseLabel.insets = new Insets(5, 0, 5, 5);
+        gbc_currentPhaseLabel.insets = JBUI.insets(5, 0, 5, 5);
         gbc_currentPhaseLabel.gridx = 0;
         add(currentPhaseLabel, gbc_currentPhaseLabel);
 
         phaseDetails = new JXLabel();
         phaseDetails.setText("phase");
         phaseDetails.setFont(new Font(phaseDetails.getFont().getName(), Font.PLAIN, 14));
-        phaseDetails.setBorder(new EmptyBorder(0, 0, 0, 10));
+        phaseDetails.setBorder(JBUI.Borders.emptyRight(10));
         GridBagConstraints gbc_phaseDetails = new GridBagConstraints();
         gbc_phaseDetails.anchor = GridBagConstraints.WEST;
-        gbc_phaseDetails.insets = new Insets(5, 0, 5, 5);
+        gbc_phaseDetails.insets = JBUI.insets(5, 0, 5, 5);
         gbc_phaseDetails.gridx = 1;
         add(phaseDetails, gbc_phaseDetails);
 
-        separatorPhasePanel = new JSeparator(SwingConstants.VERTICAL);
+        JSeparator separatorPhasePanel = new JSeparator(SwingConstants.VERTICAL);
         GridBagConstraints gbc_separator3 = new GridBagConstraints();
         gbc_separator3.gridx = 2;
         gbc_separator3.fill = GridBagConstraints.VERTICAL;
@@ -86,10 +84,6 @@ public class PhasePanel extends JPanel {
 
     public void setEntityModelWrapper(EntityModelWrapper entityModelWrapper) {
         phaseDropDownMenu.setEntityModelWrapper(entityModelWrapper);
-    }
-
-    public void setPossiblePhasesForEntity(Collection<EntityModel> phasesList) {
-        phaseDropDownMenu.addItems((ArrayList) phasesList);
     }
 
     public void setPhaseInHeader(boolean showPhase) {

@@ -20,6 +20,7 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.field.Field
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.field.FieldEditorFactory;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.field.ReferenceFieldEditor;
 import com.hpe.adm.octane.ideplugins.services.model.EntityModelWrapper;
+import com.intellij.util.ui.JBUI;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
 
@@ -74,7 +75,7 @@ public class EntityFieldsPanel extends JXPanel {
         resizeHandler();
     }
 
-    public void resizeHandler() {
+    private void resizeHandler() {
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
@@ -106,13 +107,13 @@ public class EntityFieldsPanel extends JXPanel {
                 GridBagConstraints gbc1 = new GridBagConstraints();
                 gbc1.anchor = GridBagConstraints.WEST;
                 gbc1.fill = GridBagConstraints.HORIZONTAL;
-                gbc1.insets = new Insets(0, 0, 5, 0);
+                gbc1.insets = JBUI.insetsBottom(5);
                 gbc1.gridx = 0;
                 gbc1.gridy = i;
 
                 FieldEditor fieldValueLabel = fieldFactory.createFieldEditor(entityModelWrapper, fieldName);
                 GridBagConstraints gbc2 = new GridBagConstraints();
-                gbc2.insets = new Insets(0, 10, 10, 0);
+                gbc2.insets = JBUI.insets(0, 10, 10, 0);
                 gbc2.anchor = GridBagConstraints.WEST;
                 gbc2.fill = GridBagConstraints.HORIZONTAL;
                 gbc2.gridx = 1;
@@ -149,7 +150,7 @@ public class EntityFieldsPanel extends JXPanel {
             return;
         }
         GridBagConstraints gbc2 = new GridBagConstraints();
-        gbc2.insets = new Insets(5, 5, 10, 10);
+        gbc2.insets = JBUI.insets(5, 5, 10, 10);
         gbc2.fill = GridBagConstraints.HORIZONTAL;
         gbc2.gridx = 2;
         gbc2.gridy = rowCount;

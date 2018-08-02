@@ -66,7 +66,7 @@ public class BooleanFieldEditor extends FieldEditor {
             booleanEntityComboBox.setSelectedEntity(ENTITY_FALSE);
         }
         booleanEntityComboBox.addSelectionListener(e -> {
-                    boolean newValue = booleanEntityComboBox.getSelectedEntity() == ENTITY_TRUE ? true : false;
+                    boolean newValue = booleanEntityComboBox.getSelectedEntity() == ENTITY_TRUE;
                     entityModelWrapper.setValue(new BooleanFieldModel(fieldName, newValue));
                 }
         );

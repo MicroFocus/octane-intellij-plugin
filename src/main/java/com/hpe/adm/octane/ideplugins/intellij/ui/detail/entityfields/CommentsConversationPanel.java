@@ -17,12 +17,12 @@ import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.DetailsViewDefaultFields;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
+import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import javafx.application.Platform;
 import org.apache.commons.lang.StringUtils;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
@@ -89,7 +89,7 @@ public class CommentsConversationPanel extends JPanel {
         left.weighty = 1.0D;
 
         GridBagConstraints right = new GridBagConstraints();
-        right.insets = new Insets(0, 10, 0, 0);
+        right.insets = JBUI.insetsLeft(10);
         right.anchor = GridBagConstraints.LINE_END;
         right.fill = GridBagConstraints.NONE;
         right.weightx = 1.0D;
@@ -97,18 +97,18 @@ public class CommentsConversationPanel extends JPanel {
 
         southPanel.add(messageBox, left);
         southPanel.add(sendMessageButton, right);
-        southPanel.setBorder(new EmptyBorder(0, 5, 0, 5));
+        southPanel.setBorder(JBUI.Borders.empty(0, 5));
 
         add(BorderLayout.NORTH, southPanel);
         add(chatBox, BorderLayout.CENTER);
         enableButton();
     }
 
-    public void addExistingComment(String commentPostDate, String username, String message) {
+    private void addExistingComment(String commentPostDate, String username, String message) {
         commentContent += commentPostDate + " <b>" + username + ":</b> <br>" + message + "<hr>";
     }
 
-    public void setChatBoxScene() {
+    private void setChatBoxScene() {
         Platform.runLater(() -> chatBox.setContent(commentContent));
     }
 
@@ -142,7 +142,7 @@ public class CommentsConversationPanel extends JPanel {
         return messageBox.getText();
     }
 
-    public void clearCurrentComments() {
+    private void clearCurrentComments() {
         commentContent = "";
     }
 

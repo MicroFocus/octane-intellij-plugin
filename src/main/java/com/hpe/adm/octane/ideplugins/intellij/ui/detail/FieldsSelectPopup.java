@@ -26,6 +26,7 @@ import com.hpe.adm.octane.ideplugins.services.util.DefaultEntityFieldsUtil;
 import com.intellij.openapi.ui.VerticalFlowLayout;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBScrollPane;
+import com.intellij.util.ui.JBUI;
 import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.JXTextField;
 import org.json.JSONObject;
@@ -55,8 +56,6 @@ public class FieldsSelectPopup extends JFrame {
     @Inject
     private IdePluginPersistentState idePluginPersistentState;
 
-    private JScrollPane fieldsScrollPanel;
-    private JPanel fieldsRootPanel;
     private JXTextField searchField;
     private SelectFieldsAction selectFieldsAction;
     private JPanel fieldsPanel;
@@ -70,7 +69,7 @@ public class FieldsSelectPopup extends JFrame {
     public FieldsSelectPopup() {
 
         setLayout(new BorderLayout());
-        fieldsRootPanel = new JPanel();
+        JPanel fieldsRootPanel = new JPanel();
         fieldsRootPanel.setBorder(new MatteBorder(2, 2, 2, 2, JBColor.border()));
         GridBagLayout gbl = new GridBagLayout();
         gbl.columnWidths = new int[]{0, 0};
@@ -87,31 +86,22 @@ public class FieldsSelectPopup extends JFrame {
 
 
         selectNoneButton = new JXButton("None");
-        selectNoneButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                clearSearchField();
-                noneButtonClicked();
-            }
+        selectNoneButton.addActionListener(e -> {
+            clearSearchField();
+            noneButtonClicked();
         });
 
         selectAllButton = new JXButton("All");
         selectAllButton.setPreferredSize(selectNoneButton.getPreferredSize());
-        selectAllButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                clearSearchField();
-                allButtonClicked();
-            }
+        selectAllButton.addActionListener(e -> {
+            clearSearchField();
+            allButtonClicked();
         });
 
         resetButton = new JXButton("Reset");
-        resetButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                clearSearchField();
-                resetButtonClicked();
-            }
+        resetButton.addActionListener(e -> {
+            clearSearchField();
+            resetButtonClicked();
         });
 
         buttonsPanel.add(selectAllButton);
@@ -119,7 +109,7 @@ public class FieldsSelectPopup extends JFrame {
         buttonsPanel.add(resetButton);
 
         GridBagConstraints gbcButton = new GridBagConstraints();
-        gbcButton.insets = new Insets(10, 10, 10, 10);
+        gbcButton.insets = JBUI.insets(10);
         gbcButton.anchor = GridBagConstraints.NORTH;
         gbcButton.gridx = 0;
         gbcButton.gridy = 2;
@@ -146,13 +136,13 @@ public class FieldsSelectPopup extends JFrame {
         });
 
         GridBagConstraints gbcSearchField = new GridBagConstraints();
-        gbcSearchField.insets = new Insets(10, 10, 10, 10);
+        gbcSearchField.insets = JBUI.insets(10);
         gbcSearchField.anchor = GridBagConstraints.NORTH;
         gbcSearchField.gridx = 0;
         gbcSearchField.gridy = 0;
         fieldsRootPanel.add(searchField, gbcSearchField);
 
-        fieldsScrollPanel = createFieldsPanel();
+        JScrollPane fieldsScrollPanel = createFieldsPanel();
         GridBagConstraints gbc1 = new GridBagConstraints();
         gbc1.gridx = 0;
         gbc1.gridy = 1;
@@ -199,7 +189,7 @@ public class FieldsSelectPopup extends JFrame {
             selectedFieldsMap = defaultFieldsMap;
         } else {
             selectedFieldsMap = DefaultEntityFieldsUtil.entityFieldsFromJson(selectedFieldsJson.toString());
-            if (selectedFieldsMap == null) {
+            if (selectedFieldsMap.isEmpty()) {
                 selectedFieldsMap = defaultFieldsMap;
             }
         }
@@ -267,13 +257,10 @@ public class FieldsSelectPopup extends JFrame {
     }
 
     private void searchFieldAction() {
-        Collection<FieldMetadata> searchfields = new HashSet<>();
+        Collection<FieldMetadata> searchfields;
         if (!searchField.getText().equals("")) {
-            for (FieldMetadata fieldMetadata : allFields.stream()
-                    .filter(pf -> pf.getLabel().toLowerCase().contains(searchField.getText().toLowerCase()))
-                    .collect(Collectors.toSet())) {
-                searchfields.add(fieldMetadata);
-            }
+            searchfields = allFields.stream()
+                    .filter(pf -> pf.getLabel().toLowerCase().contains(searchField.getText().toLowerCase())).collect(Collectors.toSet());
         } else {
             searchfields = allFields;
         }
@@ -363,7 +350,7 @@ public class FieldsSelectPopup extends JFrame {
     private void createNoResultsPanel() {
         fieldsPanel.removeAll();
         JMenuItem noResults = new JMenuItem("No results");
-        noResults.setForeground(Color.RED);
+        noResults.setForeground(JBColor.RED);
         fieldsPanel.add(noResults, BorderLayout.EAST);
     }
 

@@ -18,7 +18,9 @@ import com.hpe.adm.nga.sdk.model.LongFieldModel;
 import com.hpe.adm.nga.sdk.model.ReferenceFieldModel;
 import com.hpe.adm.octane.ideplugins.services.model.EntityModelWrapper;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
+import com.intellij.ui.JBColor;
 import com.intellij.ui.RoundedLineBorder;
+import com.intellij.util.ui.JBUI;
 import org.jdesktop.swingx.JXTextField;
 
 import javax.swing.*;
@@ -43,7 +45,7 @@ public class NumericFieldEditor extends FieldEditor {
         layout.columnWeights = new double[]{0.0, 0.0};
         setLayout(layout);
 
-        setBorder(new RoundedLineBorder(Color.GRAY, 5));
+        setBorder(new RoundedLineBorder(JBColor.GRAY, 5));
 
         textField = new JXTextField();
         textField.setBorder(BorderFactory.createEmptyBorder(2, 5, 2, 2));
@@ -67,7 +69,7 @@ public class NumericFieldEditor extends FieldEditor {
         GridBagConstraints gbc_valueTextField = new GridBagConstraints();
         gbc_valueTextField.anchor = GridBagConstraints.WEST;
         gbc_valueTextField.fill = GridBagConstraints.HORIZONTAL;
-        gbc_valueTextField.insets = new Insets(0, 0, 0, 0);
+        gbc_valueTextField.insets = JBUI.emptyInsets();
         gbc_valueTextField.gridx = 0;
         gbc_valueTextField.weightx = 1.0;
         add(textField, gbc_valueTextField);
@@ -101,7 +103,7 @@ public class NumericFieldEditor extends FieldEditor {
                     entityModelWrapper.setValue(new FloatFieldModel(fieldName, value));
                     textField.setForeground(getForeground());
                 } catch (Exception ignored) {
-                    textField.setForeground(Color.RED);
+                    textField.setForeground(JBColor.RED);
                 }
             } else {
                 try {
@@ -109,7 +111,7 @@ public class NumericFieldEditor extends FieldEditor {
                     entityModelWrapper.setValue(new LongFieldModel(fieldName, value));
                     textField.setForeground(getForeground());
                 } catch (Exception ignored) {
-                    textField.setForeground(Color.RED);
+                    textField.setForeground(JBColor.RED);
                 }
             }
 

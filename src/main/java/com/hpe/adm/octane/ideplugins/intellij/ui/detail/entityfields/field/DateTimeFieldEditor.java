@@ -19,6 +19,7 @@ import com.hpe.adm.nga.sdk.model.ReferenceFieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.services.model.EntityModelWrapper;
 import com.intellij.openapi.util.IconLoader;
+import com.intellij.util.ui.JBUI;
 import com.michaelbaranov.microba.calendar.DatePicker;
 
 import javax.swing.*;
@@ -63,12 +64,7 @@ public class DateTimeFieldEditor extends FieldEditor {
         setLayout(gridBagLayout);
 
         microbaDatePicker = new DatePicker();
-        microbaDatePicker.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                handleChange();
-            }
-        });
+        microbaDatePicker.addActionListener(e -> handleChange());
 
 
         timeLabel = new JLabel("time :");
@@ -110,7 +106,7 @@ public class DateTimeFieldEditor extends FieldEditor {
         GridBagConstraints gbc_valueTextField = new GridBagConstraints();
         gbc_valueTextField.anchor = GridBagConstraints.WEST;
         gbc_valueTextField.fill = GridBagConstraints.HORIZONTAL;
-        gbc_valueTextField.insets = new Insets(0, 0, 0, 5);
+        gbc_valueTextField.insets = JBUI.insetsRight(5);
         gbc_valueTextField.gridx = 0;
         gbc_valueTextField.weightx = 1.0;
         add(linkToButtons, gbc_valueTextField);
@@ -139,30 +135,10 @@ public class DateTimeFieldEditor extends FieldEditor {
             }
         });
 
-        hourSpinner.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                handleChange();
-            }
-        });
-        minuteSpinner.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                handleChange();
-            }
-        });
-        secondsSpinner.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                handleChange();
-            }
-        });
-        dayTimeSpinner.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                handleChange();
-            }
-        });
+        hourSpinner.addChangeListener(e -> handleChange());
+        minuteSpinner.addChangeListener(e -> handleChange());
+        secondsSpinner.addChangeListener(e -> handleChange());
+        dayTimeSpinner.addChangeListener(e -> handleChange());
     }
 
     private void handleChange() {
@@ -178,7 +154,7 @@ public class DateTimeFieldEditor extends FieldEditor {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new Insets(0, 0, 0, 5);
+        gbc.insets = JBUI.insetsRight(5);
         gbc.gridx = x;
         add(cmp, gbc);
     }
@@ -197,7 +173,7 @@ public class DateTimeFieldEditor extends FieldEditor {
         GridBagConstraints gbc_emptyPlaceHolder = new GridBagConstraints();
         gbc_emptyPlaceHolder.anchor = GridBagConstraints.CENTER;
         gbc_emptyPlaceHolder.fill = GridBagConstraints.HORIZONTAL;
-        gbc_emptyPlaceHolder.insets = new Insets(0, 0, 0, 5);
+        gbc_emptyPlaceHolder.insets = JBUI.insetsRight(5);
         gbc_emptyPlaceHolder.gridx = 8;
         gbc_emptyPlaceHolder.weightx = 1.0;
         add(new JLabel(), gbc_emptyPlaceHolder);
@@ -212,7 +188,7 @@ public class DateTimeFieldEditor extends FieldEditor {
         GridBagConstraints gbc_linkToButtons = new GridBagConstraints();
         gbc_linkToButtons.anchor = GridBagConstraints.WEST;
         gbc_linkToButtons.fill = GridBagConstraints.HORIZONTAL;
-        gbc_linkToButtons.insets = new Insets(0, 0, 0, 5);
+        gbc_linkToButtons.insets = JBUI.insetsRight(5);
         gbc_linkToButtons.gridx = 0;
         gbc_linkToButtons.weightx = 1.0;
         add(linkToButtons, gbc_linkToButtons);
@@ -259,7 +235,7 @@ public class DateTimeFieldEditor extends FieldEditor {
                 .toInstant()
                 .atZone(ZoneId.systemDefault()).toLocalDate();
         //Date uses 0 based numbering while ZonedDateTime uses 1 based numbering
-        localDate.plusMonths(1);
+        localDate = localDate.plusMonths(1);
         // Converting to UTC is not necessary, the SDK will do it for you
         return ZonedDateTime.of(localDate,
                 LocalTime.of(

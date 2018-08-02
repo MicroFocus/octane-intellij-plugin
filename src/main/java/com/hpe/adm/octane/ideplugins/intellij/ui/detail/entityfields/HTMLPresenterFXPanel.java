@@ -208,7 +208,7 @@ public class HTMLPresenterFXPanel extends JFXPanel {
         return webView;
     }
 
-    void setWebView(WebView webView) {
+    private void setWebView(WebView webView) {
         this.webView = webView;
     }
 
