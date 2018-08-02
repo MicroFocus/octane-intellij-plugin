@@ -226,6 +226,7 @@ public class ToolbarActiveItem {
             public void projectClosing(Project project) {
                 if (project.equals(ToolbarActiveItem.this.project)) {
                     defaultActionGroup.remove(activeItemActionGroup);
+                    activeItemClickHandlers.remove(project);
                 }
             }
         });
