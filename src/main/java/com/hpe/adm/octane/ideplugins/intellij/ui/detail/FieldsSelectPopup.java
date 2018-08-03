@@ -171,13 +171,17 @@ public class FieldsSelectPopup extends JFrame {
                 && selectedFieldsMap.get(entityModelWrapper.getEntityType()).containsAll(defaultFieldsMap.get(entityModelWrapper.getEntityType()))) {
             selectFieldsAction.setDefaultFieldsIcon(true);
             resetButton.setEnabled(false);
+            selectAllButton.setEnabled(true);
+            selectNoneButton.setEnabled(true);
         } else {
             selectFieldsAction.setDefaultFieldsIcon(false);
             resetButton.setEnabled(true);
             if (selectedFieldsMap.get(entityModelWrapper.getEntityType()).size() == 0) {
                 selectNoneButton.setEnabled(false);
+                selectAllButton.setEnabled(true);
             } else if (selectedFieldsMap.get(entityModelWrapper.getEntityType()).size() == allFields.size()) {
                 selectAllButton.setEnabled(false);
+                selectNoneButton.setEnabled(true);
             }
         }
     }
@@ -197,11 +201,13 @@ public class FieldsSelectPopup extends JFrame {
 
     public void setEntityDetails(EntityModelWrapper entityModelWrapper, Collection<FieldMetadata> allFields, SelectFieldsAction selectFieldsAction) {
         this.selectFieldsAction = selectFieldsAction;
+
         this.allFields = allFields.stream()
                 .filter(e ->
                         !Arrays.asList("phase", "name", "subtype", "description", "rank", "id").contains(e.getName())
                                 && e.getFieldType() != FieldMetadata.FieldType.Memo)
                 .collect(Collectors.toList());
+
         this.entityModelWrapper = entityModelWrapper;
         retrieveSelectedFieldsFromPersistentState();
         setupPopupButtonState();

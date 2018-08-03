@@ -19,6 +19,7 @@ import com.google.inject.name.Named;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.eventbus.OpenDetailTabEvent;
 import com.hpe.adm.octane.ideplugins.intellij.eventbus.RefreshMyWorkEvent;
+import com.hpe.adm.octane.ideplugins.intellij.gitcommit.CommitMessageUtils;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
@@ -46,6 +47,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.JBMenuItem;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vcs.VcsShowConfirmationOption;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -57,6 +59,8 @@ import org.json.JSONObject;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.*;
@@ -85,6 +89,9 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
     private EventBus eventBus;
 
     @Inject
+    private CommitMessageUtils commitMessageUtils;
+
+    @Inject
     private IdePluginPersistentState persistentState;
 
     @Inject
@@ -93,10 +100,10 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
     @Inject
     private Project project;
 
-    public EntityTreeTablePresenter(){
+    public EntityTreeTablePresenter() {
     }
 
-    public void refresh(){
+    public void refresh() {
         Task.Backgroundable backgroundTask = new Task.Backgroundable(project, "Loading \"My Work\"", false) {
             public void run(@NotNull ProgressIndicator indicator) {
                 try {
@@ -129,14 +136,14 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
         myWork = MyWorkUtil.getEntityModelsFromUserItems(myWork);
 
         PartialEntity activeItem = getActiveItemFromPersistentState();
-        if(activeItem == null) return;
+        if (activeItem == null) return;
 
         boolean clearActiveItem;
 
         if (myWork != null) {
             Optional<EntityModel> activeItemInMyWork = myWork
                     .stream()
-                    .filter(entityModel ->  EntityUtil.areEqual(entityModel, activeItem))
+                    .filter(entityModel -> EntityUtil.areEqual(entityModel, activeItem))
                     .findFirst();
 
             activeItemInMyWork.ifPresent(entityModel -> {
@@ -150,7 +157,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
             clearActiveItem = true;
         }
 
-        if(clearActiveItem){
+        if (clearActiveItem) {
             persistentState.clearState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM);
             UiUtil.showWarningBalloon(null,
                     "Active item cleared, no longer part of \"My Work\"",
@@ -214,7 +221,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
             });
             popup.add(viewInBrowserItem);
 
-            if(TabbedPanePresenter.isDetailTabSupported(entityType)) {
+            if (TabbedPanePresenter.isDetailTabSupported(entityType)) {
                 Icon icon = new ImageIcon(entityIconFactory.getIconAsImage(entityType));
                 JMenuItem viewDetailMenuItem = new JMenuItem("View details", icon);
                 viewDetailMenuItem.addMouseListener(new MouseAdapter() {
@@ -229,13 +236,13 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
             if (entityType == Entity.TASK || entityType == Entity.COMMENT) {
                 //Get parent info
                 EntityModel parentEntityModel;
-                if(entityType == Entity.TASK){
+                if (entityType == Entity.TASK) {
                     parentEntityModel = (EntityModel) entityModel.getValue("story").getValue();
                 } else {
                     parentEntityModel = (EntityModel) Util.getContainerItemForCommentModel(entityModel).getValue();
                 }
 
-                if(TabbedPanePresenter.isDetailTabSupported(Entity.getEntityType(parentEntityModel))) {
+                if (TabbedPanePresenter.isDetailTabSupported(Entity.getEntityType(parentEntityModel))) {
                     //Add option
                     Icon icon = new ImageIcon(entityIconFactory.getIconAsImage(Entity.getEntityType(parentEntityModel)));
                     JMenuItem viewParentMenuItem = new JMenuItem("View parent details", icon);
@@ -263,9 +270,9 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
             }
 
             if (entityType == Entity.DEFECT ||
-                entityType == Entity.USER_STORY ||
-                entityType == Entity.QUALITY_STORY ||
-                entityType == Entity.TASK) {
+                    entityType == Entity.USER_STORY ||
+                    entityType == Entity.QUALITY_STORY ||
+                    entityType == Entity.TASK) {
 
                 popup.addSeparator();
 
@@ -277,6 +284,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
                 JMenuItem activateItem;
                 if (isActivated) {
                     activateItem = new JMenuItem("Stop work", IconLoader.findIcon(Constants.IMG_STOP_TIMER));
+
                 } else {
                     activateItem = new JMenuItem("Start work", IconLoader.findIcon(Constants.IMG_START_TIMER));
                 }
@@ -293,9 +301,21 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
                     }
                 });
                 popup.add(activateItem);
+
+
+                JMenuItem copyCommitMessage = new JBMenuItem("Copy Commit Message", IconLoader.findIcon(Constants.IMG_COPY_ICON));
+                copyCommitMessage.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mousePressed(MouseEvent e) {
+                        super.mousePressed(e);
+                        commitMessageUtils.asyncCopyCommitMessageToClipboard(selectedItem);
+                    }
+                });
+                popup.add(copyCommitMessage);
+
             }
 
-            if(myWorkService.isAddingToMyWorkSupported(entityType) && MyWorkUtil.isUserItemDismissible(userItem)) {
+            if (myWorkService.isAddingToMyWorkSupported(entityType) && MyWorkUtil.isUserItemDismissible(userItem)) {
 
                 JMenuItem removeFromMyWorkMenuItem = new JMenuItem("Dismiss", AllIcons.General.Remove);
                 removeFromMyWorkMenuItem.addMouseListener(new MouseAdapter() {
@@ -309,33 +329,33 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
                                             "Dismissing item from \"My Work\"",
                                             true) {
 
-                                public void run(@NotNull ProgressIndicator indicator) {
-                                    if(myWorkService.removeFromMyWork(entityModel)) {
+                                        public void run(@NotNull ProgressIndicator indicator) {
+                                            if (myWorkService.removeFromMyWork(entityModel)) {
 
-                                        //Remove dismissed item if successful
-                                        List list = entityTreeView.getTreeModel().getGroupedEntities()
-                                                .values()
-                                                .stream()
-                                                .flatMap(Collection::stream)
-                                                .filter(currentEntityModel ->
-                                                        !EntityUtil.areEqual(currentEntityModel, userItem))
-                                                .collect(Collectors.toList());
+                                                //Remove dismissed item if successful
+                                                List list = entityTreeView.getTreeModel().getGroupedEntities()
+                                                        .values()
+                                                        .stream()
+                                                        .flatMap(Collection::stream)
+                                                        .filter(currentEntityModel ->
+                                                                !EntityUtil.areEqual(currentEntityModel, userItem))
+                                                        .collect(Collectors.toList());
 
-                                        SwingUtilities.invokeLater(() -> {
-                                            updateActiveItem(list);
-                                            entityTreeView.setTreeModel(createEntityTreeModel(list));
-                                            entityTreeView.expandAllNodes();
-                                        });
+                                                SwingUtilities.invokeLater(() -> {
+                                                    updateActiveItem(list);
+                                                    entityTreeView.setTreeModel(createEntityTreeModel(list));
+                                                    entityTreeView.expandAllNodes();
+                                                });
 
-                                        //refresh();
-                                        UiUtil.showWarningBalloon(null,
-                                                "Item dismissed",
-                                                UiUtil.entityToString(entityModel),
-                                                NotificationType.INFORMATION);
-                                    }
-                                }
+                                                //refresh();
+                                                UiUtil.showWarningBalloon(null,
+                                                        "Item dismissed",
+                                                        UiUtil.entityToString(entityModel),
+                                                        NotificationType.INFORMATION);
+                                            }
+                                        }
 
-                            };
+                                    };
 
                             backgroundTask.queue();
                         });
@@ -439,7 +459,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
         getView().addEntityKeyHandler(handler);
     }
 
-    private static EntityTreeModel createEntityTreeModel(Collection<EntityModel> entityModels){
+    private static EntityTreeModel createEntityTreeModel(Collection<EntityModel> entityModels) {
         List<EntityCategory> entityCategories = new ArrayList<>();
         entityCategories.add(new UserItemEntityCategory("Backlog", Entity.USER_STORY, Entity.DEFECT, Entity.QUALITY_STORY,
                 Entity.EPIC, Entity.FEATURE));
@@ -447,7 +467,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
         entityCategories.add(new UserItemEntityCategory("Tasks", Entity.TASK));
         entityCategories.add(new UserItemEntityCategory("Tests", Entity.GHERKIN_TEST, Entity.MANUAL_TEST));
         entityCategories.add(new UserItemEntityCategory("Mention in comments", Entity.COMMENT));
-        entityCategories.add(new UserItemEntityCategory("Runs", Entity.MANUAL_TEST_RUN , Entity.TEST_SUITE_RUN));
+        entityCategories.add(new UserItemEntityCategory("Runs", Entity.MANUAL_TEST_RUN, Entity.TEST_SUITE_RUN));
         EntityTreeModel model = new EntityTreeModel(entityCategories, entityModels);
         return model;
     }

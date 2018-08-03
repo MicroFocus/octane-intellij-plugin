@@ -34,6 +34,7 @@ public class Constants {
     public static final String IMG_REMOVE_SELECTION = IMAGE_FOLDER_PATH + "octane_remove.png";
     public static final String IMG_REMOVE_SELECTION_DISABLED = IMAGE_FOLDER_PATH + "octane_remove_disabled.png";
     public static final String IMG_ENTITY_COMBOBOX_ARROW = IMAGE_FOLDER_PATH +"arrow.png";
+    public static final String IMG_COPY_ICON = IMAGE_FOLDER_PATH + "copy-icon.png";
 
     //Settings validation
     public static final String CORRECT_URL_FORMAT_MESSAGE = "Example: (http|https)://{serverurl[:port]}/?p={sharedspaceId}/{workspaceId}";
