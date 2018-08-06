@@ -66,7 +66,6 @@ public class DateTimeFieldEditor extends FieldEditor {
         microbaDatePicker = new DatePicker();
         microbaDatePicker.addActionListener(e -> handleChange());
 
-
         timeLabel = new JLabel("time :");
 
         SpinnerModel hourSpinnerModel = new SpinnerNumberModel(0, 0, 11, 1);
@@ -93,6 +92,7 @@ public class DateTimeFieldEditor extends FieldEditor {
 
         linkToButtons = new JLabel("set date");
         linkToButtons.setForeground(UIManager.getColor("EditorPane.selectionBackground"));
+        linkToButtons.setPreferredSize(new Dimension((int) linkToButtons.getPreferredSize().getWidth(), (int) dayTimeSpinner.getPreferredSize().getHeight()));
         Font font = linkToButtons.getFont();
         Map attributes = font.getAttributes();
         attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
@@ -114,6 +114,7 @@ public class DateTimeFieldEditor extends FieldEditor {
         clearSelection = new JLabel();
         clearSelection.setCursor(new Cursor(Cursor.HAND_CURSOR));
         clearSelection.setIcon(IconLoader.findIcon(Constants.IMG_REMOVE_SELECTION));
+        clearSelection.setEnabled(false);
 
         // Nullify
         clearSelection.addMouseListener(new MouseAdapter() {
@@ -179,6 +180,7 @@ public class DateTimeFieldEditor extends FieldEditor {
         add(new JLabel(), gbc_emptyPlaceHolder);
 
         clearSelection.setEnabled(true);
+        repaint();
         revalidate();
     }
 
@@ -192,6 +194,7 @@ public class DateTimeFieldEditor extends FieldEditor {
         gbc_linkToButtons.gridx = 0;
         gbc_linkToButtons.weightx = 1.0;
         add(linkToButtons, gbc_linkToButtons);
+        repaint();
         revalidate();
     }
 

@@ -24,7 +24,6 @@ import com.intellij.util.ui.JBUI;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -37,52 +36,21 @@ import java.util.stream.Collectors;
 public class EntityFieldsPanel extends JXPanel {
 
     private Collection<FieldMetadata> fields;
-    private JXPanel detailsRightPanel;
-    private JXPanel detailsLeftPanel;
-    private GridBagLayout gbl;
 
     @Inject
     private FieldEditorFactory fieldFactory;
 
     public EntityFieldsPanel() {
-        gbl = new GridBagLayout();
-        gbl.columnWidths = new int[]{0, 0};
-        gbl.columnWeights = new double[]{0.5, 0.5};
-        gbl.rowHeights = new int[]{0, 0};
-        gbl.rowWeights = new double[]{0.0, 0.0};
+        GridBagLayout gbl = new GridBagLayout();
+        gbl.columnWidths = new int[]{0, 0, 0, 0, 0, 0};
+        gbl.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
         setLayout(gbl);
 
-        detailsLeftPanel = new JXPanel();
-        GridBagLayout gbl_detailsLeftPanel = new GridBagLayout();
-        gbl_detailsLeftPanel.columnWeights = new double[]{0.0, 0.0};
-        detailsLeftPanel.setLayout(gbl_detailsLeftPanel);
-        GridBagConstraints gbc_leftPanel = new GridBagConstraints();
-        gbc_leftPanel.fill = GridBagConstraints.HORIZONTAL;
-        gbc_leftPanel.anchor = GridBagConstraints.WEST;
-        gbc_leftPanel.gridx = 0;
-        gbc_leftPanel.gridy = 1;
-        add(detailsLeftPanel, gbc_leftPanel);
-
-        detailsRightPanel = new JXPanel();
-        GridBagLayout gbl_detailsRightPanel = new GridBagLayout();
-        gbl_detailsRightPanel.columnWeights = new double[]{0.0, 0.0};
-        detailsRightPanel.setLayout(gbl_detailsRightPanel);
-        GridBagConstraints gbc_rightPanel = new GridBagConstraints();
-        gbc_rightPanel.fill = GridBagConstraints.HORIZONTAL;
-        gbc_rightPanel.anchor = GridBagConstraints.NORTH;
-        gbc_rightPanel.gridx = 1;
-        gbc_rightPanel.gridy = 1;
-        add(detailsRightPanel, gbc_rightPanel);
-
-        resizeHandler();
-    }
-
-    private void resizeHandler() {
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
                 super.componentResized(e);
-                gbl.columnWidths = new int[]{getWidth() / 2, getWidth() / 2};
+                gbl.columnWidths = new int[]{0, getWidth() / 2, 0, 0, getWidth() / 2, 0};
                 updateUI();
                 revalidate();
                 repaint();
@@ -90,15 +58,15 @@ public class EntityFieldsPanel extends JXPanel {
         });
     }
 
+
     public void setFields(Collection<FieldMetadata> fields) {
         this.fields = fields;
     }
 
     public void setEntityModel(EntityModelWrapper entityModelWrapper, Set<String> fieldNames) {
-        detailsLeftPanel.removeAll();
-        detailsRightPanel.removeAll();
-        int fieldCount = 0;
-        int i = 0;
+        removeAll();
+        int columnCount = 0;
+        int rowCount = 0;
 
         //This needs to be checked in case the user has memo fields selected from a previous version of the plugin
         Collection<FieldMetadata> possibleFields = fields.stream()
@@ -115,41 +83,36 @@ public class EntityFieldsPanel extends JXPanel {
                 fieldLabel.setText(fieldMetadata.getLabel());
                 GridBagConstraints gbc1 = new GridBagConstraints();
                 gbc1.anchor = GridBagConstraints.WEST;
-                gbc1.fill = GridBagConstraints.HORIZONTAL;
-                gbc1.insets = JBUI.insetsBottom(5);
-                gbc1.gridx = 0;
-                gbc1.gridy = i;
+                gbc1.insets = JBUI.insets(0, 0, 10, 0);
+                gbc1.gridx = columnCount++;
+                gbc1.gridy = rowCount;
 
                 FieldEditor fieldValueLabel = fieldFactory.createFieldEditor(entityModelWrapper, fieldName);
                 GridBagConstraints gbc2 = new GridBagConstraints();
                 gbc2.insets = JBUI.insets(0, 10, 10, 0);
                 gbc2.anchor = GridBagConstraints.WEST;
                 gbc2.fill = GridBagConstraints.HORIZONTAL;
-                gbc2.gridx = 1;
-                gbc2.gridy = i;
-                gbc2.weightx = 1.0;
+                gbc2.gridx = columnCount++;
+                gbc2.gridy = rowCount;
+                gbc2.weightx = 0.5;
 
-                if (fieldCount % 2 == 0) {
-                    detailsLeftPanel.add(fieldLabel, gbc1);
-                    detailsLeftPanel.add(fieldValueLabel, gbc2);
-                    addClearButton(fieldValueLabel, detailsLeftPanel, i);
-                } else {
-                    detailsRightPanel.add(fieldLabel, gbc1);
-                    detailsRightPanel.add(fieldValueLabel, gbc2);
-                    addClearButton(fieldValueLabel, detailsRightPanel, i);
+                add(fieldLabel, gbc1);
+                add(fieldValueLabel, gbc2);
+                addClearButton(fieldValueLabel, rowCount, columnCount);
+                columnCount++;
+
+                if (columnCount > 5) {
+                    rowCount++;
+                    columnCount = 0;
                 }
-                i++;
-                fieldCount++;
             }
         }
 
-        detailsLeftPanel.repaint();
-        detailsLeftPanel.revalidate();
-        detailsRightPanel.repaint();
-        detailsRightPanel.revalidate();
+        repaint();
+        revalidate();
     }
 
-    private void addClearButton(FieldEditor fieldEditor, JPanel parent, int rowCount) {
+    private void addClearButton(FieldEditor fieldEditor, int rowCount, int column) {
         Component clearButton;
         if (fieldEditor instanceof ReferenceFieldEditor) {
             clearButton = ((ReferenceFieldEditor) fieldEditor).getClearButton();
@@ -159,10 +122,9 @@ public class EntityFieldsPanel extends JXPanel {
             return;
         }
         GridBagConstraints gbc2 = new GridBagConstraints();
-        gbc2.insets = JBUI.insets(5, 5, 10, 10);
-        gbc2.fill = GridBagConstraints.HORIZONTAL;
-        gbc2.gridx = 2;
+        gbc2.insets = JBUI.insets(0, 5, 10, 10);
+        gbc2.gridx = column;
         gbc2.gridy = rowCount;
-        parent.add(clearButton, gbc2);
+        add(clearButton, gbc2);
     }
 }

@@ -114,6 +114,7 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
         gbc_entityFieldsPanel.insets = JBUI.insets(0, 10, 0, 5);
         gbc_entityFieldsPanel.gridx = 0;
         gbc_entityFieldsPanel.gridy = 2;
+        gbc_entityFieldsPanel.weightx = 1.0;
         add(entityFieldsPanel, gbc_entityFieldsPanel);
 
         commentsPanel.setBorder(new MatteBorder(0, 1, 0, 0, separatorColor));
