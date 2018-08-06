@@ -11,7 +11,7 @@
   ~ limitations under the License.
   -->
 
-<idea-plugin version="2">
+<idea-plugin>
     <id>com.hpe.adm.octane.ideplugins.intellij</id>
 
     <name>ALM Octane</name>
@@ -115,9 +115,6 @@
         <projectConfigurable id="com.hpe.adm.octane.ideplugins.intellij.settings.ConnectionSettingsConfigurable"
                              displayName="ALM Octane Settings"
                              instance="com.hpe.adm.octane.ideplugins.intellij.settings.ConnectionSettingsConfigurable"/>
-
-        <checkinHandlerFactory
-                implementation="com.hpe.adm.octane.ideplugins.intellij.gitcommit.OctaneCheckinHandlerFactory"/>
     </extensions>
 
     <application-components>

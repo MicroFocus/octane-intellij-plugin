@@ -173,7 +173,6 @@ public class EntityComboBox extends JPanel {
         entities.forEach(entityModel -> {
             FieldMenuItem menuItem = new FieldMenuItem(getLabelText(entityModel));
             menuItem.setState(EntityUtil.containsEntityModel(selectedEntities, entityModel));
-            menuItem.setPreferredSize(new Dimension((int) menuItem.getBounds().getHeight(), (int) scrollRootPanel.getPreferredSize().getWidth()));
             menuItem.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
