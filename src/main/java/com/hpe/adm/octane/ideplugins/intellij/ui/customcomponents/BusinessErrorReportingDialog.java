@@ -20,6 +20,7 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.VerticalFlowLayout;
+import com.intellij.ui.components.JBScrollPane;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -45,6 +46,7 @@ public class BusinessErrorReportingDialog extends DialogWrapper {
         this.ex = ex;
         setTitle("Business Rule Violation");
         init();
+        setResizable(false);
     }
 
 
@@ -80,7 +82,11 @@ public class BusinessErrorReportingDialog extends DialogWrapper {
 
         if (fieldValueStackTrace != null) {
             leftPanel.add(new JLabel(UiUtil.convertFieldNameToLabel(ERROR_MODEL_FIELD_STACK_TRACE)));
-            rightPanel.add(new JTextArea(((FieldModel) fieldValueStackTrace).getValue().toString()));
+            JTextArea textArea = new JTextArea(10, 75);
+            textArea.setEditable(false);
+            textArea.setText(((FieldModel) fieldValueStackTrace).getValue().toString());
+            JScrollPane sp = new JBScrollPane(textArea);
+            rightPanel.add(sp);
         }
 
         rootPanel.add(leftPanel, BorderLayout.WEST);
