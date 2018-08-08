@@ -1,0 +1,77 @@
+/*
+ * © 2017 EntIT Software LLC, a Micro Focus company, L.P.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.hpe.adm.octane.ideplugins.intellij.ui.util;
+
+import com.google.inject.Inject;
+import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
+import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
+import com.hpe.adm.octane.ideplugins.services.util.DefaultEntityFieldsUtil;
+import org.json.JSONObject;
+
+import java.util.Map;
+import java.util.Set;
+
+public class FieldsUtil {
+
+    @Inject
+    private IdePluginPersistentState idePluginPersistentState;
+
+    private Map<Entity, Set<String>> defaultFieldsMap;
+    private Map<Entity, Set<String>> selectedFieldsMap;
+
+
+    public FieldsUtil() {
+
+    }
+
+    public Map<Entity, Set<String>> retrieveSelectedFieldsFromPersistentState() {
+        JSONObject selectedFieldsJson = idePluginPersistentState.loadState(IdePluginPersistentState.Key.SELECTED_FIELDS);
+        if (selectedFieldsJson == null) {
+            selectedFieldsMap = retrieveDefaultFields();
+        } else {
+            selectedFieldsMap = DefaultEntityFieldsUtil.entityFieldsFromJson(selectedFieldsJson.toString());
+            if (selectedFieldsMap.isEmpty()) {
+                selectedFieldsMap = retrieveDefaultFields();
+            }
+        }
+        return selectedFieldsMap;
+    }
+
+    public Map<Entity, Set<String>> retrieveDefaultFields() {
+        if (defaultFieldsMap == null) {
+            defaultFieldsMap = DefaultEntityFieldsUtil.getDefaultFields();
+        }
+        return defaultFieldsMap;
+    }
+
+    public Set<String> retrieveSelectedFieldsForEntity(Entity entity) {
+        return retrieveSelectedFieldsFromPersistentState().get(entity);
+    }
+
+    public boolean isDefaultState(Entity entity) {
+        Set<String> selectedFields = retrieveSelectedFieldsForEntity(entity);
+        Set<String> defaultFields = retrieveDefaultFields().get(entity);
+        return defaultFields.containsAll(selectedFields) && selectedFields.containsAll(defaultFields);
+    }
+
+    public void saveSelectedFields(Map<Entity, Set<String>> selectedFieldsMap) {
+        idePluginPersistentState.saveState(IdePluginPersistentState.Key.SELECTED_FIELDS, new JSONObject(DefaultEntityFieldsUtil.entityFieldsToJson(selectedFieldsMap)));
+    }
+
+    public void addStateChangedHandler(IdePluginPersistentState.SettingsChangedHandler changedHandler) {
+        idePluginPersistentState.addStateChangedHandler(changedHandler);
+    }
+
+
+}

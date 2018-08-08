@@ -25,6 +25,7 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.CommentsCon
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.EntityFieldsPanel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.HTMLPresenterFXPanel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.HeaderPanel;
+import com.hpe.adm.octane.ideplugins.intellij.ui.util.FieldsUtil;
 import com.hpe.adm.octane.ideplugins.intellij.util.ExceptionHandler;
 import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
 import com.hpe.adm.octane.ideplugins.services.CommentService;
@@ -43,8 +44,6 @@ import org.jdesktop.swingx.JXLabel;
 import javax.swing.*;
 import javax.swing.border.MatteBorder;
 import java.awt.*;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.Collection;
 
 import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.TASK;
@@ -63,8 +62,10 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
     private SelectFieldsAction fieldsSelectAction;
     private Collection<FieldMetadata> fields;
 
-    @Inject
     private FieldsSelectPopup fieldsPopup;
+
+    @Inject
+    private FieldsUtil fieldsUtil;
 
     @Inject
     private CommentService commentService;
@@ -150,21 +151,6 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
         descriptionPanel.addEventActions();
 
         fieldsSelectAction = new SelectFieldsAction(this);
-
-        // redraw the fields popup to handle theme change
-        UIManager.addPropertyChangeListener(new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                if ("lookAndFeel".equals(evt.getPropertyName())) {
-                    if (!isShowing()) {
-                        UIManager.removePropertyChangeListener(this);
-                    } else {
-                        fieldsPopup = PluginModule.getPluginModuleForProject(project).getInstance(FieldsSelectPopup.class);
-                        fieldsPopup.setEntityDetails(entityModelWrapper, fields, fieldsSelectAction);
-                    }
-                }
-            }
-        });
     }
 
     @Override
@@ -181,15 +167,15 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
         this.fields = fields;
         // set header data
         headerPanel.setEntityModel(entityModelWrapper);
-        // set the fields popup data
-        fieldsPopup.setEntityDetails(entityModelWrapper, fields, fieldsSelectAction);
         // add comments action to header panel
         setupComments(entityModelWrapper);
         // add description data
         setupDescription(entityModelWrapper);
         // set fields data
         entityFieldsPanel.setFields(fields);
-        entityFieldsPanel.setEntityModel(entityModelWrapper, fieldsPopup.getSelectedFields());
+        entityFieldsPanel.setEntityModel(entityModelWrapper, fieldsUtil.retrieveSelectedFieldsForEntity(entityModelWrapper.getEntityType()));
+
+        fieldsSelectAction.setDefaultFieldsIcon(fieldsUtil.isDefaultState(entityModelWrapper.getEntityType()));
 
         component.setViewportView(this);
     }
@@ -282,11 +268,13 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
 
     private void setupFieldsSelectButton(SelectFieldsAction fieldSelectButton) {
         headerPanel.setFieldSelectButton(fieldSelectButton);
-        fieldsPopup.addSelectionListener(e -> entityFieldsPanel.setEntityModel(entityModelWrapper, fieldsPopup.getSelectedFields()));
-        fieldsPopup.addPersistentStateListener();
     }
 
     public void showFieldsSettings() {
+        fieldsPopup = PluginModule.getPluginModuleForProject(project).getInstance(FieldsSelectPopup.class);
+        fieldsPopup.setEntityDetails(entityModelWrapper, fields, fieldsSelectAction);
+        fieldsPopup.addSelectionListener(e -> entityFieldsPanel.setEntityModel(entityModelWrapper, fieldsPopup.getSelectedFields()));
+        fieldsPopup.addPersistentStateListener();
         fieldsPopup.setLocation(headerPanel.getFieldsPopupLocation().x - (int) fieldsPopup.getPreferredSize().getWidth(),
                 headerPanel.getFieldsPopupLocation().y);
         fieldsPopup.setVisible(!fieldsPopup.isVisible());
