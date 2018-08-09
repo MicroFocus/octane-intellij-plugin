@@ -1,22 +1,14 @@
 package com.hpe.adm.octane.ideplugins.intellij.gitcommit;
 
 import com.google.inject.Inject;
-import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.nga.sdk.model.ReferenceFieldModel;
-import com.hpe.adm.nga.sdk.model.StringFieldModel;
 import com.hpe.adm.nga.sdk.query.Query;
 import com.hpe.adm.nga.sdk.query.QueryMethod;
-import com.hpe.adm.octane.ideplugins.intellij.ui.detail.DetailsViewDefaultFields;
-import com.hpe.adm.octane.ideplugins.intellij.util.ExceptionHandler;
-import com.hpe.adm.octane.ideplugins.intellij.util.HtmlTextEditor;
-import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
 import com.hpe.adm.octane.ideplugins.services.EntityService;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
-import com.hpe.adm.octane.ideplugins.services.model.EntityModelWrapper;
 import com.hpe.adm.octane.ideplugins.services.nonentity.CommitMessageService;
 import com.hpe.adm.octane.ideplugins.services.util.PartialEntity;
-import com.hpe.adm.octane.ideplugins.services.util.Util;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -59,7 +51,7 @@ public class CommitMessageUtils {
 
         String commitMessage = generateLocalCommitMessage(entityModel);
 
-        if(!isCommitMessageValid(entityModel, commitMessage)) {
+        if (!isCommitMessageValid(entityModel, commitMessage)) {
 
             ApplicationManager.getApplication().invokeLater(() -> showCommitPatternsWarning(entityModel));
         } else {
@@ -75,12 +67,12 @@ public class CommitMessageUtils {
     }
 
     public void asyncCopyCommitMessageToClipboard(PartialEntity partialEntity) {
-            Task.Backgroundable backgroundTask = new Task.Backgroundable(project, "Generating Commit Message...", true) {
-                public void run(@NotNull ProgressIndicator indicator) {
-                    copyCommitMessageToClipboard(partialEntity);
-                }
-            };
-            backgroundTask.queue();
+        Task.Backgroundable backgroundTask = new Task.Backgroundable(project, "Generating Commit Message...", true) {
+            public void run(@NotNull ProgressIndicator indicator) {
+                copyCommitMessageToClipboard(partialEntity);
+            }
+        };
+        backgroundTask.queue();
     }
 
     public String generateLocalCommitMessage(EntityModel entityModel) {
@@ -162,7 +154,7 @@ public class CommitMessageUtils {
 
         Entity type;
 
-        if(Entity.getEntityType(entityModel) == Entity.TASK) {
+        if (Entity.getEntityType(entityModel) == Entity.TASK) {
             entityModel = addReferenceFieldIfNeeded(entityModel);
             type = Entity.getEntityType((EntityModel) entityModel.getValue("story"));
         } else {

@@ -60,7 +60,6 @@ public class HTMLPresenterFXPanel extends JFXPanel {
                 Platform.runLater(() -> setContent(getCommentContent()));
             }
         });
-
         addMouseWheelListener(new MouseWheelListener() {
             @Override
             public void mouseWheelMoved(MouseWheelEvent e) {
@@ -209,7 +208,7 @@ public class HTMLPresenterFXPanel extends JFXPanel {
         return webView;
     }
 
-    void setWebView(WebView webView) {
+    private void setWebView(WebView webView) {
         this.webView = webView;
     }
 

@@ -19,6 +19,10 @@ import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.project.Project;
+import org.apache.commons.lang.StringUtils;
+
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 /**
  * Created by marineal on 2/14/2017.
@@ -56,5 +60,15 @@ public class UiUtil {
         }
 
         return result.toString();
+    }
+
+    public static String convertFieldNameToLabel(String fieldname) {
+        fieldname = fieldname.replace("_", " ");
+        fieldname = Arrays.stream(StringUtils.splitByCharacterTypeCamelCase(fieldname)).collect(Collectors.joining(" "));
+        fieldname = Arrays.stream(fieldname.split("\\s+"))
+                .map(str -> StringUtils.capitalize(str))
+                .collect(Collectors.joining(" "));
+        fieldname = fieldname + ": ";
+        return fieldname;
     }
 }

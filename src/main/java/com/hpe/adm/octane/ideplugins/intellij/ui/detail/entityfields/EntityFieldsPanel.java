@@ -13,16 +13,17 @@
 
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields;
 
+import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
-import com.hpe.adm.octane.ideplugins.intellij.ui.detail.DetailsViewDefaultFields;
+import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.field.DateTimeFieldEditor;
+import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.field.FieldEditor;
+import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.field.FieldEditorFactory;
+import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.field.ReferenceFieldEditor;
 import com.hpe.adm.octane.ideplugins.services.model.EntityModelWrapper;
-import com.hpe.adm.octane.ideplugins.services.util.Util;
-import com.intellij.ui.JBColor;
-import net.miginfocom.swing.MigLayout;
+import com.intellij.util.ui.JBUI;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
 
-import javax.swing.border.MatteBorder;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -35,56 +36,37 @@ import java.util.stream.Collectors;
 public class EntityFieldsPanel extends JXPanel {
 
     private Collection<FieldMetadata> fields;
-    private JXPanel detailsRightPanel;
-    private JXPanel detailsLeftPanel;
-    private JXLabel generalLabel;
+
+    @Inject
+    private FieldEditorFactory fieldFactory;
 
     public EntityFieldsPanel() {
-        setLayout(new MigLayout("", "[pref!][10px][pref!]", "[23px,top][263px]"));
+        GridBagLayout gbl = new GridBagLayout();
+        gbl.columnWidths = new int[]{0, 0, 0, 0, 0, 0};
+        gbl.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+        setLayout(gbl);
 
-        generalLabel = new JXLabel("General");
-        generalLabel.setFont(new Font("Arial", Font.BOLD, 18));
-        add(generalLabel, "cell 0 0 3 1,growx,aligny center");
-
-        detailsLeftPanel = new JXPanel();
-        add(detailsLeftPanel, "cell 0 1,width 50%!,growy");
-        GridBagLayout gbl_detailsLeftPanel = new GridBagLayout();
-        detailsLeftPanel.setLayout(gbl_detailsLeftPanel);
-
-        detailsRightPanel = new JXPanel();
-        add(detailsRightPanel, "cell 2 1,width 50%!,growy");
-        GridBagLayout gbl_detailsRightPanel = new GridBagLayout();
-        detailsRightPanel.setLayout(gbl_detailsRightPanel);
-
-        addComponentListener(detailsLeftPanel, detailsRightPanel);
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                super.componentResized(e);
+                gbl.columnWidths = new int[]{0, getWidth() / 2, 0, 0, getWidth() / 2, 0};
+                updateUI();
+                revalidate();
+                repaint();
+            }
+        });
     }
+
 
     public void setFields(Collection<FieldMetadata> fields) {
         this.fields = fields;
     }
 
-    public void addComponentListener(JXPanel detailsLeftPanel, JXPanel detailsRightPanel) {
-        addComponentListener(new ComponentAdapter() {
-            public void componentResized(ComponentEvent e) {
-                int halfWidth = getWidth() / 2;
-                int height = getHeight();
-                if (halfWidth != 0 && height != 0) {
-                    Dimension halfSizeFields = new Dimension((int) halfWidth, height);
-                    detailsLeftPanel.setPreferredSize(halfSizeFields);
-                    detailsRightPanel.setPreferredSize(halfSizeFields);
-                    updateUI();
-                    repaint();
-                }
-            }
-        });
-    }
-
     public void setEntityModel(EntityModelWrapper entityModelWrapper, Set<String> fieldNames) {
-        detailsLeftPanel.removeAll();
-        detailsRightPanel.removeAll();
-
-        int fieldCount = 0;
-        int i = 0;
+        removeAll();
+        int columnCount = 0;
+        int rowCount = 0;
 
         //This needs to be checked in case the user has memo fields selected from a previous version of the plugin
         Collection<FieldMetadata> possibleFields = fields.stream()
@@ -96,68 +78,53 @@ public class EntityFieldsPanel extends JXPanel {
             if (fieldNames.contains(fieldMetadata.getName())) {
                 String fieldName = fieldMetadata.getName();
                 JXLabel fieldLabel = new JXLabel();
-                fieldLabel.setFont(new Font("Arial", Font.BOLD, 12));
+                Font font = new Font(fieldLabel.getFont().getFontName(), Font.BOLD, fieldLabel.getFont().getSize());
+                fieldLabel.setFont(font);
                 fieldLabel.setText(fieldMetadata.getLabel());
                 GridBagConstraints gbc1 = new GridBagConstraints();
-                gbc1.anchor = GridBagConstraints.FIRST_LINE_START;
-                gbc1.insets = new Insets(10, 0, 0, 0);
-                gbc1.fill = GridBagConstraints.HORIZONTAL;
-                gbc1.gridx = 0;
-                gbc1.gridy = i;
+                gbc1.anchor = GridBagConstraints.WEST;
+                gbc1.insets = JBUI.insets(0, 5, 10, 0);
+                gbc1.gridx = columnCount++;
+                gbc1.gridy = rowCount;
 
-                String fieldValue;
-
-                if (DetailsViewDefaultFields.FIELD_OWNER.equals(fieldName)
-                        || DetailsViewDefaultFields.FIELD_AUTHOR.equals(fieldName)
-                        || DetailsViewDefaultFields.FIELD_TEST_RUN_RUN_BY.equals(fieldName)
-                        || DetailsViewDefaultFields.FIELD_DETECTEDBY.equals(fieldName)) {
-                    fieldValue = Util.getUiDataFromModel(entityModelWrapper.getValue(fieldName),
-                            DetailsViewDefaultFields.FIELD_FULL_NAME);
-                } else {
-                    fieldValue = Util.getUiDataFromModel(entityModelWrapper.getValue(fieldName));
-                }
-
-                JXLabel fieldValueLabel = new JXLabel();
-                fieldValueLabel.setFont(new Font("Arial", Font.PLAIN, 12));
-                fieldValueLabel.setText(fieldValue);
-                fieldValueLabel.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
-                fieldValueLabel.setToolTipText(fieldValue);
-                fieldValueLabel.setLineWrap(false);
+                FieldEditor fieldValueLabel = fieldFactory.createFieldEditor(entityModelWrapper, fieldName);
                 GridBagConstraints gbc2 = new GridBagConstraints();
-                gbc2.insets = new Insets(10, 10, 0, 5);
-                gbc2.anchor = GridBagConstraints.FIRST_LINE_START;
-                gbc2.fill = GridBagConstraints.BOTH;
-                gbc2.gridx = 1;
-                gbc2.gridy = i;
-                gbc2.weightx = 1.0;
+                gbc2.insets = JBUI.insets(0, 10, 10, 0);
+                gbc2.anchor = GridBagConstraints.WEST;
+                gbc2.fill = GridBagConstraints.HORIZONTAL;
+                gbc2.gridx = columnCount++;
+                gbc2.gridy = rowCount;
+                gbc2.weightx = 0.5;
 
-                if (fieldCount % 2 == 0) {
-                    detailsLeftPanel.add(fieldLabel, gbc1);
-                    detailsLeftPanel.add(fieldValueLabel, gbc2);
-                } else {
-                    detailsRightPanel.add(fieldLabel, gbc1);
-                    detailsRightPanel.add(fieldValueLabel, gbc2);
+                add(fieldLabel, gbc1);
+                add(fieldValueLabel, gbc2);
+                addClearButton(fieldValueLabel, rowCount, columnCount);
+                columnCount++;
+
+                if (columnCount > 5) {
+                    rowCount++;
+                    columnCount = 0;
                 }
-                i++;
-                fieldCount++;
             }
         }
 
-        if (fieldCount % 2 == 1) {
-            JXLabel emptyLabel = new JXLabel();
-            emptyLabel.setFont(new Font("Arial", Font.BOLD, 12));
-            GridBagConstraints gbc = new GridBagConstraints();
-            gbc.insets = new Insets(20, 10, 0, 5);
-            gbc.anchor = GridBagConstraints.CENTER;
-            gbc.fill = GridBagConstraints.BOTH;
-            gbc.gridx = 0;
-            gbc.gridy = i;
-            gbc.gridwidth = 2;
-            detailsRightPanel.add(emptyLabel, gbc);
+        repaint();
+        revalidate();
+    }
+
+    private void addClearButton(FieldEditor fieldEditor, int rowCount, int column) {
+        Component clearButton;
+        if (fieldEditor instanceof ReferenceFieldEditor) {
+            clearButton = ((ReferenceFieldEditor) fieldEditor).getClearButton();
+        } else if (fieldEditor instanceof DateTimeFieldEditor) {
+            clearButton = ((DateTimeFieldEditor) fieldEditor).getClearButton();
+        } else {
+            return;
         }
-        detailsLeftPanel.repaint();
-        detailsLeftPanel.revalidate();
-        detailsRightPanel.repaint();
-        detailsRightPanel.revalidate();
+        GridBagConstraints gbc2 = new GridBagConstraints();
+        gbc2.insets = JBUI.insets(0, 5, 10, 5);
+        gbc2.gridx = column;
+        gbc2.gridy = rowCount;
+        add(clearButton, gbc2);
     }
 }

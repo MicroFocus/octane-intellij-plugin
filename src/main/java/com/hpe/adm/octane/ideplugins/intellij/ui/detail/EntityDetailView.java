@@ -16,7 +16,6 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.exception.OctaneException;
 import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
-import com.hpe.adm.nga.sdk.model.FieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.View;
@@ -26,6 +25,7 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.CommentsCon
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.EntityFieldsPanel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.HTMLPresenterFXPanel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.HeaderPanel;
+import com.hpe.adm.octane.ideplugins.intellij.ui.util.FieldsUtil;
 import com.hpe.adm.octane.ideplugins.intellij.util.ExceptionHandler;
 import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
 import com.hpe.adm.octane.ideplugins.services.CommentService;
@@ -35,14 +35,15 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
+import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBScrollPane;
+import com.intellij.util.ui.JBUI;
 import javafx.application.Platform;
+import org.jdesktop.swingx.JXLabel;
 
 import javax.swing.*;
 import javax.swing.border.MatteBorder;
 import java.awt.*;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.Collection;
 
 import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.TASK;
@@ -59,21 +60,18 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
     private CommentsConversationPanel commentsPanel;
     private HTMLPresenterFXPanel descriptionPanel;
     private SelectFieldsAction fieldsSelectAction;
-
     private Collection<FieldMetadata> fields;
 
-    @Inject
     private FieldsSelectPopup fieldsPopup;
+
+    @Inject
+    private FieldsUtil fieldsUtil;
 
     @Inject
     private CommentService commentService;
 
     @Inject
     private Project project;
-
-    private FieldsSelectPopup.SelectionListener selectionListener;
-
-    private Color separatorColor = UIManager.getColor("Separator.foreground");
 
     @Inject
     public EntityDetailView(HeaderPanel headerPanel, EntityFieldsPanel entityFieldsPanel, CommentsConversationPanel commentsPanel, HTMLPresenterFXPanel descriptionPanel) {
@@ -92,28 +90,39 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
         gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
         setLayout(gridBagLayout);
 
+        Color separatorColor = UIManager.getColor("Separator.foreground");
         headerPanel.setBorder(new MatteBorder(0, 0, 1, 0, separatorColor));
         GridBagConstraints gbc_headerPanel = new GridBagConstraints();
         gbc_headerPanel.gridwidth = 2;
         gbc_headerPanel.fill = GridBagConstraints.HORIZONTAL;
-        gbc_headerPanel.insets = new Insets(0, 5, 5, 5);
+        gbc_headerPanel.insets = JBUI.insets(0, 5, 5, 5);
         gbc_headerPanel.gridx = 0;
         gbc_headerPanel.gridy = 0;
         add(headerPanel, gbc_headerPanel);
 
+        JXLabel generalLabel = new JXLabel("General");
+        generalLabel.setFont(new Font(generalLabel.getFont().getName(), Font.BOLD, 18));
+        GridBagConstraints gbc_GeneralTitle = new GridBagConstraints();
+        gbc_GeneralTitle.anchor = GridBagConstraints.WEST;
+        gbc_GeneralTitle.insets = JBUI.insets(5, 10, 10, 0);
+        gbc_GeneralTitle.gridx = 0;
+        gbc_GeneralTitle.gridy = 1;
+        add(generalLabel, gbc_GeneralTitle);
+
         GridBagConstraints gbc_entityFieldsPanel = new GridBagConstraints();
         gbc_entityFieldsPanel.anchor = GridBagConstraints.NORTH;
         gbc_entityFieldsPanel.fill = GridBagConstraints.HORIZONTAL;
-        gbc_entityFieldsPanel.insets = new Insets(0, 5, 0, 5);
+        gbc_entityFieldsPanel.insets = JBUI.insets(0, 10, 0, 5);
         gbc_entityFieldsPanel.gridx = 0;
-        gbc_entityFieldsPanel.gridy = 1;
+        gbc_entityFieldsPanel.gridy = 2;
+        gbc_entityFieldsPanel.weightx = 1.0;
         add(entityFieldsPanel, gbc_entityFieldsPanel);
 
         commentsPanel.setBorder(new MatteBorder(0, 1, 0, 0, separatorColor));
         GridBagConstraints gbc_commentsPanel = new GridBagConstraints();
         gbc_commentsPanel.gridheight = 3;
         gbc_commentsPanel.fill = GridBagConstraints.BOTH;
-        gbc_commentsPanel.insets = new Insets(0, 5, 0, 5);
+        gbc_commentsPanel.insets = JBUI.insets(0, 5);
         gbc_commentsPanel.gridx = 1;
         gbc_commentsPanel.gridy = 1;
         add(commentsPanel, gbc_commentsPanel);
@@ -123,40 +132,25 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
         commentsPanel.setVisible(false);
 
         JLabel descriptionLabel = new JLabel("Description");
-        descriptionLabel.setFont(new Font("Arial", Font.BOLD, 18));
+        descriptionLabel.setFont(new Font(descriptionLabel.getFont().getName(), Font.BOLD, 18));
         GridBagConstraints gbc_descriptionLabel = new GridBagConstraints();
         gbc_descriptionLabel.anchor = GridBagConstraints.NORTH;
         gbc_descriptionLabel.fill = GridBagConstraints.HORIZONTAL;
-        gbc_descriptionLabel.insets = new Insets(10, 12, 5, 5);
+        gbc_descriptionLabel.insets = JBUI.insets(10, 10, 5, 5);
         gbc_descriptionLabel.gridx = 0;
-        gbc_descriptionLabel.gridy = 2;
+        gbc_descriptionLabel.gridy = 3;
         add(descriptionLabel, gbc_descriptionLabel);
 
         GridBagConstraints gbc_descriptionPanel = new GridBagConstraints();
         gbc_descriptionPanel.fill = GridBagConstraints.BOTH;
-        gbc_descriptionPanel.insets = new Insets(0, 5, 0, 5);
+        gbc_descriptionPanel.insets = JBUI.insets(0, 5);
         gbc_descriptionPanel.gridx = 0;
-        gbc_descriptionPanel.gridy = 3;
+        gbc_descriptionPanel.gridy = 4;
         add(descriptionPanel, gbc_descriptionPanel);
 
         descriptionPanel.addEventActions();
 
         fieldsSelectAction = new SelectFieldsAction(this);
-
-        // redraw the fields popup to handle theme change
-        UIManager.addPropertyChangeListener(new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                if ("lookAndFeel".equals(evt.getPropertyName())) {
-                    if (!isShowing()) {
-                        UIManager.removePropertyChangeListener(this);
-                    } else {
-                        fieldsPopup = PluginModule.getPluginModuleForProject(project).getInstance(FieldsSelectPopup.class);
-                        fieldsPopup.setEntityDetails(entityModelWrapper, fields, fieldsSelectAction);
-                    }
-                }
-            }
-        });
     }
 
     @Override
@@ -173,15 +167,15 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
         this.fields = fields;
         // set header data
         headerPanel.setEntityModel(entityModelWrapper);
-        // set the fields popup data
-        fieldsPopup.setEntityDetails(entityModelWrapper, fields, fieldsSelectAction);
         // add comments action to header panel
         setupComments(entityModelWrapper);
         // add description data
         setupDescription(entityModelWrapper);
         // set fields data
         entityFieldsPanel.setFields(fields);
-        entityFieldsPanel.setEntityModel(entityModelWrapper, fieldsPopup.getSelectedFields());
+        entityFieldsPanel.setEntityModel(entityModelWrapper, fieldsUtil.retrieveSelectedFieldsForEntity(entityModelWrapper.getEntityType()));
+
+        fieldsSelectAction.setDefaultFieldsIcon(fieldsUtil.isDefaultState(entityModelWrapper.getEntityType()));
 
         component.setViewportView(this);
     }
@@ -204,7 +198,7 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
         JPanel errorPanel = new JPanel(new BorderLayout(0, 0));
 
         JLabel errorLabel = new JLabel();
-        errorLabel.setForeground(Color.RED);
+        errorLabel.setForeground(JBColor.RED);
         errorLabel.setText("<html><center>" + error + "</center></html>");
         errorPanel.add(errorLabel);
         errorLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -224,10 +218,6 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
 
     public void setSaveSelectedPhaseButton(AnAction saveSelectedPhaseAction) {
         headerPanel.setSaveButton(saveSelectedPhaseAction);
-    }
-
-    public FieldModel getSelectedTransition() {
-        return headerPanel.getSelectedTransition();
     }
 
     /**
@@ -278,11 +268,13 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
 
     private void setupFieldsSelectButton(SelectFieldsAction fieldSelectButton) {
         headerPanel.setFieldSelectButton(fieldSelectButton);
-        fieldsPopup.addSelectionListener(e -> entityFieldsPanel.setEntityModel(entityModelWrapper, fieldsPopup.getSelectedFields()));
-        fieldsPopup.addPersistentStateListener();
     }
 
     public void showFieldsSettings() {
+        fieldsPopup = PluginModule.getPluginModuleForProject(project).getInstance(FieldsSelectPopup.class);
+        fieldsPopup.setEntityDetails(entityModelWrapper, fields, fieldsSelectAction);
+        fieldsPopup.addSelectionListener(e -> entityFieldsPanel.setEntityModel(entityModelWrapper, fieldsPopup.getSelectedFields()));
+        fieldsPopup.addPersistentStateListener();
         fieldsPopup.setLocation(headerPanel.getFieldsPopupLocation().x - (int) fieldsPopup.getPreferredSize().getWidth(),
                 headerPanel.getFieldsPopupLocation().y);
         fieldsPopup.setVisible(!fieldsPopup.isVisible());
