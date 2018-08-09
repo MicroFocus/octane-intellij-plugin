@@ -83,7 +83,7 @@ public class EntityFieldsPanel extends JXPanel {
                 fieldLabel.setText(fieldMetadata.getLabel());
                 GridBagConstraints gbc1 = new GridBagConstraints();
                 gbc1.anchor = GridBagConstraints.WEST;
-                gbc1.insets = JBUI.insets(0, 0, 10, 0);
+                gbc1.insets = JBUI.insets(0, 5, 10, 0);
                 gbc1.gridx = columnCount++;
                 gbc1.gridy = rowCount;
 
@@ -122,7 +122,7 @@ public class EntityFieldsPanel extends JXPanel {
             return;
         }
         GridBagConstraints gbc2 = new GridBagConstraints();
-        gbc2.insets = JBUI.insets(0, 5, 10, 10);
+        gbc2.insets = JBUI.insets(0, 5, 10, 5);
         gbc2.gridx = column;
         gbc2.gridy = rowCount;
         add(clearButton, gbc2);
