@@ -57,7 +57,7 @@ public class FieldEditorFactory {
         if (!fieldMetadata.isEditable() ||
                 fieldMetadata.isFinal() ||
                 fieldName.equals(DetailsViewDefaultFields.FIELD_APPMODULE) ||
-                fieldName.equals(DetailsViewDefaultFields.FIELD_ENVIROMENT)) {
+                fieldName.contains(DetailsViewDefaultFields.FIELD_ENVIROMENT)) {
             fieldEditor = new ReadOnlyFieldEditor();
         } else {
             switch (fieldMetadata.getFieldType()) {
