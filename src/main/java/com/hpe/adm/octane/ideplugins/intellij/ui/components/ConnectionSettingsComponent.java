@@ -34,8 +34,8 @@ public class ConnectionSettingsComponent implements HasComponent {
 
     private static final String EMPTY_SERVER_URL_TEXT = "Copy paste your Octane URL from the browser here...";
     private static final String EMPTY_SHAREDSPACE_WORKSPACE_URL_TEXT = "Retrieved from server URL";
-    private static final Insets insets = new Insets(5,5,5,5);
-    
+    private static final Insets insets = new Insets(5, 5, 5, 5);
+
     private JPanel rootPanel;
     private JTextField txtFieldServerUrl;
     private JTextField txtFieldSharedSpace;
@@ -49,10 +49,10 @@ public class ConnectionSettingsComponent implements HasComponent {
     public ConnectionSettingsComponent() {
         rootPanel = new JPanel();
         GridBagLayout gridBagLayout = new GridBagLayout();
-        gridBagLayout.columnWidths = new int[] {0, 0, 0};
-        gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,};
+        gridBagLayout.columnWidths = new int[]{0, 0, 0};
+        gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
         gridBagLayout.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
-        gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0};
+        gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0};
         rootPanel.setLayout(gridBagLayout);
 
         JLabel lblServerUrl = new JLabel("Server URL:");
@@ -123,40 +123,66 @@ public class ConnectionSettingsComponent implements HasComponent {
         gbc_separator1.gridy = 6;
         rootPanel.add(separator1, gbc_separator1);
 
+        JRadioButton radioButton = new JRadioButton("Log in with username and password");
+        GridBagConstraints gbc_radioButton = new GridBagConstraints();
+        gbc_radioButton.fill = GridBagConstraints.HORIZONTAL;
+        gbc_radioButton.insets = insets;
+        gbc_radioButton.gridx = 0;
+        gbc_radioButton.gridy = 7;
+        rootPanel.add(radioButton, gbc_radioButton);
+
         JLabel lblUsername = new JLabel("Username:");
         GridBagConstraints gbc_lblUsername = new GridBagConstraints();
         gbc_lblUsername.fill = GridBagConstraints.HORIZONTAL;
-        gbc_lblUsername.insets = insets;
+        gbc_lblUsername.insets = new Insets(5, 10, 5, 0);
         gbc_lblUsername.gridx = 0;
-        gbc_lblUsername.gridy = 7;
+        gbc_lblUsername.gridy = 8;
         rootPanel.add(lblUsername, gbc_lblUsername);
 
         txtFieldUserName = new JTextField();
         GridBagConstraints gbc_txtFieldUserName = new GridBagConstraints();
         gbc_txtFieldUserName.gridwidth = 2;
         gbc_txtFieldUserName.fill = GridBagConstraints.HORIZONTAL;
-        gbc_txtFieldUserName.insets = new Insets(5, 5, 5, 0);
+        gbc_txtFieldUserName.insets = new Insets(5, 15, 5, 0);
         gbc_txtFieldUserName.gridx = 0;
-        gbc_txtFieldUserName.gridy = 8;
+        gbc_txtFieldUserName.gridy = 9;
         rootPanel.add(txtFieldUserName, gbc_txtFieldUserName);
         txtFieldUserName.setColumns(10);
 
         JLabel lblPassword = new JLabel("Password:");
         GridBagConstraints gbc_lblPassword = new GridBagConstraints();
         gbc_lblPassword.fill = GridBagConstraints.HORIZONTAL;
-        gbc_lblPassword.insets = insets;
+        gbc_lblPassword.insets = new Insets(5, 10, 5, 0);
         gbc_lblPassword.gridx = 0;
-        gbc_lblPassword.gridy = 9;
+        gbc_lblPassword.gridy = 10;
         rootPanel.add(lblPassword, gbc_lblPassword);
 
         passField = new JPasswordField();
         GridBagConstraints gbc_passField = new GridBagConstraints();
         gbc_passField.gridwidth = 2;
         gbc_passField.fill = GridBagConstraints.HORIZONTAL;
-        gbc_passField.insets = new Insets(5, 5, 5, 0);
+        gbc_passField.insets = new Insets(5, 15, 5, 0);
         gbc_passField.gridx = 0;
-        gbc_passField.gridy = 10;
+        gbc_passField.gridy = 11;
         rootPanel.add(passField, gbc_passField);
+
+        btnTest = new JButton("Test connection");
+        GridBagConstraints gbc_btnTest = new GridBagConstraints();
+        gbc_btnTest.fill = GridBagConstraints.HORIZONTAL;
+        gbc_btnTest.insets = new Insets(5, 15, 5, 5);
+        gbc_btnTest.gridx = 0;
+        gbc_btnTest.gridy = 12;
+        rootPanel.add(btnTest, gbc_btnTest);
+
+        lblConnectionStatus = new JLabel();
+        lblConnectionStatus.setForeground(Color.RED);
+        GridBagConstraints gbc_label = new GridBagConstraints();
+        gbc_label.fill = GridBagConstraints.BOTH;
+        gbc_label.gridwidth = 2;
+        gbc_label.insets = new Insets(5, 5, 5, 0);
+        gbc_label.gridx = 1;
+        gbc_label.gridy = 12;
+        rootPanel.add(lblConnectionStatus, gbc_label);
 
         JSeparator separator2 = new JSeparator();
         GridBagConstraints gbc_separator2 = new GridBagConstraints();
@@ -164,35 +190,68 @@ public class ConnectionSettingsComponent implements HasComponent {
         gbc_separator2.fill = GridBagConstraints.HORIZONTAL;
         gbc_separator2.insets = new Insets(5, 5, 5, 0);
         gbc_separator2.gridx = 0;
-        gbc_separator2.gridy = 11;
+        gbc_separator2.gridy = 13;
         rootPanel.add(separator2, gbc_separator2);
 
-        btnTest = new JButton("Test connection");
-        GridBagConstraints gbc_btnTest = new GridBagConstraints();
-        gbc_btnTest.fill = GridBagConstraints.HORIZONTAL;
-        gbc_btnTest.insets = new Insets(5, 0, 5, 5);
-        gbc_btnTest.gridx = 0;
-        gbc_btnTest.gridy = 12;
-        rootPanel.add(btnTest, gbc_btnTest);
-        
-        lblConnectionStatus = new JLabel();
-        lblConnectionStatus.setForeground(Color.RED);
-        GridBagConstraints gbc_label = new GridBagConstraints();
-        gbc_label.fill = GridBagConstraints.BOTH;
-        gbc_label.gridwidth = 2;
-        gbc_label.insets = new Insets(5, 5, 5, 0);
-        gbc_label.gridx = 0;
-        gbc_label.gridy = 13;
-        rootPanel.add(lblConnectionStatus, gbc_label);
+        JRadioButton ssoRadioButton = new JRadioButton("Log in with sso");
+        GridBagConstraints gbc_ssoradioButton = new GridBagConstraints();
+        gbc_ssoradioButton.fill = GridBagConstraints.HORIZONTAL;
+        gbc_ssoradioButton.insets = insets;
+        gbc_ssoradioButton.gridx = 0;
+        gbc_ssoradioButton.gridy = 15;
+        rootPanel.add(ssoRadioButton, gbc_ssoradioButton);
+
+        JButton ssoLoginButton = new JButton("Log in");
+        GridBagConstraints gbc_ssoLoginButton = new GridBagConstraints();
+        gbc_ssoLoginButton.fill = GridBagConstraints.HORIZONTAL;
+        gbc_ssoLoginButton.insets = new Insets(5, 15, 5, 5);
+        gbc_ssoLoginButton.gridx = 0;
+        gbc_ssoLoginButton.gridy = 16;
+        rootPanel.add(ssoLoginButton, gbc_ssoLoginButton);
+
+        JSeparator separator3 = new JSeparator();
+        GridBagConstraints gbc_separator3 = new GridBagConstraints();
+        gbc_separator3.gridwidth = 2;
+        gbc_separator3.fill = GridBagConstraints.HORIZONTAL;
+        gbc_separator3.insets = new Insets(5, 5, 5, 0);
+        gbc_separator3.gridx = 0;
+        gbc_separator3.gridy = 13;
+        rootPanel.add(separator3, gbc_separator3);
 
         btnClearSettings = new JButton("Clear settings");
         GridBagConstraints gbc_btnClearSettings = new GridBagConstraints();
         gbc_btnClearSettings.fill = GridBagConstraints.HORIZONTAL;
         gbc_btnClearSettings.insets = new Insets(5, 0, 5, 5);
         gbc_btnClearSettings.gridx = 0;
-        gbc_btnClearSettings.gridy = 14;
+        gbc_btnClearSettings.gridy = 17;
         rootPanel.add(btnClearSettings, gbc_btnClearSettings);
 
+        ButtonGroup buttonGroup = new ButtonGroup();
+        buttonGroup.add(radioButton);
+        buttonGroup.add(ssoRadioButton);
+
+        radioButton.addItemListener(e -> {
+            if (radioButton.isSelected()) {
+                txtFieldUserName.setEnabled(true);
+                passField.setEnabled(true);
+                btnTest.setEnabled(true);
+            } else {
+                txtFieldUserName.setEnabled(false);
+                passField.setEnabled(false);
+                btnTest.setEnabled(false);
+            }
+        });
+
+        ssoRadioButton.addItemListener(e -> {
+            if (ssoRadioButton.isSelected()) {
+                ssoLoginButton.setEnabled(true);
+            } else {
+                ssoLoginButton.setEnabled(false);
+            }
+        });
+
+        ssoRadioButton.setSelected(true);
+        radioButton.setSelected(true);
         //Default placeholder
         txtFieldSharedSpace.setText(EMPTY_SHAREDSPACE_WORKSPACE_URL_TEXT);
         txtFieldWorkspace.setText(EMPTY_SHAREDSPACE_WORKSPACE_URL_TEXT);
@@ -308,7 +367,7 @@ public class ConnectionSettingsComponent implements HasComponent {
 
     /**
      * Re-enables the test connection button, sets error text for the label
-    **/
+     **/
     public void setConnectionStatusError(String errorText) {
         lblConnectionStatus.setVisible(true);
         setTestConnectionButtonEnabled(true);
