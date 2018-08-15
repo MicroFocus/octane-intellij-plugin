@@ -145,7 +145,7 @@ public class EntityComboBox extends JPanel {
                     selectedEntities.add(entityModel);
                     selectionListeners.forEach(l -> l.valueChanged(new SelectionEvent(e)));
                     editorLabel.setText(menuItem.getText());
-                    popupFrame.setVisible(false);
+                    popupFrame.dispose();
                 }
 
                 @Override
@@ -290,7 +290,7 @@ public class EntityComboBox extends JPanel {
 
             @Override
             public void windowLostFocus(WindowEvent e) {
-                popupFrame.setVisible(false);
+                popupFrame.dispose();
             }
         });
 
