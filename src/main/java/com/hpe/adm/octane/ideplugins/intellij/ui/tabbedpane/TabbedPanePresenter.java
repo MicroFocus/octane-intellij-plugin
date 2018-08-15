@@ -145,8 +145,6 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
     public void openDetailTab(Entity entityType, Long entityId, String entityName) {
         EntityDetailPresenter presenter = entityDetailPresenterProvider.get();
         presenter.setEntity(entityType, entityId);
-        List<EntityDetailView> detailViews = new ArrayList<>();
-        detailViews.add(presenter.getView());
 
         PartialEntity tabKey = new PartialEntity(entityId, entityName, entityType);
         ImageIcon tabIcon = new ImageIcon(entityIconFactory.getIconAsImage(entityType));
