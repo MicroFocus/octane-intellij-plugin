@@ -60,14 +60,11 @@ public class HTMLPresenterFXPanel extends JFXPanel {
                 Platform.runLater(() -> setContent(getCommentContent()));
             }
         });
-        addMouseWheelListener(new MouseWheelListener() {
-            @Override
-            public void mouseWheelMoved(MouseWheelEvent e) {
+        addMouseWheelListener(e -> {
                 Component source = (Component) e.getSource();
                 MouseEvent parentEvent = SwingUtilities.convertMouseEvent(source, e, source.getParent());
                 source.getParent().dispatchEvent(parentEvent);
-            }
-        });
+            });
         setFocusable(false);
     }
 
