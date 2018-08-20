@@ -238,7 +238,7 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
                     if (ex.getMessage().contains("401")) {
                         connectionSettingsView.setConnectionStatusError("Invalid username or password.");
                     } else {
-                        connectionSettingsView.setConnectionStatusError(ex.getMessage());
+                        connectionSettingsView.setConnectionStatusError("Failed to connect to octane, please check your server url.");
                     }
             });
             return null;
