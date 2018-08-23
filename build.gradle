@@ -27,7 +27,7 @@ apply plugin: "org.jetbrains.intellij"
 //NOTE, the local maven repository path from the settings.xml will be ignored because of this, the default is hardcoded
 def localMavenRepo = project.hasProperty('localMavenRepo') ?
         project.getProperty('localMavenRepo') :
-        'file://' + new File(System.getProperty('user.home'), '.m2/repository').absolutePath
+        'file://' + new File(System.getProperty('user.home'), '.m2/repository2').absolutePath
 
 repositories {
     //local
@@ -55,7 +55,7 @@ sourceSets {
 }
 
 dependencies {
-    compile("com.hpe.adm.octane.ideplugins:octane-plugin-common:$commonVersion"){
+    compile("com.hpe.adm.octane.ideplugins:octane-plugin-common:1.5.7-SNAPSHOT"){
         exclude group: 'org.slf4j', module: 'slf4j-api'
     }
 
@@ -74,11 +74,12 @@ dependencies {
 intellij {
 
     version project.hasProperty("intellijVersion") ? project.getProperty("intellijVersion") : ideaVersion
+    alternativeIdePath 'C:\\DevTools\\PyCharm Community Edition 2018.2.1'
     plugins = ["maven", "gradle"]
     pluginName = project.hasProperty('zipname') ? project.getProperty('zipname') : "Octane IntelliJ Plugin"
     updateSinceUntilBuild false
 
-    downloadSources Boolean.valueOf(downloadIdeaSources)
+    downloadSources false
     sandboxDirectory project.rootDir.canonicalPath + "/.sandbox"
 }
 

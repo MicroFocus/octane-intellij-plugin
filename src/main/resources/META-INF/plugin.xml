@@ -26,6 +26,8 @@
         Compatible with ALM Octane version 12.53.20 and above.
     ]]></description>
 
+    <depends>com.intellij.modules.lang</depends>
+
     <change-notes><![CDATA[
       <b>2016.2-12.60.4.1</b>
       <ul>
