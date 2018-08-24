@@ -99,6 +99,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                         fields = metadataService.getVisibleFields(entityType);
 
                         Set<String> requestedFields = fields.stream().map(FieldMetadata::getName).collect(Collectors.toSet());
+                        requestedFields.add("client_lock_stamp");
                         entityModelWrapper = new EntityModelWrapper(entityService.findEntity(this.entityType, this.entityId, requestedFields));
 
                         //The subtype field is absolutely necessary, yet the server sometimes has weird ideas, and doesn't return it
