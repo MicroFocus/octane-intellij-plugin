@@ -44,6 +44,8 @@ public class ConnectionSettingsComponent implements HasComponent {
     private JButton btnTest;
     private JButton btnClearSettings;
     private JLabel lblConnectionStatus;
+    private JRadioButton userPassButton;
+    private JRadioButton ssoRadioButton;
 
     public ConnectionSettingsComponent() {
         rootPanel = new JPanel();
@@ -110,7 +112,7 @@ public class ConnectionSettingsComponent implements HasComponent {
 
         addSeparator(rootPanel, 4, "Authentication");
 
-        JRadioButton ssoRadioButton = new JRadioButton("Login using a browser");
+        ssoRadioButton = new JRadioButton("Login using a browser");
         GridBagConstraints gbc_ssoradioButton = new GridBagConstraints();
         gbc_ssoradioButton.fill = GridBagConstraints.HORIZONTAL;
         gbc_ssoradioButton.insets = JBUI.insets(5);
@@ -119,14 +121,14 @@ public class ConnectionSettingsComponent implements HasComponent {
         gbc_ssoradioButton.gridwidth = 2;
         rootPanel.add(ssoRadioButton, gbc_ssoradioButton);
 
-        JRadioButton radioButton = new JRadioButton("Login with username and password");
+        userPassButton = new JRadioButton("Login with username and password");
         GridBagConstraints gbc_radioButton = new GridBagConstraints();
         gbc_radioButton.fill = GridBagConstraints.HORIZONTAL;
         gbc_radioButton.insets = JBUI.insets(5);
         gbc_radioButton.gridx = 0;
         gbc_radioButton.gridy = 6;
         gbc_radioButton.gridwidth = 2;
-        rootPanel.add(radioButton, gbc_radioButton);
+        rootPanel.add(userPassButton, gbc_radioButton);
 
         JLabel lblUsername = new JLabel("Username:");
         GridBagConstraints gbc_lblUsername = new GridBagConstraints();
@@ -205,11 +207,11 @@ public class ConnectionSettingsComponent implements HasComponent {
         panelTestConnection.add(btnClearSettings, gbc_btnClearSettings);
 
         ButtonGroup buttonGroup = new ButtonGroup();
-        buttonGroup.add(radioButton);
+        buttonGroup.add(userPassButton);
         buttonGroup.add(ssoRadioButton);
 
-        radioButton.addItemListener(e -> {
-            if (radioButton.isSelected()) {
+        userPassButton.addItemListener(e -> {
+            if (userPassButton.isSelected()) {
                 txtFieldUserName.setEnabled(true);
                 passField.setEnabled(true);
             } else {
@@ -219,7 +221,7 @@ public class ConnectionSettingsComponent implements HasComponent {
         });
 
         ssoRadioButton.setSelected(true);
-        radioButton.setSelected(true);
+        userPassButton.setSelected(true);
 
         //Default placeholder
         txtFieldSharedSpace.setText(EMPTY_SHAREDSPACE_WORKSPACE_URL_TEXT);
@@ -359,6 +361,22 @@ public class ConnectionSettingsComponent implements HasComponent {
 
     public void setPassword(String password) {
         passField.setText(password);
+    }
+
+    public boolean isSsoAuth() {
+        return ssoRadioButton.isSelected();
+    }
+
+    public void setSsoAuth(boolean isSsoAuth) {
+        if(isSsoAuth) {
+            txtFieldUserName.setText("");
+            passField.setText("");
+        }
+
+        txtFieldUserName.setEnabled(!isSsoAuth);
+        passField.setEnabled(!isSsoAuth);
+        userPassButton.setSelected(!isSsoAuth);
+        ssoRadioButton.setSelected(isSsoAuth);
     }
 
     //This is private, should always be set from the base url

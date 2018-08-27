@@ -79,7 +79,7 @@ public class EntryPoint implements ToolWindowFactory {
                         }
 
                         TestService testService = pluginModule.getInstance(TestService.class);
-                        testService.testConnection(connectionSettings);
+                        //testService.testConnection(connectionSettings);
 
                         // Make sure you only instantiate other services (including the ones in the Presenter hierarchy,
                         // after you tested the connection settings with the test service

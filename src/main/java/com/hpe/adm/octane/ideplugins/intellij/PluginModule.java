@@ -23,6 +23,7 @@ import com.google.inject.Provides;
 import com.google.inject.name.Named;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePersistentConnectionSettingsProvider;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
+import com.hpe.adm.octane.ideplugins.intellij.settings.LoginDialog;
 import com.hpe.adm.octane.ideplugins.intellij.ui.ToolbarActiveItem;
 import com.hpe.adm.octane.ideplugins.intellij.ui.searchresult.SearchResultEntityTreeCellRenderer;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeCellRenderer;
@@ -32,6 +33,9 @@ import com.hpe.adm.octane.ideplugins.services.di.ServiceModule;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 
+import java.awt.*;
+import java.io.IOException;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,17 +52,32 @@ public class PluginModule extends AbstractModule {
 
         ConnectionSettingsProvider connectionSettingsProvider = ServiceManager.getService(project, IdePersistentConnectionSettingsProvider.class);
 
-        injectorSupplier = Suppliers.memoize(() -> Guice.createInjector(
-                new ServiceModule(connectionSettingsProvider),
-                this));
+        ServiceModule serviceModule = new ServiceModule(connectionSettingsProvider);
 
+        //LoginDialog loginFrame = new LoginDialog(project);
+
+        serviceModule.setSsoTokenPollingStartedHandler(loginPageUrl -> EventQueue.invokeLater(() -> {
+
+            try {
+                Desktop.getDesktop().browse(URI.create(loginPageUrl));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            //loginFrame.setLoginPageUrl(loginPageUrl);
+            //loginFrame.show();
+        }));
+
+        //serviceModule.setSsoTokenPollingCompleteHandler(() -> EventQueue.invokeLater(() -> loginFrame.close(0, true)));
+
+        injectorSupplier = Suppliers.memoize(() -> Guice.createInjector(serviceModule, this));
         injectorMap.put(project, injectorSupplier);
-
         getInstance(ToolbarActiveItem.class);
     }
 
     /**
      * Create an instance from an already existing PluginModule
+     *
      * @param project
      * @param injectorSupplier
      */
@@ -71,8 +90,8 @@ public class PluginModule extends AbstractModule {
         return injectorMap.containsKey(project);
     }
 
-    public static PluginModule getPluginModuleForProject(Project project){
-        if(hasProject(project)){
+    public static PluginModule getPluginModuleForProject(Project project) {
+        if (hasProject(project)) {
             return new PluginModule(project, injectorMap.get(project));
         }
         return new PluginModule(project);
@@ -85,13 +104,14 @@ public class PluginModule extends AbstractModule {
     /**
      * CAREFUL: if there's a possibility that the module with the project does not exist yet,
      * this must be run on dispatch thread
+     *
      * @param project
      * @param type
      * @param <T>
      * @return
      */
     public static <T> T getInstance(Project project, Class<T> type) {
-        if(!injectorMap.containsKey(project)){
+        if (!injectorMap.containsKey(project)) {
             //Constructor changes static field event tho instance is not used anywhere
             new PluginModule(project);
         }
@@ -121,7 +141,7 @@ public class PluginModule extends AbstractModule {
     }
 
     @Provides
-    Project getProject(){
+    Project getProject() {
         return project;
     }
 
@@ -129,7 +149,7 @@ public class PluginModule extends AbstractModule {
     private EventBus eventBus = new EventBus();
 
     @Provides
-    EventBus getEventBus(){
+    EventBus getEventBus() {
         return eventBus;
     }
 

@@ -21,6 +21,9 @@ import com.hpe.adm.octane.ideplugins.intellij.util.ExceptionHandler;
 import com.hpe.adm.octane.ideplugins.services.TestService;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
+import com.hpe.adm.octane.ideplugins.services.connection.UserAuthentication;
+import com.hpe.adm.octane.ideplugins.services.connection.sso.SsoAuthentication;
+import com.hpe.adm.octane.ideplugins.services.di.ServiceModule;
 import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
 import com.hpe.adm.octane.ideplugins.services.nonentity.OctaneVersionService;
 import com.hpe.adm.octane.ideplugins.services.util.OctaneVersion;
@@ -94,15 +97,21 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
 
         //Setting the base url will fire the even handler in the view, this will set the shared space and workspace fields
         connectionSettingsView.setServerUrl(UrlParser.createUrlFromConnectionSettings(connectionSettings));
-        connectionSettingsView.setUserName(connectionSettings.getUserName());
-        connectionSettingsView.setPassword(connectionSettings.getPassword());
+
+        if (connectionSettings.getAuthentication() instanceof UserAuthentication) {
+            connectionSettingsView.setSsoAuth(false);
+            UserAuthentication authentication = (UserAuthentication) connectionSettings.getAuthentication();
+            connectionSettingsView.setUserName(authentication.getUserName());
+            connectionSettingsView.setPassword(authentication.getPassword());
+        } else if (connectionSettings.getAuthentication() instanceof SsoAuthentication) {
+            connectionSettingsView.setSsoAuth(true);
+        }
 
         connectionSettingsView.setTestConnectionActionListener(event -> {
-            //Clear previous message
-            connectionSettingsView.setConnectionStatusLoading();
             new SwingWorker<Void, Void>() {
                 @Override
                 protected Void doInBackground() throws Exception {
+                    connectionSettingsView.setConnectionStatusLabelVisible(false);
                     testConnection();
                     return null;
                 }
@@ -159,11 +168,11 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
         if (newConnectionSettings != null) {
 
             //If anything other than the password was changed, wipe open tabs and active tab item
-            if (!newConnectionSettings.equalsExceptPassword(connectionSettingsProvider.getConnectionSettings())) {
-                idePluginPersistentState.clearState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM);
-                idePluginPersistentState.clearState(IdePluginPersistentState.Key.SELECTED_TAB);
-                idePluginPersistentState.clearState(IdePluginPersistentState.Key.OPEN_TABS);
-            }
+            //if (!newConnectionSettings.equalsExceptPassword(connectionSettingsProvider.getConnectionSettings())) {
+            idePluginPersistentState.clearState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM);
+            idePluginPersistentState.clearState(IdePluginPersistentState.Key.SELECTED_TAB);
+            idePluginPersistentState.clearState(IdePluginPersistentState.Key.OPEN_TABS);
+            //}
 
             connectionSettingsProvider.setConnectionSettings(newConnectionSettings);
             //remove the hash and remove extra stuff if successful
@@ -213,8 +222,6 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
      */
     private ConnectionSettings testConnection() {
 
-        connectionSettingsView.setConnectionStatusLoading();
-
         ConnectionSettings newConnectionSettings;
         try {
             newConnectionSettings = validateClientSide();
@@ -225,33 +232,43 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
         pinMessage = true;
 
         //This will attempt a connection
-        try {
-            testService.testConnection(newConnectionSettings);
-            testOctaneVersion(newConnectionSettings);
-            SwingUtilities.invokeLater(() -> {
-                if (connectionSettingsView != null) connectionSettingsView.setConnectionStatusSuccess();
-            });
-        } catch (Exception ex) {
-            //handle case when ok button is pressed
-            SwingUtilities.invokeLater(() -> {
-                if (connectionSettingsView != null)
-                    if (ex.getMessage().contains("401")) {
-                        connectionSettingsView.setConnectionStatusError("Invalid username or password.");
-                    } else {
-                        connectionSettingsView.setConnectionStatusError(ex.getMessage());
-                    }
-            });
-            return null;
+        if(!connectionSettingsView.isSsoAuth()) {
+            try {
+                connectionSettingsView.setConnectionStatusLoading();
+                testService.testConnection(newConnectionSettings);
+                testOctaneVersion(newConnectionSettings);
+                SwingUtilities.invokeLater(() -> {
+                    if (connectionSettingsView != null) connectionSettingsView.setConnectionStatusSuccess();
+                });
+            } catch (Exception ex) {
+                //handle case when ok button is pressed
+                SwingUtilities.invokeLater(() -> {
+                    if (connectionSettingsView != null)
+                        if (ex.getMessage().contains("401")) {
+                            connectionSettingsView.setConnectionStatusError("Invalid username or password.");
+                        } else {
+                            connectionSettingsView.setConnectionStatusError(ex.getMessage());
+                        }
+                });
+                return null;
+            }
         }
         return newConnectionSettings;
     }
 
     private ConnectionSettings getConnectionSettingsFromView() throws ServiceException {
         //Parse server url
-        return UrlParser.resolveConnectionSettings(
-                connectionSettingsView.getServerUrl(),
-                connectionSettingsView.getUserName(),
-                connectionSettingsView.getPassword());
+        ConnectionSettings connectionSettings =
+                UrlParser.resolveConnectionSettings(
+                        connectionSettingsView.getServerUrl(),
+                        connectionSettingsView.getUserName(),
+                        connectionSettingsView.getPassword());
+
+        if(connectionSettingsView.isSsoAuth()) {
+            connectionSettings.setAuthentication(new SsoAuthentication());
+        }
+
+        return connectionSettings;
     }
 
     private boolean isViewConnectionSettingsEmpty() {
@@ -297,14 +314,17 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
         }
 
         //Validation of username and password
-        try {
-            validateUsernameAndPassword();
-        } catch (ServiceException ex) {
-            //handle case when ok button is pressed
-            SwingUtilities.invokeLater(() -> {
-                if (connectionSettingsView != null) connectionSettingsView.setConnectionStatusError(ex.getMessage());
-            });
-            throw ex;
+        if (!connectionSettingsView.isSsoAuth()) {
+            try {
+                validateUsernameAndPassword();
+            } catch (ServiceException ex) {
+                //handle case when ok button is pressed
+                SwingUtilities.invokeLater(() -> {
+                    if (connectionSettingsView != null)
+                        connectionSettingsView.setConnectionStatusError(ex.getMessage());
+                });
+                throw ex;
+            }
         }
 
         return newConnectionSettings;
@@ -314,8 +334,12 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
     public void reset() {
         ConnectionSettings connectionSettings = connectionSettingsProvider.getConnectionSettings();
         connectionSettingsView.setServerUrl(UrlParser.createUrlFromConnectionSettings(connectionSettings));
-        connectionSettingsView.setUserName(connectionSettings.getUserName());
-        connectionSettingsView.setPassword(connectionSettings.getPassword());
+
+        if (connectionSettings.getAuthentication() instanceof UserAuthentication) {
+            UserAuthentication authentication = (UserAuthentication) connectionSettings.getAuthentication();
+            connectionSettingsView.setUserName(authentication.getUserName());
+            connectionSettingsView.setPassword(authentication.getPassword());
+        }
     }
 
     @Override
