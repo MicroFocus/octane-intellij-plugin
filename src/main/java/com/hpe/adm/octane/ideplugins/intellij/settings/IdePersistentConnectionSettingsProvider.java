@@ -97,7 +97,6 @@ public class IdePersistentConnectionSettingsProvider extends BasicConnectionSett
 
     @Override
     public void loadState(Element state) {
-        ConnectionSettings connectionSettings = new ConnectionSettings();
 
         if (state.getAttribute(URL_TAG) != null) {
             connectionSettings.setBaseUrl(state.getAttributeValue(URL_TAG));
