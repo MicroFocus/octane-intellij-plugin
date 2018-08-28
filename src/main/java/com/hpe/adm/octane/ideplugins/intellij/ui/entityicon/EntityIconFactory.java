@@ -27,7 +27,7 @@ import java.util.Map;
 public class EntityIconFactory {
 
     //Detail for unmapped entity type
-    private final IconDetail unmapedEntityIconDetail = new IconDetail(new Color(0,0,0,0), "", true);
+    private final IconDetail unmapedEntityIconDetail = new IconDetail(new Color(0, 0, 0, 0), "", true);
 
     //map to color and short text
     private final Map<Entity, IconDetail> iconDetailMap = new HashMap<>();
@@ -35,109 +35,107 @@ public class EntityIconFactory {
 
     private int iconHeight = 30;
     private int iconWidth = 30;
-    private Color fontColor = new Color(255,255,255);
+    private Color fontColor = new Color(255, 255, 255);
     private int fontSize = 15;
 
     private static final Image activeImg = ImageLoader.loadFromResource(Constants.IMG_ACTIVE_ITEM);
-   
-    public EntityIconFactory(){	
-    	init();
-    }
-    
-    public EntityIconFactory(int iconHeight, int iconWidth, int fontSize, Color fontColor){
-    	this.iconHeight = iconHeight;
-    	this.iconWidth = iconWidth;
-    	this.fontColor = fontColor;
-        this.fontSize = fontSize;
-    	init();
+
+    public EntityIconFactory() {
+        init();
     }
 
-    public EntityIconFactory(int iconHeight, int iconWidth, int fontSize){
+    public EntityIconFactory(int iconHeight, int iconWidth, int fontSize, Color fontColor) {
+        this.iconHeight = iconHeight;
+        this.iconWidth = iconWidth;
+        this.fontColor = fontColor;
+        this.fontSize = fontSize;
+        init();
+    }
+
+    public EntityIconFactory(int iconHeight, int iconWidth, int fontSize) {
         this.iconHeight = iconHeight;
         this.iconWidth = iconWidth;
         this.fontSize = fontSize;
         init();
     }
-    
-    private void init(){
-        iconDetailMap.put(Entity.USER_STORY, new IconDetail(new Color(255,176,0), "US"));
-        iconDetailMap.put(Entity.QUALITY_STORY, new IconDetail(new Color(51,193,128), "QS"));
-        iconDetailMap.put(Entity.DEFECT, new IconDetail(new Color(178,22,70), "D"));
-        iconDetailMap.put(Entity.EPIC, new IconDetail(new Color(116,37,173), "E"));
-        iconDetailMap.put(Entity.FEATURE, new IconDetail(new Color(229,120,40), "F"));
 
-        iconDetailMap.put(Entity.TASK, new IconDetail(new Color(22,104,193), "T"));
+    private void init() {
+        iconDetailMap.put(Entity.USER_STORY, new IconDetail(new Color(255, 176, 0), "US"));
+        iconDetailMap.put(Entity.QUALITY_STORY, new IconDetail(new Color(51, 193, 128), "QS"));
+        iconDetailMap.put(Entity.DEFECT, new IconDetail(new Color(178, 22, 70), "D"));
+        iconDetailMap.put(Entity.EPIC, new IconDetail(new Color(116, 37, 173), "E"));
+        iconDetailMap.put(Entity.FEATURE, new IconDetail(new Color(229, 120, 40), "F"));
 
-        iconDetailMap.put(Entity.MANUAL_TEST, new IconDetail(new Color(0,171,243), "MT"));
-        iconDetailMap.put(Entity.GHERKIN_TEST, new IconDetail(new Color(0,169,137), "GT"));
+        iconDetailMap.put(Entity.TASK, new IconDetail(new Color(22, 104, 193), "T"));
 
-        iconDetailMap.put(Entity.TEST_SUITE, new IconDetail(new Color(39,23,130), "TS"));
-        iconDetailMap.put(Entity.MANUAL_TEST_RUN, new IconDetail(new Color(0,171,243), "MR"));
-        iconDetailMap.put(Entity.TEST_SUITE_RUN, new IconDetail(new Color(0,171,243), "SR"));
-        iconDetailMap.put(Entity.AUTOMATED_TEST, new IconDetail(new Color(186,71,226), "AT"));
+        iconDetailMap.put(Entity.MANUAL_TEST, new IconDetail(new Color(0, 171, 243), "MT"));
+        iconDetailMap.put(Entity.GHERKIN_TEST, new IconDetail(new Color(0, 169, 137), "GT"));
 
-        iconDetailMap.put(Entity.COMMENT, new IconDetail(new Color(253,225,89), "C"));
-        iconDetailMap.put(Entity.REQUIREMENT, new IconDetail(new Color(11,142,172), "R"));
+        iconDetailMap.put(Entity.TEST_SUITE, new IconDetail(new Color(39, 23, 130), "TS"));
+        iconDetailMap.put(Entity.MANUAL_TEST_RUN, new IconDetail(new Color(0, 171, 243), "MR"));
+        iconDetailMap.put(Entity.TEST_SUITE_RUN, new IconDetail(new Color(0, 171, 243), "SR"));
+        iconDetailMap.put(Entity.AUTOMATED_TEST, new IconDetail(new Color(186, 71, 226), "AT"));
+
+        iconDetailMap.put(Entity.COMMENT, new IconDetail(new Color(253, 225, 89), "C"));
+        iconDetailMap.put(Entity.REQUIREMENT, new IconDetail(new Color(11, 142, 172), "R"));
 
         iconDetailMap.keySet().forEach(entity -> iconComponentMap.put(entity, createIconAsComponent(entity)));
     }
-    
-    private JComponent createIconAsComponent(Entity entity){
-    	IconDetail iconDetail = iconDetailMap.containsKey(entity) ? iconDetailMap.get(entity) : unmapedEntityIconDetail;
-    	
+
+    private JComponent createIconAsComponent(Entity entity) {
         //Make the label
         Font defaultFont = new JXLabel().getFont();
-        Font boldFont = new Font(defaultFont.getFontName(), Font.BOLD, fontSize);
-
-        JXLabel label = new JXLabel(iconDetail.getDisplayLabelText());
-        
-        label.setForeground(fontColor);
-        label.setOpaque(iconDetail.isOpaque());
-        label.setBackground(iconDetail.getColor());
+        JXLabel label = new JXLabel(new ImageIcon(createIconAsImage(entity)));
         label.setPreferredSize(new Dimension(iconWidth, iconHeight));
         label.setMinimumSize(new Dimension(iconWidth, iconHeight));
         label.setMaximumSize(new Dimension(iconWidth, iconHeight));
-        label.setFont(boldFont);
         label.setHorizontalAlignment(SwingConstants.CENTER);
         label.setVerticalAlignment(SwingConstants.CENTER);
-        label.setBounds(0,0,iconWidth,iconHeight);
+        label.setBounds(0, 0, iconWidth, iconHeight);
         return label;
     }
 
-    private Image createIconAsImage(Entity entity, boolean isActive){
-        JComponent lblIcon = getIconAsComponent(entity, isActive);
-        lblIcon.setBounds(0,0,iconWidth,iconHeight);
-        JFrame frame = new JFrame();
-        frame.getContentPane().setLayout(null);
-        frame.getContentPane().add(lblIcon);
-        frame.pack();
+    private Image createIconAsImage(Entity entity) {
+        IconDetail iconDetail = iconDetailMap.containsKey(entity) ? iconDetailMap.get(entity) : unmapedEntityIconDetail;
 
         BufferedImage image = new BufferedImage(iconWidth, iconHeight, BufferedImage.TYPE_INT_ARGB);
-        Graphics g = image.createGraphics();
-        lblIcon.paint(g);
+        Graphics2D bg = image.createGraphics();
+        // make BufferedImage fully transparent
+        bg.setComposite(AlphaComposite.Clear);
+        bg.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        bg.fillRect(0, 0, iconWidth, iconHeight);
+        bg.setComposite(AlphaComposite.SrcOver);
+        bg.setColor(iconDetail.getColor());
 
-        //dispose the frame after the paint to free up OS User Objects
-        frame.dispose();
+        bg.fillOval(0, 0, iconWidth, iconHeight);
+        bg.setColor(fontColor);
+        bg.setFont(new Font("Arial", Font.BOLD, fontSize));
+
+        FontMetrics fm = bg.getFontMetrics();
+        int fontX = (iconWidth - fm.stringWidth(iconDetail.getDisplayLabelText())) / 2;
+        int fontY = (fm.getAscent() + (iconHeight - (fm.getAscent() + fm.getDescent())) / 2);
+
+        bg.drawString(iconDetail.getDisplayLabelText(), fontX, fontY);
 
         return image;
     }
 
-    public JComponent getIconAsComponent(Entity entity){
-      	return iconComponentMap.get(entity);
+    public JComponent getIconAsComponent(Entity entity) {
+        return iconComponentMap.get(entity);
     }
 
-    public JComponent getIconAsComponent(Entity entity, boolean isActive){
-        if(!isActive){
+    public JComponent getIconAsComponent(Entity entity, boolean isActive) {
+        if (!isActive) {
             return getIconAsComponent(entity);
         } else {
             //Overlay the run image on top of the original entity icon component
             JComponent component = getIconAsComponent(entity);
 
-            if(component == null){
+            if (component == null) {
                 return new JLabel("N/A");
             }
 
-            component.setBounds(0,0,iconWidth,iconHeight);
+            component.setBounds(0, 0, iconWidth, iconHeight);
 
             //Overlay an image on top of the component
             JPanel runImagePanel = new JPanel() {
@@ -171,12 +169,12 @@ public class EntityIconFactory {
         }
     }
 
-    public Image getIconAsImage(Entity entity, boolean isActive){
-        return createIconAsImage(entity, isActive);
+    public Image getIconAsImage(Entity entity, boolean isActive) {
+        return createIconAsImage(entity);
     }
 
-    public Image getIconAsImage(Entity entity){
-        return createIconAsImage(entity, false);
+    public Image getIconAsImage(Entity entity) {
+        return createIconAsImage(entity);
     }
 
 }
