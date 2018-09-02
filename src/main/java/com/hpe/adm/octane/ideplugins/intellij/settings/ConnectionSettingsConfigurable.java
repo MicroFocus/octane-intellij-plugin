@@ -23,7 +23,6 @@ import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import com.hpe.adm.octane.ideplugins.services.connection.UserAuthentication;
 import com.hpe.adm.octane.ideplugins.services.connection.sso.SsoAuthentication;
-import com.hpe.adm.octane.ideplugins.services.di.ServiceModule;
 import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
 import com.hpe.adm.octane.ideplugins.services.nonentity.OctaneVersionService;
 import com.hpe.adm.octane.ideplugins.services.util.OctaneVersion;
@@ -34,8 +33,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.ui.popup.Balloon;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
-import com.intellij.openapi.wm.StatusBar;
-import com.intellij.openapi.wm.WindowManager;
 import com.intellij.ui.awt.RelativePoint;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.Nls;
@@ -47,7 +44,7 @@ import javax.swing.*;
 public class ConnectionSettingsConfigurable implements SearchableConfigurable, Configurable.NoScroll {
 
     private static final String NAME = "Octane";
-    private Project currentProject = null;
+    private Project currentProject;
 
     //@Inject is not supported here, this class is instantiated by intellij
     private ConnectionSettingsProvider connectionSettingsProvider;
@@ -179,8 +176,6 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
             connectionSettingsView.setServerUrl(UrlParser.createUrlFromConnectionSettings(newConnectionSettings));
             connectionSettingsView.setConnectionStatusSuccess();
         }
-
-
     }
 
 
@@ -192,6 +187,12 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
             if (version.compareTo(OctaneVersion.DYNAMO) < 0) {
                 showWarningBallon("Octane version not supported. This plugin works with Octane versions starting " + OctaneVersion.DYNAMO.getVersionString());
             }
+
+            if (version.compareTo(new OctaneVersion("12.60.14")) < 0) {
+                showWarningBallon("Login with browser is only supported starting from Octane server version: " + OctaneVersion.INTER_P2.getVersionString());
+                connectionSettingsView.setSsoAuth(false);
+            }
+
         } catch (Exception ex) {
             version = OctaneVersionService.fallbackVersion;
 
@@ -207,12 +208,12 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
     }
 
     private void showWarningBallon(String message) {
-        StatusBar statusBar = WindowManager.getInstance().getStatusBar(currentProject);
         Balloon balloon = JBPopupFactory.getInstance().createHtmlTextBalloonBuilder(message,
                 MessageType.WARNING, null)
                 .setCloseButtonEnabled(true)
                 .createBalloon();
-        balloon.show(RelativePoint.getCenterOf(statusBar.getComponent()), Balloon.Position.atRight);
+
+        balloon.show(RelativePoint.getCenterOf(connectionSettingsView.getComponent()), Balloon.Position.atRight);
     }
 
     /**
@@ -231,28 +232,32 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
 
         pinMessage = true;
 
-        //This will attempt a connection
-        if(!connectionSettingsView.isSsoAuth()) {
-            try {
-                connectionSettingsView.setConnectionStatusLoading();
+        try {
+            connectionSettingsView.setConnectionStatusLoading();
+
+            testOctaneVersion(newConnectionSettings);
+
+            //This will attempt a connection
+            if (!connectionSettingsView.isSsoAuth()) {
                 testService.testConnection(newConnectionSettings);
-                testOctaneVersion(newConnectionSettings);
-                SwingUtilities.invokeLater(() -> {
-                    if (connectionSettingsView != null) connectionSettingsView.setConnectionStatusSuccess();
-                });
-            } catch (Exception ex) {
-                //handle case when ok button is pressed
-                SwingUtilities.invokeLater(() -> {
-                    if (connectionSettingsView != null)
-                        if (ex.getMessage().contains("401")) {
-                            connectionSettingsView.setConnectionStatusError("Invalid username or password.");
-                        } else {
-                            connectionSettingsView.setConnectionStatusError(ex.getMessage());
-                        }
-                });
-                return null;
             }
+
+            SwingUtilities.invokeLater(() -> {
+                if (connectionSettingsView != null) connectionSettingsView.setConnectionStatusSuccess();
+            });
+        } catch (Exception ex) {
+            //handle case when ok button is pressed
+            SwingUtilities.invokeLater(() -> {
+                if (connectionSettingsView != null)
+                    if (ex.getMessage().contains("401")) {
+                        connectionSettingsView.setConnectionStatusError("Invalid username or password.");
+                    } else {
+                        connectionSettingsView.setConnectionStatusError(ex.getMessage());
+                    }
+            });
+            return null;
         }
+
         return newConnectionSettings;
     }
 
@@ -264,7 +269,7 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
                         connectionSettingsView.getUserName(),
                         connectionSettingsView.getPassword());
 
-        if(connectionSettingsView.isSsoAuth()) {
+        if (connectionSettingsView.isSsoAuth()) {
             connectionSettings.setAuthentication(new SsoAuthentication());
         }
 

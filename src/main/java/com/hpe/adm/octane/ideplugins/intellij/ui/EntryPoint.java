@@ -56,6 +56,26 @@ public class EntryPoint implements ToolWindowFactory {
     @Override
     public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
 
+//        JPanel panel = new JPanel(new FlowLayout());
+//
+//        JButton button = new JButton("POP ME");
+//        JTextField textField = new JTextField();
+//        textField.setText("http://google.com");
+//
+//        panel.add(button);
+//        panel.add(textField);
+//
+//        button.addActionListener(e -> {
+//            LoginDialog loginDialog = new LoginDialog(project);
+//            loginDialog.setLoginPageUrl(textField.getText());
+//            loginDialog.show();
+//        });
+//
+//        ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
+//        toolWindow.getContentManager().removeAllContents(true);
+//        toolWindow.getContentManager().addContent(contentFactory.createContent(panel, "Test", false));
+
+
         // The DI module returns instances based on your current project
         // Be careful with all static members of beans, you might end up affecting the plugin open for another project
         // when dealing with 2 IntelliJ windows with two different projects running at the same time

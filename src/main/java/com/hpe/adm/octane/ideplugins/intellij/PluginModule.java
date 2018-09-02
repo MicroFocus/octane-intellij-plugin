@@ -33,17 +33,18 @@ import com.hpe.adm.octane.ideplugins.services.di.ServiceModule;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 
-import java.awt.*;
-import java.io.IOException;
-import java.net.URI;
+import javax.swing.*;
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.hpe.adm.octane.ideplugins.services.connection.sso.SsoLoginGoogleHttpClient.*;
 
 public class PluginModule extends AbstractModule {
 
     protected final Supplier<Injector> injectorSupplier;
 
     private Project project;
+    private LoginDialog loginDialog;
     private static final Map<Project, Supplier<Injector>> injectorMap = new HashMap<>();
 
     private PluginModule(Project project) {
@@ -52,23 +53,20 @@ public class PluginModule extends AbstractModule {
 
         ConnectionSettingsProvider connectionSettingsProvider = ServiceManager.getService(project, IdePersistentConnectionSettingsProvider.class);
 
-        ServiceModule serviceModule = new ServiceModule(connectionSettingsProvider);
+        SsoTokenPollingStartedHandler pollingStartedHandler = loginPageUrl -> SwingUtilities.invokeLater(() -> {
+            loginDialog = new LoginDialog(project, loginPageUrl);
+            loginDialog.show();
+        });
 
-        //LoginDialog loginFrame = new LoginDialog(project);
-
-        serviceModule.setSsoTokenPollingStartedHandler(loginPageUrl -> EventQueue.invokeLater(() -> {
-
-            try {
-                Desktop.getDesktop().browse(URI.create(loginPageUrl));
-            } catch (IOException e) {
-                e.printStackTrace();
+        SsoTokenPollingInProgressHandler pollingInProgressHandler = (pollingStatus -> SwingUtilities.invokeLater(() -> {
+            if(loginDialog != null) {
+                pollingStatus.shouldPoll = loginDialog.shouldStopPolling;
             }
-
-            //loginFrame.setLoginPageUrl(loginPageUrl);
-            //loginFrame.show();
         }));
 
-        //serviceModule.setSsoTokenPollingCompleteHandler(() -> EventQueue.invokeLater(() -> loginFrame.close(0, true)));
+        SsoTokenPollingCompleteHandler pollingCompleteHandler = () ->SwingUtilities.invokeLater(() -> loginDialog.close(0 , true));
+
+        ServiceModule serviceModule = new ServiceModule(connectionSettingsProvider, pollingStartedHandler, pollingInProgressHandler, pollingCompleteHandler);
 
         injectorSupplier = Suppliers.memoize(() -> Guice.createInjector(serviceModule, this));
         injectorMap.put(project, injectorSupplier);

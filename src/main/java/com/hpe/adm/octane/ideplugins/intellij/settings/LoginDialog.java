@@ -2,10 +2,7 @@ package com.hpe.adm.octane.ideplugins.intellij.settings;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.util.ui.JBUI;
 import com.sun.javafx.application.PlatformImpl;
-import com.sun.javafx.webkit.WebConsoleListener;
-import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -26,12 +23,14 @@ import java.net.URISyntaxException;
 
 public class LoginDialog extends DialogWrapper {
 
+    public static final String TITLE = "Login to ALM Octane";
     private String loginPageUrl;
+    public boolean shouldStopPolling;
 
-    public LoginDialog(Project project) {
+    public LoginDialog(Project project, String loginPageUrl) {
         super(project, false, IdeModalityType.PROJECT);
-        setSize(800, 600); //default
-        setTitle("Octane IntelliJ Plugin: Login");
+        this.loginPageUrl = loginPageUrl;
+        setTitle("Login to ALM Octane");
         init();
     }
 
@@ -42,7 +41,7 @@ public class LoginDialog extends DialogWrapper {
         contentPane.setLayout(new BorderLayout(0, 10));
         contentPane.setPreferredSize(new Dimension(800, 600));
 
-        JLabel lblOpenSystemBrowser = new JLabel("<html>Login to ALM Octane<br>If the page below does not display correctly, <a href=\\\"\\\">click here to use your system default browser.</a></html>");
+        JLabel lblOpenSystemBrowser = new JLabel("<html>If the page below does not display correctly, <a href=\\\"\\\">click here to use your system default browser.</a></html>");
         lblOpenSystemBrowser.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         contentPane.add(lblOpenSystemBrowser, BorderLayout.NORTH);
 
@@ -53,14 +52,6 @@ public class LoginDialog extends DialogWrapper {
         PlatformImpl.runLater(() -> {
 
             Group root = new Group();
-
-            WebConsoleListener.setDefaultListener(new WebConsoleListener(){
-                @Override
-                public void messageAdded(WebView webView, String message, int lineNumber, String sourceId) {
-                    System.out.println("Console: [" + sourceId + ":" + lineNumber + "] " + message);
-                }
-            });
-
             Stage stage = new Stage();
             stage.setResizable(true);
 
@@ -73,7 +64,6 @@ public class LoginDialog extends DialogWrapper {
             webEngine.load(loginPageUrl);
             root.getChildren().add(browser);
 
-
             jfxPanel.setScene(scene);
         });
 
@@ -85,7 +75,10 @@ public class LoginDialog extends DialogWrapper {
                     JLabel lblSystemBrowser = new JLabel("Opening login page system browser, waiting for session...");
                     jfxPanel.setVisible(false);
                     contentPane.add(lblSystemBrowser, BorderLayout.CENTER);
-
+                    contentPane.setPreferredSize(new Dimension(-1, -1));
+                    LoginDialog.this.pack();
+                    LoginDialog.this.centerRelativeToParent();
+                    LoginDialog.this.shouldStopPolling = true;
                 } catch (URISyntaxException | IOException ex) {
                     //It looks like there's a problem
                 }
@@ -99,7 +92,4 @@ public class LoginDialog extends DialogWrapper {
     @Override
     protected Action[] createActions() {return new Action[0];}
 
-    public void setLoginPageUrl(String loginPageUrl) {
-        this.loginPageUrl = loginPageUrl;
-    }
 }
