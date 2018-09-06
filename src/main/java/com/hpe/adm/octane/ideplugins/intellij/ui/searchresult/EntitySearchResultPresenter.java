@@ -22,6 +22,7 @@ import com.hpe.adm.octane.ideplugins.intellij.eventbus.RefreshMyWorkEvent;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
+import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactoryManager;
 import com.hpe.adm.octane.ideplugins.intellij.ui.tabbedpane.TabbedPanePresenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityCategory;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeModel;
@@ -44,7 +45,6 @@ import com.intellij.openapi.util.IconLoader;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -55,7 +55,8 @@ import static com.hpe.adm.octane.ideplugins.services.util.Util.getUiDataFromMode
 
 public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
 
-    private static final EntityIconFactory entityIconFactory = new EntityIconFactory(20, 20, 11, Color.WHITE);
+    @Inject
+    private EntityIconFactoryManager factoryManager;
 
     private static final Entity[] searchEntityTypes = new Entity[]{
             Entity.EPIC,
@@ -88,11 +89,11 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
         return entityTreeView;
     }
 
-    public void globalSearch(String query){
+    public void globalSearch(String query) {
 
         lastSearchQuery = query;
 
-        Task.Backgroundable backgroundTask = new Task.Backgroundable(null, "Searching Octane for \""+query+"\"", false) {
+        Task.Backgroundable backgroundTask = new Task.Backgroundable(null, "Searching Octane for \"" + query + "\"", false) {
 
             private Collection<EntityModel> searchResults;
 
@@ -144,7 +145,7 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
         entityTreeView.setComponentWhenEmpty(() -> new NoSearchResultsPanel());
     }
 
-    private EntityTreeModel createEmptyEntityTreeModel(Collection<EntityModel> entityModels){
+    private EntityTreeModel createEmptyEntityTreeModel(Collection<EntityModel> entityModels) {
         List<EntityCategory> entityCategories = new ArrayList<>();
         entityCategories.add(new SearchEntityCategory("Backlog", Entity.USER_STORY, Entity.EPIC, Entity.FEATURE, Entity.QUALITY_STORY));
         entityCategories.add(new SearchEntityCategory("Requirements", Entity.REQUIREMENT));
@@ -176,7 +177,8 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
             });
             popup.add(viewInBrowserItem);
 
-            if(TabbedPanePresenter.isDetailTabSupported(entityType)){
+            if (TabbedPanePresenter.isDetailTabSupported(entityType)) {
+                EntityIconFactory entityIconFactory = factoryManager.getEntityIconFactory(20, 11);
                 Icon icon = new ImageIcon(entityIconFactory.getIconAsImage(entityType));
                 JMenuItem viewDetailMenuItem = new JMenuItem("View details", icon);
                 viewDetailMenuItem.addMouseListener(new MouseAdapter() {
@@ -188,7 +190,7 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
                 popup.add(viewDetailMenuItem);
             }
 
-            if(myWorkService.isAddingToMyWorkSupported(entityType)) {
+            if (myWorkService.isAddingToMyWorkSupported(entityType)) {
                 JMenuItem addToMyWorkMenuItem = new JMenuItem("Add to \"My Work\"", AllIcons.General.Add);
                 addToMyWorkMenuItem.addMouseListener(new MouseAdapter() {
                     @Override
@@ -196,7 +198,7 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
                         ApplicationManager.getApplication().invokeLater(() -> {
                             Task.Backgroundable backgroundTask = new Task.Backgroundable(null, "Adding item to \"My Work\"", true) {
                                 public void run(@NotNull ProgressIndicator indicator) {
-                                    if(myWorkService.addToMyWork(entityModel)) {
+                                    if (myWorkService.addToMyWork(entityModel)) {
                                         eventBus.post(new RefreshMyWorkEvent());
                                         UiUtil.showWarningBalloon(null,
                                                 "Item added",

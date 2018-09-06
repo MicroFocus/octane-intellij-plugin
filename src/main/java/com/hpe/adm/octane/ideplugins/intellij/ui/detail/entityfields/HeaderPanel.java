@@ -21,6 +21,7 @@ import com.hpe.adm.nga.sdk.model.StringFieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.DetailsViewDefaultFields;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
+import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactoryManager;
 import com.hpe.adm.octane.ideplugins.services.EntityService;
 import com.hpe.adm.octane.ideplugins.services.model.EntityModelWrapper;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
@@ -62,6 +63,9 @@ public class HeaderPanel extends JPanel {
 
     @Inject
     private EntityService entityService;
+
+    @Inject
+    private EntityIconFactoryManager factoryManager;
 
     @Inject
     public HeaderPanel(PhasePanel phasePanel) {
@@ -259,7 +263,7 @@ public class HeaderPanel extends JPanel {
 
     public void setEntityModel(EntityModelWrapper entityModelWrapper) {
         this.entityModelWrapper = entityModelWrapper;
-        EntityIconFactory entityIconFactory = new EntityIconFactory(26, 26, 12);
+        EntityIconFactory entityIconFactory = factoryManager.getEntityIconFactory(26, 12);
         // icon
         setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(entityModelWrapper.getEntityType())));
         // id

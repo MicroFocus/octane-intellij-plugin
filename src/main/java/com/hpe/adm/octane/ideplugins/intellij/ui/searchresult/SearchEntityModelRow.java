@@ -13,7 +13,9 @@
 
 package com.hpe.adm.octane.ideplugins.intellij.ui.searchresult;
 
+import com.google.inject.Inject;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
+import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactoryManager;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.intellij.util.ui.UIUtil;
 import org.jdesktop.swingx.JXLabel;
@@ -21,28 +23,28 @@ import org.jdesktop.swingx.JXLabel;
 import javax.swing.*;
 import java.awt.*;
 
-public class SearchEntityModelRow extends JPanel{
+public class SearchEntityModelRow extends JPanel {
+    @Inject
+    private EntityIconFactoryManager factoryManager;
 
-	private static final long serialVersionUID = 1L;
-	private JXLabel lblEntityName;
-	private JPanel panelIcon;
+    private static final long serialVersionUID = 1L;
+    private JXLabel lblEntityName;
+    private JPanel panelIcon;
 
-	private static final Color transparentColor = new Color(0, 0, 0, 0);
-	private Color fontColor = UIUtil.getLabelFontColor(UIUtil.FontColor.NORMAL);
-	private JXLabel lblEntityRelease;
-
-    private static final EntityIconFactory ENTITY_ICON_FACTORY = new EntityIconFactory(40,40,17,Color.WHITE);
+    private static final Color transparentColor = new Color(0, 0, 0, 0);
+    private Color fontColor = UIUtil.getLabelFontColor(UIUtil.FontColor.NORMAL);
+    private JXLabel lblEntityRelease;
 
     public SearchEntityModelRow() {
+        super();
+    }
+
+    public void initFocusedUI() {
+        fontColor = new Color(255, 255, 255);
         initUI();
     }
 
-	public SearchEntityModelRow(Color fontColor) {
-		this.fontColor = fontColor;
-        initUI();
-	}
-
-	private void initUI(){
+    public void initUI() {
         GridBagLayout gbl_rootPanel = new GridBagLayout();
         gbl_rootPanel.columnWidths = new int[]{0, 150, 0};
         gbl_rootPanel.rowHeights = new int[]{25, 25, 0};
@@ -64,7 +66,7 @@ public class SearchEntityModelRow extends JPanel{
         add(panelIcon, gbc_panelIcon);
         panelIcon.setOpaque(true);
         panelIcon.setBackground(transparentColor);
-        
+
         lblEntityName = new JXLabel("");
         lblEntityName.setForeground(fontColor);
         lblEntityName.setHorizontalAlignment(SwingConstants.LEFT);
@@ -76,7 +78,7 @@ public class SearchEntityModelRow extends JPanel{
         gbc_lblEntityName.gridx = 1;
         gbc_lblEntityName.gridy = 0;
         add(lblEntityName, gbc_lblEntityName);
-        
+
         lblEntityRelease = new JXLabel("");
         lblEntityRelease.setForeground(fontColor);
         lblEntityRelease.setHorizontalAlignment(SwingConstants.LEFT);
@@ -92,21 +94,22 @@ public class SearchEntityModelRow extends JPanel{
         setOpaque(true);
     }
 
-	public void setIcon(Entity entityType, boolean isActive){
-		panelIcon.removeAll();
-		panelIcon.add(ENTITY_ICON_FACTORY.getIconAsComponent(entityType, isActive), BorderLayout.CENTER);
-	}
-	
-	public void setEntityName(String id, String name){
-        lblEntityName.setText("<html><body><b>"+id+"</b>&nbsp;" + name + "</body><html>");
-	}
-	
-	public void setEntityDescription(String description){
+    public void setIcon(Entity entityType, boolean isActive) {
+        panelIcon.removeAll();
+        EntityIconFactory iconFactory = factoryManager.getEntityIconFactory(40, 17);
+        panelIcon.add(iconFactory.getIconAsComponent(entityType, isActive), BorderLayout.CENTER);
+    }
+
+    public void setEntityName(String id, String name) {
+        lblEntityName.setText("<html><body><b>" + id + "</b>&nbsp;" + name + "</body><html>");
+    }
+
+    public void setEntityDescription(String description) {
         lblEntityRelease.setText(description);
     }
 
-    public void setEntityHtmlDescription(String description){
+    public void setEntityHtmlDescription(String description) {
         lblEntityRelease.setText("<html><body>" + description + "</body><html>");
     }
-	
+
 }

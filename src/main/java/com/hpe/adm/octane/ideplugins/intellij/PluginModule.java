@@ -107,7 +107,7 @@ public class PluginModule extends AbstractModule {
     @Provides
     @Named("searchEntityTreeView")
     public EntityTreeView getSearchEntityTreeView() {
-        EntityTreeView entityTreeView = new EntityTreeView(new SearchResultEntityTreeCellRenderer());
+        EntityTreeView entityTreeView = new EntityTreeView(getInstance(SearchResultEntityTreeCellRenderer.class));
         injectorSupplier.get().injectMembers(entityTreeView);
         return entityTreeView;
     }

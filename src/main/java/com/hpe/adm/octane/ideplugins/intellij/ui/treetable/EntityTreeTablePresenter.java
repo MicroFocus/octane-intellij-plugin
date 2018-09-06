@@ -24,6 +24,7 @@ import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
+import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactoryManager;
 import com.hpe.adm.octane.ideplugins.intellij.ui.tabbedpane.TabbedPanePresenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
 import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
@@ -58,9 +59,6 @@ import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
 
 import javax.swing.*;
-import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.*;
@@ -75,9 +73,10 @@ import static com.hpe.adm.octane.ideplugins.services.util.Util.getUiDataFromMode
 
 public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
 
-    private static final EntityIconFactory entityIconFactory = new EntityIconFactory(20, 20, 11, Color.WHITE);
-
     private EntityTreeView entityTreeTableView;
+
+    @Inject
+    private EntityIconFactoryManager factoryManager;
 
     @Inject
     private MyWorkService myWorkService;
@@ -221,8 +220,10 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
             });
             popup.add(viewInBrowserItem);
 
+            EntityIconFactory iconFactory = factoryManager.getEntityIconFactory(20, 11);
+
             if (TabbedPanePresenter.isDetailTabSupported(entityType)) {
-                Icon icon = new ImageIcon(entityIconFactory.getIconAsImage(entityType));
+                Icon icon = new ImageIcon(iconFactory.getIconAsImage(entityType));
                 JMenuItem viewDetailMenuItem = new JMenuItem("View details", icon);
                 viewDetailMenuItem.addMouseListener(new MouseAdapter() {
                     @Override
@@ -244,7 +245,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
 
                 if (TabbedPanePresenter.isDetailTabSupported(Entity.getEntityType(parentEntityModel))) {
                     //Add option
-                    Icon icon = new ImageIcon(entityIconFactory.getIconAsImage(Entity.getEntityType(parentEntityModel)));
+                    Icon icon = new ImageIcon(iconFactory.getIconAsImage(Entity.getEntityType(parentEntityModel)));
                     JMenuItem viewParentMenuItem = new JMenuItem("View parent details", icon);
                     viewParentMenuItem.addMouseListener(new MouseAdapter() {
                         @Override

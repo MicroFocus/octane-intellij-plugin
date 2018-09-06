@@ -27,18 +27,22 @@ public class EntityIconFactoryManager {
     @Inject
     private EntityLabelService entityLabelService;
 
-    private Map<Integer, EntityIconFactory> factories;
+    private Map<Integer, Map<Integer, EntityIconFactory>> factories;
 
     public EntityIconFactoryManager() {
         factories = new HashMap<>();
     }
 
-    public EntityIconFactory getEntityIconFactory(int size) {
+    public EntityIconFactory getEntityIconFactory(int size, int fontSize) {
         if (factories.get(size) == null) {
-            //todo create another factory and add it to the pool of factories
+            Map<Integer, EntityIconFactory> factoryFontList = new HashMap<>();
+            factoryFontList.put(fontSize, new EntityIconFactory(entityLabelService, size, size, fontSize));
+            factories.put(size, factoryFontList);
         }
-
-        return factories.get(size);
+        if (factories.get(size).get(fontSize) == null) {
+            factories.get(size).put(fontSize, new EntityIconFactory(entityLabelService, size, size, fontSize));
+        }
+        return factories.get(size).get(fontSize);
     }
 
 

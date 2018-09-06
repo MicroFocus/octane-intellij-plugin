@@ -18,6 +18,7 @@ import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.gitcommit.CommitMessageUtils;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
+import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactoryManager;
 import com.hpe.adm.octane.ideplugins.services.util.PartialEntity;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.Project;
@@ -37,7 +38,9 @@ import java.util.Map;
 
 public class ToolbarActiveItem {
 
-    private static EntityIconFactory entityIconFactory = new EntityIconFactory(20, 20, 10, Color.WHITE);
+    @Inject
+    private EntityIconFactoryManager factoryManager;
+
     private static Map<Project, Runnable> activeItemClickHandlers = new HashMap<>();
     private ActiveItemAction activeItemAction;
     private CopyCommitMessageAction copyCommitMessageAction;
@@ -91,7 +94,8 @@ public class ToolbarActiveItem {
             presentation.setDescription(partialEntity.getEntityName());
             presentation.setText("");
             presentation.setText("#" + partialEntity.getEntityId());
-            presentation.setIcon(new ImageIcon(entityIconFactory.getIconAsImage(partialEntity.getEntityType())));
+            EntityIconFactory iconFactory = factoryManager.getEntityIconFactory(20, 10);
+            presentation.setIcon(new ImageIcon(iconFactory.getIconAsImage(partialEntity.getEntityType())));
         }
 
         @Override
