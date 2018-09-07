@@ -15,10 +15,12 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.searchresult;
 
 import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.model.EntityModel;
+import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityCategory;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeModel;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
+import com.intellij.openapi.project.Project;
 import com.intellij.ui.JBColor;
 import org.jdesktop.swingx.JXLabel;
 
@@ -31,7 +33,7 @@ import static com.hpe.adm.octane.ideplugins.intellij.ui.detail.DetailsViewDefaul
 public class SearchResultEntityTreeCellRenderer implements TreeCellRenderer {
 
     @Inject
-    private SearchEntityModelRow rowPanel;
+    private Project project;
 
     public SearchResultEntityTreeCellRenderer() {
         super();
@@ -65,6 +67,8 @@ public class SearchResultEntityTreeCellRenderer implements TreeCellRenderer {
             EntityModel entityModel = (EntityModel) value;
             Long entityId = Long.valueOf(Util.getUiDataFromModel(entityModel.getValue("id")));
 
+
+            SearchEntityModelRow rowPanel = PluginModule.getPluginModuleForProject(project).getInstance(SearchEntityModelRow.class);
             if (selected && hasFocus) {
                 rowPanel.initFocusedUI();
             } else {

@@ -29,6 +29,7 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeView;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
 import com.hpe.adm.octane.ideplugins.intellij.util.ExceptionHandler;
+import com.hpe.adm.octane.ideplugins.services.EntityLabelService;
 import com.hpe.adm.octane.ideplugins.services.EntityService;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.mywork.MyWorkService;
@@ -50,6 +51,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import static com.hpe.adm.octane.ideplugins.services.util.Util.getUiDataFromModel;
 
@@ -57,6 +59,9 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
 
     @Inject
     private EntityIconFactoryManager factoryManager;
+
+    @Inject
+    private EntityLabelService entityLabelService;
 
     private static final Entity[] searchEntityTypes = new Entity[]{
             Entity.EPIC,
@@ -147,10 +152,11 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
 
     private EntityTreeModel createEmptyEntityTreeModel(Collection<EntityModel> entityModels) {
         List<EntityCategory> entityCategories = new ArrayList<>();
+        Map<String, EntityModel> entityLabelMap = entityLabelService.getEntityLabelDetails();
         entityCategories.add(new SearchEntityCategory("Backlog", Entity.USER_STORY, Entity.EPIC, Entity.FEATURE, Entity.QUALITY_STORY));
-        entityCategories.add(new SearchEntityCategory("Requirements", Entity.REQUIREMENT));
-        entityCategories.add(new SearchEntityCategory("Defects", Entity.DEFECT));
-        entityCategories.add(new SearchEntityCategory("Tasks", Entity.TASK));
+        entityCategories.add(new SearchEntityCategory(entityLabelMap.get(Entity.REQUIREMENT.getTypeName()).getValue("plural_capitalized").getValue().toString(), Entity.REQUIREMENT));
+        entityCategories.add(new SearchEntityCategory(entityLabelMap.get(Entity.DEFECT.getEntityName()).getValue("plural_capitalized").getValue().toString(), Entity.DEFECT));
+        entityCategories.add(new SearchEntityCategory(entityLabelMap.get(Entity.TASK.getEntityName()).getValue("plural_capitalized").getValue().toString(), Entity.TASK));
         entityCategories.add(new SearchEntityCategory("Tests", Entity.TEST_SUITE, Entity.MANUAL_TEST, Entity.AUTOMATED_TEST, Entity.GHERKIN_TEST));
         EntityTreeModel model = new EntityTreeModel(entityCategories, entityModels);
         return model;

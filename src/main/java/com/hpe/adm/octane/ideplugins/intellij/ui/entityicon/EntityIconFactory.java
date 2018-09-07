@@ -100,7 +100,6 @@ public class EntityIconFactory {
 
     private JComponent createIconAsComponent(Entity entity) {
         //Make the label
-        Font defaultFont = new JXLabel().getFont();
         JXLabel label = new JXLabel(new ImageIcon(createIconAsImage(entity)));
         label.setPreferredSize(new Dimension(iconWidth, iconHeight));
         label.setMinimumSize(new Dimension(iconWidth, iconHeight));
