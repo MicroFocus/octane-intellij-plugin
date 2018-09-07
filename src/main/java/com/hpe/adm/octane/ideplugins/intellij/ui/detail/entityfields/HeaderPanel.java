@@ -21,7 +21,6 @@ import com.hpe.adm.nga.sdk.model.StringFieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.DetailsViewDefaultFields;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
-import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactoryManager;
 import com.hpe.adm.octane.ideplugins.services.EntityService;
 import com.hpe.adm.octane.ideplugins.services.model.EntityModelWrapper;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
@@ -30,7 +29,6 @@ import com.intellij.openapi.actionSystem.impl.ActionToolbarImpl;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ui.JBUI;
-import com.intellij.util.ui.UIUtil;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -65,7 +63,7 @@ public class HeaderPanel extends JPanel {
     private EntityService entityService;
 
     @Inject
-    private EntityIconFactoryManager factoryManager;
+    private EntityIconFactory iconFactory;
 
     @Inject
     public HeaderPanel(PhasePanel phasePanel) {
@@ -263,9 +261,8 @@ public class HeaderPanel extends JPanel {
 
     public void setEntityModel(EntityModelWrapper entityModelWrapper) {
         this.entityModelWrapper = entityModelWrapper;
-        EntityIconFactory entityIconFactory = factoryManager.getEntityIconFactory(26, 12);
         // icon
-        setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(entityModelWrapper.getEntityType())));
+        setEntityIcon(new ImageIcon(iconFactory.getIconAsImage(entityModelWrapper.getEntityType(), 26, 12)));
         // id
         setId(Util.getUiDataFromModel(entityModelWrapper.getValue(DetailsViewDefaultFields.FIELD_ID)));
         // name

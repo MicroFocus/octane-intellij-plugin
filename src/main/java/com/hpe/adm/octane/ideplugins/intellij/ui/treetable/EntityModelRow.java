@@ -15,7 +15,6 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.treetable;
 
 import com.google.inject.Inject;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
-import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactoryManager;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ui.UIUtil;
@@ -28,7 +27,7 @@ import java.awt.*;
 public class EntityModelRow extends JPanel {
 
     @Inject
-    private EntityIconFactoryManager factoryManager;
+    private EntityIconFactory iconFactory;
 
     private Color fontColor = UIUtil.getLabelFontColor(UIUtil.FontColor.NORMAL);
     private JPanel panelEntityIcon;
@@ -149,8 +148,7 @@ public class EntityModelRow extends JPanel {
 
     public void setIcon(Entity entityType, boolean isActive) {
         panelEntityIcon.removeAll();
-        EntityIconFactory iconFactory = factoryManager.getEntityIconFactory(40, 17);
-        panelEntityIcon.add(iconFactory.getIconAsComponent(entityType, isActive), BorderLayout.CENTER);
+        panelEntityIcon.add(iconFactory.getIconAsComponent(entityType, 40, 17, isActive), BorderLayout.CENTER);
     }
 
     public void setEntityName(String id, String name) {

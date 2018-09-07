@@ -15,7 +15,6 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.searchresult;
 
 import com.google.inject.Inject;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
-import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactoryManager;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.intellij.util.ui.UIUtil;
 import org.jdesktop.swingx.JXLabel;
@@ -25,7 +24,7 @@ import java.awt.*;
 
 public class SearchEntityModelRow extends JPanel {
     @Inject
-    private EntityIconFactoryManager factoryManager;
+    private EntityIconFactory iconFactory;
 
     private static final long serialVersionUID = 1L;
     private JXLabel lblEntityName;
@@ -96,8 +95,7 @@ public class SearchEntityModelRow extends JPanel {
 
     public void setIcon(Entity entityType, boolean isActive) {
         panelIcon.removeAll();
-        EntityIconFactory iconFactory = factoryManager.getEntityIconFactory(40, 17);
-        panelIcon.add(iconFactory.getIconAsComponent(entityType, isActive), BorderLayout.CENTER);
+        panelIcon.add(iconFactory.getIconAsComponent(entityType, 40, 16, isActive), BorderLayout.CENTER);
     }
 
     public void setEntityName(String id, String name) {

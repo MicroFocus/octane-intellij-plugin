@@ -25,7 +25,6 @@ import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
-import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactoryManager;
 import com.hpe.adm.octane.ideplugins.intellij.ui.tabbedpane.TabbedPanePresenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
 import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
@@ -75,10 +74,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
     private EntityTreeView entityTreeTableView;
 
     @Inject
-    private EntityIconFactoryManager factoryManager;
-
-    @Inject
-    EntityLabelService entityLabelService;
+    private EntityIconFactory iconFactory;
 
     @Inject
     private MyWorkService myWorkService;
@@ -222,10 +218,9 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
             });
             popup.add(viewInBrowserItem);
 
-            EntityIconFactory iconFactory = factoryManager.getEntityIconFactory(20, 11);
 
             if (TabbedPanePresenter.isDetailTabSupported(entityType)) {
-                Icon icon = new ImageIcon(iconFactory.getIconAsImage(entityType));
+                Icon icon = new ImageIcon(iconFactory.getIconAsImage(entityType, 20, 11));
                 JMenuItem viewDetailMenuItem = new JMenuItem("View details", icon);
                 viewDetailMenuItem.addMouseListener(new MouseAdapter() {
                     @Override
@@ -247,7 +242,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
 
                 if (TabbedPanePresenter.isDetailTabSupported(Entity.getEntityType(parentEntityModel))) {
                     //Add option
-                    Icon icon = new ImageIcon(iconFactory.getIconAsImage(Entity.getEntityType(parentEntityModel)));
+                    Icon icon = new ImageIcon(iconFactory.getIconAsImage(Entity.getEntityType(parentEntityModel), 20, 11));
                     JMenuItem viewParentMenuItem = new JMenuItem("View parent details", icon);
                     viewParentMenuItem.addMouseListener(new MouseAdapter() {
                         @Override

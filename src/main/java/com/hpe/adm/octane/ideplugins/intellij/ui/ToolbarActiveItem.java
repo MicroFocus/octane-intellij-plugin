@@ -18,7 +18,6 @@ import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.gitcommit.CommitMessageUtils;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
-import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactoryManager;
 import com.hpe.adm.octane.ideplugins.services.util.PartialEntity;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.Project;
@@ -30,16 +29,13 @@ import com.intellij.openapi.wm.ToolWindowManager;
 import org.json.JSONObject;
 
 import javax.swing.*;
-import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
 import java.util.HashMap;
 import java.util.Map;
 
 public class ToolbarActiveItem {
 
     @Inject
-    private EntityIconFactoryManager factoryManager;
+    private EntityIconFactory iconFactory;
 
     private static Map<Project, Runnable> activeItemClickHandlers = new HashMap<>();
     private ActiveItemAction activeItemAction;
@@ -52,7 +48,7 @@ public class ToolbarActiveItem {
 
     private class ActiveItemAction extends AnAction {
 
-        PartialEntity partialEntity;
+        private PartialEntity partialEntity;
 
         public ActiveItemAction(PartialEntity partialEntity) {
             this.partialEntity = partialEntity;
@@ -94,8 +90,7 @@ public class ToolbarActiveItem {
             presentation.setDescription(partialEntity.getEntityName());
             presentation.setText("");
             presentation.setText("#" + partialEntity.getEntityId());
-            EntityIconFactory iconFactory = factoryManager.getEntityIconFactory(20, 10);
-            presentation.setIcon(new ImageIcon(iconFactory.getIconAsImage(partialEntity.getEntityType())));
+            presentation.setIcon(new ImageIcon(iconFactory.getIconAsImage(partialEntity.getEntityType(), 20, 11)));
         }
 
         @Override

@@ -22,7 +22,6 @@ import com.hpe.adm.octane.ideplugins.intellij.eventbus.RefreshMyWorkEvent;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
-import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactoryManager;
 import com.hpe.adm.octane.ideplugins.intellij.ui.tabbedpane.TabbedPanePresenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityCategory;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeModel;
@@ -58,7 +57,7 @@ import static com.hpe.adm.octane.ideplugins.services.util.Util.getUiDataFromMode
 public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
 
     @Inject
-    private EntityIconFactoryManager factoryManager;
+    private EntityIconFactory iconFactory;
 
     @Inject
     private EntityLabelService entityLabelService;
@@ -184,8 +183,7 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
             popup.add(viewInBrowserItem);
 
             if (TabbedPanePresenter.isDetailTabSupported(entityType)) {
-                EntityIconFactory entityIconFactory = factoryManager.getEntityIconFactory(20, 11);
-                Icon icon = new ImageIcon(entityIconFactory.getIconAsImage(entityType));
+                Icon icon = new ImageIcon(iconFactory.getIconAsImage(entityType, 20, 11));
                 JMenuItem viewDetailMenuItem = new JMenuItem("View details", icon);
                 viewDetailMenuItem.addMouseListener(new MouseAdapter() {
                     @Override
