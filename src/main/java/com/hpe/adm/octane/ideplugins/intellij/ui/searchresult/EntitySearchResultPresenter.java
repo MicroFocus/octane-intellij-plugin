@@ -28,6 +28,7 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeView;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
 import com.hpe.adm.octane.ideplugins.intellij.util.ExceptionHandler;
+import com.hpe.adm.octane.ideplugins.services.EntityLabelService;
 import com.hpe.adm.octane.ideplugins.services.EntityService;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.mywork.MyWorkService;
@@ -44,18 +45,22 @@ import com.intellij.openapi.util.IconLoader;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import static com.hpe.adm.octane.ideplugins.services.util.Util.getUiDataFromModel;
 
 public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
 
-    private static final EntityIconFactory entityIconFactory = new EntityIconFactory(20, 20, 11, Color.WHITE);
+    @Inject
+    private EntityIconFactory iconFactory;
+
+    @Inject
+    private EntityLabelService entityLabelService;
 
     private static final Entity[] searchEntityTypes = new Entity[]{
             Entity.EPIC,
@@ -88,11 +93,11 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
         return entityTreeView;
     }
 
-    public void globalSearch(String query){
+    public void globalSearch(String query) {
 
         lastSearchQuery = query;
 
-        Task.Backgroundable backgroundTask = new Task.Backgroundable(null, "Searching Octane for \""+query+"\"", false) {
+        Task.Backgroundable backgroundTask = new Task.Backgroundable(null, "Searching Octane for \"" + query + "\"", false) {
 
             private Collection<EntityModel> searchResults;
 
@@ -144,12 +149,13 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
         entityTreeView.setComponentWhenEmpty(() -> new NoSearchResultsPanel());
     }
 
-    private EntityTreeModel createEmptyEntityTreeModel(Collection<EntityModel> entityModels){
+    private EntityTreeModel createEmptyEntityTreeModel(Collection<EntityModel> entityModels) {
         List<EntityCategory> entityCategories = new ArrayList<>();
+        Map<String, EntityModel> entityLabelMap = entityLabelService.getEntityLabelDetails();
         entityCategories.add(new SearchEntityCategory("Backlog", Entity.USER_STORY, Entity.EPIC, Entity.FEATURE, Entity.QUALITY_STORY));
-        entityCategories.add(new SearchEntityCategory("Requirements", Entity.REQUIREMENT));
-        entityCategories.add(new SearchEntityCategory("Defects", Entity.DEFECT));
-        entityCategories.add(new SearchEntityCategory("Tasks", Entity.TASK));
+        entityCategories.add(new SearchEntityCategory(entityLabelMap.get(Entity.REQUIREMENT.getTypeName()).getValue("plural_capitalized").getValue().toString(), Entity.REQUIREMENT));
+        entityCategories.add(new SearchEntityCategory(entityLabelMap.get(Entity.DEFECT.getEntityName()).getValue("plural_capitalized").getValue().toString(), Entity.DEFECT));
+        entityCategories.add(new SearchEntityCategory(entityLabelMap.get(Entity.TASK.getEntityName()).getValue("plural_capitalized").getValue().toString(), Entity.TASK));
         entityCategories.add(new SearchEntityCategory("Tests", Entity.TEST_SUITE, Entity.MANUAL_TEST, Entity.AUTOMATED_TEST, Entity.GHERKIN_TEST));
         EntityTreeModel model = new EntityTreeModel(entityCategories, entityModels);
         return model;
@@ -176,8 +182,8 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
             });
             popup.add(viewInBrowserItem);
 
-            if(TabbedPanePresenter.isDetailTabSupported(entityType)){
-                Icon icon = new ImageIcon(entityIconFactory.getIconAsImage(entityType));
+            if (TabbedPanePresenter.isDetailTabSupported(entityType)) {
+                Icon icon = new ImageIcon(iconFactory.getIconAsImage(entityType, 20, 11));
                 JMenuItem viewDetailMenuItem = new JMenuItem("View details", icon);
                 viewDetailMenuItem.addMouseListener(new MouseAdapter() {
                     @Override
@@ -188,7 +194,7 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
                 popup.add(viewDetailMenuItem);
             }
 
-            if(myWorkService.isAddingToMyWorkSupported(entityType)) {
+            if (myWorkService.isAddingToMyWorkSupported(entityType)) {
                 JMenuItem addToMyWorkMenuItem = new JMenuItem("Add to \"My Work\"", AllIcons.General.Add);
                 addToMyWorkMenuItem.addMouseListener(new MouseAdapter() {
                     @Override
@@ -196,7 +202,7 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
                         ApplicationManager.getApplication().invokeLater(() -> {
                             Task.Backgroundable backgroundTask = new Task.Backgroundable(null, "Adding item to \"My Work\"", true) {
                                 public void run(@NotNull ProgressIndicator indicator) {
-                                    if(myWorkService.addToMyWork(entityModel)) {
+                                    if (myWorkService.addToMyWork(entityModel)) {
                                         eventBus.post(new RefreshMyWorkEvent());
                                         UiUtil.showWarningBalloon(null,
                                                 "Item added",

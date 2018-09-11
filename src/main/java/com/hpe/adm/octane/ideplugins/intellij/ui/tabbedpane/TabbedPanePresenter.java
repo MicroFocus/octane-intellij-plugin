@@ -26,7 +26,6 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.ToolbarActiveItem;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.EntityDetailPresenter;
-import com.hpe.adm.octane.ideplugins.intellij.ui.detail.EntityDetailView;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
 import com.hpe.adm.octane.ideplugins.intellij.ui.searchresult.EntitySearchResultPresenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.searchresult.SearchHistoryManager;
@@ -46,10 +45,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
-import java.util.List;
 
 import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.*;
 
@@ -72,7 +68,8 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
         });
     }
 
-    private static EntityIconFactory entityIconFactory = new EntityIconFactory(22, 22, 12, Color.WHITE);
+    @Inject
+    private EntityIconFactory iconFactory;
 
     @Inject
     private SearchHistoryManager searchManager;
@@ -147,7 +144,7 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
         presenter.setEntity(entityType, entityId);
 
         PartialEntity tabKey = new PartialEntity(entityId, entityName, entityType);
-        ImageIcon tabIcon = new ImageIcon(entityIconFactory.getIconAsImage(entityType));
+        ImageIcon tabIcon = new ImageIcon(iconFactory.getIconAsImage(entityType, 22, 11));
         TabInfo tabInfo = tabbedPaneView.addTab(
                 String.valueOf(entityId),
                 entityName,
