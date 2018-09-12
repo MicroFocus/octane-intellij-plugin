@@ -127,7 +127,7 @@ public class EntityIconFactory {
         bg.setFont(new Font("Arial", Font.BOLD, fontSize));
 
         FontMetrics fm = bg.getFontMetrics();
-        int fontX = (iconSize - fm.stringWidth(iconDetail.getDisplayLabelText())) / 2;
+        int fontX = (iconSize - fm.stringWidth(iconDetail.getDisplayLabelText()) + 1) / 2;
         int fontY = (fm.getAscent() + (iconSize - (fm.getAscent() + fm.getDescent())) / 2);
 
         bg.drawString(iconDetail.getDisplayLabelText(), fontX, fontY);
