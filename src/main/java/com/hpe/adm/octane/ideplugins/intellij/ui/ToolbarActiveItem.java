@@ -200,8 +200,8 @@ public class ToolbarActiveItem {
                         "ToolbarRunGroup");
         DefaultActionGroup activeItemActionGroup = new DefaultActionGroup();
 
-        Separator first = Separator.create();
-        activeItemActionGroup.add(first, Constraints.FIRST);
+
+        activeItemActionGroup.addSeparator();
         activeItemActionGroup.add(stopActiveItemAction, Constraints.FIRST);
         activeItemActionGroup.add(copyCommitMessageAction, Constraints.FIRST);
         activeItemActionGroup.add(activeItemAction, Constraints.FIRST);
