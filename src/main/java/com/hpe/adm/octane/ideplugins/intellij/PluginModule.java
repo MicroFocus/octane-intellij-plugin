@@ -25,7 +25,6 @@ import com.hpe.adm.octane.ideplugins.intellij.settings.IdePersistentConnectionSe
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.settings.LoginDialog;
 import com.hpe.adm.octane.ideplugins.intellij.ui.ToolbarActiveItem;
-import com.hpe.adm.octane.ideplugins.intellij.ui.detail.EntityDetailPresenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.searchresult.SearchResultEntityTreeCellRenderer;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeCellRenderer;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeView;

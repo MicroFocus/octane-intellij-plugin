@@ -18,6 +18,7 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.HasComponent;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
 import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
 import com.hpe.adm.octane.ideplugins.services.util.UrlParser;
+import com.intellij.openapi.util.IconLoader;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import org.apache.commons.lang.StringUtils;
@@ -26,14 +27,19 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
+import java.awt.event.*;
 
 public class ConnectionSettingsComponent implements HasComponent {
 
     private static final String EMPTY_SERVER_URL_TEXT = "Copy paste your Octane URL from the browser here...";
     private static final String EMPTY_SHAREDSPACE_WORKSPACE_URL_TEXT = "Retrieved from server URL";
+
+    private static final String userPassAuthInfoText = "Log into ALM Octane directly with your user name and password, in non-SSO environments. " + System.lineSeparator() +
+            "This method saves your login credentials between sessions, so you do not have to re-enter them.";
+
+    private static final String browserAuthInfoText = "Log into ALM Octane using a browser. " + System.lineSeparator() +
+            "You can use this method for non-SSO, SSO, and federated environments. " + System.lineSeparator() +
+            "Your login credentials are not saved between sessions, so you will have to re-enter them each time.";
 
     private JPanel rootPanel;
     private JTextField txtFieldServerUrl;
@@ -105,21 +111,34 @@ public class ConnectionSettingsComponent implements HasComponent {
         txtFieldWorkspace.setColumns(10);
         GridBagConstraints gbc_txtFieldWorkspace = new GridBagConstraints();
         gbc_txtFieldWorkspace.fill = GridBagConstraints.HORIZONTAL;
-        gbc_txtFieldWorkspace.insets = JBUI.insets(5, 5, 5, 0);
+        gbc_txtFieldWorkspace.insets = JBUI.insets(5, 5, 15, 0);
         gbc_txtFieldWorkspace.gridx = 1;
         gbc_txtFieldWorkspace.gridy = 3;
         rootPanel.add(txtFieldWorkspace, gbc_txtFieldWorkspace);
 
         addSeparator(rootPanel, 4, "Authentication");
 
+        JPanel panelUserPassAuth = new JPanel(new FlowLayout());
+        GridBagConstraints gbc_panelUserPassAuth = new GridBagConstraints();
+        gbc_panelUserPassAuth.anchor = GridBagConstraints.WEST;
+        gbc_panelUserPassAuth.insets = JBUI.insets(0);
+        gbc_panelUserPassAuth.gridx = 0;
+        gbc_panelUserPassAuth.gridy = 5;
+        gbc_panelUserPassAuth.gridwidth = 2;
+        rootPanel.add(panelUserPassAuth, gbc_panelUserPassAuth);
+
         userPassButton = new JRadioButton("Login with username and password");
-        GridBagConstraints gbc_radioButton = new GridBagConstraints();
-        gbc_radioButton.fill = GridBagConstraints.HORIZONTAL;
-        gbc_radioButton.insets = JBUI.insets(5);
-        gbc_radioButton.gridx = 0;
-        gbc_radioButton.gridy = 5;
-        gbc_radioButton.gridwidth = 2;
-        rootPanel.add(userPassButton, gbc_radioButton);
+
+        JLabel lblUserPassAuthInfo = new JLabel(IconLoader.findIcon(Constants.IMG_HELP_ICON));
+        lblUserPassAuthInfo.setToolTipText(userPassAuthInfoText);
+        lblUserPassAuthInfo.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                JOptionPane.showMessageDialog(rootPanel, userPassAuthInfoText, "Login with username and password", JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
+        panelUserPassAuth.add(userPassButton);
+        panelUserPassAuth.add(lblUserPassAuthInfo);
 
         JLabel lblUsername = new JLabel("Username:");
         GridBagConstraints gbc_lblUsername = new GridBagConstraints();
@@ -154,14 +173,28 @@ public class ConnectionSettingsComponent implements HasComponent {
         gbc_passField.gridy = 7;
         rootPanel.add(passField, gbc_passField);
 
+        JPanel panelBrowserAuth = new JPanel(new FlowLayout());
+        GridBagConstraints gbc_panelBrowserAuth = new GridBagConstraints();
+        gbc_panelBrowserAuth.anchor = GridBagConstraints.WEST;
+        gbc_panelBrowserAuth.insets = JBUI.insets(0);
+        gbc_panelBrowserAuth.gridx = 0;
+        gbc_panelBrowserAuth.gridy = 8;
+        gbc_panelBrowserAuth.gridwidth = 2;
+        rootPanel.add(panelBrowserAuth, gbc_panelBrowserAuth);
+
         ssoRadioButton = new JRadioButton("Login using a browser");
-        GridBagConstraints gbc_ssoradioButton = new GridBagConstraints();
-        gbc_ssoradioButton.fill = GridBagConstraints.HORIZONTAL;
-        gbc_ssoradioButton.insets = JBUI.insets(5);
-        gbc_ssoradioButton.gridx = 0;
-        gbc_ssoradioButton.gridy = 8;
-        gbc_ssoradioButton.gridwidth = 2;
-        rootPanel.add(ssoRadioButton, gbc_ssoradioButton);
+
+        JLabel lblBrowserAuthInfo = new JLabel(IconLoader.findIcon(Constants.IMG_HELP_ICON));
+        lblBrowserAuthInfo.setToolTipText(browserAuthInfoText);
+        lblBrowserAuthInfo.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                JOptionPane.showMessageDialog(rootPanel, browserAuthInfoText, "Login using a browser", JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
+
+        panelBrowserAuth.add(ssoRadioButton);
+        panelBrowserAuth.add(lblBrowserAuthInfo);
 
         addSeparator(rootPanel, 9);
 
@@ -281,7 +314,6 @@ public class ConnectionSettingsComponent implements HasComponent {
         GridBagConstraints gbc_childPanel = new GridBagConstraints();
         gbc_childPanel.gridwidth = 2;
         gbc_childPanel.fill = GridBagConstraints.HORIZONTAL;
-        gbc_childPanel.insets = JBUI.insets(5, 5, 5, 0);
         gbc_childPanel.gridx = 0;
         gbc_childPanel.gridy = gridY;
 
@@ -294,7 +326,7 @@ public class ConnectionSettingsComponent implements HasComponent {
             JLabel lblALabel = new JLabel(title);
             GridBagConstraints gbc_lblALabel = new GridBagConstraints();
             gbc_lblALabel.anchor = GridBagConstraints.WEST;
-            gbc_lblALabel.insets = JBUI.insetsRight(5);
+            gbc_lblALabel.insets = JBUI.insets(0, 5, 0,  5);
             gbc_lblALabel.gridx = 0;
             gbc_lblALabel.gridy = 0;
             childPanel.add(lblALabel, gbc_lblALabel);
@@ -303,6 +335,7 @@ public class ConnectionSettingsComponent implements HasComponent {
         JSeparator separator = new JSeparator();
         GridBagConstraints gbc_separator = new GridBagConstraints();
         gbc_separator.fill = GridBagConstraints.HORIZONTAL;
+        gbc_separator.insets = JBUI.insets(5, 0, 5,  0);
         gbc_separator.gridx = 1;
         gbc_separator.gridy = 0;
         childPanel.add(separator, gbc_separator);
