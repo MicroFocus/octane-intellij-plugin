@@ -18,10 +18,6 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.project.Project;
-import org.apache.commons.lang.StringUtils;
-
-import java.util.Arrays;
-import java.util.stream.Collectors;
 
 public class ExceptionHandler {
 

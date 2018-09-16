@@ -25,6 +25,7 @@ import com.hpe.adm.octane.ideplugins.intellij.settings.IdePersistentConnectionSe
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.settings.LoginDialog;
 import com.hpe.adm.octane.ideplugins.intellij.ui.ToolbarActiveItem;
+import com.hpe.adm.octane.ideplugins.intellij.ui.detail.EntityDetailPresenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.searchresult.SearchResultEntityTreeCellRenderer;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeCellRenderer;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeView;
@@ -34,6 +35,7 @@ import com.hpe.adm.octane.ideplugins.services.connection.granttoken.TokenPolling
 import com.hpe.adm.octane.ideplugins.services.connection.granttoken.TokenPollingStartedHandler;
 import com.hpe.adm.octane.ideplugins.services.di.ServiceModule;
 import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 
@@ -43,6 +45,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PluginModule extends AbstractModule {
+
+    private static final Logger logger = Logger.getInstance(PluginModule.class.getName());
 
     protected final Supplier<Injector> injectorSupplier;
 
@@ -65,11 +69,13 @@ public class PluginModule extends AbstractModule {
             try {
                 SwingUtilities.invokeAndWait(() -> {
                     if(loginDialog != null) {
+                        long secondsUntilTimeout = (pollingStatus.timeoutTimeStamp - System.currentTimeMillis()) / 1000;
+                        loginDialog.setTitle(LoginDialog.TITLE + " (waiting for session, timeout in: " + secondsUntilTimeout + ")");
                         pollingStatus.shouldPoll = loginDialog.getExitCode() == DialogWrapper.CANCEL_EXIT_CODE;
                     }
                 });
             } catch (InterruptedException | InvocationTargetException e) {
-                e.printStackTrace();
+                logger.error(e);
             }
             return pollingStatus;
         };

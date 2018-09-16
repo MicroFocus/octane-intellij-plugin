@@ -14,7 +14,6 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields;
 
 import com.google.inject.Inject;
-import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.nga.sdk.model.FieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.PhaseDropDownMenu;
 import com.hpe.adm.octane.ideplugins.services.model.EntityModelWrapper;
@@ -23,10 +22,7 @@ import com.intellij.util.ui.JBUI;
 import org.jdesktop.swingx.JXLabel;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Collection;
 
 public class PhasePanel extends JPanel {
 

@@ -2,7 +2,6 @@ package com.hpe.adm.octane.ideplugins.intellij.settings;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.openapi.util.Disposer;
 import com.sun.javafx.application.PlatformImpl;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Group;

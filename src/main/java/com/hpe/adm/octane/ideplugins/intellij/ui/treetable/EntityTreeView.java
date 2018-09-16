@@ -13,31 +13,6 @@
 
 package com.hpe.adm.octane.ideplugins.intellij.ui.treetable;
 
-import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
-
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-
-import javax.inject.Provider;
-import javax.swing.BorderFactory;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.SwingUtilities;
-import javax.swing.tree.TreeCellRenderer;
-import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
-
-import org.jdesktop.swingx.JXHyperlink;
-import org.jdesktop.swingx.JXLabel;
-
 import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.settings.ConnectionSettingsConfigurable;
@@ -47,16 +22,27 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.nowork.NoWorkPanel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.EntityContextMenuFactory;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.intellij.icons.AllIcons;
-import com.intellij.openapi.actionSystem.ActionManager;
-import com.intellij.openapi.actionSystem.ActionToolbar;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBScrollPane;
+import org.jdesktop.swingx.JXHyperlink;
+import org.jdesktop.swingx.JXLabel;
+
+import javax.inject.Provider;
+import javax.swing.*;
+import javax.swing.tree.TreeCellRenderer;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
+import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
+import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
 
 public class EntityTreeView implements View {
 

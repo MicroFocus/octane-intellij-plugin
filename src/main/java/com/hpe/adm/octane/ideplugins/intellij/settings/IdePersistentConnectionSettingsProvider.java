@@ -14,7 +14,6 @@
 package com.hpe.adm.octane.ideplugins.intellij.settings;
 
 import com.hpe.adm.octane.ideplugins.services.connection.BasicConnectionSettingProvider;
-
 import com.hpe.adm.octane.ideplugins.services.connection.UserAuthentication;
 import com.hpe.adm.octane.ideplugins.services.connection.granttoken.GrantTokenAuthentication;
 import com.intellij.ide.passwordSafe.PasswordSafe;

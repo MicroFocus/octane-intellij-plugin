@@ -15,6 +15,7 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents;
 
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBLabel;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
