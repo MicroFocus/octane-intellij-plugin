@@ -70,7 +70,7 @@ public class PluginModule extends AbstractModule {
                     if(loginDialog != null) {
                         long secondsUntilTimeout = (pollingStatus.timeoutTimeStamp - System.currentTimeMillis()) / 1000;
                         loginDialog.setTitle(LoginDialog.TITLE + " (waiting for session, timeout in: " + secondsUntilTimeout + ")");
-                        pollingStatus.shouldPoll = loginDialog.getExitCode() == DialogWrapper.CANCEL_EXIT_CODE;
+                        pollingStatus.shouldPoll = !loginDialog.wasClosed();
                     }
                 });
             } catch (InterruptedException | InvocationTargetException e) {

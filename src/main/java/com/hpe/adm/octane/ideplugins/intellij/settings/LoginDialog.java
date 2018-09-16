@@ -25,6 +25,7 @@ public class LoginDialog extends DialogWrapper {
 
     public static final String TITLE = "Login to ALM Octane";
     private String loginPageUrl;
+    private boolean wasClosed = false;
 
     public LoginDialog(Project project, String loginPageUrl) {
         super(project, false, IdeModalityType.PROJECT);
@@ -89,6 +90,18 @@ public class LoginDialog extends DialogWrapper {
 
     @NotNull
     @Override
-    protected Action[] createActions() {return new Action[0];}
+    protected Action[] createActions() {
+        return new Action[0];
+    }
+
+    @Override
+    protected void dispose() {
+        wasClosed = true;
+        super.dispose();
+    }
+
+    public boolean wasClosed() {
+        return wasClosed;
+    }
 
 }
