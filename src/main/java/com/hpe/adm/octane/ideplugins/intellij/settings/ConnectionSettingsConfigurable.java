@@ -22,7 +22,7 @@ import com.hpe.adm.octane.ideplugins.services.TestService;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import com.hpe.adm.octane.ideplugins.services.connection.UserAuthentication;
-import com.hpe.adm.octane.ideplugins.services.connection.sso.SsoAuthentication;
+import com.hpe.adm.octane.ideplugins.services.connection.granttoken.GrantTokenAuthentication;
 import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
 import com.hpe.adm.octane.ideplugins.services.nonentity.OctaneVersionService;
 import com.hpe.adm.octane.ideplugins.services.util.OctaneVersion;
@@ -100,7 +100,7 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
             UserAuthentication authentication = (UserAuthentication) connectionSettings.getAuthentication();
             connectionSettingsView.setUserName(authentication.getUserName());
             connectionSettingsView.setPassword(authentication.getPassword());
-        } else if (connectionSettings.getAuthentication() instanceof SsoAuthentication) {
+        } else if (connectionSettings.getAuthentication() instanceof GrantTokenAuthentication) {
             connectionSettingsView.setSsoAuth(true);
         }
 
@@ -270,7 +270,7 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
                         connectionSettingsView.getPassword());
 
         if (connectionSettingsView.isSsoAuth()) {
-            connectionSettings.setAuthentication(new SsoAuthentication());
+            connectionSettings.setAuthentication(new GrantTokenAuthentication());
         }
 
         return connectionSettings;

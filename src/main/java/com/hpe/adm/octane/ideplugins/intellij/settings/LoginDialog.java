@@ -2,6 +2,7 @@ package com.hpe.adm.octane.ideplugins.intellij.settings;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
+import com.intellij.openapi.util.Disposer;
 import com.sun.javafx.application.PlatformImpl;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Group;
@@ -25,12 +26,11 @@ public class LoginDialog extends DialogWrapper {
 
     public static final String TITLE = "Login to ALM Octane";
     private String loginPageUrl;
-    public boolean shouldStopPolling;
 
     public LoginDialog(Project project, String loginPageUrl) {
         super(project, false, IdeModalityType.PROJECT);
         this.loginPageUrl = loginPageUrl;
-        setTitle("Login to ALM Octane");
+        setTitle(TITLE);
         init();
     }
 
@@ -49,6 +49,25 @@ public class LoginDialog extends DialogWrapper {
         jfxPanel.setBorder(new LineBorder(UIManager.getColor("Separator.foreground")));
         contentPane.add(jfxPanel, BorderLayout.CENTER);
 
+        lblOpenSystemBrowser.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                try {
+                    Desktop.getDesktop().browse(new URI(loginPageUrl));
+                    JLabel lblSystemBrowser = new JLabel("Opening login page system browser, waiting for session...");
+                    jfxPanel.setVisible(false);
+                    contentPane.add(lblSystemBrowser, BorderLayout.CENTER);
+                    contentPane.setPreferredSize(new Dimension(-1, -1));
+                    LoginDialog.this.pack();
+                    LoginDialog.this.centerRelativeToParent();
+                } catch (URISyntaxException | IOException ex) {
+                    //It looks like there's a problem
+                }
+            }
+        });
+
+        PlatformImpl.setImplicitExit(false);
+
         PlatformImpl.runLater(() -> {
 
             Group root = new Group();
@@ -65,24 +84,6 @@ public class LoginDialog extends DialogWrapper {
             root.getChildren().add(browser);
 
             jfxPanel.setScene(scene);
-        });
-
-        lblOpenSystemBrowser.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                try {
-                    Desktop.getDesktop().browse(new URI(loginPageUrl));
-                    JLabel lblSystemBrowser = new JLabel("Opening login page system browser, waiting for session...");
-                    jfxPanel.setVisible(false);
-                    contentPane.add(lblSystemBrowser, BorderLayout.CENTER);
-                    contentPane.setPreferredSize(new Dimension(-1, -1));
-                    LoginDialog.this.pack();
-                    LoginDialog.this.centerRelativeToParent();
-                    LoginDialog.this.shouldStopPolling = true;
-                } catch (URISyntaxException | IOException ex) {
-                    //It looks like there's a problem
-                }
-            }
         });
 
         return contentPane;

@@ -14,10 +14,9 @@
 package com.hpe.adm.octane.ideplugins.intellij.settings;
 
 import com.hpe.adm.octane.ideplugins.services.connection.BasicConnectionSettingProvider;
-import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
+
 import com.hpe.adm.octane.ideplugins.services.connection.UserAuthentication;
-import com.hpe.adm.octane.ideplugins.services.connection.sso.SsoAuthentication;
-import com.hpe.adm.octane.ideplugins.services.di.ServiceModule;
+import com.hpe.adm.octane.ideplugins.services.connection.granttoken.GrantTokenAuthentication;
 import com.intellij.ide.passwordSafe.PasswordSafe;
 import com.intellij.ide.passwordSafe.PasswordSafeException;
 import com.intellij.openapi.components.PersistentStateComponent;
@@ -28,8 +27,6 @@ import org.apache.commons.lang.StringUtils;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import javax.xml.ws.ServiceMode;
 
 @State(
         name = "OctanePluginConnectionSettings",
@@ -88,7 +85,7 @@ public class IdePersistentConnectionSettingsProvider extends BasicConnectionSett
             }
 
         }
-        else if (connectionSettings.getAuthentication() instanceof SsoAuthentication) {
+        else if (connectionSettings.getAuthentication() instanceof GrantTokenAuthentication) {
             element.setAttribute(SSO_TAG, Boolean.TRUE.toString());
         }
 
@@ -118,9 +115,9 @@ public class IdePersistentConnectionSettingsProvider extends BasicConnectionSett
             //user pass login
             String username = state.getAttributeValue(USER_TAG) != null ? state.getAttributeValue(USER_TAG) : "";
             String password = decryptPassword();
-            connectionSettings.setAuthentication(new UserAuthentication(username, password, ServiceModule.CLIENT_TYPE.name()));
+            connectionSettings.setAuthentication(new UserAuthentication(username, password));
         } else {
-            connectionSettings.setAuthentication(new SsoAuthentication());
+            connectionSettings.setAuthentication(new GrantTokenAuthentication());
         }
 
     }

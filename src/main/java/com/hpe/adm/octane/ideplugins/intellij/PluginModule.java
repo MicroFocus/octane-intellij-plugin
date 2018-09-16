@@ -29,15 +29,18 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.searchresult.SearchResultEntity
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeCellRenderer;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeView;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
+import com.hpe.adm.octane.ideplugins.services.connection.granttoken.TokenPollingCompleteHandler;
+import com.hpe.adm.octane.ideplugins.services.connection.granttoken.TokenPollingInProgressHandler;
+import com.hpe.adm.octane.ideplugins.services.connection.granttoken.TokenPollingStartedHandler;
 import com.hpe.adm.octane.ideplugins.services.di.ServiceModule;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.DialogWrapper;
 
 import javax.swing.*;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
-
-import static com.hpe.adm.octane.ideplugins.services.connection.sso.SsoLoginGoogleHttpClient.*;
 
 public class PluginModule extends AbstractModule {
 
@@ -53,18 +56,31 @@ public class PluginModule extends AbstractModule {
 
         ConnectionSettingsProvider connectionSettingsProvider = ServiceManager.getService(project, IdePersistentConnectionSettingsProvider.class);
 
-        SsoTokenPollingStartedHandler pollingStartedHandler = loginPageUrl -> SwingUtilities.invokeLater(() -> {
+        TokenPollingStartedHandler pollingStartedHandler = loginPageUrl -> SwingUtilities.invokeLater(() -> {
             loginDialog = new LoginDialog(project, loginPageUrl);
             loginDialog.show();
         });
 
-        SsoTokenPollingInProgressHandler pollingInProgressHandler = (pollingStatus -> SwingUtilities.invokeLater(() -> {
-            if(loginDialog != null) {
-                pollingStatus.shouldPoll = loginDialog.shouldStopPolling;
+        TokenPollingInProgressHandler pollingInProgressHandler = pollingStatus -> {
+            try {
+                SwingUtilities.invokeAndWait(() -> {
+                    if(loginDialog != null) {
+                        pollingStatus.shouldPoll = loginDialog.getExitCode() == DialogWrapper.CANCEL_EXIT_CODE;
+                    }
+                });
+            } catch (InterruptedException | InvocationTargetException e) {
+                e.printStackTrace();
             }
-        }));
+            return pollingStatus;
+        };
 
-        SsoTokenPollingCompleteHandler pollingCompleteHandler = () ->SwingUtilities.invokeLater(() -> loginDialog.close(0 , true));
+        TokenPollingCompleteHandler pollingCompleteHandler = tokenPollingCompletedStatus -> {
+            try {
+                SwingUtilities.invokeAndWait(() -> loginDialog.close(0, true));
+            } catch (InterruptedException | InvocationTargetException e) {
+                e.printStackTrace();
+            }
+        };
 
         ServiceModule serviceModule = new ServiceModule(connectionSettingsProvider, pollingStartedHandler, pollingInProgressHandler, pollingCompleteHandler);
 
