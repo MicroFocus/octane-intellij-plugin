@@ -84,7 +84,7 @@ public class PluginModule extends AbstractModule {
             try {
                 SwingUtilities.invokeAndWait(() -> loginDialog.close(0, true));
             } catch (InterruptedException | InvocationTargetException e) {
-                e.printStackTrace();
+                logger.error(e);
             }
         };
 
