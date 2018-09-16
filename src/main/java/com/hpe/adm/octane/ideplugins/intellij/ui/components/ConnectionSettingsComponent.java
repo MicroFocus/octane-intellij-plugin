@@ -112,21 +112,12 @@ public class ConnectionSettingsComponent implements HasComponent {
 
         addSeparator(rootPanel, 4, "Authentication");
 
-        ssoRadioButton = new JRadioButton("Login using a browser");
-        GridBagConstraints gbc_ssoradioButton = new GridBagConstraints();
-        gbc_ssoradioButton.fill = GridBagConstraints.HORIZONTAL;
-        gbc_ssoradioButton.insets = JBUI.insets(5);
-        gbc_ssoradioButton.gridx = 0;
-        gbc_ssoradioButton.gridy = 5;
-        gbc_ssoradioButton.gridwidth = 2;
-        rootPanel.add(ssoRadioButton, gbc_ssoradioButton);
-
         userPassButton = new JRadioButton("Login with username and password");
         GridBagConstraints gbc_radioButton = new GridBagConstraints();
         gbc_radioButton.fill = GridBagConstraints.HORIZONTAL;
         gbc_radioButton.insets = JBUI.insets(5);
         gbc_radioButton.gridx = 0;
-        gbc_radioButton.gridy = 6;
+        gbc_radioButton.gridy = 5;
         gbc_radioButton.gridwidth = 2;
         rootPanel.add(userPassButton, gbc_radioButton);
 
@@ -135,7 +126,7 @@ public class ConnectionSettingsComponent implements HasComponent {
         gbc_lblUsername.fill = GridBagConstraints.HORIZONTAL;
         gbc_lblUsername.insets = JBUI.insets(5, 25, 5, 0);
         gbc_lblUsername.gridx = 0;
-        gbc_lblUsername.gridy = 7;
+        gbc_lblUsername.gridy = 6;
         rootPanel.add(lblUsername, gbc_lblUsername);
 
         txtFieldUserName = new JTextField();
@@ -143,7 +134,7 @@ public class ConnectionSettingsComponent implements HasComponent {
         gbc_txtFieldUserName.fill = GridBagConstraints.HORIZONTAL;
         gbc_txtFieldUserName.insets = JBUI.insets(5, 15, 5, 0);
         gbc_txtFieldUserName.gridx = 1;
-        gbc_txtFieldUserName.gridy = 7;
+        gbc_txtFieldUserName.gridy = 6;
         rootPanel.add(txtFieldUserName, gbc_txtFieldUserName);
         txtFieldUserName.setColumns(10);
 
@@ -152,7 +143,7 @@ public class ConnectionSettingsComponent implements HasComponent {
         gbc_lblPassword.fill = GridBagConstraints.HORIZONTAL;
         gbc_lblPassword.insets = JBUI.insets(5, 25, 5, 0);
         gbc_lblPassword.gridx = 0;
-        gbc_lblPassword.gridy = 8;
+        gbc_lblPassword.gridy = 7;
         rootPanel.add(lblPassword, gbc_lblPassword);
 
         passField = new JPasswordField();
@@ -160,8 +151,17 @@ public class ConnectionSettingsComponent implements HasComponent {
         gbc_passField.fill = GridBagConstraints.HORIZONTAL;
         gbc_passField.insets = JBUI.insets(5, 15, 5, 0);
         gbc_passField.gridx = 1;
-        gbc_passField.gridy = 8;
+        gbc_passField.gridy = 7;
         rootPanel.add(passField, gbc_passField);
+
+        ssoRadioButton = new JRadioButton("Login using a browser");
+        GridBagConstraints gbc_ssoradioButton = new GridBagConstraints();
+        gbc_ssoradioButton.fill = GridBagConstraints.HORIZONTAL;
+        gbc_ssoradioButton.insets = JBUI.insets(5);
+        gbc_ssoradioButton.gridx = 0;
+        gbc_ssoradioButton.gridy = 8;
+        gbc_ssoradioButton.gridwidth = 2;
+        rootPanel.add(ssoRadioButton, gbc_ssoradioButton);
 
         addSeparator(rootPanel, 9);
 

@@ -67,8 +67,7 @@ public class LoginDialog extends DialogWrapper {
         });
 
         PlatformImpl.setImplicitExit(false);
-
-        PlatformImpl.runLater(() -> {
+        PlatformImpl.runAndWait(() -> {
 
             Group root = new Group();
             Stage stage = new Stage();
