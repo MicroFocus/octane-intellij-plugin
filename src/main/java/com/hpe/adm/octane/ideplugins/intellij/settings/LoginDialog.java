@@ -37,53 +37,77 @@ public class LoginDialog extends DialogWrapper {
     @Nullable
     @Override
     protected JComponent createCenterPanel() {
+
         JPanel contentPane = new JPanel();
         contentPane.setLayout(new BorderLayout(0, 10));
         contentPane.setPreferredSize(new Dimension(800, 600));
 
-        JLabel lblOpenSystemBrowser = new JLabel("<html>If the page below does not display correctly, <a href=\\\"\\\">click here to use your system default browser.</a></html>");
-        lblOpenSystemBrowser.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        contentPane.add(lblOpenSystemBrowser, BorderLayout.NORTH);
+        // We need to check if the jvm running IntelliJ has java fx installed in it, on linux, openjdk can be installed without java fx
+        // TODO: need to do this for the description and the comments as well
+        boolean isJavaFxAvailable;
+        try {
+            this.getClass().getClassLoader().loadClass("javafx.embed.swing.JFXPanel");
+            isJavaFxAvailable = true;
 
-        JFXPanel jfxPanel = new JFXPanel();
-        jfxPanel.setBorder(new LineBorder(UIManager.getColor("Separator.foreground")));
-        contentPane.add(jfxPanel, BorderLayout.CENTER);
+        } catch (ClassNotFoundException e) {
 
-        lblOpenSystemBrowser.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                try {
-                    Desktop.getDesktop().browse(new URI(loginPageUrl));
-                    JLabel lblSystemBrowser = new JLabel("Opening login page system browser, waiting for session...");
-                    jfxPanel.setVisible(false);
-                    contentPane.add(lblSystemBrowser, BorderLayout.CENTER);
-                    contentPane.setPreferredSize(new Dimension(-1, -1));
-                    LoginDialog.this.pack();
-                    LoginDialog.this.centerRelativeToParent();
-                } catch (URISyntaxException | IOException ex) {
-                    //It looks like there's a problem
+            isJavaFxAvailable = false;
+        }
+
+        if(isJavaFxAvailable) {
+
+            JLabel lblOpenSystemBrowser = new JLabel("<html>If the page below does not display correctly, <a href=\\\"\\\">click here to use your system default browser.</a></html>");
+            lblOpenSystemBrowser.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            contentPane.add(lblOpenSystemBrowser, BorderLayout.NORTH);
+
+            JFXPanel jfxPanel = new JFXPanel();
+            jfxPanel.setBorder(new LineBorder(UIManager.getColor("Separator.foreground")));
+            contentPane.add(jfxPanel, BorderLayout.CENTER);
+
+            lblOpenSystemBrowser.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    try {
+                        Desktop.getDesktop().browse(new URI(loginPageUrl));
+                        JLabel lblSystemBrowser = new JLabel("Opening login page system browser, waiting for session...");
+                        jfxPanel.setVisible(false);
+                        contentPane.add(lblSystemBrowser, BorderLayout.CENTER);
+                        contentPane.setPreferredSize(new Dimension(-1, -1));
+                        LoginDialog.this.pack();
+                        LoginDialog.this.centerRelativeToParent();
+                    } catch (URISyntaxException | IOException ex) {
+                        //It looks like there's a problem
+                    }
                 }
-            }
-        });
+            });
 
-        PlatformImpl.setImplicitExit(false);
-        PlatformImpl.runAndWait(() -> {
+            PlatformImpl.setImplicitExit(false);
+            PlatformImpl.runAndWait(() -> {
 
-            Group root = new Group();
-            Stage stage = new Stage();
-            stage.setResizable(true);
+                Group root = new Group();
+                Stage stage = new Stage();
+                stage.setResizable(true);
 
-            Scene scene = new Scene(root, jfxPanel.getWidth(), jfxPanel.getHeight());
-            stage.setScene(scene);
+                Scene scene = new Scene(root, jfxPanel.getWidth(), jfxPanel.getHeight());
+                stage.setScene(scene);
 
-            // Set up the embedded browser:
-            WebView browser = new WebView();
-            WebEngine webEngine = browser.getEngine();
-            webEngine.load(loginPageUrl);
-            root.getChildren().add(browser);
+                // Set up the embedded browser:
+                WebView browser = new WebView();
+                WebEngine webEngine = browser.getEngine();
+                webEngine.load(loginPageUrl);
+                root.getChildren().add(browser);
 
-            jfxPanel.setScene(scene);
-        });
+                jfxPanel.setScene(scene);
+            });
+
+        } else {
+
+            JLabel lblOpenSystemBrowser = new JLabel("<html>Login required, <a href=\\\"\\\">click here to open the login page in your system default browser.</a></html>");
+            lblOpenSystemBrowser.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            contentPane.add(lblOpenSystemBrowser, BorderLayout.CENTER);
+            pack();
+            centerRelativeToParent();
+        }
 
         return contentPane;
     }
