@@ -4,8 +4,6 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.LoadingWidget;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.sun.javafx.application.PlatformImpl;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Worker.State;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Group;
@@ -105,19 +103,20 @@ public class LoginDialog extends DialogWrapper {
 
                 // process page loading
                 webEngine.getLoadWorker().stateProperty().addListener(
-                        (ov, oldState, newState) -> {
-                            browserPanel.remove(jfxPanel);
-                            browserPanel.remove(loadingWidget);
+                        (ov, oldState, newState) ->
+                                SwingUtilities.invokeLater(() -> {
+                                    browserPanel.remove(jfxPanel);
+                                    browserPanel.remove(loadingWidget);
 
-                            if(State.SCHEDULED == newState || State.RUNNING == newState) {
-                                browserPanel.add(jfxPanel, BorderLayout.CENTER);
-                            } else {
-                                browserPanel.add(loadingWidget, BorderLayout.CENTER);
-                            }
+                                    if (State.SCHEDULED == newState || State.RUNNING == newState) {
+                                        browserPanel.add(loadingWidget, BorderLayout.CENTER);
+                                    } else {
+                                        browserPanel.add(jfxPanel, BorderLayout.CENTER);
+                                    }
 
-                            contentPane.repaint();
-                            contentPane.revalidate();
-                        }
+                                    contentPane.repaint();
+                                    contentPane.revalidate();
+                                })
                 );
 
                 webEngine.load(loginPageUrl);
