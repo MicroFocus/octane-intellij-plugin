@@ -36,7 +36,6 @@ import com.hpe.adm.octane.ideplugins.services.di.ServiceModule;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.DialogWrapper;
 
 import javax.swing.*;
 import java.lang.reflect.InvocationTargetException;
