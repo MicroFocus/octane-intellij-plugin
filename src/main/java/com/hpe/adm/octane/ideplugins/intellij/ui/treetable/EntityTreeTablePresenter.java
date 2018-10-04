@@ -17,6 +17,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.hpe.adm.nga.sdk.model.EntityModel;
+import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.eventbus.OpenDetailTabEvent;
 import com.hpe.adm.octane.ideplugins.intellij.eventbus.RefreshMyWorkEvent;
 import com.hpe.adm.octane.ideplugins.intellij.gitcommit.CommitMessageUtils;
@@ -27,6 +28,7 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
 import com.hpe.adm.octane.ideplugins.intellij.ui.tabbedpane.TabbedPanePresenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
 import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
+import com.hpe.adm.octane.ideplugins.services.EntityLabelService;
 import com.hpe.adm.octane.ideplugins.services.EntityService;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.mywork.MyWorkService;
@@ -63,19 +65,17 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.hpe.adm.octane.ideplugins.services.util.Util.getUiDataFromModel;
 
 public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
 
-    private static final EntityIconFactory entityIconFactory = new EntityIconFactory(20, 20, 11, Color.WHITE);
-
     private EntityTreeView entityTreeTableView;
+
+    @Inject
+    private EntityIconFactory iconFactory;
 
     @Inject
     private MyWorkService myWorkService;
@@ -219,8 +219,9 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
             });
             popup.add(viewInBrowserItem);
 
+
             if (TabbedPanePresenter.isDetailTabSupported(entityType)) {
-                Icon icon = new ImageIcon(entityIconFactory.getIconAsImage(entityType));
+                Icon icon = new ImageIcon(iconFactory.getIconAsImage(entityType, 20, 11));
                 JMenuItem viewDetailMenuItem = new JMenuItem("View details", icon);
                 viewDetailMenuItem.addMouseListener(new MouseAdapter() {
                     @Override
@@ -242,7 +243,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
 
                 if (TabbedPanePresenter.isDetailTabSupported(Entity.getEntityType(parentEntityModel))) {
                     //Add option
-                    Icon icon = new ImageIcon(entityIconFactory.getIconAsImage(Entity.getEntityType(parentEntityModel)));
+                    Icon icon = new ImageIcon(iconFactory.getIconAsImage(Entity.getEntityType(parentEntityModel), 20, 11));
                     JMenuItem viewParentMenuItem = new JMenuItem("View parent details", icon);
                     viewParentMenuItem.addMouseListener(new MouseAdapter() {
                         @Override
@@ -457,12 +458,17 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
         getView().addEntityKeyHandler(handler);
     }
 
-    private static EntityTreeModel createEntityTreeModel(Collection<EntityModel> entityModels) {
+    private EntityTreeModel createEntityTreeModel(Collection<EntityModel> entityModels) {
         List<EntityCategory> entityCategories = new ArrayList<>();
+
+        EntityLabelService entityLabelService = PluginModule.getPluginModuleForProject(project).getInstance(EntityLabelService.class);
+        Map<String, EntityModel> entityLabelMap = entityLabelService.getEntityLabelDetails();
+
+
         entityCategories.add(new UserItemEntityCategory("Backlog", Entity.USER_STORY, Entity.DEFECT, Entity.QUALITY_STORY,
                 Entity.EPIC, Entity.FEATURE));
-        entityCategories.add(new UserItemEntityCategory("Requirements", Entity.REQUIREMENT));
-        entityCategories.add(new UserItemEntityCategory("Tasks", Entity.TASK));
+        entityCategories.add(new UserItemEntityCategory(entityLabelMap.get(Entity.REQUIREMENT.getTypeName()).getValue("plural_capitalized").getValue().toString(), Entity.REQUIREMENT));
+        entityCategories.add(new UserItemEntityCategory(entityLabelMap.get(Entity.TASK.getEntityName()).getValue("plural_capitalized").getValue().toString(), Entity.TASK));
         entityCategories.add(new UserItemEntityCategory("Tests", Entity.GHERKIN_TEST, Entity.MANUAL_TEST));
         entityCategories.add(new UserItemEntityCategory("Mention in comments", Entity.COMMENT));
         entityCategories.add(new UserItemEntityCategory("Runs", Entity.MANUAL_TEST_RUN, Entity.TEST_SUITE_RUN));

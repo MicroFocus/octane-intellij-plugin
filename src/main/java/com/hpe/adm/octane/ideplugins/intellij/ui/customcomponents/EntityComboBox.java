@@ -75,7 +75,10 @@ public class EntityComboBox extends JPanel {
         setBorder(new RoundedLineBorder(Color.GRAY, 5));
 
         editorLabel = new JTextField();
+        Color enabledColor = editorLabel.getBackground();
+        setBackground(enabledColor);
         editorLabel.setEditable(false);
+        editorLabel.setBackground(enabledColor);
         editorLabel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
         GridBagConstraints gbc_editorLabel = new GridBagConstraints();
         gbc_editorLabel.anchor = GridBagConstraints.WEST;
@@ -83,6 +86,19 @@ public class EntityComboBox extends JPanel {
         gbc_editorLabel.gridx = 0;
         gbc_editorLabel.weightx = 1.0;
         add(editorLabel, gbc_editorLabel);
+        editorLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (popupFrame == null) {
+                    createPopup();
+                    delayTimer.restart();
+                }
+                popupFrame.setLocation(arrowButton.getLocationOnScreen().x + (int) arrowButton.getBounds().getWidth() - (int) popupFrame.getPreferredSize().getWidth(),
+                        arrowButton.getLocationOnScreen().y + (int) arrowButton.getBounds().getHeight());
+                popupFrame.setVisible(!popupFrame.isVisible());
+
+            }
+        });
 
         separator = new JSeparator(SwingConstants.VERTICAL);
         separator.setBackground(Color.GRAY);
@@ -145,7 +161,7 @@ public class EntityComboBox extends JPanel {
                     selectedEntities.add(entityModel);
                     selectionListeners.forEach(l -> l.valueChanged(new SelectionEvent(e)));
                     editorLabel.setText(menuItem.getText());
-                    popupFrame.setVisible(false);
+                    popupFrame.dispose();
                 }
 
                 @Override
@@ -290,7 +306,7 @@ public class EntityComboBox extends JPanel {
 
             @Override
             public void windowLostFocus(WindowEvent e) {
-                popupFrame.setVisible(false);
+                popupFrame.dispose();
             }
         });
 

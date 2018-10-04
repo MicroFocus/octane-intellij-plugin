@@ -13,6 +13,7 @@
 
 package com.hpe.adm.octane.ideplugins.intellij.settings;
 
+import com.hpe.adm.nga.sdk.exception.OctaneException;
 import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.components.ConnectionSettingsComponent;
@@ -246,14 +247,14 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
                 if (connectionSettingsView != null) connectionSettingsView.setConnectionStatusSuccess();
             });
         } catch (Exception ex) {
-            //handle case when ok button is pressed
             SwingUtilities.invokeLater(() -> {
-                if (connectionSettingsView != null)
-                    if (ex.getMessage().contains("401")) {
+                if (connectionSettingsView != null) {
+                    if (ex instanceof OctaneException && (Long)((OctaneException) ex).getError().getValue("http_status_code").getValue() == 401) {
                         connectionSettingsView.setConnectionStatusError("Invalid username or password.");
                     } else {
-                        connectionSettingsView.setConnectionStatusError(ex.getMessage());
+                        connectionSettingsView.setConnectionStatusError("Failed to connect to octane, please check your server url.");
                     }
+                }
             });
             return null;
         }

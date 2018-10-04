@@ -63,6 +63,9 @@ public class HeaderPanel extends JPanel {
     private EntityService entityService;
 
     @Inject
+    private EntityIconFactory iconFactory;
+
+    @Inject
     public HeaderPanel(PhasePanel phasePanel) {
         this.phasePanel = phasePanel;
 
@@ -258,9 +261,8 @@ public class HeaderPanel extends JPanel {
 
     public void setEntityModel(EntityModelWrapper entityModelWrapper) {
         this.entityModelWrapper = entityModelWrapper;
-        EntityIconFactory entityIconFactory = new EntityIconFactory(26, 26, 12);
         // icon
-        setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(entityModelWrapper.getEntityType())));
+        setEntityIcon(new ImageIcon(iconFactory.getIconAsImage(entityModelWrapper.getEntityType(), 26, 12)));
         // id
         setId(Util.getUiDataFromModel(entityModelWrapper.getValue(DetailsViewDefaultFields.FIELD_ID)));
         // name

@@ -16,11 +16,13 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.treetable;
 import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.nga.sdk.model.FieldModel;
+import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.mywork.MyWorkUtil;
 import com.hpe.adm.octane.ideplugins.services.util.EntityTypeIdPair;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
+import com.intellij.openapi.project.Project;
 import com.intellij.ui.JBColor;
 import org.apache.commons.lang.StringUtils;
 import org.jdesktop.swingx.JXLabel;
@@ -44,6 +46,9 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
 
     @Inject
     private IdePluginPersistentState idePluginPersistentState;
+
+    @Inject
+    private Project project;
 
     static {
         //US
@@ -151,7 +156,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
      * @return
      */
     public static Map<Entity, Set<String>> getEntityFieldMap() {
-        return Collections.unmodifiableMap(entityFields); //ok
+        return Collections.unmodifiableMap(entityFields); //tsais
     }
 
     public static String getSubtypeName(String subtype) {
@@ -186,12 +191,12 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
             Entity entityType = Entity.getEntityType(entityModel);
             Long entityId = Long.valueOf(getUiDataFromModel(entityModel.getValue("id")));
 
-            //Init row panel
-            final EntityModelRow rowPanel;
+            EntityModelRow rowPanel = PluginModule.getPluginModuleForProject(project).getInstance(EntityModelRow.class);
+
             if (selected && hasFocus) {
-                rowPanel = new EntityModelRow(new Color(255, 255, 255));
+                rowPanel.initFocusedUI();
             } else {
-                rowPanel = new EntityModelRow();
+                rowPanel.initUI();
             }
             rowPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, JBColor.border()));
 
@@ -317,7 +322,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
                 String text = getUiDataFromModel(entityModel.getValue("text"));
                 text = " Comment: " + Util.stripHtml(text);
                 FieldModel owner = getContainerItemForCommentModel(entityModel);
-                if(owner != null){
+                if (owner != null) {
                     String ownerId = getUiDataFromModel(owner, "id");
                     String ownerName = getUiDataFromModel(owner, "name");
                     String ownerType = getUiDataFromModel(owner, "type");
