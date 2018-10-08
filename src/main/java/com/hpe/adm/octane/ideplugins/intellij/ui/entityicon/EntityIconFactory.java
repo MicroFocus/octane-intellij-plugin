@@ -17,6 +17,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.services.EntityLabelService;
+import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.intellij.util.ImageLoader;
 import org.jdesktop.swingx.JXLabel;
@@ -65,7 +66,8 @@ public class EntityIconFactory {
     private static final Image activeImg = ImageLoader.loadFromResource(Constants.IMG_ACTIVE_ITEM);
 
     @Inject
-    public EntityIconFactory(EntityLabelService entityLabelService) {
+    public EntityIconFactory(EntityLabelService entityLabelService, ConnectionSettingsProvider connectionSettingsProvider) {
+        connectionSettingsProvider.addChangeHandler(() -> iconComponentMap.clear());
         this.entityLabelService = entityLabelService;
     }
 
