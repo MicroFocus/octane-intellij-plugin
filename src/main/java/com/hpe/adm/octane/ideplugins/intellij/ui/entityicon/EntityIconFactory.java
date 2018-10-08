@@ -15,10 +15,8 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.entityicon;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.services.EntityLabelService;
-import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.intellij.util.ImageLoader;
 import org.jdesktop.swingx.JXLabel;
@@ -29,73 +27,46 @@ import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
 
+/*
+JBColor might not be backwards compatible with prev intellij versions
+ */
+@SuppressWarnings({"UseJBColor", "InspectionUsingGrayColors"})
 @Singleton
 public class EntityIconFactory {
 
+    @Inject
     private EntityLabelService entityLabelService;
 
-    //Detail for unmapped entity type
-    private final IconDetail unmapedEntityIconDetail = new IconDetail(new Color(0, 0, 0, 0), "", true);
+    private final Color fontColor = new Color(255, 255, 255);
 
-    private final String INITIALS = "initials";
+    private final Color unmappedEntityIconColor = new Color(0, 0, 0);
 
-    //map to color and short text
-    private final Map<Entity, IconDetail> iconDetailMap = new HashMap<>();
+    private static final Map<Entity, Color> entityColorMap = new HashMap<>();
+    static {
+        entityColorMap.put(Entity.USER_STORY, new Color(255, 176, 0));
+        entityColorMap.put(Entity.QUALITY_STORY, new Color(51, 193, 128));
+        entityColorMap.put(Entity.DEFECT, new Color(178, 22, 70));
+        entityColorMap.put(Entity.EPIC, new Color(116, 37, 173));
+        entityColorMap.put(Entity.FEATURE, new Color(229, 120, 40));
+        entityColorMap.put(Entity.TASK, new Color(22, 104, 193));
+        entityColorMap.put(Entity.MANUAL_TEST, new Color(0, 171, 243));
+        entityColorMap.put(Entity.GHERKIN_TEST, new Color(0, 169, 137));
+        entityColorMap.put(Entity.TEST_SUITE, new Color(39, 23, 130));
+        entityColorMap.put(Entity.MANUAL_TEST_RUN, new Color(0, 171, 243));
+        entityColorMap.put(Entity.TEST_SUITE_RUN, new Color(0, 171, 243));
+        entityColorMap.put(Entity.AUTOMATED_TEST, new Color(186, 71, 226));
+        entityColorMap.put(Entity.COMMENT, new Color(253, 225, 89));
+        entityColorMap.put(Entity.REQUIREMENT, new Color(11, 142, 172));
+    }
+
     //cache the icons based on size, font and entity
     private Map<Integer, Map<Integer, Map<Entity, JComponent>>> iconComponentMap = new HashMap<>();
-
-    private Color fontColor = new Color(255, 255, 255);
 
     private static final Image activeImg = ImageLoader.loadFromResource(Constants.IMG_ACTIVE_ITEM);
 
     @Inject
-    public EntityIconFactory(ConnectionSettingsProvider connectionSettingsProvider, EntityLabelService entityLabelService) {
+    public EntityIconFactory(EntityLabelService entityLabelService) {
         this.entityLabelService = entityLabelService;
-        connectionSettingsProvider.addChangeHandler(() -> {
-            iconComponentMap.clear();
-            iconDetailMap.clear();
-            init();
-        });
-        init();
-    }
-
-    private void init() {
-        Map<String, EntityModel> entityLabels = entityLabelService.getEntityLabelDetails();
-
-        iconDetailMap.put(Entity.USER_STORY, new IconDetail(new Color(255, 176, 0),
-                entityLabels.get(Entity.USER_STORY.getSubtypeName()).getValue(INITIALS).getValue().toString()));
-        iconDetailMap.put(Entity.QUALITY_STORY, new IconDetail(new Color(51, 193, 128),
-                entityLabels.get(Entity.QUALITY_STORY.getEntityName()).getValue(INITIALS).getValue().toString()));
-        iconDetailMap.put(Entity.DEFECT, new IconDetail(new Color(178, 22, 70),
-                entityLabels.get(Entity.DEFECT.getEntityName()).getValue(INITIALS).getValue().toString()));
-        iconDetailMap.put(Entity.EPIC, new IconDetail(new Color(116, 37, 173),
-                entityLabels.get(Entity.EPIC.getEntityName()).getValue(INITIALS).getValue().toString()));
-        iconDetailMap.put(Entity.FEATURE, new IconDetail(new Color(229, 120, 40),
-                entityLabels.get(Entity.FEATURE.getEntityName()).getValue(INITIALS).getValue().toString()));
-
-        iconDetailMap.put(Entity.TASK, new IconDetail(new Color(22, 104, 193),
-                entityLabels.get(Entity.TASK.getEntityName()).getValue(INITIALS).getValue().toString()));
-
-        iconDetailMap.put(Entity.MANUAL_TEST, new IconDetail(new Color(0, 171, 243),
-                entityLabels.get(Entity.MANUAL_TEST.getEntityName()).getValue(INITIALS).getValue().toString()));
-        iconDetailMap.put(Entity.GHERKIN_TEST, new IconDetail(new Color(0, 169, 137),
-                entityLabels.get(Entity.GHERKIN_TEST.getEntityName()).getValue(INITIALS).getValue().toString()));
-
-        iconDetailMap.put(Entity.TEST_SUITE, new IconDetail(new Color(39, 23, 130),
-                entityLabels.get(Entity.TEST_SUITE.getEntityName()).getValue(INITIALS).getValue().toString()));
-        iconDetailMap.put(Entity.MANUAL_TEST_RUN, new IconDetail(new Color(0, 171, 243),
-                entityLabels.get(Entity.MANUAL_TEST_RUN.getEntityName()).getValue(INITIALS).getValue().toString()));
-        iconDetailMap.put(Entity.TEST_SUITE_RUN, new IconDetail(new Color(0, 171, 243),
-                entityLabels.get(Entity.TEST_SUITE_RUN.getEntityName()).getValue(INITIALS).getValue().toString()));
-        iconDetailMap.put(Entity.AUTOMATED_TEST, new IconDetail(new Color(186, 71, 226),
-                entityLabels.get(Entity.AUTOMATED_TEST.getEntityName()).getValue(INITIALS).getValue().toString()));
-
-
-        iconDetailMap.put(Entity.COMMENT, new IconDetail(new Color(253, 225, 89),
-                entityLabels.get(Entity.COMMENT.getEntityName()).getValue(INITIALS).getValue().toString()));
-        iconDetailMap.put(Entity.REQUIREMENT, new IconDetail(new Color(11, 142, 172),
-                entityLabels.get(Entity.REQUIREMENT.getTypeName()).getValue(INITIALS).getValue().toString()));
-
     }
 
     private JComponent createIconAsComponent(Entity entity, int iconSize, int fontSize) {
@@ -111,7 +82,9 @@ public class EntityIconFactory {
     }
 
     private Image createIconAsImage(Entity entity, int iconSize, int fontSize) {
-        IconDetail iconDetail = iconDetailMap.containsKey(entity) ? iconDetailMap.get(entity) : unmapedEntityIconDetail;
+
+        Color iconColor = entityColorMap.getOrDefault(entity, unmappedEntityIconColor);
+        String iconText =  entityLabelService.getEntityInitials(entity);
 
         BufferedImage image = new BufferedImage(iconSize, iconSize, BufferedImage.TYPE_INT_ARGB);
         Graphics2D bg = image.createGraphics();
@@ -120,17 +93,17 @@ public class EntityIconFactory {
         bg.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         bg.fillRect(0, 0, iconSize, iconSize);
         bg.setComposite(AlphaComposite.SrcOver);
-        bg.setColor(iconDetail.getColor());
+        bg.setColor(iconColor);
 
         bg.fillOval(0, 0, iconSize, iconSize);
         bg.setColor(fontColor);
         bg.setFont(new Font("Arial", Font.BOLD, fontSize));
 
         FontMetrics fm = bg.getFontMetrics();
-        int fontX = (iconSize - fm.stringWidth(iconDetail.getDisplayLabelText()) + 1) / 2;
+        int fontX = (iconSize - fm.stringWidth(iconText) + 1) / 2;
         int fontY = (fm.getAscent() + (iconSize - (fm.getAscent() + fm.getDescent())) / 2);
 
-        bg.drawString(iconDetail.getDisplayLabelText(), fontX, fontY);
+        bg.drawString(iconText, fontX, fontY);
 
         return image;
     }

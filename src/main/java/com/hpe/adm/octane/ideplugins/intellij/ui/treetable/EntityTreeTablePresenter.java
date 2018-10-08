@@ -461,17 +461,21 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
         List<EntityCategory> entityCategories = new ArrayList<>();
 
         EntityLabelService entityLabelService = PluginModule.getPluginModuleForProject(project).getInstance(EntityLabelService.class);
-        Map<String, EntityModel> entityLabelMap = entityLabelService.getEntityLabelDetails();
+        Map<Entity, EntityModel> entityLabelMap = entityLabelService.getEntityLabelDetails();
 
+        entityCategories.add(new UserItemEntityCategory("Backlog",
+                Entity.USER_STORY,
+                Entity.DEFECT,
+                Entity.QUALITY_STORY,
+                Entity.EPIC,
+                Entity.FEATURE));
 
-        entityCategories.add(new UserItemEntityCategory("Backlog", Entity.USER_STORY, Entity.DEFECT, Entity.QUALITY_STORY,
-                Entity.EPIC, Entity.FEATURE));
-        entityCategories.add(new UserItemEntityCategory(entityLabelMap.get(Entity.REQUIREMENT.getTypeName()).getValue("plural_capitalized").getValue().toString(), Entity.REQUIREMENT));
-        entityCategories.add(new UserItemEntityCategory(entityLabelMap.get(Entity.TASK.getEntityName()).getValue("plural_capitalized").getValue().toString(), Entity.TASK));
+        entityCategories.add(new UserItemEntityCategory(entityLabelMap.get(Entity.REQUIREMENT).getValue("plural_capitalized").getValue().toString(), Entity.REQUIREMENT));
+        entityCategories.add(new UserItemEntityCategory(entityLabelMap.get(Entity.TASK).getValue("plural_capitalized").getValue().toString(), Entity.TASK));
         entityCategories.add(new UserItemEntityCategory("Tests", Entity.GHERKIN_TEST, Entity.MANUAL_TEST));
         entityCategories.add(new UserItemEntityCategory("Mention in comments", Entity.COMMENT));
         entityCategories.add(new UserItemEntityCategory("Runs", Entity.MANUAL_TEST_RUN, Entity.TEST_SUITE_RUN));
-        EntityTreeModel model = new EntityTreeModel(entityCategories, entityModels);
-        return model;
+
+        return new EntityTreeModel(entityCategories, entityModels);
     }
 }
