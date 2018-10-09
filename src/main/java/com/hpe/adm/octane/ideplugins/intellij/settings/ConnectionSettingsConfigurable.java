@@ -166,11 +166,11 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
         if (newConnectionSettings != null) {
 
             //If anything other than the password was changed, wipe open tabs and active tab item
-            //if (!newConnectionSettings.equalsExceptPassword(connectionSettingsProvider.getConnectionSettings())) {
-            idePluginPersistentState.clearState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM);
-            idePluginPersistentState.clearState(IdePluginPersistentState.Key.SELECTED_TAB);
-            idePluginPersistentState.clearState(IdePluginPersistentState.Key.OPEN_TABS);
-            //}
+            if (!newConnectionSettings.equalsExceptAuth(connectionSettingsProvider.getConnectionSettings())) {
+                idePluginPersistentState.clearState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM);
+                idePluginPersistentState.clearState(IdePluginPersistentState.Key.SELECTED_TAB);
+                idePluginPersistentState.clearState(IdePluginPersistentState.Key.OPEN_TABS);
+            }
 
             connectionSettingsProvider.setConnectionSettings(newConnectionSettings);
             //remove the hash and remove extra stuff if successful

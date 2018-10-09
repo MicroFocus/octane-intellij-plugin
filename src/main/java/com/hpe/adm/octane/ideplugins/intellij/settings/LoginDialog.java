@@ -4,6 +4,7 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.LoadingWidget;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.sun.javafx.application.PlatformImpl;
+import com.sun.webkit.network.CookieManager;
 import javafx.concurrent.Worker.State;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Group;
@@ -20,6 +21,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.net.CookieHandler;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -89,6 +91,8 @@ public class LoginDialog extends DialogWrapper {
 
             PlatformImpl.setImplicitExit(false);
             PlatformImpl.runAndWait(() -> {
+
+                //CookieHandler.setDefault(new CookieManager());
 
                 Group root = new Group();
                 Stage stage = new Stage();
