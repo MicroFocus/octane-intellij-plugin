@@ -116,6 +116,12 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
             }.execute();
         });
 
+        connectionSettingsView.addResetUserActionListener(e -> {
+            if(connectionSettingsView.isSsoAuth()) {
+                apply();
+            }
+        });
+
         return connectionSettingsView.getComponent();
     }
 
@@ -141,7 +147,17 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
             return false;
         }
 
-        return !viewConnectionSettings.equals(currentConnectionSettings);
+        // compare auth method
+        if(!(currentConnectionSettings.getAuthentication() instanceof GrantTokenAuthentication) && connectionSettingsView.isSsoAuth()) {
+            return true;
+        }
+
+        // compare auth data
+        if(connectionSettingsView.isSsoAuth()) {
+            return !viewConnectionSettings.equalsExceptAuth(currentConnectionSettings);
+        } else {
+            return !viewConnectionSettings.equals(currentConnectionSettings);
+        }
     }
 
     @Override

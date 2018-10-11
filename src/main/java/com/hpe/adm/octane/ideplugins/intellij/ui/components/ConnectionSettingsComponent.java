@@ -22,6 +22,7 @@ import com.intellij.openapi.util.IconLoader;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import org.apache.commons.lang.StringUtils;
+import org.jdesktop.swingx.JXHyperlink;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -52,6 +53,7 @@ public class ConnectionSettingsComponent implements HasComponent {
     private JLabel lblConnectionStatus;
     private JRadioButton userPassButton;
     private JRadioButton ssoRadioButton;
+    private JXHyperlink hyperlinkResetUser;
 
     public ConnectionSettingsComponent() {
         rootPanel = new JPanel();
@@ -193,7 +195,11 @@ public class ConnectionSettingsComponent implements HasComponent {
             }
         });
 
+        hyperlinkResetUser = new JXHyperlink();
+        hyperlinkResetUser.setText("(Change user)");
+
         panelBrowserAuth.add(ssoRadioButton);
+        panelBrowserAuth.add(hyperlinkResetUser);
         panelBrowserAuth.add(lblBrowserAuthInfo);
 
         addSeparator(rootPanel, 9);
@@ -247,9 +253,11 @@ public class ConnectionSettingsComponent implements HasComponent {
             if (userPassButton.isSelected()) {
                 txtFieldUserName.setEnabled(true);
                 passField.setEnabled(true);
+                hyperlinkResetUser.setEnabled(false);
             } else {
                 txtFieldUserName.setEnabled(false);
                 passField.setEnabled(false);
+                hyperlinkResetUser.setEnabled(true);
             }
         });
 
@@ -303,6 +311,10 @@ public class ConnectionSettingsComponent implements HasComponent {
         });
 
         rootPanel.setVisible(true);
+    }
+
+    public void addResetUserActionListener(ActionListener l) {
+        hyperlinkResetUser.addActionListener(l);
     }
 
     private static void addSeparator(JPanel panel, int gridY) {
