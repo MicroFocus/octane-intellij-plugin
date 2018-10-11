@@ -67,7 +67,7 @@ public class EntryPoint implements ToolWindowFactory {
 
         Runnable mainToolWindowContentControl = () -> {
 
-            EntryPoint.this.setContent(toolWindow, () -> new LoadingWidget(), "");
+            EntryPoint.this.setContent(toolWindow, LoadingWidget::new, "");
 
             Task.Backgroundable backgroundTask = new Task.Backgroundable(project, "Loading Workspace", false) {
                 public void run(@NotNull ProgressIndicator indicator) {

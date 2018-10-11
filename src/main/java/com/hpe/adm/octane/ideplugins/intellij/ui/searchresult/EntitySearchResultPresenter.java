@@ -33,7 +33,6 @@ import com.hpe.adm.octane.ideplugins.services.EntityService;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.mywork.MyWorkService;
 import com.hpe.adm.octane.ideplugins.services.nonentity.EntitySearchService;
-import com.hpe.adm.octane.ideplugins.services.util.Util;
 import com.intellij.icons.AllIcons;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -51,8 +50,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-
-import static com.hpe.adm.octane.ideplugins.services.util.Util.getUiDataFromModel;
 
 public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
 
@@ -146,19 +143,18 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
         //Arrays.asList(Entity.values()).forEach(myWorkService::isFollowingEntitySupported);
         setContextMenuFactory(this.entityTreeView);
 
-        entityTreeView.setComponentWhenEmpty(() -> new NoSearchResultsPanel());
+        entityTreeView.setComponentWhenEmpty(NoSearchResultsPanel::new);
     }
 
     private EntityTreeModel createEmptyEntityTreeModel(Collection<EntityModel> entityModels) {
         List<EntityCategory> entityCategories = new ArrayList<>();
-        Map<String, EntityModel> entityLabelMap = entityLabelService.getEntityLabelDetails();
+        Map<Entity, EntityModel> entityLabelMap = entityLabelService.getEntityLabelDetails();
         entityCategories.add(new SearchEntityCategory("Backlog", Entity.USER_STORY, Entity.EPIC, Entity.FEATURE, Entity.QUALITY_STORY));
-        entityCategories.add(new SearchEntityCategory(entityLabelMap.get(Entity.REQUIREMENT.getTypeName()).getValue("plural_capitalized").getValue().toString(), Entity.REQUIREMENT));
-        entityCategories.add(new SearchEntityCategory(entityLabelMap.get(Entity.DEFECT.getEntityName()).getValue("plural_capitalized").getValue().toString(), Entity.DEFECT));
-        entityCategories.add(new SearchEntityCategory(entityLabelMap.get(Entity.TASK.getEntityName()).getValue("plural_capitalized").getValue().toString(), Entity.TASK));
+        entityCategories.add(new SearchEntityCategory(entityLabelMap.get(Entity.REQUIREMENT).getValue("plural_capitalized").getValue().toString(), Entity.REQUIREMENT));
+        entityCategories.add(new SearchEntityCategory(entityLabelMap.get(Entity.DEFECT).getValue("plural_capitalized").getValue().toString(), Entity.DEFECT));
+        entityCategories.add(new SearchEntityCategory(entityLabelMap.get(Entity.TASK).getValue("plural_capitalized").getValue().toString(), Entity.TASK));
         entityCategories.add(new SearchEntityCategory("Tests", Entity.TEST_SUITE, Entity.MANUAL_TEST, Entity.AUTOMATED_TEST, Entity.GHERKIN_TEST));
-        EntityTreeModel model = new EntityTreeModel(entityCategories, entityModels);
-        return model;
+        return new EntityTreeModel(entityCategories, entityModels);
     }
 
     @Inject
@@ -168,9 +164,6 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
         entityTreeView.setEntityContextMenuFactory(entityModel -> {
 
             Entity entityType = Entity.getEntityType(entityModel);
-            String entityName = Util.getUiDataFromModel(entityModel.getValue("name"));
-            Integer entityId = Integer.valueOf(getUiDataFromModel(entityModel.getValue("id")));
-
             JPopupMenu popup = new JPopupMenu();
 
             JMenuItem viewInBrowserItem = new JMenuItem("View in browser", IconLoader.findIcon(Constants.IMG_BROWSER_ICON));
