@@ -29,15 +29,14 @@ import com.intellij.openapi.wm.ToolWindowManager;
 import org.json.JSONObject;
 
 import javax.swing.*;
-import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
 import java.util.HashMap;
 import java.util.Map;
 
 public class ToolbarActiveItem {
 
-    private static EntityIconFactory entityIconFactory = new EntityIconFactory(20, 20, 10, Color.WHITE);
+    @Inject
+    private EntityIconFactory iconFactory;
+
     private static Map<Project, Runnable> activeItemClickHandlers = new HashMap<>();
     private ActiveItemAction activeItemAction;
     private CopyCommitMessageAction copyCommitMessageAction;
@@ -49,7 +48,7 @@ public class ToolbarActiveItem {
 
     private class ActiveItemAction extends AnAction {
 
-        PartialEntity partialEntity;
+        private PartialEntity partialEntity;
 
         public ActiveItemAction(PartialEntity partialEntity) {
             this.partialEntity = partialEntity;
@@ -91,7 +90,7 @@ public class ToolbarActiveItem {
             presentation.setDescription(partialEntity.getEntityName());
             presentation.setText("");
             presentation.setText("#" + partialEntity.getEntityId());
-            presentation.setIcon(new ImageIcon(entityIconFactory.getIconAsImage(partialEntity.getEntityType())));
+            presentation.setIcon(new ImageIcon(iconFactory.getIconAsImage(partialEntity.getEntityType(), 20, 11)));
         }
 
         @Override
@@ -201,8 +200,8 @@ public class ToolbarActiveItem {
                         "ToolbarRunGroup");
         DefaultActionGroup activeItemActionGroup = new DefaultActionGroup();
 
-        Separator first = Separator.create();
-        activeItemActionGroup.add(first, Constraints.FIRST);
+
+        activeItemActionGroup.addSeparator();
         activeItemActionGroup.add(stopActiveItemAction, Constraints.FIRST);
         activeItemActionGroup.add(copyCommitMessageAction, Constraints.FIRST);
         activeItemActionGroup.add(activeItemAction, Constraints.FIRST);

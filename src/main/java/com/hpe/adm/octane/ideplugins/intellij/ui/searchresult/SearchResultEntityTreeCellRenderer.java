@@ -13,11 +13,14 @@
 
 package com.hpe.adm.octane.ideplugins.intellij.ui.searchresult;
 
+import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.model.EntityModel;
+import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityCategory;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeModel;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
+import com.intellij.openapi.project.Project;
 import com.intellij.ui.JBColor;
 import org.jdesktop.swingx.JXLabel;
 
@@ -28,6 +31,13 @@ import java.awt.*;
 import static com.hpe.adm.octane.ideplugins.intellij.ui.detail.DetailsViewDefaultFields.FIELD_DESCRIPTION;
 
 public class SearchResultEntityTreeCellRenderer implements TreeCellRenderer {
+
+    @Inject
+    private Project project;
+
+    public SearchResultEntityTreeCellRenderer() {
+        super();
+    }
 
     @Override
     public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
@@ -57,12 +67,12 @@ public class SearchResultEntityTreeCellRenderer implements TreeCellRenderer {
             EntityModel entityModel = (EntityModel) value;
             Long entityId = Long.valueOf(Util.getUiDataFromModel(entityModel.getValue("id")));
 
-            SearchEntityModelRow rowPanel;
 
+            SearchEntityModelRow rowPanel = PluginModule.getPluginModuleForProject(project).getInstance(SearchEntityModelRow.class);
             if (selected && hasFocus) {
-                rowPanel = new SearchEntityModelRow(new Color(255, 255, 255));
+                rowPanel.initFocusedUI();
             } else {
-                rowPanel = new SearchEntityModelRow();
+                rowPanel.initUI();
             }
 
             rowPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, JBColor.border()));

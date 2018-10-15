@@ -29,7 +29,6 @@ import com.intellij.openapi.actionSystem.impl.ActionToolbarImpl;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ui.JBUI;
-import com.intellij.util.ui.UIUtil;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -62,6 +61,9 @@ public class HeaderPanel extends JPanel {
 
     @Inject
     private EntityService entityService;
+
+    @Inject
+    private EntityIconFactory iconFactory;
 
     @Inject
     public HeaderPanel(PhasePanel phasePanel) {
@@ -259,9 +261,8 @@ public class HeaderPanel extends JPanel {
 
     public void setEntityModel(EntityModelWrapper entityModelWrapper) {
         this.entityModelWrapper = entityModelWrapper;
-        EntityIconFactory entityIconFactory = new EntityIconFactory(26, 26, 12);
         // icon
-        setEntityIcon(new ImageIcon(entityIconFactory.getIconAsImage(entityModelWrapper.getEntityType())));
+        setEntityIcon(new ImageIcon(iconFactory.getIconAsImage(entityModelWrapper.getEntityType(), 26, 12)));
         // id
         setId(Util.getUiDataFromModel(entityModelWrapper.getValue(DetailsViewDefaultFields.FIELD_ID)));
         // name
