@@ -13,7 +13,7 @@
 
 package com.hpe.adm.octane.ideplugins.intellij.settings;
 
-import com.hpe.adm.nga.sdk.exception.OctaneException;
+import com.google.api.client.http.HttpResponseException;
 import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.components.ConnectionSettingsComponent;
@@ -51,12 +51,13 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
     private ConnectionSettingsProvider connectionSettingsProvider;
     private TestService testService;
     private IdePluginPersistentState idePluginPersistentState;
-    private ConnectionSettingsComponent connectionSettingsView = new ConnectionSettingsComponent();
+    private ConnectionSettingsComponent connectionSettingsView;
     private SearchHistoryManager searchManager;
     private boolean pinMessage = false;
 
     public ConnectionSettingsConfigurable(@NotNull final Project currentProject) {
         PluginModule module = PluginModule.getPluginModuleForProject(currentProject);
+        connectionSettingsView = new ConnectionSettingsComponent(currentProject);
         connectionSettingsProvider = module.getInstance(ConnectionSettingsProvider.class);
         testService = module.getInstance(TestService.class);
         idePluginPersistentState = module.getInstance(IdePluginPersistentState.class);
@@ -105,16 +106,14 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
             connectionSettingsView.setSsoAuth(true);
         }
 
-        connectionSettingsView.setTestConnectionActionListener(event -> {
-            new SwingWorker<Void, Void>() {
-                @Override
-                protected Void doInBackground() throws Exception {
-                    connectionSettingsView.setConnectionStatusLabelVisible(false);
-                    testConnection();
-                    return null;
-                }
-            }.execute();
-        });
+        connectionSettingsView.setTestConnectionActionListener(event -> new SwingWorker<Void, Void>() {
+            @Override
+            protected Void doInBackground() {
+                connectionSettingsView.setConnectionStatusLabelVisible(false);
+                testConnection();
+                return null;
+            }
+        }.execute());
 
         connectionSettingsView.addResetUserActionListener(e -> {
             if(connectionSettingsView.isSsoAuth()) {
@@ -127,6 +126,9 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
 
     @Override
     public boolean isModified() {
+
+        connectionSettingsView.refreshProxySettingsLabel();
+
         //If it's empty and different allow apply
         if (isViewConnectionSettingsEmpty() && !connectionSettingsProvider.getConnectionSettings().isEmpty()) {
             return true;
@@ -213,14 +215,12 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
         } catch (Exception ex) {
             version = OctaneVersionService.fallbackVersion;
 
-            StringBuilder message = new StringBuilder();
+            String message = "Failed to determine Octane server version, http call to " +
+                    OctaneVersionService.getServerVersionUrl(connectionSettings) +
+                    " failed. Assuming server version is higher or equal to: " +
+                    version.getVersionString();
 
-            message.append("Failed to determine Octane server version, http call to ")
-                    .append(OctaneVersionService.getServerVersionUrl(connectionSettings))
-                    .append(" failed. Assuming server version is higher or equal to: ")
-                    .append(version.getVersionString());
-
-            showWarningBallon(message.toString());
+            showWarningBallon(message);
         }
     }
 
@@ -252,26 +252,31 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
         try {
             connectionSettingsView.setConnectionStatusLoading();
 
-            testOctaneVersion(newConnectionSettings);
-
             //This will attempt a connection
-            if (!connectionSettingsView.isSsoAuth()) {
-                testService.testConnection(newConnectionSettings);
-            }
+            testService.testConnection(newConnectionSettings);
+
+            testOctaneVersion(newConnectionSettings);
 
             SwingUtilities.invokeLater(() -> {
                 if (connectionSettingsView != null) connectionSettingsView.setConnectionStatusSuccess();
             });
+
         } catch (Exception ex) {
+
             SwingUtilities.invokeLater(() -> {
                 if (connectionSettingsView != null) {
-                    if (ex instanceof OctaneException && (Long)((OctaneException) ex).getError().getValue("http_status_code").getValue() == 401) {
-                        connectionSettingsView.setConnectionStatusError("Invalid username or password.");
-                    } else {
-                        connectionSettingsView.setConnectionStatusError("Failed to connect to octane, please check your server url.");
+                    if (ex instanceof RuntimeException && ex.getCause() != null && ex.getCause() instanceof HttpResponseException) {
+                        HttpResponseException responseException = (HttpResponseException) ex.getCause();
+                        if(responseException.getStatusCode() == 401) {
+                            connectionSettingsView.setConnectionStatusError("Invalid username or password.");
+                        }
+                    }
+                    else {
+                        connectionSettingsView.setConnectionStatusError("Failed to connect to octane: " + ex.getMessage());
                     }
                 }
             });
+
             return null;
         }
 
@@ -328,7 +333,7 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
             errorMessageBuilder.append(ex.getMessage());
             errorMessageBuilder.append(Constants.CORRECT_URL_FORMAT_MESSAGE);
             SwingUtilities.invokeLater(() -> {
-                if (connectionSettingsView != null) connectionSettingsView.setConnectionStatusError(ex.getMessage());
+                if (connectionSettingsView != null) connectionSettingsView.setConnectionStatusError(errorMessageBuilder.toString());
             });
 
             throw ex;
