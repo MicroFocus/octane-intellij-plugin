@@ -54,6 +54,7 @@ import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vcs.VcsShowConfirmationOption;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.refactoring.ui.InfoDialog;
 import com.intellij.util.ui.ConfirmationDialog;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -96,6 +97,31 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
 
     @Inject
     private Project project;
+
+    // FOR MARIUS START
+
+    public class OktaneGoogleAction extends AnAction {
+
+        public OktaneGoogleAction() {
+            super("OKtaneGoogle", "OKtaneGoogle", AllIcons.Actions.Find);
+        }
+
+        public void actionPerformed(AnActionEvent e) {
+            Collection<EntityModel> entityModels = myWorkService.getMyWork();
+
+            String myWorkEntitiesString =
+                    entityModels
+                            .stream()
+                            .map(MyWorkUtil::getEntityModelFromUserItem)
+                            .map(entityModel -> entityModel.getValue("name").getValue().toString())
+                            .collect(Collectors.joining("\n"));
+
+            InfoDialog infoDialog = new InfoDialog(myWorkEntitiesString, e.getProject());
+            infoDialog.show();
+        }
+    }
+
+    // FOR MARIUS END
 
     public EntityTreeTablePresenter() {
     }
@@ -192,6 +218,9 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
         entityTreeTableView.addActionToToolbar(new EntityTreeView.ExpandNodesAction(entityTreeTableView));
         entityTreeTableView.addActionToToolbar(new EntityTreeView.CollapseNodesAction(entityTreeTableView));
         entityTreeTableView.addSeparatorToToolbar();
+
+        // FOR MARIUS
+        entityTreeTableView.addActionToToolbar(new OktaneGoogleAction());
 
         //Also register event handler
         eventBus.register((RefreshMyWorkEvent.RefreshMyWorkEventListener) refreshMyWorkEvent -> refresh());
