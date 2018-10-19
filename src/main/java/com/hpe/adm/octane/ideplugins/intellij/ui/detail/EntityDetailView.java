@@ -33,6 +33,7 @@ import com.hpe.adm.octane.ideplugins.services.model.EntityModelWrapper;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.JBColor;
@@ -51,6 +52,8 @@ import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
 import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS;
 
 public class EntityDetailView extends JPanel implements View, Scrollable {
+
+    private static final Logger logger = Logger.getInstance(EntityDetailView.class.getName());
 
     private EntityModelWrapper entityModelWrapper;
     private JBScrollPane component = new JBScrollPane(new LoadingWidget());
@@ -236,9 +239,18 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
         commentsPanel.addSendNewCommentAction(e -> {
             try {
                 commentService.postComment(entityModelWrapper.getEntityModel(), getCommentMessageBoxText());
-            } catch (OctaneException oe) {
-                ExceptionHandler exceptionHandler = new ExceptionHandler(oe, project);
+
+            } catch (OctaneException octaneException) {
+                ExceptionHandler exceptionHandler = new ExceptionHandler(octaneException, project);
                 exceptionHandler.showErrorNotification();
+                logger.error(octaneException);
+
+            }
+            catch (Exception genericException) {
+                ExceptionHandler exceptionHandler = new ExceptionHandler(genericException, project);
+                exceptionHandler.showErrorNotification();
+
+                logger.error(genericException);
             }
             commentsPanel.setCommentMessageBoxText("");
             setComments(entityModelWrapper);
