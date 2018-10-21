@@ -228,7 +228,7 @@ public class ConnectionSettingsComponent implements HasComponent {
         panelTestConnection.setLayout(panelTestConnectionGridBagLayout);
 
         JXHyperlink hyperlinkSettings = new JXHyperlink();
-        hyperlinkSettings.setText("IDE proxy settings: ");
+        hyperlinkSettings.setText("Global IDE proxy settings");
         hyperlinkSettings.addActionListener(event -> HttpConfigurable.editConfigurable(null));
         GridBagConstraints gbc_hyperlinkSettings = new GridBagConstraints();
         gbc_hyperlinkSettings.insets = JBUI.insets(0, 5, 5, 5);
@@ -522,10 +522,10 @@ public class ConnectionSettingsComponent implements HasComponent {
 
         List<Pair<String, String>> proxySettings = HttpConfigurable.getInstance().getJvmProperties(true, uri);
 
-        String proxyValues = "";
+        String proxyValues = "<b>Detected proxy for current server url:</b><br>";
 
         if(proxySettings.size() == 0) {
-            proxyValues += "No proxy configured.";
+            proxyValues += "No proxy detected.";
 
         } else {
             proxyValues +=
