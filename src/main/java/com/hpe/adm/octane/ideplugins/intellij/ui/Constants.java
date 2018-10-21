@@ -57,7 +57,7 @@ public class Constants {
         if (UIUtil.isUnderDarcula()) {
             return IMG_TRANSPARENT;
         } else {
-            return IMAGE_FOLDER_PATH + "octane_remove_dark.png";
+            return IMAGE_FOLDER_PATH + "octane_remove_light.png";
         }
     }
 
