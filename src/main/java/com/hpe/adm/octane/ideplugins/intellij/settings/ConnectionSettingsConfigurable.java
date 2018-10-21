@@ -204,11 +204,11 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
             version = OctaneVersionService.getOctaneVersion(connectionSettings);
             version.discardBuildNumber();
             if (version.compareTo(OctaneVersion.DYNAMO) < 0) {
-                showWarningBallon("Octane version not supported. This plugin works with Octane versions starting " + OctaneVersion.DYNAMO.getVersionString());
+                showWarningBalloon("Octane version not supported. This plugin works with Octane versions starting " + OctaneVersion.DYNAMO.getVersionString());
             }
 
             if (version.compareTo(new OctaneVersion("12.60.14")) < 0) {
-                showWarningBallon("Login with browser is only supported starting from Octane server version: " + OctaneVersion.INTER_P2.getVersionString());
+                showWarningBalloon("Login with browser is only supported starting from Octane server version: " + OctaneVersion.INTER_P2.getVersionString());
                 connectionSettingsView.setSsoAuth(false);
             }
 
@@ -220,11 +220,11 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
                     " failed. Assuming server version is higher or equal to: " +
                     version.getVersionString();
 
-            showWarningBallon(message);
+            showWarningBalloon(message);
         }
     }
 
-    private void showWarningBallon(String message) {
+    private void showWarningBalloon(String message) {
         Balloon balloon = JBPopupFactory.getInstance().createHtmlTextBalloonBuilder(message,
                 MessageType.WARNING, null)
                 .setCloseButtonEnabled(true)
