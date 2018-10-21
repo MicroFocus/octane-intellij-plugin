@@ -35,8 +35,11 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class PhaseDropDownMenu extends JPanel {
+
+    private static final Color enabledColor = new Color(30, 144, 255);
     private static final String MOVE_TO = "Move to: ";
     private static final String MOVED_TO = "Moved to: ";
+    private static final String LOADING_PHASE = "Loading phase ...";
     private static final String TOOLTIP_BLOCKED_PHASE = "You must save first before doing any more changes to phase";
     private static final String TOOLTIP_CLICKABLE_PHASE = "Click here to choose your desired next phase";
 
@@ -60,10 +63,12 @@ public class PhaseDropDownMenu extends JPanel {
         setLayout(gbl_phasePanel);
         labelPhaseMap = new HashMap<>();
 
-        targetPhaseLabel = new JLabel(MOVE_TO + "Loading phase ...");
-        targetPhaseLabel.setForeground(new Color(30, 144, 255));
+        targetPhaseLabel = new JLabel(LOADING_PHASE);
+        targetPhaseLabel.setEnabled(false);
+
         targetPhaseLabel.setFont(new Font(targetPhaseLabel.getFont().getName(), Font.BOLD, 14));
         targetPhaseLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
         GridBagConstraints gbc_targetPhaseLabel = new GridBagConstraints();
         gbc_targetPhaseLabel.anchor = GridBagConstraints.WEST;
         gbc_targetPhaseLabel.weightx = 0.9;
@@ -82,6 +87,7 @@ public class PhaseDropDownMenu extends JPanel {
     public void setPhaseDetails(FieldModel currentPhase) {
         // re enable the target phase if the user changed the phase
         targetPhaseLabel.setEnabled(true);
+        targetPhaseLabel.setForeground(enabledColor);
         this.selectedPhase = currentPhase;
     }
 
