@@ -88,10 +88,6 @@ public class EntryPoint implements ToolWindowFactory {
                         SharedSpaceLevelRequestService sharedSpaceLevelRequestService = pluginModule.getInstance(SharedSpaceLevelRequestService.class);
                         String workspaceDisplayName = " [" + sharedSpaceLevelRequestService.getCurrentWorkspaceName() + "]";
 
-                        //Eager init the metadata service, it's an eager singleton
-                        MetadataService metadataService = pluginModule.getInstance(MetadataService.class);
-                        metadataService.eagerInit(Entity.values());
-
                         SwingUtilities.invokeAndWait(() -> {
                             //Create the presenter hierarchy, DI will inject view instances
                             MainPresenter mainPresenter = pluginModule.getInstance(MainPresenter.class);

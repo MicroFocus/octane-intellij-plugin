@@ -76,7 +76,7 @@ public class ReferenceFieldEditor extends FieldEditor {
 
         clearSelection = new JLabel();
         clearSelection.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        clearSelection.setIcon(IconLoader.findIcon(Constants.IMG_REMOVE_SELECTION));
+        clearSelection.setIcon(IconLoader.findIcon(Constants.getOctaneRemoveIcon()));
         clearSelection.addMouseListener(mouseListener);
     }
 
@@ -102,7 +102,7 @@ public class ReferenceFieldEditor extends FieldEditor {
             } else {
                 throw new RuntimeException("Failed to set value of the Reference field model, field value and metadata not compatible");
             }
-            clearSelection.setIcon(IconLoader.findIcon(Constants.IMG_REMOVE_SELECTION));
+            clearSelection.setIcon(IconLoader.findIcon(Constants.getOctaneRemoveIcon()));
             clearSelection.setCursor(new Cursor(Cursor.HAND_CURSOR));
             clearSelection.addMouseListener(mouseListener);
         } else {
@@ -124,13 +124,13 @@ public class ReferenceFieldEditor extends FieldEditor {
     }
 
     private void disableArrowButton() {
-        clearSelection.setIcon(IconLoader.findIcon(Constants.IMG_REMOVE_SELECTION_DISABLED));
+        clearSelection.setIcon(IconLoader.findIcon(Constants.getOctaneRemoveDisabledIcon()));
         clearSelection.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         clearSelection.removeMouseListener(mouseListener);
     }
 
     private void enableArrowButton() {
-        clearSelection.setIcon(IconLoader.findIcon(Constants.IMG_REMOVE_SELECTION));
+        clearSelection.setIcon(IconLoader.findIcon(Constants.getOctaneRemoveIcon()));
         clearSelection.setCursor(new Cursor(Cursor.HAND_CURSOR));
         clearSelection.addMouseListener(mouseListener);
     }
