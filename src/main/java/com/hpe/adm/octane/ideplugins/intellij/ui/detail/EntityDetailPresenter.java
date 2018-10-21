@@ -17,6 +17,7 @@ import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.exception.OctaneException;
 import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
 import com.hpe.adm.nga.sdk.model.StringFieldModel;
+import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.BusinessErrorReportingDialog;
@@ -31,17 +32,15 @@ import com.hpe.adm.octane.ideplugins.services.nonentity.ImageService;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
+import org.json.JSONObject;
 
 import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 public class EntityDetailPresenter implements Presenter<EntityDetailView> {
-
-    private static final Logger logger = Logger.getInstance(EntityDetailPresenter.class.getName());
 
     @Inject
     private Project project;
@@ -51,6 +50,9 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
     private MetadataService metadataService;
     @Inject
     private ImageService imageService;
+
+    @Inject
+    private IdePluginPersistentState idePluginPersistentState;
 
     private Long entityId;
     private Entity entityType;
@@ -79,6 +81,15 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
         entityDetailView.setupCommentsButton();
 
     }
+
+    private IdePluginPersistentState.SettingsChangedHandler fieldSettingsChangedHandler = new IdePluginPersistentState.SettingsChangedHandler() {
+        @Override
+        public void stateChanged(IdePluginPersistentState.Key key, JSONObject value) {
+            if(key == IdePluginPersistentState.Key.SELECTED_FIELDS) {
+                entityDetailView.redrawFields();
+            }
+        }
+    };
 
     public void setEntity(Entity entityType, Long entityId) {
         this.entityType = entityType;
@@ -121,16 +132,21 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                 (entityModelWrapper) -> {
                     if (entityModelWrapper != null) {
                         entityDetailView.setEntityModel(entityModelWrapper, fields);
+                        entityModelWrapper.addFieldModelChangedHandler((e) -> stateChanged = true);
                     }
-                    entityModelWrapper.addFieldModelChangedHandler((e) -> {
-                        stateChanged = true;
-                    });
                 },
                 null,
                 null,
                 "Loading entity " + entityType.name() + ": " + entityId);
+
+        idePluginPersistentState.addStateChangedHandler(fieldSettingsChangedHandler);
     }
 
+    @Override
+    public void closing() {
+        idePluginPersistentState.removeStateChangedHandler(fieldSettingsChangedHandler);
+        fields.clear();
+    }
 
     private final class EntityRefreshAction extends AnAction {
         public EntityRefreshAction() {

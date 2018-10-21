@@ -59,13 +59,16 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
     private JBScrollPane component = new JBScrollPane(new LoadingWidget());
 
     private HeaderPanel headerPanel;
-    private EntityFieldsPanel entityFieldsPanel;
-    private CommentsConversationPanel commentsPanel;
-    private HTMLPresenterFXPanel descriptionPanel;
-    private SelectFieldsAction fieldsSelectAction;
-    private Collection<FieldMetadata> fields;
 
-    private FieldsSelectPopup fieldsPopup;
+    private EntityFieldsPanel entityFieldsPanel;
+
+    private CommentsConversationPanel commentsPanel;
+
+    private HTMLPresenterFXPanel descriptionPanel;
+
+    private SelectFieldsAction fieldsSelectAction;
+
+    private Collection<FieldMetadata> fields;
 
     @Inject
     private FieldsUtil fieldsUtil;
@@ -78,7 +81,6 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
 
     @Inject
     public EntityDetailView(HeaderPanel headerPanel, EntityFieldsPanel entityFieldsPanel, CommentsConversationPanel commentsPanel, HTMLPresenterFXPanel descriptionPanel) {
-
 
         this.headerPanel = headerPanel;
         this.entityFieldsPanel = entityFieldsPanel;
@@ -167,6 +169,7 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
 
     public void setEntityModel(EntityModelWrapper entityModelWrapper, Collection<FieldMetadata> fields) {
         this.entityModelWrapper = entityModelWrapper;
+
         this.fields = fields;
         // set header data
         headerPanel.setEntityModel(entityModelWrapper);
@@ -174,13 +177,19 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
         setupComments(entityModelWrapper);
         // add description data
         setupDescription(entityModelWrapper);
+
         // set fields data
-        entityFieldsPanel.setFields(fields);
+        entityFieldsPanel.setFieldMetadata(fields);
+
         entityFieldsPanel.setEntityModel(entityModelWrapper, fieldsUtil.retrieveSelectedFieldsForEntity(entityModelWrapper.getEntityType()));
 
         fieldsSelectAction.setDefaultFieldsIcon(fieldsUtil.isDefaultState(entityModelWrapper.getEntityType()));
 
         component.setViewportView(this);
+    }
+
+    public void redrawFields() {
+        entityFieldsPanel.setEntityModel(entityModelWrapper, fieldsUtil.retrieveSelectedFieldsForEntity(entityModelWrapper.getEntityType()));
     }
 
     private void setupDescription(EntityModelWrapper entityModelWrapper) {
@@ -283,12 +292,13 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
     }
 
     public void showFieldsSettings() {
-        fieldsPopup = PluginModule.getPluginModuleForProject(project).getInstance(FieldsSelectPopup.class);
+        FieldsSelectPopup fieldsPopup = PluginModule.getPluginModuleForProject(project).getInstance(FieldsSelectPopup.class);
+
         fieldsPopup.setEntityDetails(entityModelWrapper, fields, fieldsSelectAction);
-        fieldsPopup.addSelectionListener(e -> entityFieldsPanel.setEntityModel(entityModelWrapper, fieldsPopup.getSelectedFields()));
-        fieldsPopup.addPersistentStateListener();
+
         fieldsPopup.setLocation(headerPanel.getFieldsPopupLocation().x - (int) fieldsPopup.getPreferredSize().getWidth(),
                 headerPanel.getFieldsPopupLocation().y);
+
         fieldsPopup.setVisible(!fieldsPopup.isVisible());
     }
 
