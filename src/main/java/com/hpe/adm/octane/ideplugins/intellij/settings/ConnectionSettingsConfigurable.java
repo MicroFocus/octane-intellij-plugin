@@ -207,9 +207,11 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
                 showWarningBalloon("Octane version not supported. This plugin works with Octane versions starting " + OctaneVersion.DYNAMO.getVersionString());
             }
 
-            if (version.compareTo(new OctaneVersion("12.60.14")) < 0) {
-                showWarningBalloon("Login with browser is only supported starting from Octane server version: " + OctaneVersion.INTER_P2.getVersionString());
-                connectionSettingsView.setSsoAuth(false);
+            if(connectionSettingsView.isSsoAuth()) {
+                if (version.compareTo(new OctaneVersion("12.60.14")) < 0) {
+                    showWarningBalloon("Login with browser is only supported starting from Octane server version: " + OctaneVersion.INTER_P2.getVersionString());
+                    connectionSettingsView.setSsoAuth(false);
+                }
             }
 
         } catch (Exception ex) {
