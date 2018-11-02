@@ -119,7 +119,7 @@
     ]]>
     </change-notes>
 
-    <idea-version since-build="162"/>
+    <idea-version since-build="163"/>
 
     <extensions defaultExtensionNs="com.intellij">
         <toolWindow factoryClass="com.hpe.adm.octane.ideplugins.intellij.ui.EntryPoint" anchor="bottom"
