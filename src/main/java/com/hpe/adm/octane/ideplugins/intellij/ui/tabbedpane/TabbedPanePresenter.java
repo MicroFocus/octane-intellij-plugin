@@ -46,6 +46,8 @@ import org.json.JSONObject;
 
 import javax.swing.*;
 import java.awt.event.KeyEvent;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.*;
 
@@ -96,6 +98,7 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
     private Project project;
 
     private BiMap<PartialEntity, TabInfo> detailTabInfo = HashBiMap.create();
+    private Map<PartialEntity, EntityDetailPresenter> detailTabPresenterMap = new HashMap<>();
 
     @Inject
     private IdePluginPersistentState idePluginPersistentState;
@@ -145,12 +148,16 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
 
         PartialEntity tabKey = new PartialEntity(entityId, entityName, entityType);
         ImageIcon tabIcon = new ImageIcon(iconFactory.getIconAsImage(entityType, 22, 11));
+
         TabInfo tabInfo = tabbedPaneView.addTab(
                 String.valueOf(entityId),
                 entityName,
                 tabIcon,
                 presenter.getView().getComponent());
+
         detailTabInfo.put(tabKey, tabInfo);
+        detailTabPresenterMap.put(tabKey, presenter);
+
         saveDetailTabsToPersistentState();
     }
 
@@ -235,7 +242,7 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
     }
 
     private void initHandlers() {
-        tabbedPaneView.setSearchRequestHandler(query -> openSearchTab(query));
+        tabbedPaneView.setSearchRequestHandler(this::openSearchTab);
 
         //TODO atoth: should only save once at the end
         tabbedPaneView.addTabsListener(new TabsListener.Adapter() {
@@ -249,7 +256,18 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
                 if (tabToRemove == searchTab) {
                     searchTab = null;
                 }
+
+                PartialEntity partialEntity = detailTabInfo.inverse().get(tabToRemove);
+
+                if(detailTabPresenterMap.containsKey(partialEntity)) {
+                    EntityDetailPresenter entityDetailPresenter = detailTabPresenterMap.get(partialEntity);
+                    entityDetailPresenter.closing();
+                    detailTabPresenterMap.remove(partialEntity);
+                }
+
                 saveDetailTabsToPersistentState();
+
+                detailTabInfo.remove(partialEntity);
             }
 
             @Override

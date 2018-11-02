@@ -18,7 +18,10 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.HasComponent;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
 import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
 import com.hpe.adm.octane.ideplugins.services.util.UrlParser;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
+import com.intellij.openapi.util.Pair;
+import com.intellij.util.net.HttpConfigurable;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import org.apache.commons.lang.StringUtils;
@@ -29,6 +32,10 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.*;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ConnectionSettingsComponent implements HasComponent {
 
@@ -54,8 +61,9 @@ public class ConnectionSettingsComponent implements HasComponent {
     private JRadioButton userPassButton;
     private JRadioButton ssoRadioButton;
     private JXHyperlink hyperlinkResetUser;
+    private JLabel lblProxySettings;
 
-    public ConnectionSettingsComponent() {
+    public ConnectionSettingsComponent(Project project) {
         rootPanel = new JPanel();
         GridBagLayout gridBagLayout = new GridBagLayout();
         gridBagLayout.columnWeights = new double[]{0.0, 1.0};
@@ -219,12 +227,32 @@ public class ConnectionSettingsComponent implements HasComponent {
         panelTestConnectionGridBagLayout.columnWeights = new double[]{0.0, 1.0};
         panelTestConnection.setLayout(panelTestConnectionGridBagLayout);
 
+        JXHyperlink hyperlinkSettings = new JXHyperlink();
+        hyperlinkSettings.setText("Global IDE proxy settings");
+        hyperlinkSettings.addActionListener(event -> HttpConfigurable.editConfigurable(null));
+        GridBagConstraints gbc_hyperlinkSettings = new GridBagConstraints();
+        gbc_hyperlinkSettings.insets = JBUI.insets(0, 5, 5, 5);
+        gbc_hyperlinkSettings.fill = GridBagConstraints.HORIZONTAL;
+        gbc_hyperlinkSettings.gridx = 0;
+        gbc_hyperlinkSettings.gridy = 0;
+        gbc_hyperlinkSettings.gridwidth = 2;
+        panelTestConnection.add(hyperlinkSettings, gbc_hyperlinkSettings);
+
+        lblProxySettings = new JLabel();
+        GridBagConstraints gbc_lblProxySettings = new GridBagConstraints();
+        gbc_lblProxySettings.insets = JBUI.insets(0, 5, 5, 5);
+        gbc_lblProxySettings.fill = GridBagConstraints.HORIZONTAL;
+        gbc_lblProxySettings.gridx = 0;
+        gbc_lblProxySettings.gridy = 1;
+        gbc_lblProxySettings.gridwidth = 2;
+        panelTestConnection.add(lblProxySettings, gbc_lblProxySettings);
+
         btnTest = new JButton("Test connection");
         GridBagConstraints gbc_btnTest = new GridBagConstraints();
         gbc_btnTest.anchor = GridBagConstraints.NORTHWEST;
         gbc_btnTest.fill = GridBagConstraints.HORIZONTAL;
         gbc_btnTest.gridx = 0;
-        gbc_btnTest.gridy = 0;
+        gbc_btnTest.gridy = 2;
 
         panelTestConnection.add(btnTest, gbc_btnTest);
 
@@ -233,16 +261,18 @@ public class ConnectionSettingsComponent implements HasComponent {
         gbc_lblConnectionStatus.insets = JBUI.insets(0);
         gbc_lblConnectionStatus.fill = GridBagConstraints.HORIZONTAL;
         gbc_lblConnectionStatus.gridx = 1;
-        gbc_lblConnectionStatus.gridy = 0;
+        gbc_lblConnectionStatus.gridy = 2;
         gbc_lblConnectionStatus.insets = JBUI.insets(0, 5, 0, 0);
         panelTestConnection.add(lblConnectionStatus, gbc_lblConnectionStatus);
+
+        addSeparator(panelTestConnection, 3);
 
         btnClearSettings = new JButton("Clear settings");
         GridBagConstraints gbc_btnClearSettings = new GridBagConstraints();
         gbc_btnClearSettings.insets = JBUI.insets(5, 0);
         gbc_btnClearSettings.fill = GridBagConstraints.HORIZONTAL;
         gbc_btnClearSettings.gridx = 0;
-        gbc_btnClearSettings.gridy = 1;
+        gbc_btnClearSettings.gridy = 4;
         panelTestConnection.add(btnClearSettings, gbc_btnClearSettings);
 
         ButtonGroup buttonGroup = new ButtonGroup();
@@ -481,5 +511,30 @@ public class ConnectionSettingsComponent implements HasComponent {
         });
     }
 
+    public void refreshProxySettingsLabel() {
+
+        URI uri;
+        try {
+            uri = new URI(txtFieldServerUrl.getText());
+        } catch (URISyntaxException e) {
+            return;
+        }
+
+        List<Pair<String, String>> proxySettings = HttpConfigurable.getInstance().getJvmProperties(true, uri);
+
+        String proxyValues = "<b>Detected proxy for current server url:</b><br>";
+
+        if(proxySettings.size() == 0) {
+            proxyValues += "No proxy detected.";
+
+        } else {
+            proxyValues +=
+                    proxySettings.stream()
+                            .map(pair -> pair.getFirst() + ": " + pair.getSecond())
+                            .collect(Collectors.joining("<br>"));
+        }
+
+        this.lblProxySettings.setText("<html>" + proxyValues + "</html>");
+    }
 
 }

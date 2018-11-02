@@ -13,6 +13,8 @@
 
 package com.hpe.adm.octane.ideplugins.intellij.ui;
 
+import com.intellij.util.ui.UIUtil;
+
 public class Constants {
 
     public static final String IMAGE_FOLDER_PATH = "/images/";
@@ -31,16 +33,34 @@ public class Constants {
     public static final String IMG_FIELD_SELECTION_DEFAULT = IMAGE_FOLDER_PATH + "cus-off.png";
     public static final String IMG_NO_WORK_ROCKET = IMAGE_FOLDER_PATH + "s-rocket.png";
     public static final String IMG_PHASE_DROPDOWN = IMAGE_FOLDER_PATH + "drop-down.png";
-    public static final String IMG_REMOVE_SELECTION = IMAGE_FOLDER_PATH + "octane_remove.png";
-    public static final String IMG_REMOVE_SELECTION_DISABLED = IMAGE_FOLDER_PATH + "octane_remove_disabled.png";
     public static final String IMG_ENTITY_COMBOBOX_ARROW = IMAGE_FOLDER_PATH +"arrow.png";
     public static final String IMG_COPY_ICON = IMAGE_FOLDER_PATH + "copy-icon.png";
     public static final String IMG_HELP_ICON = IMAGE_FOLDER_PATH + "help-16x16.png";
+
+    public static final String IMG_TRANSPARENT = IMAGE_FOLDER_PATH + "transparent_1x1.png";
 
     //Settings validation
     public static final String CORRECT_URL_FORMAT_MESSAGE = "Example: (http|https)://{serverurl[:port]}/?p={sharedspaceId}/{workspaceId}";
 
     //Tabs title
     public static final String TAB_MY_WORK_TITLE = "My work";
+
+    public static String getOctaneRemoveIcon() {
+        if (UIUtil.isUnderDarcula()) {
+            return IMAGE_FOLDER_PATH + "octane_remove_light.png";
+        } else {
+            return IMAGE_FOLDER_PATH + "octane_remove_dark.png";
+        }
+    }
+
+    public static String getOctaneRemoveDisabledIcon() {
+        if (UIUtil.isUnderDarcula()) {
+            return IMG_TRANSPARENT;
+        } else {
+            return IMAGE_FOLDER_PATH + "octane_remove_light.png";
+        }
+    }
+
+
 
 }

@@ -33,6 +33,7 @@ import com.hpe.adm.octane.ideplugins.services.model.EntityModelWrapper;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.JBColor;
@@ -52,17 +53,22 @@ import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS;
 
 public class EntityDetailView extends JPanel implements View, Scrollable {
 
+    private static final Logger logger = Logger.getInstance(EntityDetailView.class.getName());
+
     private EntityModelWrapper entityModelWrapper;
     private JBScrollPane component = new JBScrollPane(new LoadingWidget());
 
     private HeaderPanel headerPanel;
-    private EntityFieldsPanel entityFieldsPanel;
-    private CommentsConversationPanel commentsPanel;
-    private HTMLPresenterFXPanel descriptionPanel;
-    private SelectFieldsAction fieldsSelectAction;
-    private Collection<FieldMetadata> fields;
 
-    private FieldsSelectPopup fieldsPopup;
+    private EntityFieldsPanel entityFieldsPanel;
+
+    private CommentsConversationPanel commentsPanel;
+
+    private HTMLPresenterFXPanel descriptionPanel;
+
+    private SelectFieldsAction fieldsSelectAction;
+
+    private Collection<FieldMetadata> fields;
 
     @Inject
     private FieldsUtil fieldsUtil;
@@ -75,7 +81,6 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
 
     @Inject
     public EntityDetailView(HeaderPanel headerPanel, EntityFieldsPanel entityFieldsPanel, CommentsConversationPanel commentsPanel, HTMLPresenterFXPanel descriptionPanel) {
-
 
         this.headerPanel = headerPanel;
         this.entityFieldsPanel = entityFieldsPanel;
@@ -164,6 +169,7 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
 
     public void setEntityModel(EntityModelWrapper entityModelWrapper, Collection<FieldMetadata> fields) {
         this.entityModelWrapper = entityModelWrapper;
+
         this.fields = fields;
         // set header data
         headerPanel.setEntityModel(entityModelWrapper);
@@ -171,13 +177,19 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
         setupComments(entityModelWrapper);
         // add description data
         setupDescription(entityModelWrapper);
+
         // set fields data
-        entityFieldsPanel.setFields(fields);
+        entityFieldsPanel.setFieldMetadata(fields);
+
         entityFieldsPanel.setEntityModel(entityModelWrapper, fieldsUtil.retrieveSelectedFieldsForEntity(entityModelWrapper.getEntityType()));
 
         fieldsSelectAction.setDefaultFieldsIcon(fieldsUtil.isDefaultState(entityModelWrapper.getEntityType()));
 
         component.setViewportView(this);
+    }
+
+    public void redrawFields() {
+        entityFieldsPanel.setEntityModel(entityModelWrapper, fieldsUtil.retrieveSelectedFieldsForEntity(entityModelWrapper.getEntityType()));
     }
 
     private void setupDescription(EntityModelWrapper entityModelWrapper) {
@@ -236,9 +248,18 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
         commentsPanel.addSendNewCommentAction(e -> {
             try {
                 commentService.postComment(entityModelWrapper.getEntityModel(), getCommentMessageBoxText());
-            } catch (OctaneException oe) {
-                ExceptionHandler exceptionHandler = new ExceptionHandler(oe, project);
+
+            } catch (OctaneException octaneException) {
+                ExceptionHandler exceptionHandler = new ExceptionHandler(octaneException, project);
                 exceptionHandler.showErrorNotification();
+                logger.error(octaneException);
+
+            }
+            catch (Exception genericException) {
+                ExceptionHandler exceptionHandler = new ExceptionHandler(genericException, project);
+                exceptionHandler.showErrorNotification();
+
+                logger.error(genericException);
             }
             commentsPanel.setCommentMessageBoxText("");
             setComments(entityModelWrapper);
@@ -271,12 +292,13 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
     }
 
     public void showFieldsSettings() {
-        fieldsPopup = PluginModule.getPluginModuleForProject(project).getInstance(FieldsSelectPopup.class);
+        FieldsSelectPopup fieldsPopup = PluginModule.getPluginModuleForProject(project).getInstance(FieldsSelectPopup.class);
+
         fieldsPopup.setEntityDetails(entityModelWrapper, fields, fieldsSelectAction);
-        fieldsPopup.addSelectionListener(e -> entityFieldsPanel.setEntityModel(entityModelWrapper, fieldsPopup.getSelectedFields()));
-        fieldsPopup.addPersistentStateListener();
+
         fieldsPopup.setLocation(headerPanel.getFieldsPopupLocation().x - (int) fieldsPopup.getPreferredSize().getWidth(),
                 headerPanel.getFieldsPopupLocation().y);
+
         fieldsPopup.setVisible(!fieldsPopup.isVisible());
     }
 

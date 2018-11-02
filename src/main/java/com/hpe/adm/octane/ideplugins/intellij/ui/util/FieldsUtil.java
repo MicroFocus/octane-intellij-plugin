@@ -69,9 +69,4 @@ public class FieldsUtil {
         idePluginPersistentState.saveState(IdePluginPersistentState.Key.SELECTED_FIELDS, new JSONObject(DefaultEntityFieldsUtil.entityFieldsToJson(selectedFieldsMap)));
     }
 
-    public void addStateChangedHandler(IdePluginPersistentState.SettingsChangedHandler changedHandler) {
-        idePluginPersistentState.addStateChangedHandler(changedHandler);
-    }
-
-
 }

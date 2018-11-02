@@ -64,7 +64,7 @@ public class FieldsSelectPopup extends JFrame {
     private JXButton selectAllButton;
     private EntityModelWrapper entityModelWrapper;
 
-    private List<SelectionListener> listeners = new ArrayList<>();
+    private Set<SelectionListener> listeners = new HashSet<>();
 
     public FieldsSelectPopup() {
 
@@ -317,7 +317,6 @@ public class FieldsSelectPopup extends JFrame {
                         }
                         selectedFieldsMap.replace(entityModelWrapper.getEntityType(), selectedFieldsMap.get(entityModelWrapper.getEntityType()));
                         fieldsUtil.saveSelectedFields(selectedFieldsMap);
-
                     }
                 });
                 if (selectedFieldsMap.get(entityModelWrapper.getEntityType()).contains(fieldMetadata)) {
@@ -383,18 +382,4 @@ public class FieldsSelectPopup extends JFrame {
         selectedFieldsMap.get(entityModelWrapper.getEntityType()).addAll(fields);
     }
 
-
-    public void addPersistentStateListener() {
-        fieldsUtil.addStateChangedHandler(new IdePluginPersistentState.SettingsChangedHandler() {
-            @Override
-            public void stateChanged(IdePluginPersistentState.Key key, JSONObject value) {
-                if (key == IdePluginPersistentState.Key.SELECTED_FIELDS) {
-                    selectedFieldsMap = fieldsUtil.retrieveSelectedFieldsFromPersistentState();
-                    listeners.forEach(listener -> listener.valueChanged(new SelectionEvent(this)));
-                    updateFieldsPanel(selectedFieldsMap.get(entityModelWrapper.getEntityType()), allFields);
-                    setupPopupButtonState();
-                }
-            }
-        });
-    }
 }
