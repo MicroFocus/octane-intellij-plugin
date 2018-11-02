@@ -84,14 +84,22 @@ public class EntryPoint implements ToolWindowFactory {
                         // Make sure you only instantiate other services (including the ones in the Presenter hierarchy,
                         // after you tested the connection settings with the test service
 
-                        //Add the workspace name to the ToolWindow content tab name
-                        SharedSpaceLevelRequestService sharedSpaceLevelRequestService = pluginModule.getInstance(SharedSpaceLevelRequestService.class);
-                        String workspaceDisplayName = " [" + sharedSpaceLevelRequestService.getCurrentWorkspaceName() + "]";
+                        // Add the workspace name to the ToolWindow content tab name
+                        // TODO: andras: 12.60.4.105 this won't work on that specific build, no idea why, need to check
+                        String workspaceDisplayName;
+                        try {
+                            SharedSpaceLevelRequestService sharedSpaceLevelRequestService = pluginModule.getInstance(SharedSpaceLevelRequestService.class);
+                            workspaceDisplayName = " [" + sharedSpaceLevelRequestService.getCurrentWorkspaceName() + "]";
+                        } catch (Exception ex) {
+                            workspaceDisplayName = "";
+                            log.warn("Failed to get workspace name: " + ex);
+                        }
+                        final String wsName = workspaceDisplayName;
 
                         SwingUtilities.invokeAndWait(() -> {
                             //Create the presenter hierarchy, DI will inject view instances
                             MainPresenter mainPresenter = pluginModule.getInstance(MainPresenter.class);
-                            setContent(toolWindow, mainPresenter.getView(), workspaceDisplayName);
+                            setContent(toolWindow, mainPresenter.getView(), wsName);
                         });
                     } catch (Exception ex) {
                         pluginModule.getInstance(IdePluginPersistentState.class).clearState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM);
