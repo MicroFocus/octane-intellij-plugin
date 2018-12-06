@@ -145,7 +145,9 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
     @Override
     public void closing() {
         idePluginPersistentState.removeStateChangedHandler(fieldSettingsChangedHandler);
-        fields.clear();
+        if(fields != null) { // can be null if first metadata req fails, then the tab is closed
+            fields.clear();
+        }
     }
 
     private final class EntityRefreshAction extends AnAction {
