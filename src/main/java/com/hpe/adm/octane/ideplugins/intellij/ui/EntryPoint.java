@@ -85,7 +85,6 @@ public class EntryPoint implements ToolWindowFactory {
                         // after you tested the connection settings with the test service
 
                         // Add the workspace name to the ToolWindow content tab name
-                        // TODO: andras: 12.60.4.105 this won't work on that specific build, no idea why, need to check
                         String workspaceDisplayName;
                         try {
                             SharedSpaceLevelRequestService sharedSpaceLevelRequestService = pluginModule.getInstance(SharedSpaceLevelRequestService.class);
