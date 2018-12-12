@@ -53,10 +53,7 @@ public class NumericFieldEditor extends FieldEditor {
             @Override
             public void keyTyped(KeyEvent e) {
                 if (isRealNumber) {
-                    if ((e.getKeyChar() < '0' || e.getKeyChar() > '9') && e.getKeyChar() != '.') {
-                        e.consume();
-                    }
-                    if (textField.getText().contains(".")) {
+                    if (((e.getKeyChar() < '0' || e.getKeyChar() > '9') && e.getKeyChar() != '.' ) || (e.getKeyChar() == '.' && textField.getText().contains("."))) {
                         e.consume();
                     }
                 } else {
