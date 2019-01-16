@@ -18,9 +18,10 @@ import com.hpe.adm.nga.sdk.exception.OctaneException;
 import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
 import com.hpe.adm.nga.sdk.model.StringFieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
-import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.BusinessErrorReportingDialog;
+import com.hpe.adm.octane.ideplugins.intellij.ui.detail.actions.RefreshCurrentEntityAction;
+import com.hpe.adm.octane.ideplugins.intellij.ui.detail.actions.SaveCurrentEntityAction;
 import com.hpe.adm.octane.ideplugins.intellij.util.ExceptionHandler;
 import com.hpe.adm.octane.ideplugins.intellij.util.HtmlTextEditor;
 import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
@@ -30,10 +31,10 @@ import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.model.EntityModelWrapper;
 import com.hpe.adm.octane.ideplugins.services.nonentity.ImageService;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.CustomShortcutSet;
+import com.intellij.openapi.keymap.Keymap;
+import com.intellij.openapi.keymap.KeymapManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.IconLoader;
 import org.json.JSONObject;
 
 import java.util.Collection;
@@ -74,8 +75,21 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
     @Inject
     public void setView(EntityDetailView entityDetailView) {
         this.entityDetailView = entityDetailView;
-        entityDetailView.setSaveSelectedPhaseButton(new SaveAction());
-        entityDetailView.setRefreshEntityButton(new EntityRefreshAction());
+
+        Keymap keymap = KeymapManager.getInstance().getActiveKeymap();
+
+        SaveCurrentEntityAction saveCurrentEntityAction = new SaveCurrentEntityAction();
+        saveCurrentEntityAction.registerCustomShortcutSet(
+                new CustomShortcutSet(keymap.getShortcuts(SaveCurrentEntityAction.class.getCanonicalName())),
+                entityDetailView);
+        entityDetailView.setSaveSelectedPhaseButton(saveCurrentEntityAction);
+
+        RefreshCurrentEntityAction refreshCurrentEntityAction = new RefreshCurrentEntityAction();
+        refreshCurrentEntityAction.registerCustomShortcutSet(
+                new CustomShortcutSet(keymap.getShortcuts(RefreshCurrentEntityAction.class.getCanonicalName())),
+                entityDetailView);
+        entityDetailView.setRefreshEntityButton(refreshCurrentEntityAction);
+
         entityDetailView.setOpenInBrowserButton();
         entityDetailView.setupFieldsSelectButton();
         entityDetailView.setupCommentsButton();
@@ -135,7 +149,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
                         entityModelWrapper.addFieldModelChangedHandler((e) -> stateChanged = true);
                     }
                 },
-                null,
+                project,
                 null,
                 "Loading entity " + entityType.name() + ": " + entityId);
 
@@ -150,61 +164,43 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
         }
     }
 
-    private final class EntityRefreshAction extends AnAction {
-        public EntityRefreshAction() {
-            super("Refresh current entity", "Refresh entity details", IconLoader.findIcon(Constants.IMG_REFRESH_ICON));
-        }
-
-        public void actionPerformed(AnActionEvent e) {
-            entityDetailView.doRefresh();
-            setEntity(entityType, entityId);
-            stateChanged = false;
-        }
+    public boolean wasEntityChanged() {
+        return stateChanged;
     }
 
-    private final class SaveAction extends AnAction {
+    public void refreshEntity() {
+        entityDetailView.doRefresh();
+        setEntity(entityType, entityId);
+        stateChanged = false;
+    }
 
+    public void saveEntity() {
+        RestUtil.runInBackground(() -> {
+            try {
+                entityService.updateEntity(entityModelWrapper.getEntityModel());
+                entityDetailView.doRefresh();
+                setEntity(entityType, entityId);
+                stateChanged = false;
+            } catch (OctaneException ex) {
+                BusinessErrorReportingDialog berDialog = new BusinessErrorReportingDialog(project, ex);
+                berDialog.show();
 
-        public SaveAction() {
-            super("Save selected phase", "Save changes to entity phase", IconLoader.findIcon("/actions/menu-saveall.png"));
-            getTemplatePresentation().setEnabled(false);
-        }
-
-        public void update(AnActionEvent e) {
-            e.getPresentation().setEnabled(stateChanged);
-
-        }
-
-        public void actionPerformed(AnActionEvent e) {
-            RestUtil.runInBackground(() -> {
-                try {
-                    entityService.updateEntity(entityModelWrapper.getEntityModel());
-                    entityDetailView.doRefresh();
-                    setEntity(entityType, entityId);
-                    stateChanged = false;
-                } catch (OctaneException ex) {
-                    BusinessErrorReportingDialog berDialog = new BusinessErrorReportingDialog(project, ex);
-                    berDialog.show();
-
-                    switch (berDialog.getExitCode()) {
-                        case BusinessErrorReportingDialog.EXIT_CODE_OPEN_IN_BROWSER: {
-                            entityService.openInBrowser(entityModelWrapper.getEntityModel());
-                        }
-                        case BusinessErrorReportingDialog.EXIT_CODE_REFRESH: {
-                            entityDetailView.doRefresh();
-                            setEntity(entityType, entityId);
-                            stateChanged = false;
-                            break;
-                        }
-                        case BusinessErrorReportingDialog.EXIT_CODE_BACK:
-                        default:
+                switch (berDialog.getExitCode()) {
+                    case BusinessErrorReportingDialog.EXIT_CODE_OPEN_IN_BROWSER: {
+                        entityService.openInBrowser(entityModelWrapper.getEntityModel());
                     }
+                    case BusinessErrorReportingDialog.EXIT_CODE_REFRESH: {
+                        entityDetailView.doRefresh();
+                        setEntity(entityType, entityId);
+                        stateChanged = false;
+                        break;
+                    }
+                    case BusinessErrorReportingDialog.EXIT_CODE_BACK:
+                    default:
                 }
+            }
 
-            }, null, "Failed to save entity", "Saving entity");
-
-        }
+        }, null, "Failed to save entity", "Saving entity");
     }
-
 
 }

@@ -19,6 +19,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.google.inject.Singleton;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.eventbus.OpenDetailTabEventListener;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
@@ -51,6 +52,7 @@ import java.util.Map;
 
 import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.*;
 
+@Singleton
 public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
 
     // TODO to be kept up-to-date
@@ -103,6 +105,7 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
     @Inject
     private IdePluginPersistentState idePluginPersistentState;
 
+    private PartialEntity selectedDetailTab;
     private TabInfo searchTab;
     private Icon searchIcon = IconLoader.findIcon("/com/intellij/ide/ui/laf/icons/search.png");
 
@@ -249,6 +252,7 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
             @Override
             public void selectionChanged(TabInfo oldSelection, TabInfo newSelection) {
                 saveSelectedTabToToPersistentState(detailTabInfo.inverse().get(newSelection));
+                selectedDetailTab = detailTabInfo.inverse().get(newSelection);
             }
 
             @Override
@@ -338,6 +342,10 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
         }
     }
 
+    public EntityDetailPresenter getSelectedDetailTabPresenter() {
+        return detailTabPresenterMap.get(selectedDetailTab);
+    }
+
     public static boolean isDetailTabSupported(Entity entityType) {
         return supportedDetailTabs.contains(entityType);
     }
@@ -392,7 +400,6 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
             return selectedTabKey;
         }
     }
-
 
     private void loadSearchHistory() {
         tabbedPaneView.setSearchHistory(searchManager.getSearchHistory());

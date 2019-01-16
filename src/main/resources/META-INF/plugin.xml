@@ -163,7 +163,12 @@
     </project-components>
 
     <actions>
-        <!-- Add your actions here -->
+        <action id="com.hpe.adm.octane.ideplugins.intellij.ui.detail.actions.SaveCurrentEntityAction" class="com.hpe.adm.octane.ideplugins.intellij.ui.detail.actions.SaveCurrentEntityAction">
+            <keyboard-shortcut first-keystroke="control S" keymap="$default"/>
+        </action>
+        <action id="com.hpe.adm.octane.ideplugins.intellij.ui.detail.actions.RefreshCurrentEntityAction" class="com.hpe.adm.octane.ideplugins.intellij.ui.detail.actions.RefreshCurrentEntityAction">
+            <keyboard-shortcut first-keystroke="control R" keymap="$default"/>
+        </action>
     </actions>
 
 </idea-plugin>
