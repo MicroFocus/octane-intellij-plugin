@@ -38,6 +38,7 @@ import com.hpe.adm.octane.ideplugins.services.util.PartialEntity;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.tabs.TabInfo;
@@ -54,6 +55,8 @@ import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.*;
 
 @Singleton
 public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
+
+    private static final Logger logger = Logger.getInstance(TabbedPanePresenter.class);
 
     // TODO to be kept up-to-date
     public static ImmutableSet<Entity> supportedDetailTabs;
@@ -162,6 +165,7 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
         detailTabPresenterMap.put(tabKey, presenter);
 
         saveDetailTabsToPersistentState();
+        tabbedPaneView.selectTabWithTabInfo(tabInfo, true);
     }
 
     public TabbedPaneView getView() {
@@ -228,7 +232,7 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
         });
 
         //Persistence
-        PartialEntity selectedTabKey = getselectedTabToFromPersistentState();
+        PartialEntity selectedTabKey = getSelectedTabToFromPersistentState();
 
         loadDetailTabsFromPersistentState();
 
@@ -251,6 +255,7 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
         tabbedPaneView.addTabsListener(new TabsListener.Adapter() {
             @Override
             public void selectionChanged(TabInfo oldSelection, TabInfo newSelection) {
+                logger.debug("Selection changed to: " + newSelection);
                 saveSelectedTabToToPersistentState(detailTabInfo.inverse().get(newSelection));
                 selectedDetailTab = detailTabInfo.inverse().get(newSelection);
             }
@@ -351,7 +356,7 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
     }
 
     private void selectDetailTab(PartialEntity tabKey) {
-        tabbedPaneView.selectTabWithTabInfo(detailTabInfo.get(tabKey), false);
+        tabbedPaneView.selectTabWithTabInfo(detailTabInfo.get(tabKey), true);
     }
 
     private boolean isDetailTabAlreadyOpen(PartialEntity tabKey) {
@@ -391,7 +396,7 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
         }
     }
 
-    private PartialEntity getselectedTabToFromPersistentState() {
+    private PartialEntity getSelectedTabToFromPersistentState() {
         JSONObject jsonObject = idePluginPersistentState.loadState(IdePluginPersistentState.Key.SELECTED_TAB);
         if (jsonObject == null) {
             return null;
