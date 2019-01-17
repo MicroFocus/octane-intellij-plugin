@@ -1,4 +1,4 @@
-package com.hpe.adm.octane.ideplugins.intellij.ui.detail.actions;
+package com.hpe.adm.octane.ideplugins.intellij.actions;
 
 import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.EntityDetailPresenter;
@@ -10,9 +10,9 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.util.Optional;
 
-public abstract class EntityDetailAction extends AnAction {
+public abstract class OctanePluginAction extends AnAction {
 
-    public EntityDetailAction(@Nullable String text, @Nullable String description, @Nullable Icon icon){
+    public OctanePluginAction(@Nullable String text, @Nullable String description, @Nullable Icon icon){
         super(text, description, icon);
     }
 
@@ -21,5 +21,6 @@ public abstract class EntityDetailAction extends AnAction {
         TabbedPanePresenter tabbedPanePresenter = pluginModule.getInstance(TabbedPanePresenter.class);
         return Optional.ofNullable(tabbedPanePresenter.getSelectedDetailTabPresenter());
     }
+
 
 }

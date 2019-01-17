@@ -20,7 +20,7 @@ import com.hpe.adm.nga.sdk.model.StringFieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.BusinessErrorReportingDialog;
-import com.hpe.adm.octane.ideplugins.intellij.ui.detail.actions.RefreshCurrentEntityAction;
+import com.hpe.adm.octane.ideplugins.intellij.actions.RefreshCurrentEntityAction;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.actions.SaveCurrentEntityAction;
 import com.hpe.adm.octane.ideplugins.intellij.util.ExceptionHandler;
 import com.hpe.adm.octane.ideplugins.intellij.util.HtmlTextEditor;

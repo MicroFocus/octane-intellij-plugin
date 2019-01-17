@@ -24,7 +24,7 @@ import com.google.inject.name.Named;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePersistentConnectionSettingsProvider;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.settings.LoginDialog;
-import com.hpe.adm.octane.ideplugins.intellij.ui.ToolbarActiveItem;
+//import com.hpe.adm.octane.ideplugins.intellij.ui.ToolbarActiveItem;
 import com.hpe.adm.octane.ideplugins.intellij.ui.searchresult.SearchResultEntityTreeCellRenderer;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeCellRenderer;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeView;
@@ -107,7 +107,7 @@ public class PluginModule extends AbstractModule {
         ServiceModule serviceModule = new ServiceModule(connectionSettingsProvider, pollingStartedHandler, pollingInProgressHandler, pollingCompleteHandler);
         injectorSupplier = Suppliers.memoize(() -> Guice.createInjector(serviceModule, this));
         injectorMap.put(project, injectorSupplier);
-        getInstance(ToolbarActiveItem.class);
+        //getInstance(ToolbarActiveItem.class);
     }
 
     /**
