@@ -194,7 +194,7 @@
 
             <action id="com.hpe.adm.octane.ideplugins.intellij.actions.activeitem.StopActiveItemAction"
                     class="com.hpe.adm.octane.ideplugins.intellij.actions.activeitem.StopActiveItemAction"
-                    text="Stop work" description="Stop work on current item, (clears active item)"/>
+                    text="Stop work" description="Stop work on current item. (clears active item)"/>
 
             <separator/>
 
