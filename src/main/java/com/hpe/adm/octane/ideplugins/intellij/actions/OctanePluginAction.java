@@ -22,5 +22,8 @@ public abstract class OctanePluginAction extends AnAction {
         return Optional.ofNullable(tabbedPanePresenter.getSelectedDetailTabPresenter());
     }
 
+    protected static Optional<PluginModule> getPluginModule(AnActionEvent e) {
+        return e.getProject() == null ? Optional.empty() : Optional.of(PluginModule.getPluginModuleForProject(e.getProject()));
+    }
 
 }

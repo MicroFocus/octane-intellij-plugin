@@ -148,23 +148,29 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
     }
 
     public void openDetailTab(Entity entityType, Long entityId, String entityName) {
-        EntityDetailPresenter presenter = entityDetailPresenterProvider.get();
-        presenter.setEntity(entityType, entityId);
+        PartialEntity partialEntity = new PartialEntity(entityId, entityName, entityType);
+        if(isDetailTabAlreadyOpen(partialEntity)) {
+            selectDetailTab(partialEntity);
+        }
+        else {
+            EntityDetailPresenter presenter = entityDetailPresenterProvider.get();
+            presenter.setEntity(entityType, entityId);
 
-        PartialEntity tabKey = new PartialEntity(entityId, entityName, entityType);
-        ImageIcon tabIcon = new ImageIcon(iconFactory.getIconAsImage(entityType, 22, 11));
+            PartialEntity tabKey = new PartialEntity(entityId, entityName, entityType);
+            ImageIcon tabIcon = new ImageIcon(iconFactory.getIconAsImage(entityType, 22, 11));
 
-        TabInfo tabInfo = tabbedPaneView.addTab(
-                String.valueOf(entityId),
-                entityName,
-                tabIcon,
-                presenter.getView().getComponent());
+            TabInfo tabInfo = tabbedPaneView.addTab(
+                    String.valueOf(entityId),
+                    entityName,
+                    tabIcon,
+                    presenter.getView().getComponent());
 
-        detailTabInfo.put(tabKey, tabInfo);
-        detailTabPresenterMap.put(tabKey, presenter);
+            detailTabInfo.put(tabKey, tabInfo);
+            detailTabPresenterMap.put(tabKey, presenter);
 
-        saveDetailTabsToPersistentState();
-        tabbedPaneView.selectTabWithTabInfo(tabInfo, true);
+            saveDetailTabsToPersistentState();
+            tabbedPaneView.selectTabWithTabInfo(tabInfo, true);
+        }
     }
 
     public TabbedPaneView getView() {
@@ -402,17 +408,6 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
 
     public boolean isMyWorkSelected() {
         return Objects.equals(myWorkTabInfo, selectedTabInfo);
-    }
-
-    public void openOrSelectActiveItem() {
-        JSONObject jsonObject = idePluginPersistentState.loadState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM);
-        if (jsonObject != null) {
-            PartialEntity activeItem = PartialEntity.fromJsonObject(jsonObject);
-            if (!isDetailTabAlreadyOpen(activeItem)) {
-                openDetailTab(activeItem.getEntityType(), activeItem.getEntityId(), activeItem.getEntityName());
-            }
-            selectDetailTab(activeItem);
-        }
     }
 
 }
