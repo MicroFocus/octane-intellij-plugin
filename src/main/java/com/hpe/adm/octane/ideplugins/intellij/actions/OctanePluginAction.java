@@ -1,7 +1,7 @@
 package com.hpe.adm.octane.ideplugins.intellij.actions;
 
 import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
-import com.hpe.adm.octane.ideplugins.intellij.ui.detail.EntityDetailPresenter;
+import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.tabbedpane.TabbedPanePresenter;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -16,10 +16,10 @@ public abstract class OctanePluginAction extends AnAction {
         super(text, description, icon);
     }
 
-    protected static Optional<EntityDetailPresenter> getCurrentEntityDetailPresenter(AnActionEvent e) {
+    protected static Presenter getSelectedPresenter(AnActionEvent e) {
         PluginModule pluginModule = PluginModule.getPluginModuleForProject(e.getProject());
         TabbedPanePresenter tabbedPanePresenter = pluginModule.getInstance(TabbedPanePresenter.class);
-        return Optional.ofNullable(tabbedPanePresenter.getSelectedDetailTabPresenter());
+        return tabbedPanePresenter.getSelectedPresenter();
     }
 
     protected static Optional<PluginModule> getPluginModule(AnActionEvent e) {

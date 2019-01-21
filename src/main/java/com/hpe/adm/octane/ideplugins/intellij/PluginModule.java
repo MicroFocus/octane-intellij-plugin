@@ -24,7 +24,6 @@ import com.google.inject.name.Named;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePersistentConnectionSettingsProvider;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.settings.LoginDialog;
-//import com.hpe.adm.octane.ideplugins.intellij.ui.ToolbarActiveItem;
 import com.hpe.adm.octane.ideplugins.intellij.ui.searchresult.SearchResultEntityTreeCellRenderer;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeCellRenderer;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeView;
@@ -44,6 +43,8 @@ import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.util.HashMap;
 import java.util.Map;
+
+//import com.hpe.adm.octane.ideplugins.intellij.ui.ToolbarActiveItem;
 
 public class PluginModule extends AbstractModule {
 

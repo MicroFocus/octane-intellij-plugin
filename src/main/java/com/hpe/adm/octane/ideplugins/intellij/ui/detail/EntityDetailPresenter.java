@@ -17,10 +17,10 @@ import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.exception.OctaneException;
 import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
 import com.hpe.adm.nga.sdk.model.StringFieldModel;
+import com.hpe.adm.octane.ideplugins.intellij.actions.RefreshCurrentEntityAction;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.BusinessErrorReportingDialog;
-import com.hpe.adm.octane.ideplugins.intellij.actions.RefreshCurrentEntityAction;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.actions.SaveCurrentEntityAction;
 import com.hpe.adm.octane.ideplugins.intellij.util.ExceptionHandler;
 import com.hpe.adm.octane.ideplugins.intellij.util.HtmlTextEditor;
@@ -168,7 +168,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
         return stateChanged;
     }
 
-    public void refreshEntity() {
+    public void refresh() {
         entityDetailView.doRefresh();
         setEntity(entityType, entityId);
         stateChanged = false;

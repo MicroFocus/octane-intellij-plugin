@@ -16,15 +16,15 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.treetable.nowork.snake;
 import com.intellij.util.ImageLoader;
 import com.intellij.util.containers.HashSet;
 
-import javax.swing.*;
 import javax.swing.Timer;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class SnakeGame extends JPanel {

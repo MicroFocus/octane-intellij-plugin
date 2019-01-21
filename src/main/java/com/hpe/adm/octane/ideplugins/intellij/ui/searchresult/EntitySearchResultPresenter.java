@@ -15,6 +15,7 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.searchresult;
 
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.eventbus.OpenDetailTabEvent;
@@ -51,6 +52,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+@Singleton
 public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
 
     @Inject

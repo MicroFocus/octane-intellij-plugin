@@ -340,8 +340,14 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
         }
     }
 
-    public EntityDetailPresenter getSelectedDetailTabPresenter() {
-        return detailTabPresenterMap.get(detailTabInfo.inverse().get(selectedTabInfo));
+    public Presenter getSelectedPresenter() {
+        if(isMyWorkSelected()) {
+            return entityTreeTablePresenterProvider.get();
+        } else if (isSearchTabSelected()) {
+            return entitySearchResultPresenter;
+        } else {
+            return detailTabPresenterMap.get(detailTabInfo.inverse().get(selectedTabInfo));
+        }
     }
 
     public static boolean isDetailTabSupported(Entity entityType) {
@@ -408,6 +414,14 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
 
     public boolean isMyWorkSelected() {
         return Objects.equals(myWorkTabInfo, selectedTabInfo);
+    }
+
+    public boolean isSearchTabSelected() {
+        return Objects.equals(searchTabInfo, selectedTabInfo);
+    }
+
+    public boolean isDetailTabSelected() {
+        return detailTabInfo.inverse().containsKey(selectedTabInfo);
     }
 
 }

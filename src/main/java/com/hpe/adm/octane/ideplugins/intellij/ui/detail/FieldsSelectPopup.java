@@ -15,7 +15,6 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 
 import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
-import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.FieldMenuItem;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.actions.SelectFieldsAction;
 import com.hpe.adm.octane.ideplugins.intellij.ui.listeners.SelectionEvent;
@@ -29,7 +28,6 @@ import com.intellij.ui.components.JBScrollPane;
 import com.intellij.util.ui.JBUI;
 import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.JXTextField;
-import org.json.JSONObject;
 
 import javax.swing.*;
 import javax.swing.border.MatteBorder;
@@ -40,8 +38,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
