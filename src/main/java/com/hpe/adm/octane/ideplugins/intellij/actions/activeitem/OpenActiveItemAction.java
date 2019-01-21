@@ -35,7 +35,8 @@ public class OpenActiveItemAction extends OctanePluginAction {
 
             JSONObject jsonObject = pluginModule.getInstance(IdePluginPersistentState.class).loadState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM);
 
-            e.getPresentation().setEnabled(jsonObject != null);
+            e.getPresentation().setEnabled(false);
+
             if (jsonObject != null) {
                 PartialEntity activeItem = PartialEntity.fromJsonObject(jsonObject);
 
@@ -44,7 +45,6 @@ public class OpenActiveItemAction extends OctanePluginAction {
                     prevActiveItem = activeItem;
 
                     e.getPresentation().setDescription(activeItem.getEntityName());
-                    e.getPresentation().setText("");
                     e.getPresentation().setText("#" + activeItem.getEntityId());
 
                     // Has to be in a thread other than the UI, because the EntityIconFactory will trigger sso login on startup
@@ -54,6 +54,8 @@ public class OpenActiveItemAction extends OctanePluginAction {
                                     .getInstance(EntityIconFactory.class)
                                     .getIconAsImage(activeItem.getEntityType(), 20, 11
                                     )))).start();
+
+                    e.getPresentation().setEnabled(true);
                 }
             }
         });
