@@ -35,7 +35,7 @@ public class OpenActiveItemAction extends OctanePluginAction {
 
             JSONObject jsonObject = pluginModule.getInstance(IdePluginPersistentState.class).loadState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM);
 
-            e.getPresentation().setEnabled(false);
+            e.getPresentation().setEnabled(jsonObject != null);
 
             if (jsonObject != null) {
                 PartialEntity activeItem = PartialEntity.fromJsonObject(jsonObject);
@@ -52,11 +52,14 @@ public class OpenActiveItemAction extends OctanePluginAction {
                     new Thread(() -> e.getPresentation().setIcon(
                             new ImageIcon(pluginModule
                                     .getInstance(EntityIconFactory.class)
-                                    .getIconAsImage(activeItem.getEntityType(), 20, 11
-                                    )))).start();
-
-                    e.getPresentation().setEnabled(true);
+                                    .getIconAsImage(activeItem.getEntityType(), 20, 11))
+                    )).start();
                 }
+            } else {
+                e.getPresentation().setIcon(
+                        new ImageIcon(pluginModule
+                                .getInstance(EntityIconFactory.class)
+                                .getIconAsImage(null, 20, 11)));
             }
         });
     }
