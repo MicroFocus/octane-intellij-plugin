@@ -44,8 +44,6 @@ import java.net.CookieManager;
 import java.util.HashMap;
 import java.util.Map;
 
-//import com.hpe.adm.octane.ideplugins.intellij.ui.ToolbarActiveItem;
-
 public class PluginModule extends AbstractModule {
 
     private static final Logger logger = Logger.getInstance(PluginModule.class.getName());
@@ -108,7 +106,6 @@ public class PluginModule extends AbstractModule {
         ServiceModule serviceModule = new ServiceModule(connectionSettingsProvider, pollingStartedHandler, pollingInProgressHandler, pollingCompleteHandler);
         injectorSupplier = Suppliers.memoize(() -> Guice.createInjector(serviceModule, this));
         injectorMap.put(project, injectorSupplier);
-        //getInstance(ToolbarActiveItem.class);
     }
 
     /**
