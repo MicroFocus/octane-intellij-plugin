@@ -285,6 +285,11 @@ public class HeaderPanel extends JPanel {
             super("Open in browser the current entity", "Open in browser", IconLoader.findIcon(Constants.IMG_BROWSER_ICON));
         }
 
+        @Override
+        public void update(AnActionEvent e) {
+            getTemplatePresentation().setEnabled(false);
+        }
+
         public void actionPerformed(AnActionEvent e) {
             entityService.openInBrowser(entityModelWrapper.getEntityModel());
         }

@@ -163,7 +163,43 @@
     </project-components>
 
     <actions>
-        <!-- Add your actions here -->
+
+        <action id="com.hpe.adm.octane.ideplugins.intellij.ui.detail.actions.SaveCurrentEntityAction"
+                class="com.hpe.adm.octane.ideplugins.intellij.ui.detail.actions.SaveCurrentEntityAction">
+            <keyboard-shortcut first-keystroke="control S" keymap="$default"/>
+        </action>
+
+        <action id="com.hpe.adm.octane.ideplugins.intellij.actions.RefreshCurrentEntityAction"
+                class="com.hpe.adm.octane.ideplugins.intellij.actions.RefreshCurrentEntityAction">
+            <keyboard-shortcut first-keystroke="control R" keymap="$default"/>
+        </action>
+
+        <action id="com.hpe.adm.octane.ideplugins.intellij.actions.OpenMyWorkAction"
+                class="com.hpe.adm.octane.ideplugins.intellij.actions.OpenMyWorkAction" text="Open &quot;My Work&quot;">
+            <keyboard-shortcut first-keystroke="control shift O" keymap="$default"/>
+        </action>
+
+        <group id="com.hpe.adm.octane.ideplugins.intellij.ActiveItemActions" text="ALM Octane Active Item">
+            <add-to-group group-id="MainToolBar" anchor="last"/>
+            <add-to-group group-id="NavBarToolBar" anchor="first"/>
+
+            <separator/>
+
+            <action id="com.hpe.adm.octane.ideplugins.intellij.actions.activeitem.OpenActiveItemAction"
+                    class="com.hpe.adm.octane.ideplugins.intellij.actions.activeitem.OpenActiveItemAction"/>
+
+            <action id="com.hpe.adm.octane.ideplugins.intellij.actions.activeitem.CopyCommitMessageAction"
+                    class="com.hpe.adm.octane.ideplugins.intellij.actions.activeitem.CopyCommitMessageAction"
+                    text="Copy commit message" description="Copy commit message for the current active item."/>
+
+            <action id="com.hpe.adm.octane.ideplugins.intellij.actions.activeitem.StopActiveItemAction"
+                    class="com.hpe.adm.octane.ideplugins.intellij.actions.activeitem.StopActiveItemAction"
+                    text="Stop work" description="Stop work on current item. (clears active item)"/>
+
+            <separator/>
+
+        </group>
+
     </actions>
 
 </idea-plugin>

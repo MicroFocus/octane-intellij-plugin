@@ -15,6 +15,7 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.treetable;
 
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
@@ -69,6 +70,7 @@ import java.util.stream.Collectors;
 
 import static com.hpe.adm.octane.ideplugins.services.util.Util.getUiDataFromModel;
 
+@Singleton
 public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
 
     private EntityTreeView entityTreeTableView;
