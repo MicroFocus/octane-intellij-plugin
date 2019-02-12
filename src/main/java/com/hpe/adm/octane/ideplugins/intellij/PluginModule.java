@@ -89,7 +89,10 @@ public class PluginModule extends AbstractModule {
 
         TokenPollingCompleteHandler pollingCompleteHandler = tokenPollingCompletedStatus -> {
             try {
-                SwingUtilities.invokeAndWait(() -> loginDialog.close(0, true));
+                SwingUtilities.invokeAndWait(() -> {
+                    if(loginDialog != null)
+                        loginDialog.close(0, true);
+                });
 
                 boolean cookiesCleared = CookieManagerUtil.clearCookies(connectionSettingsProvider.getConnectionSettings().getBaseUrl());
                 if(!cookiesCleared) {
