@@ -88,7 +88,7 @@ public class ConnectionSettingsComponent implements HasComponent {
         rootPanel.add(txtFieldServerUrl, gbc_txtFieldServerUrl);
         txtFieldServerUrl.setColumns(10);
 
-        JLabel lblSharedSpace = new JLabel("Shared space:");
+        JLabel lblSharedSpace = new JLabel("Space:");
         GridBagConstraints gbc_lblSharedSpace = new GridBagConstraints();
         gbc_lblSharedSpace.fill = GridBagConstraints.HORIZONTAL;
         gbc_lblSharedSpace.insets = JBUI.insets(5);
