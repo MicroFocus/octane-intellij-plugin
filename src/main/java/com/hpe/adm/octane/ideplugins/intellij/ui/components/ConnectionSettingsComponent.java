@@ -13,8 +13,13 @@
 
 package com.hpe.adm.octane.ideplugins.intellij.ui.components;
 
+import com.hpe.adm.nga.sdk.authentication.Authentication;
+import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
+import com.hpe.adm.octane.ideplugins.intellij.settings.IdePersistentConnectionSettingsProvider;
+import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.HasComponent;
+import com.hpe.adm.octane.ideplugins.intellij.util.EncodedAuthentication;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
 import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
 import com.hpe.adm.octane.ideplugins.services.util.UrlParser;
@@ -63,7 +68,10 @@ public class ConnectionSettingsComponent implements HasComponent {
     private JXHyperlink hyperlinkResetUser;
     private JLabel lblProxySettings;
 
+    private Project project;
+
     public ConnectionSettingsComponent(Project project) {
+        this.project = project;
         rootPanel = new JPanel();
         GridBagLayout gridBagLayout = new GridBagLayout();
         gridBagLayout.columnWeights = new double[]{0.0, 1.0};
@@ -395,6 +403,16 @@ public class ConnectionSettingsComponent implements HasComponent {
         if (!StringUtils.isEmpty(serverUrl) && !EMPTY_SERVER_URL_TEXT.equals(serverUrl)) {
             ConnectionSettings connectionSettings;
             try {
+                //todo tb should create here a custom class that persists the password per project
+                Authentication authentication = new EncodedAuthentication() {
+                    @Override
+                    public String getPassword() {
+                        PluginModule pluginModule = PluginModule.getPluginModuleForProject(project);
+                        IdePluginPersistentState persistentState = pluginModule.getInstance(IdePluginPersistentState.class);
+                        //persistentState.saveState();
+                    }
+                };
+
                 connectionSettings = UrlParser.resolveConnectionSettings(serverUrl, getUserName(), getPassword());
                 setConnectionStatusLabelVisible(false);
             } catch (ServiceException ex) {
