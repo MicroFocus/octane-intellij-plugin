@@ -14,15 +14,14 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.components;
 
 import com.hpe.adm.nga.sdk.authentication.Authentication;
-import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePersistentConnectionSettingsProvider;
-import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.HasComponent;
 import com.hpe.adm.octane.ideplugins.intellij.util.EncodedAuthentication;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
 import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
 import com.hpe.adm.octane.ideplugins.services.util.UrlParser;
+import com.intellij.ide.passwordSafe.PasswordSafe;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.Pair;
@@ -231,7 +230,7 @@ public class ConnectionSettingsComponent implements HasComponent {
         rootPanel.add(panelTestConnection, gbc_panelTestConnection);
 
         GridBagLayout panelTestConnectionGridBagLayout = new GridBagLayout();
-        panelTestConnectionGridBagLayout.columnWidths = new int[] {150, 0};
+        panelTestConnectionGridBagLayout.columnWidths = new int[]{150, 0};
         panelTestConnectionGridBagLayout.columnWeights = new double[]{0.0, 1.0};
         panelTestConnection.setLayout(panelTestConnectionGridBagLayout);
 
@@ -372,11 +371,11 @@ public class ConnectionSettingsComponent implements HasComponent {
         gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
         childPanel.setLayout(gridBagLayout);
 
-        if(!StringUtils.isEmpty(title)) {
+        if (!StringUtils.isEmpty(title)) {
             JLabel lblALabel = new JLabel(title);
             GridBagConstraints gbc_lblALabel = new GridBagConstraints();
             gbc_lblALabel.anchor = GridBagConstraints.WEST;
-            gbc_lblALabel.insets = JBUI.insets(0, 5, 0,  5);
+            gbc_lblALabel.insets = JBUI.insets(0, 5, 0, 5);
             gbc_lblALabel.gridx = 0;
             gbc_lblALabel.gridy = 0;
             childPanel.add(lblALabel, gbc_lblALabel);
@@ -385,7 +384,7 @@ public class ConnectionSettingsComponent implements HasComponent {
         JSeparator separator = new JSeparator();
         GridBagConstraints gbc_separator = new GridBagConstraints();
         gbc_separator.fill = GridBagConstraints.HORIZONTAL;
-        gbc_separator.insets = JBUI.insets(5, 0, 5,  0);
+        gbc_separator.insets = JBUI.insets(5, 0, 5, 0);
         gbc_separator.gridx = 1;
         gbc_separator.gridy = 0;
         childPanel.add(separator, gbc_separator);
@@ -403,17 +402,15 @@ public class ConnectionSettingsComponent implements HasComponent {
         if (!StringUtils.isEmpty(serverUrl) && !EMPTY_SERVER_URL_TEXT.equals(serverUrl)) {
             ConnectionSettings connectionSettings;
             try {
-                //todo tb should create here a custom class that persists the password per project
-                Authentication authentication = new EncodedAuthentication() {
+                Authentication authentication = new EncodedAuthentication(getUserName()) {
                     @Override
                     public String getPassword() {
-                        PluginModule pluginModule = PluginModule.getPluginModuleForProject(project);
-                        IdePluginPersistentState persistentState = pluginModule.getInstance(IdePluginPersistentState.class);
-                        //persistentState.saveState();
+                        String pwd = PasswordSafe.getInstance().getPassword(project, IdePersistentConnectionSettingsProvider.class, "OCTANE_PASSWORD_KEY");
+                        return pwd != null ? pwd : "";
                     }
                 };
 
-                connectionSettings = UrlParser.resolveConnectionSettings(serverUrl, getUserName(), getPassword());
+                connectionSettings = UrlParser.resolveConnectionSettings(serverUrl, authentication);
                 setConnectionStatusLabelVisible(false);
             } catch (ServiceException ex) {
                 connectionSettings = new ConnectionSettings();
@@ -461,7 +458,7 @@ public class ConnectionSettingsComponent implements HasComponent {
     }
 
     public void setSsoAuth(boolean isSsoAuth) {
-        if(isSsoAuth) {
+        if (isSsoAuth) {
             txtFieldUserName.setText("");
             passField.setText("");
         }
@@ -542,7 +539,7 @@ public class ConnectionSettingsComponent implements HasComponent {
 
         String proxyValues = "<b>Detected proxy for current server url:</b><br>";
 
-        if(proxySettings.size() == 0) {
+        if (proxySettings.size() == 0) {
             proxyValues += "No proxy detected.";
 
         } else {
