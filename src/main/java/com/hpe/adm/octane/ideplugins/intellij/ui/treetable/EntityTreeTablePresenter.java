@@ -108,6 +108,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
                 try {
                     entityTreeTableView.setLoading(true);
                     Collection<EntityModel> myWork = myWorkService.getMyWork(EntityTreeCellRenderer.getEntityFieldMap());
+
                     SwingUtilities.invokeLater(() -> {
                         entityTreeTableView.setLoading(false);
                         entityTreeTableView.setTreeModel(createEntityTreeModel(myWork));
@@ -468,9 +469,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
         entityCategories.add(new UserItemEntityCategory("Backlog",
                 Entity.USER_STORY,
                 Entity.DEFECT,
-                Entity.QUALITY_STORY,
-                Entity.EPIC,
-                Entity.FEATURE));
+                Entity.QUALITY_STORY));
 
         entityCategories.add(new UserItemEntityCategory(entityLabelMap.get(Entity.REQUIREMENT).getValue("plural_capitalized").getValue().toString(), Entity.REQUIREMENT));
         entityCategories.add(new UserItemEntityCategory(entityLabelMap.get(Entity.TASK).getValue("plural_capitalized").getValue().toString(), Entity.TASK));
