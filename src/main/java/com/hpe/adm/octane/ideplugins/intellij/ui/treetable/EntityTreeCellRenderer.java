@@ -156,7 +156,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
      * @return
      */
     public static Map<Entity, Set<String>> getEntityFieldMap() {
-        return Collections.unmodifiableMap(entityFields); //tsais
+        return Collections.unmodifiableMap(entityFields);
     }
 
     public static String getSubtypeName(String subtype) {
