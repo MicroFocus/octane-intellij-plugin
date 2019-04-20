@@ -22,8 +22,8 @@ import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.mywork.MyWorkUtil;
 import com.hpe.adm.octane.ideplugins.services.util.EntityTypeIdPair;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
-import com.intellij.openapi.project.Project;
 import com.intellij.ui.JBColor;
+import com.intellij.util.ui.UIUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jdesktop.swingx.JXLabel;
 
@@ -184,7 +184,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
             Font font = new Font(lbl.getFont().getFontName(), Font.BOLD, lbl.getFont().getSize() + 4);
             lbl.setFont(font);
 
-            if (selected && hasFocus) {
+            if (selected && hasFocus && !UIUtil.isUnderDarcula()) {
                 lbl.setForeground(JBColor.background());
             }
 
