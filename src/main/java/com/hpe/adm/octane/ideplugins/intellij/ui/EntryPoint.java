@@ -25,7 +25,6 @@ import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
 import com.hpe.adm.octane.ideplugins.services.nonentity.SharedSpaceLevelRequestService;
-import com.hpe.adm.octane.ideplugins.services.nonentity.TimelineService;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -84,12 +83,22 @@ public class EntryPoint implements ToolWindowFactory {
                         // Make sure you only instantiate other services (including the ones in the Presenter hierarchy,
                         // after you tested the connection settings with the test service
 
-                        final String toolWindowTabTitle = getToolWindowTabTitle(pluginModule);
+                        // Add the workspace name to the ToolWindow content tab name
+                        String workspaceDisplayName;
+                        try {
+                            SharedSpaceLevelRequestService sharedSpaceLevelRequestService = pluginModule.getInstance(SharedSpaceLevelRequestService.class);
+                            workspaceDisplayName = " [" + sharedSpaceLevelRequestService.getCurrentWorkspaceName() + "]";
+                        } catch (Exception ex) {
+                            workspaceDisplayName = "";
+                            log.warn("Failed to get workspace name: " + ex);
+                        }
+                        final String wsName = workspaceDisplayName;
+
                         SwingUtilities.invokeAndWait(() -> {
                             //Create the presenter hierarchy, DI will inject view instances
                             MainPresenter mainPresenter = pluginModule.getInstance(MainPresenter.class);
                             pluginModule.getInstance(EntityTreeTablePresenter.class).refresh();
-                            setContent(toolWindow, mainPresenter.getView(), toolWindowTabTitle);
+                            setContent(toolWindow, mainPresenter.getView(), wsName);
                         });
                     } catch (Exception ex) {
                         pluginModule.getInstance(IdePluginPersistentState.class).clearState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM);
@@ -129,39 +138,6 @@ public class EntryPoint implements ToolWindowFactory {
         connectionSettingsProvider.addChangeHandler(mainToolWindowContentControl);
     }
 
-    private String getToolWindowTabTitle(PluginModule pluginModule) {
-        String workspaceName = getCurrentWorkspaceName(pluginModule);
-        String shortTimeline = getShortTimeline(pluginModule);
-        String toolWindowTitle = "";
-        toolWindowTitle += workspaceName;
-        toolWindowTitle += shortTimeline.isEmpty() ? "" : " | " + shortTimeline;
-        return toolWindowTitle;
-    }
-
-    private String getCurrentWorkspaceName(PluginModule pluginModule) {
-        String workspaceDisplayName;
-        try {
-            SharedSpaceLevelRequestService sharedSpaceLevelRequestService = pluginModule.getInstance(SharedSpaceLevelRequestService.class);
-            workspaceDisplayName = "Ws: " + sharedSpaceLevelRequestService.getCurrentWorkspaceName();
-        } catch (Exception ex) {
-            workspaceDisplayName = "";
-            log.warn("Failed to get workspace name: " + ex);
-        }
-        return workspaceDisplayName;
-    }
-
-    private String getShortTimeline(PluginModule pluginModule) {
-        String timeline;
-        try {
-            TimelineService timelineService = pluginModule.getInstance(TimelineService.class);
-            timeline = timelineService.getTimelineString();
-        } catch (Exception ex) {
-            timeline = "";
-            log.warn("Failed to get timeline: " + ex);
-        }
-        return timeline;
-    }
-
     private void setContent(ToolWindow toolWindow, HasComponent hasComponent, String workspaceName) {
         SwingUtilities.invokeLater(() -> {
             ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
@@ -169,6 +145,5 @@ public class EntryPoint implements ToolWindowFactory {
             toolWindow.getContentManager().addContent(contentFactory.createContent(hasComponent.getComponent(), workspaceName, false));
         });
     }
-
 
 }
