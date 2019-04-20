@@ -116,7 +116,7 @@ public class EntryPoint implements ToolWindowFactory {
                             //also show a notification with the exception
                             UiUtil.showWarningBalloon(project,
                                     "Failed to connect to Octane",
-                                    "Your previously saved connection settings do not seem to work <br> Error: " + ex.getMessage(),
+                                    "Your previously saved connection settings do not seem to work <br> Error: " + ex.toString(),
                                     NotificationType.WARNING);
                         } else {
                             //In this case (probably), the plugin was never configured on this project before

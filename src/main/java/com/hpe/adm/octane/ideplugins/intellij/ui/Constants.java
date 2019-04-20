@@ -17,27 +17,28 @@ import com.intellij.util.ui.UIUtil;
 
 public class Constants {
 
-    public static final String IMAGE_FOLDER_PATH = "/images/";
-    public static final String IMG_VENDOR_LOGO = IMAGE_FOLDER_PATH + "microfocus-blue-logo.png";
-    public static final String IMG_OCTANE_LOGO = IMAGE_FOLDER_PATH + "octane-logo.png";
-    public static final String IMG_AJAX_SPINNER = IMAGE_FOLDER_PATH + "octane_preloader.gif";
-    public static final String IMG_REFRESH_ICON = IMAGE_FOLDER_PATH + "refresh-16x16.png";
-    public static final String IMG_COMMENTS_ICON = IMAGE_FOLDER_PATH + "comments-16x16.png";
-    public static final String IMG_BROWSER_ICON = IMAGE_FOLDER_PATH + "browser-16x16.png";
-    public static final String IMG_START_TIMER = IMAGE_FOLDER_PATH + "startTimer-16x16.png";
-    public static final String IMG_STOP_TIMER = IMAGE_FOLDER_PATH + "stopTimer-16x16.png";
-    public static final String IMG_PLAIN_ROBOT = IMAGE_FOLDER_PATH + "s-no-items-to-display.png";
-    public static final String IMG_ACTIVE_ITEM = IMAGE_FOLDER_PATH + "activeitem.png";
-    public static final String IMG_MYWORK = IMAGE_FOLDER_PATH + "mywork.png";
-    public static final String IMG_FIELD_SELECTION_NON_DEFAULT = IMAGE_FOLDER_PATH + "cus-on.png";
-    public static final String IMG_FIELD_SELECTION_DEFAULT = IMAGE_FOLDER_PATH + "cus-off.png";
-    public static final String IMG_NO_WORK_ROCKET = IMAGE_FOLDER_PATH + "s-rocket.png";
-    public static final String IMG_PHASE_DROPDOWN = IMAGE_FOLDER_PATH + "drop-down.png";
-    public static final String IMG_ENTITY_COMBOBOX_ARROW = IMAGE_FOLDER_PATH +"arrow.png";
-    public static final String IMG_COPY_ICON = IMAGE_FOLDER_PATH + "copy-icon.png";
-    public static final String IMG_HELP_ICON = IMAGE_FOLDER_PATH + "help-16x16.png";
+    public static final String IMG_FOLDER_PATH = "/images/";
+    public static final String IMG_VENDOR_LOGO = IMG_FOLDER_PATH + "microfocus-blue-logo.png";
+    public static final String IMG_OCTANE_LOGO = IMG_FOLDER_PATH + "octane-logo.png";
+    public static final String IMG_AJAX_SPINNER = IMG_FOLDER_PATH + "octane_preloader.gif";
+    public static final String IMG_REFRESH_ICON = IMG_FOLDER_PATH + "refresh-16x16.png";
+    public static final String IMG_COMMENTS_ICON = IMG_FOLDER_PATH + "comments-16x16.png";
+    public static final String IMG_BROWSER_ICON = IMG_FOLDER_PATH + "browser-16x16.png";
+    public static final String IMG_START_TIMER = IMG_FOLDER_PATH + "startTimer-16x16.png";
+    public static final String IMG_STOP_TIMER = IMG_FOLDER_PATH + "stopTimer-16x16.png";
+    public static final String IMG_PLAIN_ROBOT = IMG_FOLDER_PATH + "s-no-items-to-display.png";
+    public static final String IMG_ACTIVE_ITEM = IMG_FOLDER_PATH + "activeitem.png";
+    public static final String IMG_MYWORK = IMG_FOLDER_PATH + "mywork.png";
+    public static final String IMG_FIELD_SELECTION_NON_DEFAULT = IMG_FOLDER_PATH + "cus-on.png";
+    public static final String IMG_FIELD_SELECTION_DEFAULT = IMG_FOLDER_PATH + "cus-off.png";
+    public static final String IMG_NO_WORK_ROCKET = IMG_FOLDER_PATH + "s-rocket.png";
+    public static final String IMG_PHASE_DROPDOWN = IMG_FOLDER_PATH + "drop-down.png";
+    public static final String IMG_ENTITY_COMBOBOX_ARROW = IMG_FOLDER_PATH +"arrow.png";
+    public static final String IMG_COPY_ICON = IMG_FOLDER_PATH + "copy-icon.png";
+    public static final String IMG_HELP_ICON = IMG_FOLDER_PATH + "help-16x16.png";
+    public static final String IMG_SEARCH_ICON = IMG_FOLDER_PATH + "search.png";
 
-    public static final String IMG_TRANSPARENT = IMAGE_FOLDER_PATH + "transparent_1x1.png";
+    public static final String IMG_TRANSPARENT = IMG_FOLDER_PATH + "transparent_1x1.png";
 
     //Settings validation
     public static final String CORRECT_URL_FORMAT_MESSAGE = "Example: (http|https)://{serverurl[:port]}/?p={sharedspaceId}/{workspaceId}";
@@ -47,9 +48,9 @@ public class Constants {
 
     public static String getOctaneRemoveIcon() {
         if (UIUtil.isUnderDarcula()) {
-            return IMAGE_FOLDER_PATH + "octane_remove_light.png";
+            return IMG_FOLDER_PATH + "octane_remove_light.png";
         } else {
-            return IMAGE_FOLDER_PATH + "octane_remove_dark.png";
+            return IMG_FOLDER_PATH + "octane_remove_dark.png";
         }
     }
 
@@ -57,7 +58,7 @@ public class Constants {
         if (UIUtil.isUnderDarcula()) {
             return IMG_TRANSPARENT;
         } else {
-            return IMAGE_FOLDER_PATH + "octane_remove_light.png";
+            return IMG_FOLDER_PATH + "octane_remove_light.png";
         }
     }
 

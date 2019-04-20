@@ -110,7 +110,7 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
     private TabInfo selectedTabInfo;
     private TabInfo searchTabInfo;
     private TabInfo myWorkTabInfo;
-    private Icon searchIcon = IconLoader.findIcon("/com/intellij/ide/ui/laf/icons/search.png");
+    private Icon searchIcon = IconLoader.findIcon(Constants.IMG_SEARCH_ICON);
 
     public EntityTreeTablePresenter openMyWorkTab() {
         EntityTreeTablePresenter presenter = entityTreeTablePresenterProvider.get();
