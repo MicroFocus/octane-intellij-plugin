@@ -17,6 +17,7 @@ import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.DetailsViewDefaultFields;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
+import com.intellij.ui.IdeBorderFactory;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import javafx.application.Platform;
@@ -31,26 +32,26 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
 
-public class CommentsConversationPanel extends JPanel {
+public class CommentsPanel extends JPanel {
+
     private JButton sendMessageButton;
     private JTextField messageBox;
 
-    private HTMLPresenterFXPanel chatBox;
+    private HTMLPresenterFXPanel commentsPanel;
     private String commentContent = "";
     private ActionListener addCommentActionListener;
 
     @Inject
-    public CommentsConversationPanel(HTMLPresenterFXPanel chatBox) {
-        this.chatBox = chatBox;
+    public CommentsPanel(HTMLPresenterFXPanel commentsPanel) {
+
+        this.commentsPanel = commentsPanel;
+
         setLayout(new BorderLayout());
 
-        JPanel southPanel = new JPanel();
-        southPanel.setLayout(new GridBagLayout());
+        JPanel messagePanel = new JPanel();
+        messagePanel.setLayout(new GridBagLayout());
 
         messageBox = new JTextField(30);
-        messageBox.setFont(new Font("Arial", Font.PLAIN, 11));
-        messageBox.setOpaque(false);
-        messageBox.requestFocusInWindow();
         messageBox.setOpaque(true);
         messageBox.setBackground(UIUtil.getTextFieldBackground());
         messageBox.getDocument().addDocumentListener(new DocumentListener() {
@@ -66,6 +67,7 @@ public class CommentsConversationPanel extends JPanel {
                 enableButton();
             }
         });
+
         messageBox.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
@@ -76,11 +78,9 @@ public class CommentsConversationPanel extends JPanel {
                 }
             }
         });
-        sendMessageButton = new JButton("Add");
+        sendMessageButton = new JButton("Post");
 
-        chatBox.setBorder(null);
-        chatBox.setFont(new Font("Arial", Font.PLAIN, 11));
-        chatBox.addEventActions();
+        commentsPanel.addEventActions();
 
         GridBagConstraints left = new GridBagConstraints();
         left.anchor = GridBagConstraints.LINE_START;
@@ -92,15 +92,14 @@ public class CommentsConversationPanel extends JPanel {
         right.insets = JBUI.insetsLeft(10);
         right.anchor = GridBagConstraints.LINE_END;
         right.fill = GridBagConstraints.NONE;
-        right.weightx = 1.0D;
-        right.weighty = 1.0D;
 
-        southPanel.add(messageBox, left);
-        southPanel.add(sendMessageButton, right);
-        southPanel.setBorder(JBUI.Borders.empty(0, 5));
+        messagePanel.add(messageBox, left);
+        messagePanel.add(sendMessageButton, right);
+        messagePanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 5 ,0));
+        add(BorderLayout.NORTH, messagePanel);
 
-        add(BorderLayout.NORTH, southPanel);
-        add(chatBox, BorderLayout.CENTER);
+        commentsPanel.setBorder(IdeBorderFactory.createBorder());
+        add(commentsPanel, BorderLayout.CENTER);
         enableButton();
     }
 
@@ -109,7 +108,7 @@ public class CommentsConversationPanel extends JPanel {
     }
 
     private void setChatBoxScene() {
-        Platform.runLater(() -> chatBox.setContent(commentContent));
+        Platform.runLater(() -> commentsPanel.setContent(commentContent));
     }
 
 

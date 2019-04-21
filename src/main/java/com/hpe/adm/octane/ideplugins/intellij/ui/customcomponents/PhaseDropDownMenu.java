@@ -23,6 +23,7 @@ import com.hpe.adm.octane.ideplugins.services.model.EntityModelWrapper;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
 import com.intellij.openapi.ui.JBPopupMenu;
 import com.intellij.openapi.util.IconLoader;
+import com.intellij.util.ui.UIUtil;
 
 import javax.swing.*;
 import java.awt.*;
@@ -133,7 +134,9 @@ public class PhaseDropDownMenu extends JPanel {
             if (arrow == null) {
                 // create the arrow
                 arrow = new JLabel();
-                arrow.setIcon(IconLoader.findIcon(Constants.IMG_PHASE_DROPDOWN));
+
+                Icon dropdown = getDropdownIcon();
+                arrow.setIcon(dropdown);
                 arrow.setToolTipText(TOOLTIP_CLICKABLE_PHASE);
                 arrow.setCursor(new Cursor(Cursor.HAND_CURSOR));
                 arrow.addMouseListener(new MouseAdapter() {
@@ -175,6 +178,17 @@ public class PhaseDropDownMenu extends JPanel {
                 });
             }
         }
+    }
+
+    private Icon getDropdownIcon() {
+        Icon dropdown;
+        IconLoader.findIcon(Constants.IMG_PHASE_DROPDOWN);
+        if(UIUtil.isUnderDarcula()) {
+            dropdown = IconLoader.findIcon(Constants.IMG_PHASE_DROPDOWN_DARKULA);
+        } else {
+            dropdown = IconLoader.findIcon(Constants.IMG_PHASE_DROPDOWN);
+        }
+        return dropdown;
     }
 
     public void setEntityModelWrapper(EntityModelWrapper entityModelWrapper) {

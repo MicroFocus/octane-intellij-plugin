@@ -30,6 +30,9 @@ public abstract class OctanePluginAction extends AnAction {
     }
 
     protected static Presenter getSelectedPresenter(AnActionEvent e) {
+        if(e.getProject() == null) {
+            return null;
+        }
         PluginModule pluginModule = PluginModule.getPluginModuleForProject(e.getProject());
         TabbedPanePresenter tabbedPanePresenter = pluginModule.getInstance(TabbedPanePresenter.class);
         return tabbedPanePresenter.getSelectedPresenter();

@@ -15,47 +15,57 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields;
 
 import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
+import com.hpe.adm.octane.ideplugins.intellij.ui.detail.DetailsViewDefaultFields;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.field.DateTimeFieldEditor;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.field.FieldEditor;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.field.FieldEditorFactory;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.field.ReferenceFieldEditor;
 import com.hpe.adm.octane.ideplugins.services.model.EntityModelWrapper;
+import com.hpe.adm.octane.ideplugins.services.util.Util;
+import com.intellij.ui.IdeBorderFactory;
 import com.intellij.util.ui.JBUI;
+import javafx.application.Platform;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
 
+import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("serial")
-public class EntityFieldsPanel extends JXPanel {
+public class EntityFieldsPanel extends JXPanel implements Scrollable {
 
     private Collection<FieldMetadata> fields;
 
     @Inject
     private FieldEditorFactory fieldFactory;
 
-    public EntityFieldsPanel() {
+    private HTMLPresenterFXPanel descriptionPanel;
+
+    @Inject
+    public EntityFieldsPanel(HTMLPresenterFXPanel descriptionPanel) {
+        this.descriptionPanel = descriptionPanel;
+
+        setBorder(BorderFactory.createEmptyBorder(10,15,10,10));
         GridBagLayout gbl = new GridBagLayout();
         gbl.columnWidths = new int[]{0, 0, 0, 0, 0, 0};
         gbl.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
         setLayout(gbl);
 
-        addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                super.componentResized(e);
-                gbl.columnWidths = new int[]{0, getWidth() / 2, 0, 0, getWidth() / 2, 0};
-                updateUI();
-                revalidate();
-                repaint();
-            }
-        });
+//        addComponentListener(new ComponentAdapter() {
+//            @Override
+//            public void componentResized(ComponentEvent e) {
+//                super.componentResized(e);
+//                gbl.columnWidths = new int[]{0, getWidth() / 2, 0, 0, getWidth() / 2, 0};
+//                updateUI();
+//                revalidate();
+//                repaint();
+//            }
+//        });
     }
 
     public void setFieldMetadata(Collection<FieldMetadata> fields) {
@@ -73,17 +83,16 @@ public class EntityFieldsPanel extends JXPanel {
                 .filter(e -> e.getFieldType() != FieldMetadata.FieldType.Memo)
                 .collect(Collectors.toList());
 
-
-        for(String fieldName : fieldsToShow) {
+        for (String fieldName : fieldsToShow) {
 
             FieldMetadata fieldMetadata =
                     possibleFields
-                    .stream()
-                    .filter(currentFieldMetadata -> currentFieldMetadata.getName().equals(fieldName))
-                    .findAny()
-                    .orElse(null);
+                            .stream()
+                            .filter(currentFieldMetadata -> currentFieldMetadata.getName().equals(fieldName))
+                            .findAny()
+                            .orElse(null);
 
-            if(fieldMetadata == null) {
+            if (fieldMetadata == null) {
                 continue;
             }
 
@@ -118,8 +127,24 @@ public class EntityFieldsPanel extends JXPanel {
 
         }
 
+        addDescription(entityModelWrapper, rowCount);
         repaint();
         revalidate();
+    }
+
+    private void addDescription(EntityModelWrapper entityModelWrapper, int rowCount) {
+        String descriptionContent = Util.getUiDataFromModel(entityModelWrapper.getValue(DetailsViewDefaultFields.FIELD_DESCRIPTION));
+        Platform.runLater(() -> descriptionPanel.setContent(descriptionContent));
+        descriptionPanel.setBorder(new TitledBorder(IdeBorderFactory.createBorder(), "Description"));
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.anchor = GridBagConstraints.CENTER;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 0;
+        gbc.gridy = rowCount;
+        gbc.gridwidth = 6;
+
+        add(descriptionPanel, gbc);
     }
 
     private void addClearButton(FieldEditor fieldEditor, int rowCount, int column) {
@@ -136,5 +161,15 @@ public class EntityFieldsPanel extends JXPanel {
         gbc2.gridx = column;
         gbc2.gridy = rowCount;
         add(clearButton, gbc2);
+    }
+
+    @Override
+    public boolean getScrollableTracksViewportWidth() {
+        return true;
+    }
+
+    @Override
+    public boolean getScrollableTracksViewportHeight() {
+        return false;
     }
 }

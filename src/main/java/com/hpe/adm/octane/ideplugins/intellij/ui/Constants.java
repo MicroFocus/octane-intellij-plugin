@@ -33,6 +33,7 @@ public class Constants {
     public static final String IMG_FIELD_SELECTION_DEFAULT = IMG_FOLDER_PATH + "cus-off.png";
     public static final String IMG_NO_WORK_ROCKET = IMG_FOLDER_PATH + "s-rocket.png";
     public static final String IMG_PHASE_DROPDOWN = IMG_FOLDER_PATH + "drop-down.png";
+    public static final String IMG_PHASE_DROPDOWN_DARKULA = IMG_FOLDER_PATH + "drop-down-darkula.png";
     public static final String IMG_ENTITY_COMBOBOX_ARROW = IMG_FOLDER_PATH +"arrow.png";
     public static final String IMG_COPY_ICON = IMG_FOLDER_PATH + "copy-icon.png";
     public static final String IMG_HELP_ICON = IMG_FOLDER_PATH + "help-16x16.png";

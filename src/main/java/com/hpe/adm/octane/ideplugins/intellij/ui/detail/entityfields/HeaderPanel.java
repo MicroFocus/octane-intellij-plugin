@@ -31,6 +31,7 @@ import com.intellij.ui.JBColor;
 import com.intellij.util.ui.JBUI;
 
 import javax.swing.*;
+import javax.swing.border.MatteBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
@@ -173,6 +174,8 @@ public class HeaderPanel extends JPanel {
         gbc_actionButtons.anchor = GridBagConstraints.EAST;
         panelControls.add(actionToolBar.getComponent(), BorderLayout.CENTER);
         add(panelControls, gbc_actionButtons);
+
+        setBorder(new MatteBorder(0, 0, 1, 0, JBColor.border()));
     }
 
     private void setEntityIcon(ImageIcon entityIcon) {

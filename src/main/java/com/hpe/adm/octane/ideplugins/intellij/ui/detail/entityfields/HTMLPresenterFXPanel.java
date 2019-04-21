@@ -64,6 +64,7 @@ public class HTMLPresenterFXPanel extends JFXPanel {
                 source.getParent().dispatchEvent(parentEvent);
             });
         setFocusable(false);
+        addEventActions();
     }
 
     private void addHyperlinkListener(HyperlinkListener listener) {
