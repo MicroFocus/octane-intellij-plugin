@@ -27,7 +27,7 @@ apply plugin: "org.jetbrains.intellij"
 //NOTE, the local maven repository path from the settings.xml will be ignored because of this, the default is hardcoded
 def localMavenRepo = project.hasProperty('localMavenRepo') ?
         project.getProperty('localMavenRepo') :
-        'file://' + new File(System.getProperty('user.home'), '.m2/repository2').absolutePath
+        'file://' + new File(System.getProperty('user.home'), '.m2/repository').absolutePath
 
 repositories {
     //local
@@ -55,7 +55,7 @@ sourceSets {
 }
 
 dependencies {
-    compile("com.hpe.adm.octane.ideplugins:octane-plugin-common:1.5.7-SNAPSHOT"){
+    compile("com.hpe.adm.octane.ideplugins:octane-plugin-common:$commonVersion"){
         exclude group: 'org.slf4j', module: 'slf4j-api'
     }
 
