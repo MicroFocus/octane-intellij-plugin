@@ -183,7 +183,6 @@ public class EntityModelRow extends JPanel {
 
     public void addSimpleDetails(String text, DetailsPosition position) {
         JXLabel lbl = createLabel("  " + text);
-        //lbl.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, JBColor.border()));
         if (DetailsPosition.TOP.equals(position)) {
             panelTop.add(lbl);
         } else if (DetailsPosition.BOTTOM.equals(position)) {
