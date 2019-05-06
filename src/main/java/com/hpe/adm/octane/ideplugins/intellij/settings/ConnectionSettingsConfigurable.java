@@ -337,8 +337,9 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
             errorMessageBuilder.append(ex.getMessage());
             errorMessageBuilder.append(Constants.CORRECT_URL_FORMAT_MESSAGE);
             SwingUtilities.invokeLater(() -> {
-                if (connectionSettingsView != null)
+                if (connectionSettingsView != null) {
                     connectionSettingsView.setConnectionStatusError(errorMessageBuilder.toString());
+                }
             });
 
             throw ex;
@@ -352,8 +353,9 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
             } catch (ServiceException ex) {
                 //handle case when ok button is pressed
                 SwingUtilities.invokeLater(() -> {
-                    if (connectionSettingsView != null)
+                    if (connectionSettingsView != null) {
                         connectionSettingsView.setConnectionStatusError(ex.getMessage());
+                    }
                 });
                 throw ex;
             }
