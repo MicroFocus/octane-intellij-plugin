@@ -15,11 +15,17 @@ package com.hpe.adm.octane.ideplugins.intellij.util;
 
 import com.hpe.adm.octane.ideplugins.services.connection.UserAuthentication;
 
-public abstract class EncodedAuthentication extends UserAuthentication {
+public class EncodedAuthentication extends UserAuthentication {
 
     public EncodedAuthentication(String userName) {
         super(userName, "");
     }
 
-    public abstract String getPassword();
+    public EncodedAuthentication(String userName, String password) {
+        super(userName, password);
+    }
+
+    public String getPassword() {
+        return super.getPassword();
+    }
 }
