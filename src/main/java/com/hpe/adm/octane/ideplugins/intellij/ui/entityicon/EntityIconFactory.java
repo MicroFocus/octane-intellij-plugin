@@ -83,10 +83,17 @@ public class EntityIconFactory {
         return label;
     }
 
+    /**
+     * Use param entity null to get a disabled icons
+     * @param entity
+     * @param iconSize
+     * @param fontSize
+     * @return
+     */
     private Image createIconAsImage(Entity entity, int iconSize, int fontSize) {
 
         Color iconColor = entityColorMap.getOrDefault(entity, unmappedEntityIconColor);
-        String iconText =  entityLabelService.getEntityInitials(entity);
+        String iconText = entity != null ?  entityLabelService.getEntityInitials(entity) : "";
 
         BufferedImage image = new BufferedImage(iconSize, iconSize, BufferedImage.TYPE_INT_ARGB);
         Graphics2D bg = image.createGraphics();

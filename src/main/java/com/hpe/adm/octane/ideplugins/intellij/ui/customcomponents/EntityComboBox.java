@@ -127,6 +127,7 @@ public class EntityComboBox extends JPanel {
         });
 
         arrowButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        editorLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         delayTimer = new Timer(500, e -> {
             showLoading();

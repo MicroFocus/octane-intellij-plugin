@@ -21,8 +21,6 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
-import java.net.CookieHandler;
-import java.net.CookieManager;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -34,10 +32,17 @@ public class LoginDialog extends DialogWrapper {
     public static final String TITLE = "Login to ALM Octane";
     private String loginPageUrl;
     private boolean wasClosed = false;
+    private boolean shouldUseJavaFxBrowser;
+    private JPanel browserPanel;
 
     public LoginDialog(Project project, String loginPageUrl) {
+        this(project, loginPageUrl, true);
+    }
+
+    public LoginDialog(Project project, String loginPageUrl, boolean shouldUseJavaFxBrowser) {
         super(project, false, IdeModalityType.PROJECT);
         this.loginPageUrl = loginPageUrl;
+        this.shouldUseJavaFxBrowser = shouldUseJavaFxBrowser;
         setTitle(TITLE);
         init();
     }
@@ -52,6 +57,30 @@ public class LoginDialog extends DialogWrapper {
         contentPane.setLayout(new BorderLayout(0, 10));
         contentPane.setPreferredSize(new Dimension(800, 600));
 
+        JLabel lblOpenSystemBrowser = new JLabel("<html>If the page below does not display correctly, <a href=\\\"\\\">click here to use your system default browser.</a></html>");
+        lblOpenSystemBrowser.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        contentPane.add(lblOpenSystemBrowser, BorderLayout.NORTH);
+
+        lblOpenSystemBrowser.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                try {
+                    Desktop.getDesktop().browse(new URI(loginPageUrl));
+                    JLabel lblSystemBrowser = new JLabel("Opening login page system browser, waiting for session...");
+                    if(browserPanel != null) {
+                        browserPanel.setVisible(false);
+                    }
+                    contentPane.add(lblSystemBrowser, BorderLayout.CENTER);
+                    contentPane.setPreferredSize(new Dimension(800, -1));
+                    LoginDialog.this.pack();
+                    LoginDialog.this.centerRelativeToParent();
+
+                } catch (URISyntaxException | IOException ex) {
+                    logger.error("Failed to open system browser, " + ex);
+                }
+            }
+        });
+
         // We need to check if the jvm running IntelliJ has java fx installed in it, on linux, openjdk can be installed without java fx
         // TODO: need to do this for the description and the comments as well
         boolean isJavaFxAvailable;
@@ -64,36 +93,11 @@ public class LoginDialog extends DialogWrapper {
             isJavaFxAvailable = false;
         }
 
-        if (isJavaFxAvailable) {
+        if (isJavaFxAvailable && shouldUseJavaFxBrowser) {
 
-            JLabel lblOpenSystemBrowser = new JLabel("<html>If the page below does not display correctly, <a href=\\\"\\\">click here to use your system default browser.</a></html>");
-            lblOpenSystemBrowser.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-            contentPane.add(lblOpenSystemBrowser, BorderLayout.NORTH);
-
-            JPanel browserPanel = new JPanel(new BorderLayout());
+            browserPanel = new JPanel(new BorderLayout());
             browserPanel.setBorder(new LineBorder(UIManager.getColor("Separator.foreground")));
             contentPane.add(browserPanel, BorderLayout.CENTER);
-
-            lblOpenSystemBrowser.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    try {
-                        Desktop.getDesktop().browse(new URI(loginPageUrl));
-                        JLabel lblSystemBrowser = new JLabel("Opening login page system browser, waiting for session...");
-                        browserPanel.setVisible(false);
-                        contentPane.add(lblSystemBrowser, BorderLayout.CENTER);
-                        contentPane.setPreferredSize(new Dimension(-1, -1));
-                        LoginDialog.this.pack();
-                        LoginDialog.this.centerRelativeToParent();
-
-                    } catch (URISyntaxException | IOException ex) {
-                        logger.error("Failed to open system browser, " + ex);
-                    }
-                }
-            });
-
-            // Clear cookies
-            CookieHandler.setDefault(new CookieManager());
 
             LoadingWidget loadingWidget = new LoadingWidget("Loading login page...");
             JFXPanel jfxPanel = new JFXPanel();
@@ -137,10 +141,7 @@ public class LoginDialog extends DialogWrapper {
             });
 
         } else {
-
-            JLabel lblOpenSystemBrowser = new JLabel("<html>Login required, <a href=\\\"\\\">click here to open the login page in your system default browser.</a></html>");
-            lblOpenSystemBrowser.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-            contentPane.add(lblOpenSystemBrowser, BorderLayout.CENTER);
+            contentPane.setPreferredSize(new Dimension(800, -1));
             pack();
             centerRelativeToParent();
         }

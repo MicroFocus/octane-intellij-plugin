@@ -11,10 +11,8 @@
  * limitations under the License.
  */
 
-package com.hpe.adm.octane.ideplugins.intellij.ui;
+package com.hpe.adm.octane.ideplugins.intellij.ui.treetable;
 
-public interface Presenter<V extends View> {
-    V getView();
-    void setView(V view);
-    default void closing(){}
+public enum DetailsPosition {
+	TOP, BOTTOM
 }

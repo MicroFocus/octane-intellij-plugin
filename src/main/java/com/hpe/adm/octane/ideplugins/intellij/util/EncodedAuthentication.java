@@ -11,10 +11,21 @@
  * limitations under the License.
  */
 
-package com.hpe.adm.octane.ideplugins.intellij.ui;
+package com.hpe.adm.octane.ideplugins.intellij.util;
 
-public interface Presenter<V extends View> {
-    V getView();
-    void setView(V view);
-    default void closing(){}
+import com.hpe.adm.octane.ideplugins.services.connection.UserAuthentication;
+
+public class EncodedAuthentication extends UserAuthentication {
+
+    public EncodedAuthentication(String userName) {
+        super(userName, "");
+    }
+
+    public EncodedAuthentication(String userName, String password) {
+        super(userName, password);
+    }
+
+    public String getPassword() {
+        return super.getPassword();
+    }
 }

@@ -58,12 +58,11 @@ public class EntityFieldsPanel extends JXPanel {
         });
     }
 
-
-    public void setFields(Collection<FieldMetadata> fields) {
+    public void setFieldMetadata(Collection<FieldMetadata> fields) {
         this.fields = fields;
     }
 
-    public void setEntityModel(EntityModelWrapper entityModelWrapper, Set<String> fieldNames) {
+    public void setEntityModel(EntityModelWrapper entityModelWrapper, Set<String> fieldsToShow) {
         removeAll();
         int columnCount = 0;
         int rowCount = 0;
@@ -74,38 +73,49 @@ public class EntityFieldsPanel extends JXPanel {
                 .filter(e -> e.getFieldType() != FieldMetadata.FieldType.Memo)
                 .collect(Collectors.toList());
 
-        for (FieldMetadata fieldMetadata : possibleFields) {
-            if (fieldNames.contains(fieldMetadata.getName())) {
-                String fieldName = fieldMetadata.getName();
-                JXLabel fieldLabel = new JXLabel();
-                Font font = new Font(fieldLabel.getFont().getFontName(), Font.BOLD, fieldLabel.getFont().getSize());
-                fieldLabel.setFont(font);
-                fieldLabel.setText(fieldMetadata.getLabel());
-                GridBagConstraints gbc1 = new GridBagConstraints();
-                gbc1.anchor = GridBagConstraints.WEST;
-                gbc1.insets = JBUI.insets(0, 5, 10, 0);
-                gbc1.gridx = columnCount++;
-                gbc1.gridy = rowCount;
 
-                FieldEditor fieldValueLabel = fieldFactory.createFieldEditor(entityModelWrapper, fieldName);
-                GridBagConstraints gbc2 = new GridBagConstraints();
-                gbc2.insets = JBUI.insets(0, 10, 10, 0);
-                gbc2.anchor = GridBagConstraints.WEST;
-                gbc2.fill = GridBagConstraints.HORIZONTAL;
-                gbc2.gridx = columnCount++;
-                gbc2.gridy = rowCount;
-                gbc2.weightx = 0.5;
+        for(String fieldName : fieldsToShow) {
 
-                add(fieldLabel, gbc1);
-                add(fieldValueLabel, gbc2);
-                addClearButton(fieldValueLabel, rowCount, columnCount);
-                columnCount++;
+            FieldMetadata fieldMetadata =
+                    possibleFields
+                    .stream()
+                    .filter(currentFieldMetadata -> currentFieldMetadata.getName().equals(fieldName))
+                    .findAny()
+                    .orElse(null);
 
-                if (columnCount > 5) {
-                    rowCount++;
-                    columnCount = 0;
-                }
+            if(fieldMetadata == null) {
+                continue;
             }
+
+            JXLabel fieldLabel = new JXLabel();
+            Font font = new Font(fieldLabel.getFont().getFontName(), Font.BOLD, fieldLabel.getFont().getSize());
+            fieldLabel.setFont(font);
+            fieldLabel.setText(fieldMetadata.getLabel());
+            GridBagConstraints gbc1 = new GridBagConstraints();
+            gbc1.anchor = GridBagConstraints.WEST;
+            gbc1.insets = JBUI.insets(0, 5, 10, 0);
+            gbc1.gridx = columnCount++;
+            gbc1.gridy = rowCount;
+
+            FieldEditor fieldValueLabel = fieldFactory.createFieldEditor(entityModelWrapper, fieldName);
+            GridBagConstraints gbc2 = new GridBagConstraints();
+            gbc2.insets = JBUI.insets(0, 10, 10, 0);
+            gbc2.anchor = GridBagConstraints.WEST;
+            gbc2.fill = GridBagConstraints.HORIZONTAL;
+            gbc2.gridx = columnCount++;
+            gbc2.gridy = rowCount;
+            gbc2.weightx = 0.5;
+
+            add(fieldLabel, gbc1);
+            add(fieldValueLabel, gbc2);
+            addClearButton(fieldValueLabel, rowCount, columnCount);
+            columnCount++;
+
+            if (columnCount > 5) {
+                rowCount++;
+                columnCount = 0;
+            }
+
         }
 
         repaint();

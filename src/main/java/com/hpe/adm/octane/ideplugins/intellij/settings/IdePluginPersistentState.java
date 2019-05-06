@@ -68,6 +68,10 @@ public class IdePluginPersistentState implements PersistentStateComponent<Elemen
         changedHandlers.add(changedHandler);
     }
 
+    public boolean removeStateChangedHandler(SettingsChangedHandler changedHandler){
+        return changedHandlers.remove(changedHandler);
+    }
+
     @Nullable
     @Override
     public Element getState() {

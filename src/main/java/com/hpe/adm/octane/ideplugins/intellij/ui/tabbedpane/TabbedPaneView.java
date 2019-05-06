@@ -61,7 +61,7 @@ public class TabbedPaneView implements View {
         editorTabs
                 .setTabDraggingEnabled(true)
                 .setUiDecorator(
-                () -> new UiDecorator.UiDecoration(null, new Insets(TabsUtil.TAB_VERTICAL_PADDING, 8, TabsUtil.TAB_VERTICAL_PADDING, 8)))
+                () -> new UiDecorator.UiDecoration(null, new Insets(2, 8, 2, 8)))
                 .setTabLabelActionsMouseDeadzone(TimedDeadzone.NULL)
                 .setGhostsAlwaysVisible(true)
                 .setTabLabelActionsAutoHide(false);

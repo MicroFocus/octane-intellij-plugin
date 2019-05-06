@@ -18,14 +18,14 @@ import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.components.WelcomeViewComponent;
 import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.LoadingWidget;
 import com.hpe.adm.octane.ideplugins.intellij.ui.main.MainPresenter;
+import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeTablePresenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
-import com.hpe.adm.octane.ideplugins.services.MetadataService;
 import com.hpe.adm.octane.ideplugins.services.TestService;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
-import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.nonentity.SharedSpaceLevelRequestService;
+import com.hpe.adm.octane.ideplugins.services.nonentity.TimelineService;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -84,18 +84,12 @@ public class EntryPoint implements ToolWindowFactory {
                         // Make sure you only instantiate other services (including the ones in the Presenter hierarchy,
                         // after you tested the connection settings with the test service
 
-                        //Add the workspace name to the ToolWindow content tab name
-                        SharedSpaceLevelRequestService sharedSpaceLevelRequestService = pluginModule.getInstance(SharedSpaceLevelRequestService.class);
-                        String workspaceDisplayName = " [" + sharedSpaceLevelRequestService.getCurrentWorkspaceName() + "]";
-
-                        //Eager init the metadata service, it's an eager singleton
-                        MetadataService metadataService = pluginModule.getInstance(MetadataService.class);
-                        metadataService.eagerInit(Entity.values());
-
+                        final String toolWindowTabTitle = getToolWindowTabTitle(pluginModule);
                         SwingUtilities.invokeAndWait(() -> {
                             //Create the presenter hierarchy, DI will inject view instances
                             MainPresenter mainPresenter = pluginModule.getInstance(MainPresenter.class);
-                            setContent(toolWindow, mainPresenter.getView(), workspaceDisplayName);
+                            pluginModule.getInstance(EntityTreeTablePresenter.class).refresh();
+                            setContent(toolWindow, mainPresenter.getView(), toolWindowTabTitle);
                         });
                     } catch (Exception ex) {
                         pluginModule.getInstance(IdePluginPersistentState.class).clearState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM);
@@ -113,7 +107,7 @@ public class EntryPoint implements ToolWindowFactory {
                             //also show a notification with the exception
                             UiUtil.showWarningBalloon(project,
                                     "Failed to connect to Octane",
-                                    "Your previously saved connection settings do not seem to work <br> Error: " + ex.getMessage(),
+                                    "Your previously saved connection settings do not seem to work <br> Error: " + ex.toString(),
                                     NotificationType.WARNING);
                         } else {
                             //In this case (probably), the plugin was never configured on this project before
@@ -135,6 +129,39 @@ public class EntryPoint implements ToolWindowFactory {
         connectionSettingsProvider.addChangeHandler(mainToolWindowContentControl);
     }
 
+    private String getToolWindowTabTitle(PluginModule pluginModule) {
+        String workspaceName = getCurrentWorkspaceName(pluginModule);
+        String shortTimeline = getShortTimeline(pluginModule);
+        String toolWindowTitle = "";
+        toolWindowTitle += workspaceName;
+        toolWindowTitle += shortTimeline.isEmpty() ? "" : " | " + shortTimeline;
+        return toolWindowTitle;
+    }
+
+    private String getCurrentWorkspaceName(PluginModule pluginModule) {
+        String workspaceDisplayName;
+        try {
+            SharedSpaceLevelRequestService sharedSpaceLevelRequestService = pluginModule.getInstance(SharedSpaceLevelRequestService.class);
+            workspaceDisplayName = "Ws: " + sharedSpaceLevelRequestService.getCurrentWorkspaceName();
+        } catch (Exception ex) {
+            workspaceDisplayName = "";
+            log.warn("Failed to get workspace name: " + ex);
+        }
+        return workspaceDisplayName;
+    }
+
+    private String getShortTimeline(PluginModule pluginModule) {
+        String timeline;
+        try {
+            TimelineService timelineService = pluginModule.getInstance(TimelineService.class);
+            timeline = timelineService.getTimelineString();
+        } catch (Exception ex) {
+            timeline = "";
+            log.warn("Failed to get timeline: " + ex);
+        }
+        return timeline;
+    }
+
     private void setContent(ToolWindow toolWindow, HasComponent hasComponent, String workspaceName) {
         SwingUtilities.invokeLater(() -> {
             ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
@@ -142,5 +169,6 @@ public class EntryPoint implements ToolWindowFactory {
             toolWindow.getContentManager().addContent(contentFactory.createContent(hasComponent.getComponent(), workspaceName, false));
         });
     }
+
 
 }

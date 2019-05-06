@@ -13,11 +13,13 @@
 
 package com.hpe.adm.octane.ideplugins.intellij.settings;
 
-import com.hpe.adm.nga.sdk.exception.OctaneException;
+import com.google.api.client.http.HttpResponseException;
+import com.hpe.adm.nga.sdk.authentication.Authentication;
 import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.components.ConnectionSettingsComponent;
 import com.hpe.adm.octane.ideplugins.intellij.ui.searchresult.SearchHistoryManager;
+import com.hpe.adm.octane.ideplugins.intellij.util.EncodedAuthentication;
 import com.hpe.adm.octane.ideplugins.intellij.util.ExceptionHandler;
 import com.hpe.adm.octane.ideplugins.services.TestService;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
@@ -51,12 +53,13 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
     private ConnectionSettingsProvider connectionSettingsProvider;
     private TestService testService;
     private IdePluginPersistentState idePluginPersistentState;
-    private ConnectionSettingsComponent connectionSettingsView = new ConnectionSettingsComponent();
+    private ConnectionSettingsComponent connectionSettingsView;
     private SearchHistoryManager searchManager;
     private boolean pinMessage = false;
 
     public ConnectionSettingsConfigurable(@NotNull final Project currentProject) {
         PluginModule module = PluginModule.getPluginModuleForProject(currentProject);
+        connectionSettingsView = new ConnectionSettingsComponent(currentProject);
         connectionSettingsProvider = module.getInstance(ConnectionSettingsProvider.class);
         testService = module.getInstance(TestService.class);
         idePluginPersistentState = module.getInstance(IdePluginPersistentState.class);
@@ -96,28 +99,26 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
         //Setting the base url will fire the even handler in the view, this will set the shared space and workspace fields
         connectionSettingsView.setServerUrl(UrlParser.createUrlFromConnectionSettings(connectionSettings));
 
-        if (connectionSettings.getAuthentication() instanceof UserAuthentication) {
+        if (connectionSettings.getAuthentication() instanceof EncodedAuthentication) {
             connectionSettingsView.setSsoAuth(false);
-            UserAuthentication authentication = (UserAuthentication) connectionSettings.getAuthentication();
+            EncodedAuthentication authentication = (EncodedAuthentication) connectionSettings.getAuthentication();
             connectionSettingsView.setUserName(authentication.getUserName());
             connectionSettingsView.setPassword(authentication.getPassword());
         } else if (connectionSettings.getAuthentication() instanceof GrantTokenAuthentication) {
             connectionSettingsView.setSsoAuth(true);
         }
 
-        connectionSettingsView.setTestConnectionActionListener(event -> {
-            new SwingWorker<Void, Void>() {
-                @Override
-                protected Void doInBackground() throws Exception {
-                    connectionSettingsView.setConnectionStatusLabelVisible(false);
-                    testConnection();
-                    return null;
-                }
-            }.execute();
-        });
+        connectionSettingsView.setTestConnectionActionListener(event -> new SwingWorker<Void, Void>() {
+            @Override
+            protected Void doInBackground() {
+                connectionSettingsView.setConnectionStatusLabelVisible(false);
+                testConnection();
+                return null;
+            }
+        }.execute());
 
         connectionSettingsView.addResetUserActionListener(e -> {
-            if(connectionSettingsView.isSsoAuth()) {
+            if (connectionSettingsView.isSsoAuth()) {
                 apply();
             }
         });
@@ -127,6 +128,9 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
 
     @Override
     public boolean isModified() {
+
+        connectionSettingsView.refreshProxySettingsLabel();
+
         //If it's empty and different allow apply
         if (isViewConnectionSettingsEmpty() && !connectionSettingsProvider.getConnectionSettings().isEmpty()) {
             return true;
@@ -148,12 +152,12 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
         }
 
         // compare auth method
-        if(!(currentConnectionSettings.getAuthentication() instanceof GrantTokenAuthentication) && connectionSettingsView.isSsoAuth()) {
+        if (!(currentConnectionSettings.getAuthentication() instanceof GrantTokenAuthentication) && connectionSettingsView.isSsoAuth()) {
             return true;
         }
 
         // compare auth data
-        if(connectionSettingsView.isSsoAuth()) {
+        if (connectionSettingsView.isSsoAuth()) {
             return !viewConnectionSettings.equalsExceptAuth(currentConnectionSettings);
         } else {
             return !viewConnectionSettings.equals(currentConnectionSettings);
@@ -202,29 +206,29 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
             version = OctaneVersionService.getOctaneVersion(connectionSettings);
             version.discardBuildNumber();
             if (version.compareTo(OctaneVersion.DYNAMO) < 0) {
-                showWarningBallon("Octane version not supported. This plugin works with Octane versions starting " + OctaneVersion.DYNAMO.getVersionString());
+                showWarningBalloon("Octane version not supported. This plugin works with Octane versions starting " + OctaneVersion.DYNAMO.getVersionString());
             }
 
-            if (version.compareTo(new OctaneVersion("12.60.14")) < 0) {
-                showWarningBallon("Login with browser is only supported starting from Octane server version: " + OctaneVersion.INTER_P2.getVersionString());
-                connectionSettingsView.setSsoAuth(false);
+            if (connectionSettingsView.isSsoAuth()) {
+                if (version.compareTo(new OctaneVersion("12.60.14")) < 0) {
+                    showWarningBalloon("Login with browser is only supported starting from Octane server version: " + OctaneVersion.INTER_P2.getVersionString());
+                    connectionSettingsView.setSsoAuth(false);
+                }
             }
 
         } catch (Exception ex) {
             version = OctaneVersionService.fallbackVersion;
 
-            StringBuilder message = new StringBuilder();
+            String message = "Failed to determine Octane server version, http call to " +
+                    OctaneVersionService.getServerVersionUrl(connectionSettings) +
+                    " failed. Assuming server version is higher or equal to: " +
+                    version.getVersionString();
 
-            message.append("Failed to determine Octane server version, http call to ")
-                    .append(OctaneVersionService.getServerVersionUrl(connectionSettings))
-                    .append(" failed. Assuming server version is higher or equal to: ")
-                    .append(version.getVersionString());
-
-            showWarningBallon(message.toString());
+            showWarningBalloon(message);
         }
     }
 
-    private void showWarningBallon(String message) {
+    private void showWarningBalloon(String message) {
         Balloon balloon = JBPopupFactory.getInstance().createHtmlTextBalloonBuilder(message,
                 MessageType.WARNING, null)
                 .setCloseButtonEnabled(true)
@@ -252,26 +256,30 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
         try {
             connectionSettingsView.setConnectionStatusLoading();
 
-            testOctaneVersion(newConnectionSettings);
-
             //This will attempt a connection
-            if (!connectionSettingsView.isSsoAuth()) {
-                testService.testConnection(newConnectionSettings);
-            }
+            testService.testConnection(newConnectionSettings);
+
+            testOctaneVersion(newConnectionSettings);
 
             SwingUtilities.invokeLater(() -> {
                 if (connectionSettingsView != null) connectionSettingsView.setConnectionStatusSuccess();
             });
+
         } catch (Exception ex) {
+
             SwingUtilities.invokeLater(() -> {
                 if (connectionSettingsView != null) {
-                    if (ex instanceof OctaneException && (Long)((OctaneException) ex).getError().getValue("http_status_code").getValue() == 401) {
-                        connectionSettingsView.setConnectionStatusError("Invalid username or password.");
+                    if (ex instanceof RuntimeException && ex.getCause() != null && ex.getCause() instanceof HttpResponseException) {
+                        HttpResponseException responseException = (HttpResponseException) ex.getCause();
+                        if (responseException.getStatusCode() == 401) {
+                            connectionSettingsView.setConnectionStatusError("Invalid username or password.");
+                        }
                     } else {
-                        connectionSettingsView.setConnectionStatusError("Failed to connect to octane, please check your server url.");
+                        connectionSettingsView.setConnectionStatusError("Failed to connect to octane: " + ex.getMessage());
                     }
                 }
             });
+
             return null;
         }
 
@@ -279,13 +287,14 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
     }
 
     private ConnectionSettings getConnectionSettingsFromView() throws ServiceException {
+
+        Authentication authentication = new EncodedAuthentication(connectionSettingsView.getUserName(),
+                connectionSettingsView.getPassword());
         //Parse server url
         ConnectionSettings connectionSettings =
                 UrlParser.resolveConnectionSettings(
                         connectionSettingsView.getServerUrl(),
-                        connectionSettingsView.getUserName(),
-                        connectionSettingsView.getPassword());
-
+                        authentication);
         if (connectionSettingsView.isSsoAuth()) {
             connectionSettings.setAuthentication(new GrantTokenAuthentication());
         }
@@ -328,7 +337,9 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
             errorMessageBuilder.append(ex.getMessage());
             errorMessageBuilder.append(Constants.CORRECT_URL_FORMAT_MESSAGE);
             SwingUtilities.invokeLater(() -> {
-                if (connectionSettingsView != null) connectionSettingsView.setConnectionStatusError(ex.getMessage());
+                if (connectionSettingsView != null) {
+                    connectionSettingsView.setConnectionStatusError(errorMessageBuilder.toString());
+                }
             });
 
             throw ex;
@@ -342,8 +353,9 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
             } catch (ServiceException ex) {
                 //handle case when ok button is pressed
                 SwingUtilities.invokeLater(() -> {
-                    if (connectionSettingsView != null)
+                    if (connectionSettingsView != null) {
                         connectionSettingsView.setConnectionStatusError(ex.getMessage());
+                    }
                 });
                 throw ex;
             }

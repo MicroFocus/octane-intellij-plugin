@@ -29,6 +29,43 @@
     <depends>com.intellij.modules.lang</depends>
 
     <change-notes><![CDATA[
+      <b>2016.3-12.60.35.1</b>
+      <ul>
+        <li>Implemented compatibility with ALM Octane 12.60.35 (backwards compatible down to version 12.53.20)</li>
+        <li>Floating point number field support for task properties: estimated/invested/remaining hours. (Has to be enabled server side)</li>
+      </ul>
+
+      <b>2016.3-12.60.27.1</b>
+      <ul>
+        <li>Implemented compatibility with ALM Octane 12.60.27 (backwards compatible down to version 12.53.20)</li>
+        <li>Fixed bug where session timeout would not be properly handled.</li>
+      </ul>
+
+      <b>2016.3-12.60.16.2</b>
+      <ul>
+        <li>Fixed backward compatibility issue with octane versions below 12.60.16</li>
+      </ul>
+
+      <b>2016.3-12.60.16.1</b>
+      <ul>
+        <li>Implemented compatibility with ALM Octane 12.60.16 (backwards compatible down to version 12.53.20)</li>
+        <li>User can now edit their backlog items in the detail tab. (description is still read only) </li>
+        <li>Plugin now supports login to Octane configured with SSO authentication. User can now login using the browser, instead of entering their username and password directly.</li>
+        <li>Implemented support for backlog item re-naming, backlog items names now based on the server configuration.</li>
+      </ul>
+
+      <b>2016.2-12.60.4.2</b>
+      <ul>
+        <li>Fixed bug where the IDE plugin would slowly use up OS handles in certain situations.</li>
+        <li>Fixed bug where the field selection dropdown buttons: "All", "None" would not be enabled/disabled properly.</li>
+        <li>
+            The commit message is no longer populated automatically. <br />
+            The user must press a button on the active item toolbar, or use the context menu from my work, to copy the message to the clipboard.  <br />
+            This is done to avoid on relying on IntelliJ's private API for manipulating the commit window.  <br />
+            This is also better for people who use other tooling for git, like git bash. <br />
+        </li>
+      </ul>
+
       <b>2016.2-12.60.4.1</b>
       <ul>
         <li>Implemented compatibility with ALM Octane 12.60.4 (backwards compatible down to version 12.53.20)</li>
@@ -101,7 +138,7 @@
     ]]>
     </change-notes>
 
-    <idea-version since-build="162"/>
+    <idea-version since-build="163"/>
 
     <extensions defaultExtensionNs="com.intellij">
         <toolWindow factoryClass="com.hpe.adm.octane.ideplugins.intellij.ui.EntryPoint" anchor="bottom"
@@ -128,7 +165,43 @@
     </project-components>
 
     <actions>
-        <!-- Add your actions here -->
+
+        <action id="com.hpe.adm.octane.ideplugins.intellij.ui.detail.actions.SaveCurrentEntityAction"
+                class="com.hpe.adm.octane.ideplugins.intellij.ui.detail.actions.SaveCurrentEntityAction">
+            <keyboard-shortcut first-keystroke="control S" keymap="$default"/>
+        </action>
+
+        <action id="com.hpe.adm.octane.ideplugins.intellij.actions.RefreshCurrentEntityAction"
+                class="com.hpe.adm.octane.ideplugins.intellij.actions.RefreshCurrentEntityAction">
+            <keyboard-shortcut first-keystroke="control R" keymap="$default"/>
+        </action>
+
+        <action id="com.hpe.adm.octane.ideplugins.intellij.actions.OpenMyWorkAction"
+                class="com.hpe.adm.octane.ideplugins.intellij.actions.OpenMyWorkAction" text="Open &quot;My Work&quot;">
+            <keyboard-shortcut first-keystroke="control shift O" keymap="$default"/>
+        </action>
+
+        <group id="com.hpe.adm.octane.ideplugins.intellij.ActiveItemActions" text="ALM Octane Active Item">
+            <add-to-group group-id="MainToolBar" anchor="last"/>
+            <add-to-group group-id="NavBarToolBar" anchor="first"/>
+
+            <separator/>
+
+            <action id="com.hpe.adm.octane.ideplugins.intellij.actions.activeitem.OpenActiveItemAction"
+                    class="com.hpe.adm.octane.ideplugins.intellij.actions.activeitem.OpenActiveItemAction"/>
+
+            <action id="com.hpe.adm.octane.ideplugins.intellij.actions.activeitem.CopyCommitMessageAction"
+                    class="com.hpe.adm.octane.ideplugins.intellij.actions.activeitem.CopyCommitMessageAction"
+                    text="Copy commit message" description="Copy commit message for the current active item."/>
+
+            <action id="com.hpe.adm.octane.ideplugins.intellij.actions.activeitem.StopActiveItemAction"
+                    class="com.hpe.adm.octane.ideplugins.intellij.actions.activeitem.StopActiveItemAction"
+                    text="Stop work" description="Stop work on current item. (clears active item)"/>
+
+            <separator/>
+
+        </group>
+
     </actions>
 
 </idea-plugin>
