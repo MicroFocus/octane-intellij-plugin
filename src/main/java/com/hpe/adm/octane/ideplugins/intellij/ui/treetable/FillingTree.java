@@ -18,7 +18,6 @@ import com.intellij.openapi.util.Conditions;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.util.ui.MouseEventAdapter;
 import com.intellij.util.ui.UIUtil;
-import com.intellij.util.ui.tree.WideSelectionTreeUI;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -62,18 +61,7 @@ class FillingTree extends JTree {
 
     @Override
     public TreePath getPathForLocation(int x, int y) {
-        TreePath closestPath = getClosestPathForLocation(x, y);
-        return closestPath;
-        //nasty
-        //if(closestPath != null) {
-        //    Rectangle       pathBounds = getPathBounds(closestPath);
-        //
-        //    if(pathBounds != null &&
-        //            x >= pathBounds.x && x < (pathBounds.x + pathBounds.width) &&
-        //            y >= pathBounds.y && y < (pathBounds.y + pathBounds.height))
-        //        return closestPath;
-        //}
-        //return null;
+        return  getClosestPathForLocation(x, y);
     }
 
     /**
@@ -304,12 +292,6 @@ class FillingTree extends JTree {
         }
 
         private boolean shouldPaintLines() {
-//          if (UIUtil.isUnderAquaBasedLookAndFeel() || UIUtil.isUnderDarcula() || UIUtil.isUnderIntelliJLaF()) {
-//              return false;
-//          }
-//          return myForceDontPaintLines || !"None".equals(tree.getClientProperty("JTree.lineStyle"));
-
-            //never paint the lines
             return false;
         }
 
@@ -334,22 +316,7 @@ class FillingTree extends JTree {
 
         @Override
         protected Color getHashColor() {
-            //if (invertLineColor && !ComparatorUtil.equalsNullable(UIUtil.getTreeSelectionForeground(), UIUtil.getTreeForeground())) {
-            //  final Color c = UIUtil.getTreeSelectionForeground();
-            //  if (c != null) {
-            //    return c.darker();
-            //  }
-            //}
             return super.getHashColor();
-        }
-
-        public boolean isWideSelection() {
-            return myWideSelection;
-        }
-
-        public static boolean isWideSelection(@NotNull JTree tree) {
-            TreeUI ui = tree.getUI();
-            return ui instanceof WideSelectionTreeUI && ((WideSelectionTreeUI)ui).isWideSelection();
         }
 
         @Override
@@ -365,6 +332,9 @@ class FillingTree extends JTree {
 
             final int containerWidth = tree.getParent() instanceof JViewport ? tree.getParent().getWidth() : tree.getWidth();
 
+            if(isLeaf) {
+                bounds.x = 15;
+            }
             bounds.width = containerWidth - bounds.x;
 
             final int xOffset = tree.getParent() instanceof JViewport ? ((JViewport)tree.getParent()).getViewPosition().x : 0;

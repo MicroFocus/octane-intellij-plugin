@@ -95,7 +95,7 @@ public class EntityDetailView extends JPanel implements View, Scrollable {
         gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
         setLayout(gridBagLayout);
 
-        Color separatorColor = UIManager.getColor("Separator.foreground");
+        Color separatorColor = JBColor.border();
         headerPanel.setBorder(new MatteBorder(0, 0, 1, 0, separatorColor));
         GridBagConstraints gbc_headerPanel = new GridBagConstraints();
         gbc_headerPanel.gridwidth = 2;

@@ -128,6 +128,14 @@ public class EntityTreeView implements View {
                         JPopupMenu popupMenu = entityContextMenuFactory.createContextMenu((EntityModel) obj);
                         popupMenu.show(e.getComponent(), e.getX(), e.getY());
                     }
+
+                    // also select the row on right click
+                    int selRow = tree.getRowForLocation(e.getX(), e.getY());
+                    TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
+                    tree.setSelectionPath(selPath);
+                    if (selRow > -1) {
+                        tree.setSelectionRow(selRow);
+                    }
                 }
             }
         });
