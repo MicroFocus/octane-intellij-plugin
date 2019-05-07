@@ -16,14 +16,14 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.treetable;
 import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.nga.sdk.model.FieldModel;
-import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
+import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.mywork.MyWorkUtil;
 import com.hpe.adm.octane.ideplugins.services.util.EntityTypeIdPair;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
-import com.intellij.openapi.project.Project;
 import com.intellij.ui.JBColor;
+import com.intellij.util.ui.UIUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jdesktop.swingx.JXLabel;
 
@@ -33,7 +33,6 @@ import java.awt.*;
 import java.util.*;
 
 import static com.hpe.adm.octane.ideplugins.intellij.ui.detail.DetailsViewDefaultFields.*;
-import static com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityModelRow.DetailsPosition;
 import static com.hpe.adm.octane.ideplugins.services.util.Util.getContainerItemForCommentModel;
 import static com.hpe.adm.octane.ideplugins.services.util.Util.getUiDataFromModel;
 
@@ -42,13 +41,13 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
     private static final Map<Entity, HashSet<String>> entityFields = new HashMap<>();
     private static final String[] commonFields = new String[]{"id", "name", "phase"};
     private static final String[] progressFields = new String[]{FIELD_INVESTED_HOURS, FIELD_REMAINING_HOURS, FIELD_ESTIMATED_HOURS};
-    private static final Map<String, String> subtypeNames = new HashMap();
+    private static final Map<String, String> subtypeNames = new HashMap<>();
 
     @Inject
     private IdePluginPersistentState idePluginPersistentState;
 
     @Inject
-    private Project project;
+    private EntityIconFactory entityIconFactory;
 
     static {
         //US
@@ -169,18 +168,26 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
 
         //Root
         if (value instanceof String) {
+
             return new JLabel((String) value);
+
         } else if (value instanceof EntityCategory) {
+
             EntityTreeModel model = (EntityTreeModel) tree.getModel();
             EntityCategory category = (EntityCategory) value;
+
             int count = model.getChildCount(value);
+
             String labelText = category.getName() + " (" + count + ")";
             JXLabel lbl = new JXLabel(labelText);
+
             Font font = new Font(lbl.getFont().getFontName(), Font.BOLD, lbl.getFont().getSize() + 4);
             lbl.setFont(font);
-            if (selected && hasFocus) {
-                lbl.setForeground(new Color(255, 255, 255));
+
+            if (selected && hasFocus && !UIUtil.isUnderDarcula()) {
+                lbl.setForeground(JBColor.background());
             }
+
             return lbl;
 
         } else if (value instanceof EntityModel) {
@@ -191,13 +198,14 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
             Entity entityType = Entity.getEntityType(entityModel);
             Long entityId = Long.valueOf(getUiDataFromModel(entityModel.getValue("id")));
 
-            EntityModelRow rowPanel = PluginModule.getPluginModuleForProject(project).getInstance(EntityModelRow.class);
+            EntityModelRow rowPanel;
 
             if (selected && hasFocus) {
-                rowPanel.initFocusedUI();
+                rowPanel = new EntityModelRow(entityIconFactory, true);
             } else {
-                rowPanel.initUI();
+                rowPanel = new EntityModelRow(entityIconFactory, false);
             }
+
             rowPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, JBColor.border()));
 
             //Add owner if entity is not owned by the current plugin user
