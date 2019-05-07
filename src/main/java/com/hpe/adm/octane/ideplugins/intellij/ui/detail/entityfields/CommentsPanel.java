@@ -16,6 +16,7 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields;
 import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.DetailsViewDefaultFields;
+import com.hpe.adm.octane.ideplugins.intellij.ui.detail.html.JavaFxHtmlPanel;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.util.ui.JBUI;
@@ -37,12 +38,12 @@ public class CommentsPanel extends JPanel {
     private JButton sendMessageButton;
     private JTextField messageBox;
 
-    private HTMLPresenterFXPanel commentsPanel;
+    private JavaFxHtmlPanel commentsPanel;
     private String commentContent = "";
     private ActionListener addCommentActionListener;
 
     @Inject
-    public CommentsPanel(HTMLPresenterFXPanel commentsPanel) {
+    public CommentsPanel(JavaFxHtmlPanel commentsPanel) {
 
         this.commentsPanel = commentsPanel;
 
@@ -80,8 +81,6 @@ public class CommentsPanel extends JPanel {
         });
         sendMessageButton = new JButton("Post");
 
-        commentsPanel.addEventActions();
-
         GridBagConstraints left = new GridBagConstraints();
         left.anchor = GridBagConstraints.LINE_START;
         left.fill = GridBagConstraints.HORIZONTAL;
@@ -108,7 +107,7 @@ public class CommentsPanel extends JPanel {
     }
 
     private void setChatBoxScene() {
-        Platform.runLater(() -> commentsPanel.setContent(commentContent));
+        Platform.runLater(() -> commentsPanel.setHtmlContent(commentContent));
     }
 
 

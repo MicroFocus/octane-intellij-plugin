@@ -20,17 +20,18 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.field.DateT
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.field.FieldEditor;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.field.FieldEditorFactory;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.field.ReferenceFieldEditor;
+import com.hpe.adm.octane.ideplugins.intellij.ui.detail.html.HtmlPanel;
+import com.hpe.adm.octane.ideplugins.intellij.ui.detail.html.JavaFxHtmlPanel;
+import com.hpe.adm.octane.ideplugins.intellij.ui.detail.html.SwingHtmlPanel;
 import com.hpe.adm.octane.ideplugins.services.model.EntityModelWrapper;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
-import com.intellij.ui.IdeBorderFactory;
 import com.intellij.util.ui.JBUI;
-import javafx.application.Platform;
-import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
 
 import javax.swing.*;
-import javax.swing.border.TitledBorder;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Set;
@@ -44,28 +45,24 @@ public class EntityFieldsPanel extends JXPanel implements Scrollable {
     @Inject
     private FieldEditorFactory fieldFactory;
 
-    private HTMLPresenterFXPanel descriptionPanel;
-
     @Inject
-    public EntityFieldsPanel(HTMLPresenterFXPanel descriptionPanel) {
-        this.descriptionPanel = descriptionPanel;
+    public EntityFieldsPanel() {
 
-        setBorder(BorderFactory.createEmptyBorder(10,15,10,10));
+        setBorder(BorderFactory.createLineBorder(Color.RED));
+
         GridBagLayout gbl = new GridBagLayout();
-        gbl.columnWidths = new int[]{0, 0, 0, 0, 0, 0};
-        gbl.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+        //gbl.columnWidths = new int[]{0, 0, 0, 0, 0, 0};
+        //gbl.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
         setLayout(gbl);
 
-//        addComponentListener(new ComponentAdapter() {
-//            @Override
-//            public void componentResized(ComponentEvent e) {
-//                super.componentResized(e);
-//                gbl.columnWidths = new int[]{0, getWidth() / 2, 0, 0, getWidth() / 2, 0};
-//                updateUI();
-//                revalidate();
-//                repaint();
-//            }
-//        });
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                super.componentResized(e);
+                //gbl.columnWidths = new int[]{0, getWidth() / 2, 0, 0, getWidth() / 2, 0};
+                repaint();
+            }
+        });
     }
 
     public void setFieldMetadata(Collection<FieldMetadata> fields) {
@@ -84,6 +81,8 @@ public class EntityFieldsPanel extends JXPanel implements Scrollable {
                 .collect(Collectors.toList());
 
         for (String fieldName : fieldsToShow) {
+
+            /*
 
             FieldMetadata fieldMetadata =
                     possibleFields
@@ -125,17 +124,20 @@ public class EntityFieldsPanel extends JXPanel implements Scrollable {
                 columnCount = 0;
             }
 
+            */
         }
 
         addDescription(entityModelWrapper, rowCount);
+
         repaint();
         revalidate();
     }
 
     private void addDescription(EntityModelWrapper entityModelWrapper, int rowCount) {
+
         String descriptionContent = Util.getUiDataFromModel(entityModelWrapper.getValue(DetailsViewDefaultFields.FIELD_DESCRIPTION));
-        Platform.runLater(() -> descriptionPanel.setContent(descriptionContent));
-        descriptionPanel.setBorder(new TitledBorder(IdeBorderFactory.createBorder(), "Description"));
+
+        //descriptionPanel.setBorder(new TitledBorder(IdeBorderFactory.createBorder(), "Description"));
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.anchor = GridBagConstraints.CENTER;
@@ -144,7 +146,18 @@ public class EntityFieldsPanel extends JXPanel implements Scrollable {
         gbc.gridy = rowCount;
         gbc.gridwidth = 6;
 
-        add(descriptionPanel, gbc);
+        JPanel panel = new JPanel(new BorderLayout());
+
+        panel.setBackground(Color.RED);
+
+        add(panel, gbc);
+
+        HtmlPanel descriptionPanel = new SwingHtmlPanel();
+        descriptionPanel.setHtmlContent(descriptionContent);
+        panel.add(descriptionPanel);
+        //add(descriptionPanel, gbc);
+
+        //Platform.runLater(() -> descriptionPanel.setHtmlContent(descriptionContent));
     }
 
     private void addClearButton(FieldEditor fieldEditor, int rowCount, int column) {

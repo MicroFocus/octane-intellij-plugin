@@ -91,7 +91,7 @@ public class EntityDetailView extends JPanel implements View {
 
         commentsPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, fieldsScrollPaneWrapper, commentsPanel);
+        splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, entityFieldsPanel, commentsPanel);
         splitPane.setOneTouchExpandable(true);
         splitPane.setContinuousLayout(true);
         splitPane.setResizeWeight(1);

@@ -11,7 +11,7 @@
  * limitations under the License.
  */
 
-package com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields;
+package com.hpe.adm.octane.ideplugins.intellij.ui.detail.html;
 
 import com.google.inject.Inject;
 import com.hpe.adm.octane.ideplugins.intellij.util.HtmlTextEditor;
@@ -40,31 +40,73 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-public class HTMLPresenterFXPanel extends JFXPanel {
-    private static final Logger log = Logger.getInstance(HTMLPresenterFXPanel.class);
+public class JavaFxHtmlPanel extends HtmlPanel {
+
+    private static final Logger log = Logger.getInstance(JavaFxHtmlPanel.class);
+
     private static final String EVENT_TYPE_CLICK = "click";
     private static final String EVENT_TYPE_MOUSEOVER = "mouseover";
     private static final String EVENT_TYPE_MOUSEOUT = "mouseclick";
     private static final String HYPERLINK_TAG = "a";
+
+    private String htmlContent;
+
+    private JFXPanel jfxPanel;
     private WebView webView;
-    private String commentContent;
 
     @Inject
     private ConnectionSettingsProvider connectionSettingsProvider;
 
-    public HTMLPresenterFXPanel() {
+    public JavaFxHtmlPanel() {
+
+        setLayout(new BorderLayout());
+        jfxPanel = new JFXPanel();
+        add(jfxPanel, BorderLayout.CENTER);
+
         UIManager.addPropertyChangeListener(evt -> {
             if ("lookAndFeel".equals(evt.getPropertyName())) {
-                Platform.runLater(() -> setContent(getCommentContent()));
+                Platform.runLater(() -> setHtmlContent(htmlContent));
             }
         });
-        addMouseWheelListener(e -> {
+
+        jfxPanel.addMouseWheelListener(e -> {
                 Component source = (Component) e.getSource();
                 MouseEvent parentEvent = SwingUtilities.convertMouseEvent(source, e, source.getParent());
                 source.getParent().dispatchEvent(parentEvent);
             });
+
         setFocusable(false);
         addEventActions();
+    }
+
+    @Override
+    public void setHtmlContent(final String htmlContent) {
+        this.htmlContent = htmlContent;
+
+        Platform.runLater(() -> {
+            initFX();
+
+            final String strippedContent = HtmlTextEditor.removeHtmlStructure(htmlContent);
+            final String coloredHtmlCode = HtmlTextEditor.getColoredHTML(strippedContent);
+
+            final StackPane root = new StackPane();
+            final Scene scene = new Scene(root);
+            final WebView webView = getWebView();
+            final WebEngine webEngine = webView.getEngine();
+
+            root.getChildren().add(webView);
+
+            jfxPanel.setScene(scene);
+            webEngine.loadContent(coloredHtmlCode);
+
+            Platform.setImplicitExit(false);
+
+        });
+    }
+
+    @Override
+    public String getHtmlContent() {
+        return htmlContent;
     }
 
     private void addHyperlinkListener(HyperlinkListener listener) {
@@ -143,23 +185,6 @@ public class HTMLPresenterFXPanel extends JFXPanel {
         });
     }
 
-    public void setContent(final String commentContent) {
-        initFX();
-        final String strippedContent = HtmlTextEditor.removeHtmlStructure(commentContent);
-        final StackPane root = new StackPane();
-        final Scene scene = new Scene(root);
-        final WebView webView = getWebView();
-        final WebEngine webEngine = webView.getEngine();
-        final String coloredHtmlCode = HtmlTextEditor.getColoredHTML(strippedContent);
-
-        setCommentContent(strippedContent);
-        root.getChildren().add(webView);
-        webEngine.loadContent(coloredHtmlCode);
-        this.setWebView(webView);
-        this.setScene(scene);
-        Platform.setImplicitExit(false);
-    }
-
     private void addEventListeners(EventTarget eventTarget, EventListener listener) {
         eventTarget.addEventListener(EVENT_TYPE_CLICK, listener, false);
         eventTarget.addEventListener(EVENT_TYPE_MOUSEOVER, listener, false);
@@ -167,7 +192,7 @@ public class HTMLPresenterFXPanel extends JFXPanel {
     }
 
 
-    public void addEventActions() {
+    private void addEventActions() {
         this.addHyperlinkListener(evt -> {
             final String href = evt.getDescription();
             URL targetUrl;
@@ -196,25 +221,12 @@ public class HTMLPresenterFXPanel extends JFXPanel {
         });
     }
 
-    WebView getWebView() {
+    private WebView getWebView() {
         if (webView == null) {
             webView = new WebView();
         }
 
         return webView;
     }
-
-    private void setWebView(WebView webView) {
-        this.webView = webView;
-    }
-
-    private String getCommentContent() {
-        return commentContent;
-    }
-
-    private void setCommentContent(String commentContent) {
-        this.commentContent = commentContent;
-    }
-
 
 }
