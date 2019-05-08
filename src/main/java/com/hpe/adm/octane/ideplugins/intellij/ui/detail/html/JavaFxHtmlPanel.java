@@ -87,7 +87,7 @@ public class JavaFxHtmlPanel extends HtmlPanel {
             initFX();
 
             final String strippedContent = HtmlTextEditor.removeHtmlStructure(htmlContent);
-            final String coloredHtmlCode = HtmlTextEditor.getColoredHTML(strippedContent);
+            //final String coloredHtmlCode = HtmlTextEditor.getColoredHTML(strippedContent);
 
             final StackPane root = new StackPane();
             final Scene scene = new Scene(root);
@@ -97,8 +97,7 @@ public class JavaFxHtmlPanel extends HtmlPanel {
             root.getChildren().add(webView);
 
             jfxPanel.setScene(scene);
-            webEngine.loadContent(coloredHtmlCode);
-
+            webEngine.loadContent(strippedContent);
             Platform.setImplicitExit(false);
 
         });

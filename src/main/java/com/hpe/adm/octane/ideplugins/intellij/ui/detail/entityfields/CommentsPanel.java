@@ -16,12 +16,12 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields;
 import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.DetailsViewDefaultFields;
+import com.hpe.adm.octane.ideplugins.intellij.ui.detail.html.HtmlPanel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.html.JavaFxHtmlPanel;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
-import javafx.application.Platform;
 import org.apache.commons.lang.StringUtils;
 
 import javax.swing.*;
@@ -38,14 +38,14 @@ public class CommentsPanel extends JPanel {
     private JButton sendMessageButton;
     private JTextField messageBox;
 
-    private JavaFxHtmlPanel commentsPanel;
+    private HtmlPanel commentsPanel;
     private String commentContent = "";
     private ActionListener addCommentActionListener;
 
     @Inject
-    public CommentsPanel(JavaFxHtmlPanel commentsPanel) {
+    public CommentsPanel() {
 
-        this.commentsPanel = commentsPanel;
+        this.commentsPanel = new JavaFxHtmlPanel();
 
         setLayout(new BorderLayout());
 
@@ -107,9 +107,8 @@ public class CommentsPanel extends JPanel {
     }
 
     private void setChatBoxScene() {
-        Platform.runLater(() -> commentsPanel.setHtmlContent(commentContent));
+        commentsPanel.setHtmlContent(commentContent);
     }
-
 
     public void addSendNewCommentAction(ActionListener actionListener) {
         this.addCommentActionListener = actionListener;

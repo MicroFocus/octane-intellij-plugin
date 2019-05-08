@@ -15,29 +15,28 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields;
 
 import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
-import com.hpe.adm.octane.ideplugins.intellij.ui.detail.DetailsViewDefaultFields;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.field.DateTimeFieldEditor;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.field.FieldEditor;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.field.FieldEditorFactory;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.field.ReferenceFieldEditor;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.html.HtmlPanel;
-import com.hpe.adm.octane.ideplugins.intellij.ui.detail.html.SwingHtmlPanel;
+import com.hpe.adm.octane.ideplugins.intellij.ui.detail.html.JavaFxHtmlPanel;
+import com.hpe.adm.octane.ideplugins.intellij.ui.util.ColumnLayoutManager;
 import com.hpe.adm.octane.ideplugins.services.model.EntityModelWrapper;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.util.ui.JBUI;
 import org.jdesktop.swingx.JXLabel;
+import org.jdesktop.swingx.JXPanel;
 
 import javax.swing.*;
-import javax.swing.border.TitledBorder;
 import java.awt.*;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.List;
+import java.util.*;
+import java.util.function.Predicate;
 
 @SuppressWarnings("serial")
-public class EntityFieldsPanel extends JPanel {
+public class EntityFieldsPanel extends JXPanel {
 
     private Collection<FieldMetadata> fields;
 
@@ -46,35 +45,36 @@ public class EntityFieldsPanel extends JPanel {
 
     private JPanel leftFieldsPanel;
     private JPanel rightFieldsPanel;
-    private HtmlPanel descriptionPanel;
+    private JPanel memoFieldsPanel;
 
     @Inject
     public EntityFieldsPanel() {
 
-        this.setBorder(BorderFactory.createLineBorder(Color.green));
-        this.setLayout(new BorderLayout());
+        BorderLayout rootLayout = new BorderLayout();
+        rootLayout.setVgap(5);
+        rootLayout.setVgap(5);
+        this.setLayout(rootLayout);
 
         JPanel fieldsPanel = new JPanel();
-        fieldsPanel.setBackground(Color.BLUE);
-        fieldsPanel.setBorder(BorderFactory.createLineBorder(Color.BLUE));
 
         leftFieldsPanel = new JPanel();
-        leftFieldsPanel.setBorder(BorderFactory.createLineBorder(Color.CYAN));
-        //leftFieldsPanel.setLayout(new BoxLayout(leftFieldsPanel, BoxLayout.PAGE_AXIS));
+        leftFieldsPanel.setLayout(new GridBagLayout());
 
         rightFieldsPanel = new JPanel();
-        rightFieldsPanel.setBorder(BorderFactory.createLineBorder(Color.ORANGE));
-        //rightFieldsPanel.setLayout(new BoxLayout(rightFieldsPanel, BoxLayout.PAGE_AXIS));
+        rightFieldsPanel.setLayout(new GridBagLayout());
 
-        fieldsPanel.setLayout(new BoxLayout(fieldsPanel, BoxLayout.LINE_AXIS));
+        fieldsPanel.setLayout(new ColumnLayoutManager());
         fieldsPanel.add(leftFieldsPanel);
         fieldsPanel.add(rightFieldsPanel);
 
         this.add(fieldsPanel, BorderLayout.CENTER);
 
-        descriptionPanel = new SwingHtmlPanel();
-        descriptionPanel.setBorder(new TitledBorder(IdeBorderFactory.createBorder(), "Description"));
-        this.add(descriptionPanel,BorderLayout.SOUTH);
+        memoFieldsPanel = new JPanel();
+        BoxLayout memoFieldsLayout = new BoxLayout(memoFieldsPanel, BoxLayout.Y_AXIS);
+        memoFieldsPanel.setLayout(memoFieldsLayout);
+
+        memoFieldsPanel.setBorder(BorderFactory.createEmptyBorder(0,5,5,5));
+        this.add(memoFieldsPanel, BorderLayout.SOUTH);
     }
 
     public void setFieldMetadata(Collection<FieldMetadata> fields) {
@@ -84,84 +84,126 @@ public class EntityFieldsPanel extends JPanel {
     public void setEntityModel(EntityModelWrapper entityModelWrapper, Set<String> fieldsToShow) {
         leftFieldsPanel.removeAll();
         rightFieldsPanel.removeAll();
+        memoFieldsPanel.removeAll();
 
-        int columnCount = 0;
-        int rowCount = 0;
+        List<FieldMetadata> simpleFields = getFieldMetadata(
+                fieldsToShow,
+                fieldMetadata -> fieldMetadata.getFieldType() != FieldMetadata.FieldType.Memo
+        );
 
-        //This needs to be checked in case the user has memo fields selected from a previous version of the plugin
-        Collection<FieldMetadata> possibleFields = fields.stream()
-                .filter(e -> !Arrays.asList("phase", "name", "subtype", "description", "rank").contains(e.getName()))
-                .filter(e -> e.getFieldType() != FieldMetadata.FieldType.Memo)
-                .collect(Collectors.toList());
+        List<FieldMetadata> memoFields = getFieldMetadata(
+                fieldsToShow,
+                fieldMetadata -> fieldMetadata.getFieldType() == FieldMetadata.FieldType.Memo
+        );
 
         int index = 0;
-
-        for (String fieldName : fieldsToShow) {
-
-            FieldMetadata fieldMetadata =
-                    possibleFields
-                            .stream()
-                            .filter(currentFieldMetadata -> currentFieldMetadata.getName().equals(fieldName))
-                            .findAny()
-                            .orElse(null);
-
-            if (fieldMetadata == null) {
-                continue;
-            }
-
-            JXLabel fieldLabel = new JXLabel();
-            Font font = new Font(fieldLabel.getFont().getFontName(), Font.BOLD, fieldLabel.getFont().getSize());
-            fieldLabel.setFont(font);
-            fieldLabel.setText(fieldMetadata.getLabel());
-//            GridBagConstraints gbc1 = new GridBagConstraints();
-//            gbc1.anchor = GridBagConstraints.WEST;
-//            gbc1.insets = JBUI.insets(0, 5, 10, 0);
-//            gbc1.gridx = columnCount++;
-//            gbc1.gridy = rowCount;
-
-            FieldEditor fieldValueLabel = fieldFactory.createFieldEditor(entityModelWrapper, fieldName);
-//            GridBagConstraints gbc2 = new GridBagConstraints();
-//            gbc2.insets = JBUI.insets(0, 10, 10, 0);
-//            gbc2.anchor = GridBagConstraints.WEST;
-//            gbc2.fill = GridBagConstraints.HORIZONTAL;
-//            gbc2.gridx = columnCount++;
-//            gbc2.gridy = rowCount;
-//            gbc2.weightx = 0.5;
-
-//            fieldsPanel.add(fieldLabel, gbc1);
-//            fieldsPanel.add(fieldValueLabel, gbc2);
-
-            if(index % 2 == 0) {
-                leftFieldsPanel.add(fieldLabel);
+        int rowIndexLeft = 0;
+        int rowIndexRight = 0;
+        for (FieldMetadata fieldMetadata : simpleFields) {
+            if (index % 2 == 0) {
+                addToFieldPanel(leftFieldsPanel, entityModelWrapper, fieldMetadata, rowIndexLeft);
+                rowIndexLeft++;
             } else {
-                rightFieldsPanel.add(fieldLabel);
+                addToFieldPanel(rightFieldsPanel, entityModelWrapper, fieldMetadata, rowIndexRight);
+                rowIndexRight++;
             }
             index++;
-
-
-
-
-            //addClearButton(fieldValueLabel, rowCount, columnCount);
-            columnCount++;
-
-            if (columnCount > 5) {
-                rowCount++;
-                columnCount = 0;
-            }
         }
 
-        setDescription(entityModelWrapper);
+        if (simpleFields.size() % 2 != 0) {
+            JPanel fillerPanel = new JPanel();
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.fill = GridBagConstraints.BOTH;
+            gbc.gridx = 0;
+            gbc.gridy = rowIndexRight;
+            double minHeight = leftFieldsPanel.getComponents()[0].getPreferredSize().getHeight();
+            gbc.insets = JBUI.insets(5 + (int) minHeight,5, 0, 0);
+            rightFieldsPanel.add(fillerPanel, gbc);
+        }
+
+        for(FieldMetadata memoField : memoFields) {
+            memoFieldsPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+            String memoFieldContent = Util.getUiDataFromModel(entityModelWrapper.getValue(memoField.getName()));
+            memoFieldsPanel.add(createMemoFieldPanel(memoField.getLabel(), memoFieldContent));
+        }
+
         repaint();
         revalidate();
     }
 
-    private void setDescription(EntityModelWrapper entityModelWrapper) {
-        String descriptionContent = Util.getUiDataFromModel(entityModelWrapper.getValue(DetailsViewDefaultFields.FIELD_DESCRIPTION));
-        descriptionPanel.setHtmlContent(descriptionContent);
+    private JPanel createMemoFieldPanel(String fieldLabelString, String fieldContent) {
+
+        BorderLayout layout = new BorderLayout();
+        layout.setVgap(5);
+        JPanel memoFieldPanel = new JPanel(layout);
+        memoFieldPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 0, 0));
+
+        JXLabel fieldLabel = new JXLabel();
+        Font font = new Font(fieldLabel.getFont().getFontName(), Font.BOLD, fieldLabel.getFont().getSize());
+        fieldLabel.setFont(font);
+        fieldLabel.setText(fieldLabelString);
+        memoFieldPanel.add(fieldLabel, BorderLayout.NORTH);
+
+        HtmlPanel htmlPanel = new JavaFxHtmlPanel();
+        htmlPanel.setHtmlContent(fieldContent);
+        htmlPanel.setBorder(IdeBorderFactory.createBorder());
+        memoFieldPanel.add(htmlPanel, BorderLayout.CENTER);
+
+        return memoFieldPanel;
     }
 
-    private void addClearButton(FieldEditor fieldEditor, int rowCount, int column) {
+    /*
+        Preserves the iteration order of the input param
+     */
+    private List<FieldMetadata> getFieldMetadata(Collection<String> fieldsToShow, Predicate<FieldMetadata> filter) {
+        List<FieldMetadata> result = new ArrayList<>();
+        for (String fieldName : fieldsToShow) {
+            FieldMetadata fieldMetadata = getFieldMetadata(fieldName);
+            if (fieldMetadata != null && filter.test(fieldMetadata)) {
+                result.add(fieldMetadata);
+            }
+        }
+        return result;
+    }
+
+    private FieldMetadata getFieldMetadata(String fieldName) {
+        if(fields == null) { //TODO: atoth, temporal coupling
+            return null;
+        }
+
+        return fields.stream()
+                .filter(fieldMetadata -> !Arrays.asList("phase", "name", "subtype", "rank").contains(fieldMetadata.getName()))
+                .filter(fieldMetadata -> fieldMetadata.getName().equals(fieldName))
+                .findAny()
+                .orElse(null);
+    }
+
+    private void addToFieldPanel(JPanel parent, EntityModelWrapper entityModelWrapper, FieldMetadata fieldMetadata, int rowIndex) {
+
+        JXLabel fieldLabel = new JXLabel();
+        Font font = new Font(fieldLabel.getFont().getFontName(), Font.BOLD, fieldLabel.getFont().getSize());
+        fieldLabel.setFont(font);
+        fieldLabel.setText(fieldMetadata.getLabel());
+
+        GridBagConstraints gbcLabel = new GridBagConstraints();
+        gbcLabel.anchor = GridBagConstraints.WEST;
+        gbcLabel.gridx = 0;
+        gbcLabel.gridy = rowIndex;  // last row
+        gbcLabel.insets = JBUI.insets(5, 5, 0, 0);
+
+        FieldEditor fieldEditor = fieldFactory.createFieldEditor(entityModelWrapper, fieldMetadata.getName());
+        GridBagConstraints gbcEditor = new GridBagConstraints();
+        gbcEditor.fill = GridBagConstraints.HORIZONTAL;
+        gbcEditor.gridx = 1;
+        gbcEditor.gridy = rowIndex;
+        gbcEditor.weightx = 1;
+        gbcEditor.insets = JBUI.insets(5, 5, 0, 5);
+
+        parent.add(fieldLabel, gbcLabel);
+        parent.add(fieldEditor, gbcEditor);
+
         Component clearButton;
+
         if (fieldEditor instanceof ReferenceFieldEditor) {
             clearButton = ((ReferenceFieldEditor) fieldEditor).getClearButton();
         } else if (fieldEditor instanceof DateTimeFieldEditor) {
@@ -169,20 +211,22 @@ public class EntityFieldsPanel extends JPanel {
         } else {
             return;
         }
+
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = JBUI.insets(0, 5, 10, 5);
-        gbc.gridx = column;
-        gbc.gridy = rowCount;
-        //fieldsPanel.add(clearButton, gbc);
+        gbc.anchor = GridBagConstraints.CENTER;
+        gbc.gridx = 2;
+        gbc.gridy = rowIndex;
+        gbc.insets = JBUI.insets(5, 0, 0, 5);
+        parent.add(clearButton, gbc);
     }
 
-//    @Override
-//    public boolean getScrollableTracksViewportWidth() {
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean getScrollableTracksViewportHeight() {
-//        return false;
-//    }
+    @Override
+    public boolean getScrollableTracksViewportWidth() {
+        return true;
+    }
+
+    @Override
+    public boolean getScrollableTracksViewportHeight() {
+        return false;
+    }
 }

@@ -191,9 +191,7 @@ public class FieldsSelectPopup extends JFrame {
         this.selectFieldsAction = selectFieldsAction;
 
         this.allFields = allFields.stream()
-                .filter(e ->
-                        !Arrays.asList("phase", "name", "subtype", "description", "rank", "id").contains(e.getName())
-                                && e.getFieldType() != FieldMetadata.FieldType.Memo)
+                .filter(e -> !Arrays.asList("phase", "name", "subtype", "rank", "id").contains(e.getName()))
                 .collect(Collectors.toList());
 
         this.entityModelWrapper = entityModelWrapper;
@@ -281,48 +279,48 @@ public class FieldsSelectPopup extends JFrame {
     private void createCheckBoxMenuItems() {
         menuItems = new ArrayList<>();
         for (FieldMetadata fieldMetadata : allFields) {
-            if (!"description".equals(fieldMetadata.getName()) && !"phase".equals(fieldMetadata.getName())) {
-                FieldMenuItem menuItem = new FieldMenuItem(fieldMetadata.getLabel());
-                menuItem.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        if (menuItem.isSelected()) {
-                            selectedFieldsMap.get(entityModelWrapper.getEntityType()).add(fieldMetadata.getName());
-                        } else {
-                            selectedFieldsMap.get(entityModelWrapper.getEntityType()).remove(fieldMetadata.getName());
-                        }
-                        listeners.forEach(listener -> listener.valueChanged(new SelectionEvent(this)));
-                        if (defaultFieldsMap.get(entityModelWrapper.getEntityType()).containsAll(selectedFieldsMap.get(entityModelWrapper.getEntityType())) && selectedFieldsMap.get(entityModelWrapper.getEntityType()).containsAll(defaultFieldsMap.get(entityModelWrapper.getEntityType()))) {
-                            selectFieldsAction.setDefaultFieldsIcon(true);
-                            resetButton.setEnabled(false);
-                            selectNoneButton.setEnabled(true);
-                            selectAllButton.setEnabled(true);
-                        } else {
-                            selectFieldsAction.setDefaultFieldsIcon(false);
-                            resetButton.setEnabled(true);
+            FieldMenuItem menuItem = new FieldMenuItem(fieldMetadata.getLabel());
+            menuItem.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
 
-                            if (selectedFieldsMap.get(entityModelWrapper.getEntityType()).size() == 0) {
-                                selectNoneButton.setEnabled(false);
-                            } else {
-                                selectNoneButton.setEnabled(true);
-                            }
-
-                            if (selectedFieldsMap.get(entityModelWrapper.getEntityType()).containsAll(allFields.stream().map(FieldMetadata::getName).collect(Collectors.toSet()))) {
-                                selectAllButton.setEnabled(false);
-                            } else {
-                                selectAllButton.setEnabled(true);
-                            }
-                        }
-                        selectedFieldsMap.replace(entityModelWrapper.getEntityType(), selectedFieldsMap.get(entityModelWrapper.getEntityType()));
-                        fieldsUtil.saveSelectedFields(selectedFieldsMap);
+                    if (menuItem.isSelected()) {
+                        selectedFieldsMap.get(entityModelWrapper.getEntityType()).add(fieldMetadata.getName());
+                    } else {
+                        selectedFieldsMap.get(entityModelWrapper.getEntityType()).remove(fieldMetadata.getName());
                     }
-                });
-                if (selectedFieldsMap.get(entityModelWrapper.getEntityType()).contains(fieldMetadata)) {
-                    menuItem.setState(true);
+                    listeners.forEach(listener -> listener.valueChanged(new SelectionEvent(this)));
+
+                    if (defaultFieldsMap.get(entityModelWrapper.getEntityType()).containsAll(selectedFieldsMap.get(entityModelWrapper.getEntityType())) && selectedFieldsMap.get(entityModelWrapper.getEntityType()).containsAll(defaultFieldsMap.get(entityModelWrapper.getEntityType()))) {
+                        selectFieldsAction.setDefaultFieldsIcon(true);
+                        resetButton.setEnabled(false);
+                        selectNoneButton.setEnabled(true);
+                        selectAllButton.setEnabled(true);
+                    } else {
+                        selectFieldsAction.setDefaultFieldsIcon(false);
+                        resetButton.setEnabled(true);
+
+                        if (selectedFieldsMap.get(entityModelWrapper.getEntityType()).size() == 0) {
+                            selectNoneButton.setEnabled(false);
+                        } else {
+                            selectNoneButton.setEnabled(true);
+                        }
+
+                        if (selectedFieldsMap.get(entityModelWrapper.getEntityType()).containsAll(allFields.stream().map(FieldMetadata::getName).collect(Collectors.toSet()))) {
+                            selectAllButton.setEnabled(false);
+                        } else {
+                            selectAllButton.setEnabled(true);
+                        }
+                    }
+                    selectedFieldsMap.replace(entityModelWrapper.getEntityType(), selectedFieldsMap.get(entityModelWrapper.getEntityType()));
+                    fieldsUtil.saveSelectedFields(selectedFieldsMap);
                 }
-                menuItems.add(menuItem);
-                prettyFields.put(fieldMetadata.getLabel(), fieldMetadata.getName());
+            });
+            if (selectedFieldsMap.get(entityModelWrapper.getEntityType()).contains(fieldMetadata)) {
+                menuItem.setState(true);
             }
+            menuItems.add(menuItem);
+            prettyFields.put(fieldMetadata.getLabel(), fieldMetadata.getName());
         }
     }
 
