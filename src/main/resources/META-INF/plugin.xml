@@ -25,6 +25,8 @@
         Enables integration with ALM Octane.<br>
         Compatible with ALM Octane version 12.53.20 and above.
     ]]></description>
+    <!--enables the plugin on other platforms-->
+    <depends>com.intellij.modules.lang</depends>
 
     <change-notes><![CDATA[
       <b>2016.3-12.60.35.1</b>

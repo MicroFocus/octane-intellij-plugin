@@ -74,11 +74,14 @@ dependencies {
 intellij {
 
     version project.hasProperty("intellijVersion") ? project.getProperty("intellijVersion") : ideaVersion
+    //to debug the plugin on other platforms comment out alternativeIdePath and set the path to the installation
+    //folder of the IDE
+    //alternativeIdePath 'C:\\DevTools\\PyCharm Community Edition 2018.2.1'
     plugins = ["maven", "gradle"]
     pluginName = project.hasProperty('zipname') ? project.getProperty('zipname') : "Octane IntelliJ Plugin"
     updateSinceUntilBuild false
 
-    downloadSources Boolean.valueOf(downloadIdeaSources)
+    downloadSources false
     sandboxDirectory project.rootDir.canonicalPath + "/.sandbox"
 }
 
