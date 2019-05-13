@@ -19,6 +19,7 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.detail.DetailsViewDefaultFields
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.html.HtmlPanel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.html.JavaFxHtmlPanel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.html.SwingHtmlPanel;
+import com.hpe.adm.octane.ideplugins.intellij.util.HtmlTextEditor;
 import com.hpe.adm.octane.ideplugins.intellij.util.JavaFxUtils;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
 import com.intellij.ui.IdeBorderFactory;
@@ -108,14 +109,6 @@ public class CommentsPanel extends JPanel {
         enableButton();
     }
 
-    private void addExistingComment(String commentPostDate, String username, String message) {
-        commentContent += commentPostDate + " <b>" + username + ":</b> <br>" + message + "<hr>";
-    }
-
-    private void setChatBoxScene() {
-        commentsPanel.setHtmlContent(commentContent);
-    }
-
     public void addSendNewCommentAction(ActionListener actionListener) {
         this.addCommentActionListener = actionListener;
         removeAnyPreviousListener();
@@ -157,6 +150,13 @@ public class CommentsPanel extends JPanel {
             String commentLine = Util.getUiDataFromModel(comment.getValue(DetailsViewDefaultFields.FIELD_COMMENT_TEXT));
             addExistingComment(commentsPostTime, userName, commentLine);
         }
-        setChatBoxScene();
+
+        commentContent = HtmlTextEditor.removeHtmlStructure(commentContent);
+        commentContent = HtmlTextEditor.getColoredHTML(commentContent);
+        commentsPanel.setHtmlContent(commentContent);
+    }
+
+    private void addExistingComment(String commentPostDate, String username, String message) {
+        commentContent += commentPostDate + " <b>" + username + ":</b> <br>" + message + "<hr>";
     }
 }

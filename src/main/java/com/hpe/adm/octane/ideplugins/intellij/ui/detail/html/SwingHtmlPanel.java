@@ -13,23 +13,30 @@
 
 package com.hpe.adm.octane.ideplugins.intellij.ui.detail.html;
 
+import com.intellij.ui.components.JBScrollPane;
+
 import javax.swing.*;
+import java.awt.*;
 
 public class SwingHtmlPanel extends HtmlPanel {
 
     private JEditorPane editorPane;
 
     public SwingHtmlPanel() {
-        setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+        setLayout(new BorderLayout());
+
         editorPane = new JEditorPane();
         editorPane.setContentType("text/html");
         editorPane.setEditable(false);
-        add(editorPane);
+
+        JBScrollPane fieldsScrollPane = new JBScrollPane(editorPane);
+        add(fieldsScrollPane);
     }
 
     @Override
     public void setHtmlContent(String htmlContent) {
         editorPane.setText(htmlContent);
+        editorPane.setCaretPosition(0);
     }
 
     @Override

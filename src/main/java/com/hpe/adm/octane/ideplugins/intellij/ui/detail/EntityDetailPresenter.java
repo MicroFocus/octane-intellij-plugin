@@ -166,6 +166,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
     private String downloadImagesInsideOfMemoField(FieldModel fieldModel) {
         String fieldValue = Util.getUiDataFromModel(fieldModel);
         fieldValue = HtmlTextEditor.removeHtmlStructure(fieldValue);
+        fieldValue = HtmlTextEditor.getColoredHTML(fieldValue);
 
         try {
             fieldValue = imageService.downloadPictures(fieldValue);
