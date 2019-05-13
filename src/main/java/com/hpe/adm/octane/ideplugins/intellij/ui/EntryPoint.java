@@ -20,6 +20,7 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.LoadingWidget;
 import com.hpe.adm.octane.ideplugins.intellij.ui.main.MainPresenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeTablePresenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
+import com.hpe.adm.octane.ideplugins.intellij.util.JavaFxUtils;
 import com.hpe.adm.octane.ideplugins.services.TestService;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
@@ -55,6 +56,13 @@ public class EntryPoint implements ToolWindowFactory {
      */
     @Override
     public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
+
+        if(!JavaFxUtils.isJavaFxAvailable()){
+            UiUtil.showWarningBalloon(project,
+                    "JavaFx not found on current JVM",
+                    "JVM running the IDEA platform does not have JavaFx installed, comments and memo fields might not be displayed properly.",
+                    NotificationType.WARNING);
+        }
 
         // The DI module returns instances based on your current project
         // Be careful with all static members of beans, you might end up affecting the plugin open for another project
