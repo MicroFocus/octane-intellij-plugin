@@ -224,21 +224,22 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
             }
         });
 
-        //Persistence
-        PartialEntity selectedTabKey = getSelectedTabToFromPersistentState();
 
-        loadDetailTabsFromPersistentState();
-
-        //attempt to reselect prev tab
-        if (selectedTabKey != null) {
-            selectDetailTab(selectedTabKey);
-        }
 
         loadSearchHistory();
 
         // Make sure handler are init after history,
         // activating this handler b4 can overwrite the saved settings
         initHandlers();
+
+        loadDetailTabsFromPersistentState();
+
+        //Persistence
+        PartialEntity selectedTabKey = getSelectedTabToFromPersistentState();
+        //attempt to reselect prev tab
+        if (selectedTabKey != null) {
+            selectDetailTab(selectedTabKey);
+        }
     }
 
     private void initHandlers() {
