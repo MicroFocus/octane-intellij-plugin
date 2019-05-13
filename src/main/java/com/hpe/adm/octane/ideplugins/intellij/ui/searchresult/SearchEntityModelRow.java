@@ -28,7 +28,7 @@ public class SearchEntityModelRow extends JPanel {
 
     private static final long serialVersionUID = 1L;
     private JXLabel lblEntityName;
-    private JPanel panelIcon;
+    private JLabel lblEntityIcon;
 
     private static final Color transparentColor = new Color(0, 0, 0, 0);
     private Color fontColor = UIUtil.getLabelFontColor(UIUtil.FontColor.NORMAL);
@@ -51,20 +51,17 @@ public class SearchEntityModelRow extends JPanel {
         gbl_rootPanel.rowWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
         setLayout(gbl_rootPanel);
 
-        panelIcon = new JPanel();
-
-        FlowLayout flowLayout_1 = (FlowLayout) panelIcon.getLayout();
-        flowLayout_1.setVgap(2);
+        lblEntityIcon = new JLabel();
         GridBagConstraints gbc_panelIcon = new GridBagConstraints();
-        gbc_panelIcon.anchor = GridBagConstraints.SOUTH;
+        gbc_panelIcon.anchor = GridBagConstraints.CENTER;
         gbc_panelIcon.gridheight = 2;
         gbc_panelIcon.fill = GridBagConstraints.HORIZONTAL;
         gbc_panelIcon.insets = new Insets(5, 0, 5, 5);
         gbc_panelIcon.gridx = 0;
         gbc_panelIcon.gridy = 0;
-        add(panelIcon, gbc_panelIcon);
-        panelIcon.setOpaque(true);
-        panelIcon.setBackground(transparentColor);
+        add(lblEntityIcon, gbc_panelIcon);
+        lblEntityIcon.setOpaque(true);
+        lblEntityIcon.setBackground(transparentColor);
 
         lblEntityName = new JXLabel("");
         lblEntityName.setForeground(fontColor);
@@ -94,8 +91,8 @@ public class SearchEntityModelRow extends JPanel {
     }
 
     public void setIcon(Entity entityType, boolean isActive) {
-        panelIcon.removeAll();
-        panelIcon.add(iconFactory.getIconAsComponent(entityType, 40, 16, isActive), BorderLayout.CENTER);
+        ImageIcon icon = new ImageIcon(iconFactory.getIconAsImage(entityType, 40, 16, isActive));
+        lblEntityIcon.setIcon(icon);
     }
 
     public void setEntityName(String id, String name) {

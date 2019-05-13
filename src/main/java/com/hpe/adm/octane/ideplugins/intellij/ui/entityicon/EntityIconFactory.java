@@ -20,13 +20,12 @@ import com.hpe.adm.octane.ideplugins.services.EntityLabelService;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.intellij.util.ImageLoader;
-import org.jdesktop.swingx.JXLabel;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /*
 JBColor might not be backwards compatible with prev intellij versions
@@ -35,14 +34,45 @@ JBColor might not be backwards compatible with prev intellij versions
 @Singleton
 public class EntityIconFactory {
 
+    class CacheKey {
+        int size;
+        int fontSize;
+        Entity type;
+        boolean isActive;
+
+        public CacheKey(int size, int fontSize, Entity type, boolean isActive) {
+            this.size = size;
+            this.fontSize = fontSize;
+            this.type = type;
+            this.isActive = isActive;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            CacheKey cacheKey = (CacheKey) o;
+            return size == cacheKey.size &&
+                    fontSize == cacheKey.fontSize &&
+                    isActive == cacheKey.isActive &&
+                    type == cacheKey.type;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(size, fontSize, type, isActive);
+        }
+    }
+
     @Inject
     private EntityLabelService entityLabelService;
 
-    private final Color fontColor = new Color(255, 255, 255);
-
-    private final Color unmappedEntityIconColor = new Color(0, 0, 0);
+    private static final Color fontColor = new Color(255, 255, 255);
+    private static final Color unmappedEntityIconColor = new Color(0, 0, 0);
+    private static final Image activeImg = ImageLoader.loadFromResource(Constants.IMG_ACTIVE_ITEM);
 
     private static final Map<Entity, Color> entityColorMap = new HashMap<>();
+
     static {
         entityColorMap.put(Entity.USER_STORY, new Color(255, 176, 0));
         entityColorMap.put(Entity.QUALITY_STORY, new Color(51, 193, 128));
@@ -61,131 +91,69 @@ public class EntityIconFactory {
     }
 
     //cache the icons based on size, font and entity
-    private Map<Integer, Map<Integer, Map<Entity, JComponent>>> iconComponentMap = new HashMap<>();
-
-    private static final Image activeImg = ImageLoader.loadFromResource(Constants.IMG_ACTIVE_ITEM);
+    private Map<CacheKey, Image> imageCache = new HashMap<>();
 
     @Inject
     public EntityIconFactory(EntityLabelService entityLabelService, ConnectionSettingsProvider connectionSettingsProvider) {
-        connectionSettingsProvider.addChangeHandler(() -> iconComponentMap.clear());
         this.entityLabelService = entityLabelService;
-    }
-
-    private JComponent createIconAsComponent(Entity entity, int iconSize, int fontSize) {
-        //Make the label
-        JXLabel label = new JXLabel(new ImageIcon(createIconAsImage(entity, iconSize, fontSize)));
-        label.setPreferredSize(new Dimension(iconSize, iconSize));
-        label.setMinimumSize(new Dimension(iconSize, iconSize));
-        label.setMaximumSize(new Dimension(iconSize, iconSize));
-        label.setHorizontalAlignment(SwingConstants.CENTER);
-        label.setVerticalAlignment(SwingConstants.CENTER);
-        label.setBounds(0, 0, iconSize, iconSize);
-        return label;
+        connectionSettingsProvider.addChangeHandler(() -> imageCache.clear());
     }
 
     /**
      * Use param entity null to get a disabled icons
+     *
      * @param entity
      * @param iconSize
      * @param fontSize
      * @return
      */
-    private Image createIconAsImage(Entity entity, int iconSize, int fontSize) {
+    private Image createIconAsImage(Entity entity, int iconSize, int fontSize, boolean isActive) {
 
         Color iconColor = entityColorMap.getOrDefault(entity, unmappedEntityIconColor);
-        String iconText = entity != null ?  entityLabelService.getEntityInitials(entity) : "";
+        String iconText = entity != null ? entityLabelService.getEntityInitials(entity) : "";
 
         BufferedImage image = new BufferedImage(iconSize, iconSize, BufferedImage.TYPE_INT_ARGB);
         Graphics2D bg = image.createGraphics();
+
         // make BufferedImage fully transparent
         bg.setComposite(AlphaComposite.Clear);
         bg.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         bg.fillRect(0, 0, iconSize, iconSize);
         bg.setComposite(AlphaComposite.SrcOver);
-        bg.setColor(iconColor);
 
+        bg.setColor(iconColor);
         bg.fillOval(0, 0, iconSize, iconSize);
+
         bg.setColor(fontColor);
         bg.setFont(new Font("Arial", Font.BOLD, fontSize));
-
         FontMetrics fm = bg.getFontMetrics();
         int fontX = (iconSize - fm.stringWidth(iconText) + 1) / 2;
         int fontY = (fm.getAscent() + (iconSize - (fm.getAscent() + fm.getDescent())) / 2);
-
         bg.drawString(iconText, fontX, fontY);
+
+        if (isActive) {
+            int activeImage_x = 60 * iconSize / 100;
+            int ypercent = 60 * iconSize / 100;
+            int activeImageSize = iconSize - activeImage_x;
+            bg.drawImage(activeImg, activeImage_x, ypercent, activeImageSize, activeImageSize, null);
+        }
 
         return image;
     }
 
-    public JComponent getIconAsComponent(Entity entity, int iconSize, int fontSize) {
-        if (iconComponentMap.get(iconSize) == null) {
-            //create a map for this size
-            Map<Entity, JComponent> componentMap = new HashMap<>();
-            componentMap.put(entity, createIconAsComponent(entity, iconSize, fontSize));
-            Map<Integer, Map<Entity, JComponent>> fontSizeMap = new HashMap<>();
-            fontSizeMap.put(fontSize, componentMap);
-            iconComponentMap.put(iconSize, fontSizeMap);
-        } else if (iconComponentMap.get(iconSize).get(fontSize) == null) {
-            //size map exists but fontSize map does not
-            Map<Entity, JComponent> componentMap = new HashMap<>();
-            componentMap.put(entity, createIconAsComponent(entity, iconSize, fontSize));
-            iconComponentMap.get(iconSize).put(fontSize, componentMap);
-        } else if (iconComponentMap.get(iconSize).get(fontSize).get(entity) == null) {
-            //size map exists, font map exists but entity icon does not
-            iconComponentMap.get(iconSize).get(fontSize).put(entity, createIconAsComponent(entity, iconSize, fontSize));
-        }
-
-        return iconComponentMap.get(iconSize).get(fontSize).get(entity);
-    }
-
-    public JComponent getIconAsComponent(Entity entity, int iconSize, int fontSize, boolean isActive) {
-        if (!isActive) {
-            return getIconAsComponent(entity, iconSize, fontSize);
-        } else {
-            //Overlay the run image on top of the original entity icon component
-            JComponent component = getIconAsComponent(entity, iconSize, fontSize);
-
-            if (component == null) {
-                return new JLabel("N/A");
-            }
-
-            component.setBounds(0, 0, iconSize, iconSize);
-
-            //Overlay an image on top of the component
-            JPanel runImagePanel = new JPanel() {
-                @Override
-                public void paintComponent(Graphics g) {
-                    super.paintComponent(g);
-                    g.drawImage(activeImg, 0, 0, getWidth(), getHeight(), this);
-                }
-            };
-
-            int xpercent = 60 * iconSize / 100;
-            int ypercent = 60 * iconSize / 100;
-
-            runImagePanel.setBounds(
-                    xpercent,
-                    ypercent,
-                    iconSize - xpercent,
-                    iconSize - ypercent);
-            runImagePanel.setOpaque(false);
-
-            JPanel panel = new JPanel(null);
-            panel.setBorder(null);
-            panel.setOpaque(false);
-            panel.add(runImagePanel);
-            panel.add(component);
-
-            panel.setPreferredSize(new Dimension(iconSize, iconSize));
-            panel.setMinimumSize(new Dimension(iconSize, iconSize));
-            panel.setMaximumSize(new Dimension(iconSize, iconSize));
-            return panel;
-        }
-    }
-
-
     public Image getIconAsImage(Entity entity, int iconSize, int fontSize) {
-        return createIconAsImage(entity, iconSize, fontSize);
+        return createIconAsImage(entity, iconSize, fontSize, false);
+    }
+
+    public Image getIconAsImage(Entity entity, int iconSize, int fontSize, boolean isActive) {
+
+        CacheKey key = new CacheKey(iconSize, fontSize, entity, isActive);
+
+        if (!imageCache.containsKey(key)) {
+            imageCache.put(key, createIconAsImage(entity, iconSize, fontSize, isActive));
+        }
+
+        return imageCache.get(key);
     }
 
 }

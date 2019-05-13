@@ -32,7 +32,7 @@ public class EntityModelRow extends JPanel {
 
     private JPanel panelBottom;
     private JPanel panelTop;
-    private JPanel panelIcon;
+    private JLabel lblEntityIcon;
     private JLabel lblEntityId;
     private JLabel lblEntityTitle;
     private JLabel lblEntitySubtitle;
@@ -74,16 +74,16 @@ public class EntityModelRow extends JPanel {
         gbl_mainPanel.rowWeights = new double[]{1.0, 1.0, Double.MIN_VALUE};
         mainPanel.setLayout(gbl_mainPanel);
 
-        panelIcon = new JPanel();
-        panelIcon.setOpaque(false);
+        lblEntityIcon = new JLabel();
+        lblEntityIcon.setOpaque(false);
         GridBagConstraints gbc_lblIcon = new GridBagConstraints();
         gbc_lblIcon.gridheight = 2;
         gbc_lblIcon.gridx = 0;
         gbc_lblIcon.gridy = 0;
-        panelIcon.setMinimumSize(iconSize);
-        panelIcon.setMaximumSize(iconSize);
-        panelIcon.setPreferredSize(iconSize);
-        mainPanel.add(panelIcon, gbc_lblIcon);
+        lblEntityIcon.setMinimumSize(iconSize);
+        lblEntityIcon.setMaximumSize(iconSize);
+        lblEntityIcon.setPreferredSize(iconSize);
+        mainPanel.add(lblEntityIcon, gbc_lblIcon);
 
         lblEntityId = new JLabel();
         lblEntityId.setForeground(fontColor);
@@ -145,9 +145,8 @@ public class EntityModelRow extends JPanel {
 
     public void setIcon(Entity entityType, boolean isActive) {
         if (iconFactory != null) {
-            panelIcon.removeAll();
-            JComponent icon = iconFactory.getIconAsComponent(entityType, 40, 17, isActive);
-            panelIcon.add(icon, BorderLayout.CENTER);
+            Image icon = iconFactory.getIconAsImage(entityType, 40, 17, isActive);
+            lblEntityIcon.setIcon(new ImageIcon(icon));
         }
     }
 
