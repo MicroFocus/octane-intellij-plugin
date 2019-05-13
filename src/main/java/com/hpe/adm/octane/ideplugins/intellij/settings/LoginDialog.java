@@ -1,6 +1,7 @@
 package com.hpe.adm.octane.ideplugins.intellij.settings;
 
 import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.LoadingWidget;
+import com.hpe.adm.octane.ideplugins.intellij.util.JavaFxUtils;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -82,18 +83,7 @@ public class LoginDialog extends DialogWrapper {
         });
 
         // We need to check if the jvm running IntelliJ has java fx installed in it, on linux, openjdk can be installed without java fx
-        // TODO: need to do this for the description and the comments as well
-        boolean isJavaFxAvailable;
-        try {
-            this.getClass().getClassLoader().loadClass("javafx.embed.swing.JFXPanel");
-            isJavaFxAvailable = true;
-
-        } catch (ClassNotFoundException e) {
-
-            isJavaFxAvailable = false;
-        }
-
-        if (isJavaFxAvailable && shouldUseJavaFxBrowser) {
+        if (JavaFxUtils.isJavaFxAvailable() && shouldUseJavaFxBrowser) {
 
             browserPanel = new JPanel(new BorderLayout());
             browserPanel.setBorder(new LineBorder(UIManager.getColor("Separator.foreground")));

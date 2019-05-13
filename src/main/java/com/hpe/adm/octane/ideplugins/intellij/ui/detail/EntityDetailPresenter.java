@@ -16,6 +16,8 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.detail;
 import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.exception.OctaneException;
 import com.hpe.adm.nga.sdk.metadata.FieldMetadata;
+import com.hpe.adm.nga.sdk.model.EntityModel;
+import com.hpe.adm.nga.sdk.model.FieldModel;
 import com.hpe.adm.nga.sdk.model.StringFieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.actions.RefreshCurrentEntityAction;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
@@ -32,6 +34,7 @@ import com.hpe.adm.octane.ideplugins.services.model.EntityModelWrapper;
 import com.hpe.adm.octane.ideplugins.services.nonentity.ImageService;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
 import com.intellij.openapi.actionSystem.CustomShortcutSet;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.keymap.Keymap;
 import com.intellij.openapi.keymap.KeymapManager;
 import com.intellij.openapi.project.Project;
@@ -42,6 +45,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class EntityDetailPresenter implements Presenter<EntityDetailView> {
+
+    private static final Logger logger = Logger.getInstance(EntityDetailPresenter.class);
 
     @Inject
     private Project project;
@@ -99,7 +104,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
     private IdePluginPersistentState.SettingsChangedHandler fieldSettingsChangedHandler = new IdePluginPersistentState.SettingsChangedHandler() {
         @Override
         public void stateChanged(IdePluginPersistentState.Key key, JSONObject value) {
-            if(key == IdePluginPersistentState.Key.SELECTED_FIELDS) {
+            if (key == IdePluginPersistentState.Key.SELECTED_FIELDS) {
                 entityDetailView.redrawFields();
             }
         }
@@ -116,24 +121,16 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
 
                         Set<String> requestedFields = fields.stream().map(FieldMetadata::getName).collect(Collectors.toSet());
                         requestedFields.add("client_lock_stamp");
-                        entityModelWrapper = new EntityModelWrapper(entityService.findEntity(this.entityType, this.entityId, requestedFields));
 
-                        //The subtype field is absolutely necessary, yet the server sometimes has weird ideas, and doesn't return it
+                        EntityModel entityModel = entityService.findEntity(this.entityType, this.entityId, requestedFields);
+                        downloadMemoFieldImages(entityModel);
+
+                        entityModelWrapper = new EntityModelWrapper(entityModel);
+
+                        //The subtype field is absolutely necessary, yet the server sometimes has weird ideas and doesn't return it
                         if (entityType.isSubtype()) {
                             entityModelWrapper.setValue(new StringFieldModel(DetailsViewDefaultFields.FIELD_SUBTYPE, entityType.getSubtypeName()));
                         }
-
-                        //change relative urls with local paths to temp and download images
-                        String description = Util.getUiDataFromModel(entityModelWrapper.getValue(DetailsViewDefaultFields.FIELD_DESCRIPTION));
-                        description = HtmlTextEditor.removeHtmlStructure(description);
-                        try {
-                            description = imageService.downloadPictures(description);
-                        } catch (Exception ex) {
-                            ExceptionHandler exceptionHandler = new ExceptionHandler(ex, project);
-                            exceptionHandler.showErrorNotification();
-                            entityDetailView.setErrorMessage(ex.getMessage());
-                        }
-                        entityModelWrapper.setValue(new StringFieldModel(DetailsViewDefaultFields.FIELD_DESCRIPTION, description));
 
                         return entityModelWrapper;
                     } catch (Exception ex) {
@@ -156,10 +153,55 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
         idePluginPersistentState.addStateChangedHandler(fieldSettingsChangedHandler);
     }
 
+    private void downloadMemoFieldImages(EntityModel entityModel) {
+        entityModel
+                .getValues()
+                .stream()
+                .filter(fieldModel -> isMemoField(entityModel, fieldModel.getName()))
+                .forEach(fieldModel ->
+                        entityModel.setValue(new StringFieldModel(fieldModel.getName(), downloadImagesInsideOfMemoField(fieldModel)))
+                );
+    }
+
+    private String downloadImagesInsideOfMemoField(FieldModel fieldModel) {
+        String fieldValue = Util.getUiDataFromModel(fieldModel);
+        fieldValue = HtmlTextEditor.removeHtmlStructure(fieldValue);
+
+        try {
+            fieldValue = imageService.downloadPictures(fieldValue);
+        } catch (Exception ex) {
+            ExceptionHandler exceptionHandler = new ExceptionHandler(ex, project);
+            exceptionHandler.showErrorNotification();
+            entityDetailView.setErrorMessage(ex.getMessage());
+        }
+
+        return fieldValue;
+    }
+
+    private void removeAllMemoFields(EntityModel entityModel) {
+        Set<String> memoFields = entityModel
+                        .getValues()
+                        .stream()
+                        .filter(fieldModel -> isMemoField(entityModel, fieldModel.getName()))
+                        .map(FieldModel::getName)
+                        .collect(Collectors.toSet());
+
+        memoFields.forEach(entityModel::removeValue);
+    }
+
+    private boolean isMemoField(EntityModel entityModel, String fieldName) {
+        try {
+            FieldMetadata fieldMetadata = metadataService.getMetadata(Entity.getEntityType(entityModel), fieldName);
+            return fieldMetadata.getFieldType() == FieldMetadata.FieldType.Memo;
+        } catch (Exception ex) {
+            return false;
+        }
+    }
+
     @Override
     public void closing() {
         idePluginPersistentState.removeStateChangedHandler(fieldSettingsChangedHandler);
-        if(fields != null) { // can be null if first metadata req fails, then the tab is closed
+        if (fields != null) { // can be null if first metadata req fails, then the tab is closed
             fields.clear();
         }
     }
@@ -177,10 +219,17 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
     public void saveEntity() {
         RestUtil.runInBackground(() -> {
             try {
-                entityService.updateEntity(entityModelWrapper.getEntityModel());
+                EntityModel entityModel = entityModelWrapper.getEntityModel();
+                // because memo fields are currently read only, and we modify them for the images,
+                // we need to make sure we don't save the changes to them,
+                removeAllMemoFields(entityModel);
+
+                entityService.updateEntity(entityModel);
                 entityDetailView.doRefresh();
+
                 setEntity(entityType, entityId);
                 stateChanged = false;
+
             } catch (OctaneException ex) {
                 BusinessErrorReportingDialog berDialog = new BusinessErrorReportingDialog(project, ex);
                 berDialog.show();

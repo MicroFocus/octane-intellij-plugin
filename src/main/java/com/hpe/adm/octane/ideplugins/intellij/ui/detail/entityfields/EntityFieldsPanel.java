@@ -21,7 +21,9 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.field.Field
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.entityfields.field.ReferenceFieldEditor;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.html.HtmlPanel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.html.JavaFxHtmlPanel;
+import com.hpe.adm.octane.ideplugins.intellij.ui.detail.html.SwingHtmlPanel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.ColumnLayoutManager;
+import com.hpe.adm.octane.ideplugins.intellij.util.JavaFxUtils;
 import com.hpe.adm.octane.ideplugins.services.model.EntityModelWrapper;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
 import com.intellij.ui.IdeBorderFactory;
@@ -144,7 +146,13 @@ public class EntityFieldsPanel extends JXPanel {
         fieldLabel.setText(fieldLabelString);
         memoFieldPanel.add(fieldLabel, BorderLayout.NORTH);
 
-        HtmlPanel htmlPanel = new JavaFxHtmlPanel();
+        HtmlPanel htmlPanel;
+        if(JavaFxUtils.isJavaFxAvailable()) {
+            htmlPanel = new JavaFxHtmlPanel();
+        } else {
+            htmlPanel = new SwingHtmlPanel();
+        }
+
         htmlPanel.setHtmlContent(fieldContent);
         htmlPanel.setBorder(IdeBorderFactory.createBorder());
         memoFieldPanel.add(htmlPanel, BorderLayout.CENTER);

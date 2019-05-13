@@ -63,19 +63,19 @@ public class PluginModule extends AbstractModule {
         TokenPollingStartedHandler pollingStartedHandler = loginPageUrl -> SwingUtilities.invokeLater(() -> {
 
             boolean cookiesCleared = CookieManagerUtil.clearCookies(connectionSettingsProvider.getConnectionSettings().getBaseUrl());
-            if(!cookiesCleared) {
+            if (!cookiesCleared) {
                 logger.warn("Failed to remove http cookies for url " + connectionSettingsProvider.getConnectionSettings().getBaseUrl() + ", login page won't have javafx browser");
             }
 
             // do not show the embedded browser if cookie clear failed
-            loginDialog = new LoginDialog(project, loginPageUrl,cookiesCleared);
+            loginDialog = new LoginDialog(project, loginPageUrl, cookiesCleared);
             loginDialog.show();
         });
 
         TokenPollingInProgressHandler pollingInProgressHandler = pollingStatus -> {
             try {
                 SwingUtilities.invokeAndWait(() -> {
-                    if(loginDialog != null) {
+                    if (loginDialog != null) {
                         long secondsUntilTimeout = (pollingStatus.timeoutTimeStamp - System.currentTimeMillis()) / 1000;
                         loginDialog.setTitle(LoginDialog.TITLE + " (waiting for session, timeout in: " + secondsUntilTimeout + ")");
                         pollingStatus.shouldPoll = !loginDialog.wasClosed();
@@ -90,12 +90,12 @@ public class PluginModule extends AbstractModule {
         TokenPollingCompleteHandler pollingCompleteHandler = tokenPollingCompletedStatus -> {
             try {
                 SwingUtilities.invokeAndWait(() -> {
-                    if(loginDialog != null)
+                    if (loginDialog != null)
                         loginDialog.close(0, true);
                 });
 
                 boolean cookiesCleared = CookieManagerUtil.clearCookies(connectionSettingsProvider.getConnectionSettings().getBaseUrl());
-                if(!cookiesCleared) {
+                if (!cookiesCleared) {
                     logger.warn("Failed to remove http cookies for url " + connectionSettingsProvider.getConnectionSettings().getBaseUrl() + ", clearing global cookie store");
                     // we're sorry, this might break every java.net.HttpURLConnection
                     CookieHandler.setDefault(new CookieManager()); // clear cookies globally
