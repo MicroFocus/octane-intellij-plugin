@@ -20,6 +20,7 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
 import com.hpe.adm.octane.ideplugins.intellij.ui.tabbedpane.TabbedPanePresenter;
 import com.hpe.adm.octane.ideplugins.services.util.PartialEntity;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
@@ -34,15 +35,14 @@ public class OpenActiveItemAction extends OctanePluginAction {
     private PartialEntity prevActiveItem;
 
     public OpenActiveItemAction() {
-        super("Open active backlog item", "Open a detail tab with the active backlog item.", IconLoader.findIcon(Constants.IMG_REFRESH_ICON));
+        super("Open active backlog item", "Open a detail tab with the active backlog item.", IconLoader.findIcon(Constants.IMG_ACTIVE_ITEM_20x20));
     }
 
     @Override
     public void update(@NotNull AnActionEvent e) {
-        if(e.getProject() == null) {
+        if (e.getProject() == null) {
             return;
         }
-
 
         getPluginModule(e).ifPresent(pluginModule -> {
 
@@ -54,7 +54,7 @@ public class OpenActiveItemAction extends OctanePluginAction {
                 PartialEntity activeItem = PartialEntity.fromJsonObject(jsonObject);
 
                 // This is necessary to avoid doing a rest call for labels on init
-                if(!Objects.equals(activeItem, prevActiveItem)) {
+                if (!Objects.equals(activeItem, prevActiveItem)) {
                     prevActiveItem = activeItem;
 
                     e.getPresentation().setDescription(activeItem.getEntityName());
@@ -62,11 +62,16 @@ public class OpenActiveItemAction extends OctanePluginAction {
 
                     // Has to be in a thread other than the UI, because the EntityIconFactory will trigger sso login on startup
                     // The thread is not that expensive because of the presentation is only updated if the active item changed
-                    new Thread(() -> e.getPresentation().setIcon(
-                            new ImageIcon(pluginModule
-                                    .getInstance(EntityIconFactory.class)
-                                    .getIconAsImage(activeItem.getEntityType(), 20, 11))
-                    )).start();
+                    new Thread(() -> {
+
+                        ImageIcon imageIcon =
+                                new ImageIcon(pluginModule
+                                        .getInstance(EntityIconFactory.class)
+                                        .getIconAsImage(activeItem.getEntityType(), 20, 11));
+
+                        ApplicationManager.getApplication().invokeLater(() -> e.getPresentation().setIcon(imageIcon));
+
+                    }).start();
                 }
             } else {
                 e.getPresentation().setIcon(
@@ -79,7 +84,7 @@ public class OpenActiveItemAction extends OctanePluginAction {
 
     @Override
     public void actionPerformed(AnActionEvent e) {
-        if(e.getProject() == null) {
+        if (e.getProject() == null) {
             return;
         }
 

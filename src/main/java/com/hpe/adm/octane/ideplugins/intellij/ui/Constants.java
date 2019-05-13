@@ -28,6 +28,7 @@ public class Constants {
     public static final String IMG_STOP_TIMER = IMG_FOLDER_PATH + "stopTimer-16x16.png";
     public static final String IMG_PLAIN_ROBOT = IMG_FOLDER_PATH + "s-no-items-to-display.png";
     public static final String IMG_ACTIVE_ITEM = IMG_FOLDER_PATH + "activeitem.png";
+    public static final String IMG_ACTIVE_ITEM_20x20 = IMG_FOLDER_PATH + "activeitem-20x20.png";
     public static final String IMG_MYWORK = IMG_FOLDER_PATH + "mywork.png";
     public static final String IMG_FIELD_SELECTION_NON_DEFAULT = IMG_FOLDER_PATH + "cus-on.png";
     public static final String IMG_FIELD_SELECTION_DEFAULT = IMG_FOLDER_PATH + "cus-off.png";
