@@ -224,7 +224,7 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
             }
         });
 
-
+        // TODO: atoth, temporal coupling
 
         loadSearchHistory();
 
@@ -232,10 +232,10 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
         // activating this handler b4 can overwrite the saved settings
         initHandlers();
 
+        PartialEntity selectedTabKey = getSelectedTabToFromPersistentState();
+
         loadDetailTabsFromPersistentState();
 
-        //Persistence
-        PartialEntity selectedTabKey = getSelectedTabToFromPersistentState();
         //attempt to reselect prev tab
         if (selectedTabKey != null) {
             selectDetailTab(selectedTabKey);
