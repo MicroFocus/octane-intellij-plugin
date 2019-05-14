@@ -23,11 +23,14 @@ import com.google.inject.Provides;
 import com.google.inject.name.Named;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePersistentConnectionSettingsProvider;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
-import com.hpe.adm.octane.ideplugins.intellij.settings.LoginDialog;
+import com.hpe.adm.octane.ideplugins.intellij.settings.logindialog.ExternalUrlLoginDialog;
+import com.hpe.adm.octane.ideplugins.intellij.settings.logindialog.JavaFxLoginDialog;
+import com.hpe.adm.octane.ideplugins.intellij.settings.logindialog.LoginDialog;
 import com.hpe.adm.octane.ideplugins.intellij.ui.searchresult.SearchResultEntityTreeCellRenderer;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeCellRenderer;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeView;
 import com.hpe.adm.octane.ideplugins.intellij.util.CookieManagerUtil;
+import com.hpe.adm.octane.ideplugins.intellij.util.JavaFxUtils;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import com.hpe.adm.octane.ideplugins.services.connection.granttoken.TokenPollingCompleteHandler;
 import com.hpe.adm.octane.ideplugins.services.connection.granttoken.TokenPollingInProgressHandler;
@@ -62,13 +65,21 @@ public class PluginModule extends AbstractModule {
 
         TokenPollingStartedHandler pollingStartedHandler = loginPageUrl -> SwingUtilities.invokeLater(() -> {
 
-            boolean cookiesCleared = CookieManagerUtil.clearCookies(connectionSettingsProvider.getConnectionSettings().getBaseUrl());
-            if (!cookiesCleared) {
-                logger.warn("Failed to remove http cookies for url " + connectionSettingsProvider.getConnectionSettings().getBaseUrl() + ", login page won't have javafx browser");
+            if (JavaFxUtils.isJavaFxAvailable()) {
+
+                boolean cookiesCleared = CookieManagerUtil.clearCookies(connectionSettingsProvider.getConnectionSettings().getBaseUrl());
+
+                if (!cookiesCleared) {
+                    logger.warn("Failed to remove http cookies for url " + connectionSettingsProvider.getConnectionSettings().getBaseUrl() + ", login page won't have javafx browser");
+                }
+
+                // do not show the embedded browser if cookie clear failed
+                loginDialog = new JavaFxLoginDialog(project, loginPageUrl, cookiesCleared);
+            } else {
+
+                loginDialog = new ExternalUrlLoginDialog(project, loginPageUrl);
             }
 
-            // do not show the embedded browser if cookie clear failed
-            loginDialog = new LoginDialog(project, loginPageUrl, cookiesCleared);
             loginDialog.show();
         });
 
@@ -77,7 +88,7 @@ public class PluginModule extends AbstractModule {
                 SwingUtilities.invokeAndWait(() -> {
                     if (loginDialog != null) {
                         long secondsUntilTimeout = (pollingStatus.timeoutTimeStamp - System.currentTimeMillis()) / 1000;
-                        loginDialog.setTitle(LoginDialog.TITLE + " (waiting for session, timeout in: " + secondsUntilTimeout + ")");
+                        loginDialog.setTitle(JavaFxLoginDialog.TITLE + " (waiting for session, timeout in: " + secondsUntilTimeout + ")");
                         pollingStatus.shouldPoll = !loginDialog.wasClosed();
                     }
                 });

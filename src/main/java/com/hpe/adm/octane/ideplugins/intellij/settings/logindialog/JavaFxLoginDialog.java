@@ -1,10 +1,9 @@
-package com.hpe.adm.octane.ideplugins.intellij.settings;
+package com.hpe.adm.octane.ideplugins.intellij.settings.logindialog;
 
 import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.LoadingWidget;
 import com.hpe.adm.octane.ideplugins.intellij.util.JavaFxUtils;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.DialogWrapper;
 import com.sun.javafx.application.PlatformImpl;
 import javafx.concurrent.Worker.State;
 import javafx.embed.swing.JFXPanel;
@@ -13,7 +12,6 @@ import javafx.scene.Scene;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -26,21 +24,19 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 
-public class LoginDialog extends DialogWrapper {
+public class JavaFxLoginDialog extends LoginDialog {
 
-    private static final Logger logger = Logger.getInstance(LoginDialog.class.getName());
+    private static final Logger logger = Logger.getInstance(JavaFxLoginDialog.class.getName());
 
-    public static final String TITLE = "Login to ALM Octane";
     private String loginPageUrl;
-    private boolean wasClosed = false;
     private boolean shouldUseJavaFxBrowser;
     private JPanel browserPanel;
 
-    public LoginDialog(Project project, String loginPageUrl) {
+    public JavaFxLoginDialog(Project project, String loginPageUrl) {
         this(project, loginPageUrl, true);
     }
 
-    public LoginDialog(Project project, String loginPageUrl, boolean shouldUseJavaFxBrowser) {
+    public JavaFxLoginDialog(Project project, String loginPageUrl, boolean shouldUseJavaFxBrowser) {
         super(project, false, IdeModalityType.PROJECT);
         this.loginPageUrl = loginPageUrl;
         this.shouldUseJavaFxBrowser = shouldUseJavaFxBrowser;
@@ -73,8 +69,8 @@ public class LoginDialog extends DialogWrapper {
                     }
                     contentPane.add(lblSystemBrowser, BorderLayout.CENTER);
                     contentPane.setPreferredSize(new Dimension(800, -1));
-                    LoginDialog.this.pack();
-                    LoginDialog.this.centerRelativeToParent();
+                    JavaFxLoginDialog.this.pack();
+                    JavaFxLoginDialog.this.centerRelativeToParent();
 
                 } catch (URISyntaxException | IOException ex) {
                     logger.error("Failed to open system browser, " + ex);
@@ -137,22 +133,6 @@ public class LoginDialog extends DialogWrapper {
         }
 
         return contentPane;
-    }
-
-    @NotNull
-    @Override
-    protected Action[] createActions() {
-        return new Action[0];
-    }
-
-    @Override
-    protected void dispose() {
-        wasClosed = true;
-        super.dispose();
-    }
-
-    public boolean wasClosed() {
-        return wasClosed;
     }
 
 }
