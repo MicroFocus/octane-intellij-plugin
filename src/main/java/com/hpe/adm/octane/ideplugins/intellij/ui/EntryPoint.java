@@ -122,7 +122,7 @@ public class EntryPoint implements ToolWindowFactory {
                             welcomeViewComponent = new WelcomeViewComponent(project);
                         }
 
-                        log.info("Showing welcome view, cause: " + ex);
+                        log.error("Showing welcome view, cause: ", ex);
 
                         //Show the welcome view
                         setContent(toolWindow, welcomeViewComponent, "");

@@ -12,7 +12,7 @@
  */
 
 plugins {
-    id "org.jetbrains.intellij" version "0.4.8"
+    id "org.jetbrains.intellij" version "0.4.9"
 }
 
 project.group = projectGroup
@@ -72,16 +72,18 @@ dependencies {
 }
 
 intellij {
+    plugins 'java'
 
     version project.hasProperty("intellijVersion") ? project.getProperty("intellijVersion") : ideaVersion
     //to debug the plugin on other platforms comment out alternativeIdePath and set the path to the installation
     //folder of the IDE
     //alternativeIdePath 'C:\\DevTools\\PyCharm Community Edition 2018.2.1'
+
     plugins = ["maven", "gradle"]
     pluginName = project.hasProperty('zipname') ? project.getProperty('zipname') : "Octane IntelliJ Plugin"
     updateSinceUntilBuild false
 
-    downloadSources false
+    downloadSources true
     sandboxDirectory project.rootDir.canonicalPath + "/.sandbox"
 }
 

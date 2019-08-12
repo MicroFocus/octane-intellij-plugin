@@ -15,6 +15,7 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.tabbedpane;
 
 import com.google.inject.Inject;
 import com.hpe.adm.octane.ideplugins.intellij.ui.View;
+import com.intellij.execution.ui.layout.impl.JBRunnerTabs;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.ui.UISettings;
 import com.intellij.openapi.actionSystem.*;
@@ -24,9 +25,7 @@ import com.intellij.openapi.util.ActionCallback;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.ui.tabs.TabsListener;
-import com.intellij.ui.tabs.TabsUtil;
 import com.intellij.ui.tabs.UiDecorator;
-import com.intellij.ui.tabs.impl.JBEditorTabs;
 import com.intellij.ui.tabs.impl.TabLabel;
 import com.intellij.util.BitUtil;
 import com.intellij.util.ui.TimedDeadzone;
@@ -84,7 +83,7 @@ public class TabbedPaneView implements View {
         rootPanel.add(editorTabs.getComponent(), BorderLayout.CENTER);
     }
 
-    private void setTabsContextMenu(JBEditorTabs editorTabs){
+    private void setTabsContextMenu(JBRunnerTabs editorTabs){
         DefaultActionGroup contextMenuActionGroup = new DefaultActionGroup();
         contextMenuActionGroup.addAction(new AnAction() {
             @Override
