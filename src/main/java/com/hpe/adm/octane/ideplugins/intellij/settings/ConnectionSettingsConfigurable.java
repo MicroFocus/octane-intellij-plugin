@@ -14,12 +14,10 @@
 package com.hpe.adm.octane.ideplugins.intellij.settings;
 
 import com.google.api.client.http.HttpResponseException;
-import com.hpe.adm.nga.sdk.authentication.Authentication;
 import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.components.ConnectionSettingsComponent;
 import com.hpe.adm.octane.ideplugins.intellij.ui.searchresult.SearchHistoryManager;
-import com.hpe.adm.octane.ideplugins.intellij.util.EncodedAuthentication;
 import com.hpe.adm.octane.ideplugins.intellij.util.ExceptionHandler;
 import com.hpe.adm.octane.ideplugins.services.TestService;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
@@ -99,9 +97,9 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
         //Setting the base url will fire the even handler in the view, this will set the shared space and workspace fields
         connectionSettingsView.setServerUrl(UrlParser.createUrlFromConnectionSettings(connectionSettings));
 
-        if (connectionSettings.getAuthentication() instanceof EncodedAuthentication) {
+        if (connectionSettings.getAuthentication() instanceof UserAuthentication) {
             connectionSettingsView.setSsoAuth(false);
-            EncodedAuthentication authentication = (EncodedAuthentication) connectionSettings.getAuthentication();
+            UserAuthentication authentication = (UserAuthentication) connectionSettings.getAuthentication();
             connectionSettingsView.setUserName(authentication.getUserName());
             connectionSettingsView.setPassword(authentication.getPassword());
         } else if (connectionSettings.getAuthentication() instanceof GrantTokenAuthentication) {
@@ -288,13 +286,13 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
 
     private ConnectionSettings getConnectionSettingsFromView() throws ServiceException {
 
-        Authentication authentication = new EncodedAuthentication(connectionSettingsView.getUserName(),
-                connectionSettingsView.getPassword());
         //Parse server url
         ConnectionSettings connectionSettings =
                 UrlParser.resolveConnectionSettings(
                         connectionSettingsView.getServerUrl(),
-                        authentication);
+                        connectionSettingsView.getUserName(),
+                        connectionSettingsView.getPassword());
+
         if (connectionSettingsView.isSsoAuth()) {
             connectionSettings.setAuthentication(new GrantTokenAuthentication());
         }

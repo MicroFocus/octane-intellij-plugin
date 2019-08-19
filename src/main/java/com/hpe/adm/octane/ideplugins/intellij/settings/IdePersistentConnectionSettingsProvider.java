@@ -13,9 +13,8 @@
 
 package com.hpe.adm.octane.ideplugins.intellij.settings;
 
-import com.hpe.adm.nga.sdk.authentication.Authentication;
-import com.hpe.adm.octane.ideplugins.intellij.util.EncodedAuthentication;
 import com.hpe.adm.octane.ideplugins.services.connection.BasicConnectionSettingProvider;
+import com.hpe.adm.octane.ideplugins.services.connection.UserAuthentication;
 import com.hpe.adm.octane.ideplugins.services.connection.granttoken.GrantTokenAuthentication;
 import com.intellij.ide.passwordSafe.PasswordSafe;
 import com.intellij.ide.passwordSafe.PasswordSafeException;
@@ -71,12 +70,12 @@ public class IdePersistentConnectionSettingsProvider extends BasicConnectionSett
             element.setAttribute(WORKSPACE_TAG, String.valueOf(connectionSettings.getWorkspaceId()));
         }
 
-        if (connectionSettings.getAuthentication() instanceof EncodedAuthentication) {
+        if (connectionSettings.getAuthentication() instanceof UserAuthentication) {
 
-            EncodedAuthentication authentication = (EncodedAuthentication) connectionSettings.getAuthentication();
+            UserAuthentication authentication = (UserAuthentication) connectionSettings.getAuthentication();
 
             if (!StringUtils.isEmpty(authentication.getUserName())) {
-                element.setAttribute(USER_TAG, String.valueOf(authentication.getUserName()));
+                element.setAttribute(USER_TAG, authentication.getUserName());
                 element.setAttribute(SSO_TAG, Boolean.FALSE.toString());
             }
             //save the password into the password store, not related to the xml file
@@ -110,19 +109,11 @@ public class IdePersistentConnectionSettingsProvider extends BasicConnectionSett
             connectionSettings.setWorkspaceId(Long.valueOf(workSpaceStr));
         }
 
-        if (state.getAttributeValue(SSO_TAG) == null || state.getAttributeValue(SSO_TAG).equals(Boolean.FALSE.toString())) {
+        if(state.getAttributeValue(SSO_TAG) == null || state.getAttributeValue(SSO_TAG).equals(Boolean.FALSE.toString())) {
             //user pass login
             String username = state.getAttributeValue(USER_TAG) != null ? state.getAttributeValue(USER_TAG) : "";
-
-            Authentication authentication = new EncodedAuthentication(username) {
-                @Override
-                public String getPassword() {
-                    String pwd = PasswordSafe.getInstance().getPassword(project, IdePersistentConnectionSettingsProvider.class, "OCTANE_PASSWORD_KEY");
-                    return pwd != null ? pwd : "";
-                }
-            };
-
-            connectionSettings.setAuthentication(authentication);
+            String password = decryptPassword();
+            connectionSettings.setAuthentication(new UserAuthentication(username, password));
         } else {
             connectionSettings.setAuthentication(new GrantTokenAuthentication());
         }

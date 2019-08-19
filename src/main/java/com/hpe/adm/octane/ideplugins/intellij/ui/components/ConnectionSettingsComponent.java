@@ -13,15 +13,11 @@
 
 package com.hpe.adm.octane.ideplugins.intellij.ui.components;
 
-import com.hpe.adm.nga.sdk.authentication.Authentication;
-import com.hpe.adm.octane.ideplugins.intellij.settings.IdePersistentConnectionSettingsProvider;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.HasComponent;
-import com.hpe.adm.octane.ideplugins.intellij.util.EncodedAuthentication;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
 import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
 import com.hpe.adm.octane.ideplugins.services.util.UrlParser;
-import com.intellij.ide.passwordSafe.PasswordSafe;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.Pair;
@@ -402,15 +398,7 @@ public class ConnectionSettingsComponent implements HasComponent {
         if (!StringUtils.isEmpty(serverUrl) && !EMPTY_SERVER_URL_TEXT.equals(serverUrl)) {
             ConnectionSettings connectionSettings;
             try {
-                Authentication authentication = new EncodedAuthentication(getUserName()) {
-                    @Override
-                    public String getPassword() {
-                        String pwd = PasswordSafe.getInstance().getPassword(project, IdePersistentConnectionSettingsProvider.class, "OCTANE_PASSWORD_KEY");
-                        return pwd != null ? pwd : "";
-                    }
-                };
-
-                connectionSettings = UrlParser.resolveConnectionSettings(serverUrl, authentication);
+                connectionSettings = UrlParser.resolveConnectionSettings(serverUrl, getUserName(), getPassword());
                 setConnectionStatusLabelVisible(false);
             } catch (ServiceException ex) {
                 connectionSettings = new ConnectionSettings();
