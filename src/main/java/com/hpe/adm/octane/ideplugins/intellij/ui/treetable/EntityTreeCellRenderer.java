@@ -42,6 +42,20 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
     private static final String[] commonFields = new String[]{"id", "name", "phase"};
     private static final String[] progressFields = new String[]{FIELD_INVESTED_HOURS, FIELD_REMAINING_HOURS, FIELD_ESTIMATED_HOURS};
     private static final Map<String, String> subtypeNames = new HashMap<>();
+    static {
+        subtypeNames.put(Entity.USER_STORY.getSubtypeName(), "User Story");
+        subtypeNames.put(Entity.DEFECT.getSubtypeName(), "Defect");
+        subtypeNames.put(Entity.QUALITY_STORY.getSubtypeName(), "Quality Story");
+        subtypeNames.put(Entity.EPIC.getSubtypeName(), "Epic");
+        subtypeNames.put(Entity.FEATURE.getSubtypeName(), "Feature");
+        subtypeNames.put(Entity.GHERKIN_TEST.getSubtypeName(), "Gherkin Test");
+        subtypeNames.put(Entity.MANUAL_TEST.getSubtypeName(), "Manual Test");
+        subtypeNames.put(Entity.MANUAL_TEST_RUN.getSubtypeName(), "Manual Run");
+        subtypeNames.put(Entity.AUTOMATED_TEST_RUN.getSubtypeName(), "Automated Run");
+        subtypeNames.put(Entity.TEST_SUITE.getSubtypeName(), "Test Suite");
+        subtypeNames.put(Entity.TEST_SUITE_RUN.getSubtypeName(), "Run Suite");
+        subtypeNames.put(Entity.REQUIREMENT.getSubtypeName(), "Requirement");
+    }
 
     @Inject
     private IdePluginPersistentState idePluginPersistentState;
@@ -135,18 +149,6 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
         entityFields.get(Entity.REQUIREMENT).add(FIELD_OWNER);
         entityFields.get(Entity.REQUIREMENT).add(FIELD_RELEASE);
         entityFields.get(Entity.REQUIREMENT).add("subtype");
-
-        subtypeNames.put(Entity.USER_STORY.getSubtypeName(), "User Story");
-        subtypeNames.put(Entity.DEFECT.getSubtypeName(), "Defect");
-        subtypeNames.put(Entity.QUALITY_STORY.getSubtypeName(), "Quality Story");
-        subtypeNames.put(Entity.EPIC.getSubtypeName(), "Epic");
-        subtypeNames.put(Entity.FEATURE.getSubtypeName(), "Feature");
-        subtypeNames.put(Entity.GHERKIN_TEST.getSubtypeName(), "Gherkin Test");
-        subtypeNames.put(Entity.MANUAL_TEST.getSubtypeName(), "Manual Test");
-        subtypeNames.put(Entity.MANUAL_TEST_RUN.getSubtypeName(), "Manual Run");
-        subtypeNames.put(Entity.TEST_SUITE.getSubtypeName(), "Test Suite");
-        subtypeNames.put(Entity.TEST_SUITE_RUN.getSubtypeName(), "Run Suite");
-        subtypeNames.put(Entity.REQUIREMENT.getSubtypeName(), "Requirement");
     }
 
     /**
