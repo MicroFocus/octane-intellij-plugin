@@ -31,6 +31,7 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.searchresult.EntitySearchResult
 import com.hpe.adm.octane.ideplugins.intellij.ui.searchresult.SearchHistoryManager;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeTablePresenter;
 import com.hpe.adm.octane.ideplugins.services.EntityService;
+import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.mywork.MyWorkUtil;
 import com.hpe.adm.octane.ideplugins.services.util.PartialEntity;
@@ -100,6 +101,9 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
 
     @Inject
     private Project project;
+
+    @Inject
+    private ConnectionSettingsProvider connectionSettingsProvider;
 
     private BiMap<PartialEntity, TabInfo> detailTabInfo = HashBiMap.create();
     private Map<PartialEntity, EntityDetailPresenter> detailTabPresenterMap = new HashMap<>();
@@ -240,6 +244,10 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
         if (selectedTabKey != null) {
             selectDetailTab(selectedTabKey);
         }
+
+        connectionSettingsProvider.addChangeHandler(() -> {
+            tabbedPaneView.closeAllExcept(myWorkTabInfo);
+        });
     }
 
     private void initHandlers() {
