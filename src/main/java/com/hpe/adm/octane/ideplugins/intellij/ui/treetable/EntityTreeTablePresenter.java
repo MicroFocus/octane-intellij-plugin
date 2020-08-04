@@ -18,6 +18,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import com.hpe.adm.nga.sdk.model.EntityModel;
+import com.hpe.adm.nga.sdk.model.ReferenceFieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.eventbus.OpenDetailTabEvent;
 import com.hpe.adm.octane.ideplugins.intellij.eventbus.RefreshMyWorkEvent;
@@ -29,6 +30,7 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
 import com.hpe.adm.octane.ideplugins.intellij.ui.tabbedpane.TabbedPanePresenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
 import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
+import com.hpe.adm.octane.ideplugins.services.CommentService;
 import com.hpe.adm.octane.ideplugins.services.EntityLabelService;
 import com.hpe.adm.octane.ideplugins.services.EntityService;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
@@ -98,6 +100,9 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
 
     @Inject
     private Project project;
+    
+    @Inject
+    private CommentService commentService;
 
     public EntityTreeTablePresenter() {
     }
@@ -316,7 +321,64 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
 
             }
 
-            if (myWorkService.isAddingToMyWorkSupported(entityType) && MyWorkUtil.isUserItemDismissible(userItem)) {
+            if (entityType == Entity.COMMENT) {
+                JMenuItem removeFromMyWorkMenuItem = new JMenuItem("Dismiss", AllIcons.General.Remove);
+                removeFromMyWorkMenuItem.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mousePressed(MouseEvent e) {
+                        ApplicationManager.getApplication().invokeLater(() -> {
+                            Task.Backgroundable backgroundTask =
+
+                                    new Task.Backgroundable(
+                                            null,
+                                            "Dismissing item from \"My Work\"",
+                                            true) {
+
+                                        public void run(@NotNull ProgressIndicator indicator) {
+                                            if (commentService.dismissComment(entityModel)) {
+
+                                                String userItemId = (String)((ReferenceFieldModel)userItem.getValue("my_follow_items_comment")).getValue().getValue("id").getValue();
+                                                //Remove dismissed item if successful
+                                                List list = entityTreeView.getTreeModel().getGroupedEntities()
+                                                        .values()
+                                                        .stream()
+                                                        .flatMap(Collection::stream)
+                                                        .filter( currentEntityModel -> {
+                                                                    boolean isComment = currentEntityModel.getValue("entity_type").getValue() == "comment";
+                                                                    String myFollowEntityModelId = (MyWorkUtil.getEntityModelFromUserItem(currentEntityModel)).getId();
+                                                                    //check if it's comment
+                                                                    if (isComment) {
+                                                                        //check if it's the selected item
+                                                                        return !userItemId.equals(myFollowEntityModelId);
+                                                                    }
+                                                                    return true;
+                                                                })
+                                                        .collect(Collectors.toList());
+
+                                                SwingUtilities.invokeLater(() -> {
+                                                    updateActiveItem(list);
+                                                    entityTreeView.setTreeModel(createEntityTreeModel(list));
+                                                    entityTreeView.expandAllNodes();
+                                                });
+
+                                                //refresh();
+                                                UiUtil.showWarningBalloon(null,
+                                                        "Comment dismissed",
+                                                        UiUtil.entityToString(entityModel) + entityModel.getValue("text").getValue(),
+                                                        NotificationType.INFORMATION);
+                                            }
+                                        }
+
+                                    };
+
+                            backgroundTask.queue();
+                        });
+                    }
+                });
+                popup.add(removeFromMyWorkMenuItem);
+            }
+
+            if ((myWorkService.isAddingToMyWorkSupported(entityType) && MyWorkUtil.isUserItemDismissible(userItem))) {
 
                 JMenuItem removeFromMyWorkMenuItem = new JMenuItem("Dismiss", AllIcons.General.Remove);
                 removeFromMyWorkMenuItem.addMouseListener(new MouseAdapter() {
