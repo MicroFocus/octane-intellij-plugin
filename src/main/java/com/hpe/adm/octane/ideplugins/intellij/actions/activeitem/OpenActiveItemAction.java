@@ -78,6 +78,7 @@ public class OpenActiveItemAction extends OctanePluginAction {
                         new ImageIcon(pluginModule
                                 .getInstance(EntityIconFactory.class)
                                 .getIconAsImage(null, 20, 11)));
+                e.getPresentation().setText("No active item");
             }
         });
     }
