@@ -15,6 +15,7 @@ package com.hpe.adm.octane.ideplugins.intellij.settings;
 
 import com.google.api.client.http.HttpResponseException;
 import com.hpe.adm.nga.sdk.exception.OctaneException;
+import com.hpe.adm.nga.sdk.model.StringFieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.components.ConnectionSettingsComponent;
@@ -269,7 +270,11 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
             SwingUtilities.invokeLater(() -> {
                 if (connectionSettingsView != null) {
                     if (ex instanceof OctaneException) {
-                        connectionSettingsView.setConnectionStatusError(((OctaneException) ex).getError().getValue("description").getValue().toString());
+                        OctaneException octaneException = (OctaneException) ex;
+                        StringFieldModel errorDescription = (StringFieldModel) octaneException.getError().getValue("description");
+                        if (errorDescription != null) {
+                            connectionSettingsView.setConnectionStatusError(errorDescription.getValue());
+                        }
                     } else if (ex instanceof RuntimeException && ex.getCause() != null && ex.getCause() instanceof HttpResponseException) {
                         HttpResponseException responseException = (HttpResponseException) ex.getCause();
                         if (responseException.getStatusCode() == 401) {
