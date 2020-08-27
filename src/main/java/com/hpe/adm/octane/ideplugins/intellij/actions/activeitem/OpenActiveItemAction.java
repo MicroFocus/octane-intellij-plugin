@@ -56,23 +56,22 @@ public class OpenActiveItemAction extends OctanePluginAction {
                 // This is necessary to avoid doing a rest call for labels on init
                 if (!Objects.equals(activeItem, prevActiveItem)) {
                     prevActiveItem = activeItem;
-
-                    e.getPresentation().setDescription(activeItem.getEntityName());
-                    e.getPresentation().setText("#" + activeItem.getEntityId());
-
-                    // Has to be in a thread other than the UI, because the EntityIconFactory will trigger sso login on startup
-                    // The thread is not that expensive because of the presentation is only updated if the active item changed
-                    new Thread(() -> {
-
-                        ImageIcon imageIcon =
-                                new ImageIcon(pluginModule
-                                        .getInstance(EntityIconFactory.class)
-                                        .getIconAsImage(activeItem.getEntityType(), 20, 11));
-
-                        ApplicationManager.getApplication().invokeLater(() -> e.getPresentation().setIcon(imageIcon));
-
-                    }).start();
                 }
+                e.getPresentation().setDescription(activeItem.getEntityName());
+                e.getPresentation().setText("#" + activeItem.getEntityId());
+
+                // Has to be in a thread other than the UI, because the EntityIconFactory will trigger sso login on startup
+                // The thread is not that expensive because of the presentation is only updated if the active item changed
+                new Thread(() -> {
+
+                    ImageIcon imageIcon =
+                            new ImageIcon(pluginModule
+                                    .getInstance(EntityIconFactory.class)
+                                    .getIconAsImage(activeItem.getEntityType(), 20, 11));
+
+                    ApplicationManager.getApplication().invokeLater(() -> e.getPresentation().setIcon(imageIcon));
+
+                }).start();
             } else {
                 e.getPresentation().setIcon(
                         new ImageIcon(pluginModule
