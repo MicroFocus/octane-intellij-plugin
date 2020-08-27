@@ -301,6 +301,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
                         super.mousePressed(e);
                         if (isActivated) {
                             persistentState.clearState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM);
+                            persistentState.clearState(IdePluginPersistentState.Key.PREV_ACTIVE_WORK_ITEM);
                         } else {
                             setActiveItemFromPersistentState(selectedItem);
                         }
