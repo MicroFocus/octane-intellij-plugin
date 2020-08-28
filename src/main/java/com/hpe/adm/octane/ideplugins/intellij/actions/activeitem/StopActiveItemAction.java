@@ -39,6 +39,7 @@ public class StopActiveItemAction extends OctanePluginAction {
     public void actionPerformed(AnActionEvent e) {
         getPluginModule(e).ifPresent(pluginModule -> {
             pluginModule.getInstance(IdePluginPersistentState.class).clearState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM);
+            pluginModule.getInstance(IdePluginPersistentState.class).clearState(IdePluginPersistentState.Key.PREV_ACTIVE_WORK_ITEM);
         });
     }
 
