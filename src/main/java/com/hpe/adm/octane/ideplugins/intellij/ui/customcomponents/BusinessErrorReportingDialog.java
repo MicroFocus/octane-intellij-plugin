@@ -85,7 +85,7 @@ public class BusinessErrorReportingDialog extends DialogWrapper {
             JTextArea textArea = new JTextArea(10, 75);
             textArea.setEditable(false);
             textArea.setText(((FieldModel) fieldValueStackTrace).getValue().toString());
-            JScrollPane sp = new JBScrollPane(textArea);
+            JScrollPane sp = new JScrollPane(textArea);
             rightPanel.add(sp);
         }
 
