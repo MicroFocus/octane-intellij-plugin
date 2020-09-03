@@ -17,7 +17,9 @@ import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import com.hpe.adm.nga.sdk.exception.OctaneException;
 import com.hpe.adm.nga.sdk.model.EntityModel;
+import com.hpe.adm.nga.sdk.model.StringFieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.eventbus.OpenDetailTabEvent;
 import com.hpe.adm.octane.ideplugins.intellij.eventbus.RefreshMyWorkEvent;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
@@ -41,6 +43,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
 import org.jetbrains.annotations.NotNull;
 
@@ -83,6 +86,9 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
     private MyWorkService myWorkService;
 
     @Inject
+    private Project project;
+
+    @Inject
     private EventBus eventBus;
 
     private String lastSearchQuery = null;
@@ -113,9 +119,16 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
 
             public void onError(@NotNull Exception ex) {
                 entityTreeView.setLoading(false);
-                ExceptionHandler exceptionHandler = new ExceptionHandler(ex, myProject);
-                exceptionHandler.showErrorNotification();
-                entityTreeView.setTreeModel(createEmptyEntityTreeModel(new ArrayList<>()));
+                String message = ex.getMessage();
+                if (ex instanceof OctaneException) {
+                    entityTreeView.setTreeModel(createEmptyEntityTreeModel(new ArrayList<>()));
+                    OctaneException octaneException = (OctaneException) ex;
+                    StringFieldModel errorDescription = (StringFieldModel) octaneException.getError().getValue("description");
+                    if (errorDescription != null) {
+                        message = errorDescription.getValue();
+                    }
+                }
+                entityTreeView.setErrorMessage(message, project);
 
             }
         };
