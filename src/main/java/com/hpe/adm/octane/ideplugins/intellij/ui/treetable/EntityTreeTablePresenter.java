@@ -17,8 +17,10 @@ import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import com.hpe.adm.nga.sdk.exception.OctaneException;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.nga.sdk.model.ReferenceFieldModel;
+import com.hpe.adm.nga.sdk.model.StringFieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.eventbus.OpenDetailTabEvent;
 import com.hpe.adm.octane.ideplugins.intellij.eventbus.RefreshMyWorkEvent;
@@ -124,6 +126,13 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
                 } catch (Exception ex) {
                     entityTreeTableView.setLoading(false);
                     String message = ex.getMessage();
+                    if (ex instanceof OctaneException) {
+                        OctaneException octaneException = (OctaneException) ex;
+                        StringFieldModel errorDescription = (StringFieldModel) octaneException.getError().getValue("description");
+                        if (errorDescription != null) {
+                            message = errorDescription.getValue();
+                        }
+                    }
                     entityTreeTableView.setErrorMessage("Failed to load \"My work\" <br>" + message, project);
                 }
             }
