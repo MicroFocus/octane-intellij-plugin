@@ -545,7 +545,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
 
         entityCategories.add(new UserItemEntityCategory(entityLabelMap.get(Entity.REQUIREMENT).getValue("plural_capitalized").getValue().toString(), Entity.REQUIREMENT));
         entityCategories.add(new UserItemEntityCategory(entityLabelMap.get(Entity.TASK).getValue("plural_capitalized").getValue().toString(), Entity.TASK));
-        entityCategories.add(new UserItemEntityCategory("Tests", Entity.GHERKIN_TEST, Entity.MANUAL_TEST));
+        entityCategories.add(new UserItemEntityCategory("Tests", Entity.GHERKIN_TEST, Entity.MANUAL_TEST, Entity.BDD_SCENARIO));
         entityCategories.add(new UserItemEntityCategory("Mention in comments", Entity.COMMENT));
         entityCategories.add(new UserItemEntityCategory("Runs", Entity.MANUAL_TEST_RUN, Entity.TEST_SUITE_RUN));
 

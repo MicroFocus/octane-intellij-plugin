@@ -55,6 +55,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
         subtypeNames.put(Entity.TEST_SUITE.getSubtypeName(), "Test Suite");
         subtypeNames.put(Entity.TEST_SUITE_RUN.getSubtypeName(), "Run Suite");
         subtypeNames.put(Entity.REQUIREMENT.getSubtypeName(), "Requirement");
+        subtypeNames.put(Entity.BDD_SCENARIO.getSubtypeName(), "BDD Scenario");
     }
 
     @Inject
@@ -149,6 +150,12 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
         entityFields.get(Entity.REQUIREMENT).add(FIELD_OWNER);
         entityFields.get(Entity.REQUIREMENT).add(FIELD_RELEASE);
         entityFields.get(Entity.REQUIREMENT).add("subtype");
+
+        //BDD SCENARIO
+        entityFields.put(Entity.BDD_SCENARIO, new HashSet<>());
+        entityFields.get(Entity.BDD_SCENARIO).add(FIELD_NAME);
+        entityFields.get(Entity.BDD_SCENARIO).add(FIELD_OWNER);
+        entityFields.get(Entity.BDD_SCENARIO).add(FIELD_AUTOMATION_STATUS);
     }
 
     /**
