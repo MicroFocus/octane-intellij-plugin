@@ -271,14 +271,14 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
                 }
             }
 
-            if (entityType == Entity.GHERKIN_TEST) {
+            if (entityType == Entity.GHERKIN_TEST || entityType == Entity.BDD_SCENARIO) {
                 JMenuItem downloadScriptItem = new JMenuItem("Download script", AllIcons.Actions.Download);
                 downloadScriptItem.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mousePressed(MouseEvent e) {
                         super.mousePressed(e);
                         if (SwingUtilities.isLeftMouseButton(e))
-                            downloadScriptForGherkinTest(entityModel);
+                            downloadScriptForTest(entityModel);
                     }
                 });
                 popup.add(downloadScriptItem);
@@ -441,12 +441,12 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
         });
     }
 
-    private void downloadScriptForGherkinTest(EntityModel gherkinTest) {
+    private void downloadScriptForTest(EntityModel test) {
         VirtualFile selectedFolder = chooseScriptFolder(project);
         if (selectedFolder != null) {
-            long gherkinTestId = Long.parseLong(gherkinTest.getValue("id").getValue().toString());
-            String gherkinTestName = gherkinTest.getValue("name").getValue().toString();
-            String scriptFileName = gherkinTestName + "-" + gherkinTestId + ".feature";
+            long testId = Long.parseLong(test.getValue("id").getValue().toString());
+            String testName = test.getValue("name").getValue().toString();
+            String scriptFileName = testName + "-" + testId + ".feature";
             boolean shouldDownloadScript = true;
             if (selectedFolder.findChild(scriptFileName) != null) {
                 String title = "Confirm file overwrite";
@@ -464,10 +464,10 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
             }
 
             if (shouldDownloadScript) {
-                RestUtil.LOADING_MESSAGE = "Downloading script for gherkin test with id " + gherkinTestId;
+                RestUtil.LOADING_MESSAGE = "Downloading script for " + test.getType() + " test with id " + testId;
                 RestUtil.runInBackground(
                         () -> {
-                            String scriptContent = scriptService.getGherkinTestScriptContent(gherkinTestId);
+                            String scriptContent = scriptService.getTestScriptContent(testId);
                             return createTestScriptFile(selectedFolder.getPath(), scriptFileName, scriptContent);
                         },
                         (scriptFile) -> {
@@ -476,7 +476,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
                             project.getBaseDir().refresh(false, true);
                         },
                         project,
-                        "failed to download script for gherkin test with id " + gherkinTestId);
+                        "failed to download script for " + test.getType() + " test with id " + testId);
             }
         }
     }
