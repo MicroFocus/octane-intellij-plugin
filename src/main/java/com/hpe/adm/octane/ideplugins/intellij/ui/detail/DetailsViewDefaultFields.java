@@ -69,6 +69,7 @@ public class DetailsViewDefaultFields {
     public static final String FIELD_ESTIMATED_HOURS = "estimated_hours";
     public static final String FIELD_AUTOMATION_STATUS = "automation_status";
     public static final String FIELD_ACTIVITY_LEVEL = "activity_level";
+    public static final String FIELD_BDD_SPEC = "bdd_spec";
     //inner user prop
     public static final String FIELD_FULL_NAME = "full_name";
 

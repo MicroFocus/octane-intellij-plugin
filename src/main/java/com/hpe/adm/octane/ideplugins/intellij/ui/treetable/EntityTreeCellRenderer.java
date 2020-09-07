@@ -157,7 +157,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
         entityFields.get(Entity.BDD_SCENARIO).add(FIELD_NAME);
         entityFields.get(Entity.BDD_SCENARIO).add(FIELD_OWNER);
         entityFields.get(Entity.BDD_SCENARIO).add(FIELD_AUTOMATION_STATUS);
-        entityFields.get(Entity.BDD_SCENARIO).add("bdd_spec");
+        entityFields.get(Entity.BDD_SCENARIO).add(FIELD_BDD_SPEC);
     }
 
     /**
