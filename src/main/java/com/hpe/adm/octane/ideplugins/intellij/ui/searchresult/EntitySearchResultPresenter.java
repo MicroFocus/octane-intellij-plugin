@@ -75,6 +75,7 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
             Entity.MANUAL_TEST,
             Entity.AUTOMATED_TEST,
             Entity.GHERKIN_TEST,
+            Entity.BDD_SCENARIO,
             Entity.REQUIREMENT};
 
     protected EntityTreeView entityTreeView;
@@ -168,7 +169,7 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
         entityCategories.add(new SearchEntityCategory(entityLabelMap.get(Entity.REQUIREMENT).getValue("plural_capitalized").getValue().toString(), Entity.REQUIREMENT));
         entityCategories.add(new SearchEntityCategory(entityLabelMap.get(Entity.DEFECT).getValue("plural_capitalized").getValue().toString(), Entity.DEFECT));
         entityCategories.add(new SearchEntityCategory(entityLabelMap.get(Entity.TASK).getValue("plural_capitalized").getValue().toString(), Entity.TASK));
-        entityCategories.add(new SearchEntityCategory("Tests", Entity.TEST_SUITE, Entity.MANUAL_TEST, Entity.AUTOMATED_TEST, Entity.GHERKIN_TEST));
+        entityCategories.add(new SearchEntityCategory("Tests", Entity.TEST_SUITE, Entity.MANUAL_TEST, Entity.AUTOMATED_TEST, Entity.GHERKIN_TEST, Entity.BDD_SCENARIO));
         return new EntityTreeModel(entityCategories, entityModels);
     }
 

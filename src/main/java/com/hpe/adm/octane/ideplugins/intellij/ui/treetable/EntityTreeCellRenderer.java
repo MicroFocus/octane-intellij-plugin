@@ -16,6 +16,7 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.treetable;
 import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.nga.sdk.model.FieldModel;
+import com.hpe.adm.nga.sdk.model.ReferenceFieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
@@ -55,6 +56,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
         subtypeNames.put(Entity.TEST_SUITE.getSubtypeName(), "Test Suite");
         subtypeNames.put(Entity.TEST_SUITE_RUN.getSubtypeName(), "Run Suite");
         subtypeNames.put(Entity.REQUIREMENT.getSubtypeName(), "Requirement");
+        subtypeNames.put(Entity.BDD_SCENARIO.getSubtypeName(), "BDD Scenario");
     }
 
     @Inject
@@ -149,6 +151,13 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
         entityFields.get(Entity.REQUIREMENT).add(FIELD_OWNER);
         entityFields.get(Entity.REQUIREMENT).add(FIELD_RELEASE);
         entityFields.get(Entity.REQUIREMENT).add("subtype");
+
+        //BDD SCENARIO
+        entityFields.put(Entity.BDD_SCENARIO, new HashSet<>());
+        entityFields.get(Entity.BDD_SCENARIO).add(FIELD_NAME);
+        entityFields.get(Entity.BDD_SCENARIO).add(FIELD_OWNER);
+        entityFields.get(Entity.BDD_SCENARIO).add(FIELD_AUTOMATION_STATUS);
+        entityFields.get(Entity.BDD_SCENARIO).add(FIELD_BDD_SPEC);
     }
 
     /**
@@ -359,6 +368,17 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
                         "No environment");
                 addRelationFieldDetails(rowPanel, entityModel, FIELD_AUTHOR, FIELD_FULL_NAME, "Author", DetailsPosition.TOP);
                 rowPanel.addDetails("Started", getUiDataFromModel(entityModel.getValue(FIELD_TEST_RUN_STARTED_DATE)), DetailsPosition.BOTTOM);
+            } else if (Entity.BDD_SCENARIO.equals(entityType)) {
+                String automationStatus = getUiDataFromModel(entityModel.getValue("automation_status"));
+                if (StringUtils.isNotEmpty(automationStatus)) {
+                    rowPanel.addDetails("Automation status", automationStatus, DetailsPosition.BOTTOM);
+                }
+                ReferenceFieldModel bddSpec = (ReferenceFieldModel) entityModel.getValue("bdd_spec");
+                if (bddSpec != null) {
+                    String bddSpecId = bddSpec.getValue().getId();
+                    String bddSpecName = bddSpec.getValue().getValue("name").getValue().toString();
+                    rowPanel.addDetails("BDD Spec", bddSpecId + " - " + bddSpecName, DetailsPosition.BOTTOM);
+                }
             }
 
             return rowPanel;
