@@ -30,6 +30,7 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
 import com.hpe.adm.octane.ideplugins.intellij.ui.tabbedpane.TabbedPanePresenter;
+import com.hpe.adm.octane.ideplugins.intellij.ui.util.DownloadScript;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
 import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
 import com.hpe.adm.octane.ideplugins.services.CommentService;
@@ -98,7 +99,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
     private IdePluginPersistentState persistentState;
 
     @Inject
-    private DownloadScriptService scriptService;
+    private DownloadScript downloadScript;
 
     @Inject
     private Project project;
@@ -278,7 +279,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
                     public void mousePressed(MouseEvent e) {
                         super.mousePressed(e);
                         if (SwingUtilities.isLeftMouseButton(e))
-                            downloadScriptForTest(entityModel);
+                            downloadScript.downloadScriptForTest(entityModel);
                     }
                 });
                 popup.add(downloadScriptItem);
@@ -439,73 +440,6 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
 
             return popup;
         });
-    }
-
-    private void downloadScriptForTest(EntityModel test) {
-        VirtualFile selectedFolder = chooseScriptFolder(project);
-        if (selectedFolder != null) {
-            long testId = Long.parseLong(test.getValue("id").getValue().toString());
-            String testName = test.getValue("name").getValue().toString();
-            String scriptFileName = testName + "-" + testId + ".feature";
-            boolean shouldDownloadScript = true;
-            if (selectedFolder.findChild(scriptFileName) != null) {
-                String title = "Confirm file overwrite";
-                String message = "Selected destination folder already contains a file named \"" +
-                        scriptFileName + "\". Do you want to overwrite this file?";
-
-                ConfirmationDialog dialog = new ConfirmationDialog(project, message, title,
-                        null, VcsShowConfirmationOption.STATIC_SHOW_CONFIRMATION) {
-                    @Override
-                    public void setDoNotAskOption(@Nullable DoNotAskOption doNotAsk) {
-                        super.setDoNotAskOption(null);
-                    }
-                };
-                shouldDownloadScript = dialog.showAndGet();
-            }
-
-            if (shouldDownloadScript) {
-                RestUtil.LOADING_MESSAGE = "Downloading script for " + test.getType() + " test with id " + testId;
-                RestUtil.runInBackground(
-                        () -> {
-                            String scriptContent = scriptService.getTestScriptContent(testId);
-                            return createTestScriptFile(selectedFolder.getPath(), scriptFileName, scriptContent);
-                        },
-                        (scriptFile) -> {
-                            VirtualFile vFile = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(scriptFile);
-                            FileEditorManager.getInstance(project).openFile(vFile, true, true);
-                            project.getBaseDir().refresh(false, true);
-                        },
-                        project,
-                        "failed to download script for " + test.getType() + " test with id " + testId);
-            }
-        }
-    }
-
-    private VirtualFile chooseScriptFolder(Project project) {
-        FileChooserDescriptor descriptor = new OpenProjectFileChooserDescriptor(true);
-        descriptor.setHideIgnored(false);
-        descriptor.setRoots(project.getBaseDir());
-        descriptor.setTitle("Select Parent Folder");
-        descriptor.withTreeRootVisible(false);
-        VirtualFile[] virtualFile = FileChooser.chooseFiles(descriptor, null, null);
-
-        return (virtualFile.length != 1) ? null : virtualFile[0];
-    }
-
-    private File createTestScriptFile(String path, String fileName, String script) {
-        File f = new File(path + "/" + fileName.replaceAll("[\\\\/:?*\"<>|]", ""));
-        try {
-            f.createNewFile();
-            if (script != null) {
-                Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(f), StandardCharsets.UTF_8));
-                out.append(script);
-                out.flush();
-                out.close();
-            }
-        } catch (IOException e) {
-            return null;
-        }
-        return f;
     }
 
     private PartialEntity getActiveItemFromPersistentState() {
