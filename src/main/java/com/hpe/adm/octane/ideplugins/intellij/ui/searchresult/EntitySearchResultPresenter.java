@@ -29,8 +29,8 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.tabbedpane.TabbedPanePresenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityCategory;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeView;
+import com.hpe.adm.octane.ideplugins.intellij.ui.util.DownloadScriptUtil;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
-import com.hpe.adm.octane.ideplugins.intellij.util.ExceptionHandler;
 import com.hpe.adm.octane.ideplugins.services.EntityLabelService;
 import com.hpe.adm.octane.ideplugins.services.EntityService;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
@@ -91,6 +91,9 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
 
     @Inject
     private EventBus eventBus;
+
+    @Inject
+    private DownloadScriptUtil downloadScriptUtil;
 
     private String lastSearchQuery = null;
 
@@ -201,6 +204,19 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
                     }
                 });
                 popup.add(viewDetailMenuItem);
+            }
+
+            if ( entityType == Entity.GHERKIN_TEST || entityType == Entity.BDD_SCENARIO ) {
+                JMenuItem downloadScriptItem = new JMenuItem("Download script", AllIcons.Actions.Download);
+                downloadScriptItem.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mousePressed(MouseEvent e) {
+                        super.mousePressed(e);
+                        if (SwingUtilities.isLeftMouseButton(e))
+                            downloadScriptUtil.downloadScriptForTest(entityModel);
+                    }
+                });
+                popup.add(downloadScriptItem);
             }
 
             if (myWorkService.isAddingToMyWorkSupported(entityType)) {
