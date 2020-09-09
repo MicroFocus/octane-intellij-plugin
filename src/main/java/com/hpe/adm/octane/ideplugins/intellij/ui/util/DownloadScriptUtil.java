@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
-public class DownloadScript {
+public class DownloadScriptUtil {
     @Inject
     private DownloadScriptService scriptService;
 

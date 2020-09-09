@@ -29,9 +29,8 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.tabbedpane.TabbedPanePresenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityCategory;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeView;
-import com.hpe.adm.octane.ideplugins.intellij.ui.util.DownloadScript;
+import com.hpe.adm.octane.ideplugins.intellij.ui.util.DownloadScriptUtil;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
-import com.hpe.adm.octane.ideplugins.intellij.util.ExceptionHandler;
 import com.hpe.adm.octane.ideplugins.services.EntityLabelService;
 import com.hpe.adm.octane.ideplugins.services.EntityService;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
@@ -94,7 +93,7 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
     private EventBus eventBus;
 
     @Inject
-    private DownloadScript downloadScript;
+    private DownloadScriptUtil downloadScriptUtil;
 
     private String lastSearchQuery = null;
 
@@ -214,7 +213,7 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
                     public void mousePressed(MouseEvent e) {
                         super.mousePressed(e);
                         if (SwingUtilities.isLeftMouseButton(e))
-                            downloadScript.downloadScriptForTest(entityModel);
+                            downloadScriptUtil.downloadScriptForTest(entityModel);
                     }
                 });
                 popup.add(downloadScriptItem);

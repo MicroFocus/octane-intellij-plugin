@@ -30,46 +30,33 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
 import com.hpe.adm.octane.ideplugins.intellij.ui.tabbedpane.TabbedPanePresenter;
-import com.hpe.adm.octane.ideplugins.intellij.ui.util.DownloadScript;
+import com.hpe.adm.octane.ideplugins.intellij.ui.util.DownloadScriptUtil;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
-import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
 import com.hpe.adm.octane.ideplugins.services.CommentService;
 import com.hpe.adm.octane.ideplugins.services.EntityLabelService;
 import com.hpe.adm.octane.ideplugins.services.EntityService;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.mywork.MyWorkService;
 import com.hpe.adm.octane.ideplugins.services.mywork.MyWorkUtil;
-import com.hpe.adm.octane.ideplugins.services.nonentity.DownloadScriptService;
 import com.hpe.adm.octane.ideplugins.services.util.EntityUtil;
 import com.hpe.adm.octane.ideplugins.services.util.PartialEntity;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
 import com.intellij.icons.AllIcons;
-import com.intellij.ide.actions.OpenProjectFileChooserDescriptor;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.fileChooser.FileChooser;
-import com.intellij.openapi.fileChooser.FileChooserDescriptor;
-import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.JBMenuItem;
 import com.intellij.openapi.util.IconLoader;
-import com.intellij.openapi.vcs.VcsShowConfirmationOption;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.ui.ConfirmationDialog;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
 
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -99,7 +86,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
     private IdePluginPersistentState persistentState;
 
     @Inject
-    private DownloadScript downloadScript;
+    private DownloadScriptUtil downloadScriptUtil;
 
     @Inject
     private Project project;
@@ -279,7 +266,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
                     public void mousePressed(MouseEvent e) {
                         super.mousePressed(e);
                         if (SwingUtilities.isLeftMouseButton(e))
-                            downloadScript.downloadScriptForTest(entityModel);
+                            downloadScriptUtil.downloadScriptForTest(entityModel);
                     }
                 });
                 popup.add(downloadScriptItem);
