@@ -369,6 +369,10 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
                 addRelationFieldDetails(rowPanel, entityModel, FIELD_AUTHOR, FIELD_FULL_NAME, "Author", DetailsPosition.TOP);
                 rowPanel.addDetails("Started", getUiDataFromModel(entityModel.getValue(FIELD_TEST_RUN_STARTED_DATE)), DetailsPosition.BOTTOM);
             } else if (Entity.BDD_SCENARIO.equals(entityType)) {
+
+                rowPanel.setEntitySubTitle(
+                        getUiDataFromModel(entityModel.getValue(FIELD_TEST_TYPE)),
+                        "");
                 String automationStatus = getUiDataFromModel(entityModel.getValue("automation_status"));
                 if (StringUtils.isNotEmpty(automationStatus)) {
                     rowPanel.addDetails("Automation status", automationStatus, DetailsPosition.BOTTOM);
