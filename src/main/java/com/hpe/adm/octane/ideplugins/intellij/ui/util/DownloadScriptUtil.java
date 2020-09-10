@@ -3,7 +3,10 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.util;
 import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
+import com.hpe.adm.octane.ideplugins.services.EntityService;
+import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.nonentity.DownloadScriptService;
+import com.hpe.adm.octane.ideplugins.services.util.Util;
 import com.intellij.ide.actions.OpenProjectFileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
@@ -14,13 +17,18 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ui.ConfirmationDialog;
 import org.jetbrains.annotations.Nullable;
+import org.jsoup.Jsoup;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 
 public class DownloadScriptUtil {
     @Inject
     private DownloadScriptService scriptService;
+
+    @Inject
+    private EntityService entityService;
 
     @Inject
     private Project project;
@@ -29,8 +37,17 @@ public class DownloadScriptUtil {
         VirtualFile selectedFolder = chooseScriptFolder(project);
         if (selectedFolder != null) {
             long testId = Long.parseLong(test.getValue("id").getValue().toString());
-            String testName = test.getValue("name").getValue().toString();
-            String scriptFileName = testName + "-" + testId + ".feature";
+            String testName;
+
+            if(Entity.getEntityType(test) == Entity.BDD_SCENARIO) {
+                EntityModel bddScenario = entityService.findEntity(Entity.BDD_SCENARIO, testId, Collections.singleton("bdd_spec"));
+                testName = Util.getUiDataFromModel(bddScenario.getValue("bdd_spec"));
+            } else {
+                testName = test.getValue("name").getValue().toString();
+                testName = removeHtmlTags(testName);
+            }
+
+            String scriptFileName = testName + "_" + testId + ".feature";
             boolean shouldDownloadScript = true;
             if (selectedFolder.findChild(scriptFileName) != null) {
                 String title = "Confirm file overwrite";
@@ -90,5 +107,9 @@ public class DownloadScriptUtil {
             return null;
         }
         return f;
+    }
+
+    private String removeHtmlTags(String testName) {
+        return Jsoup.parse(testName).text();
     }
 }
