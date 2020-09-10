@@ -37,17 +37,19 @@ public class DownloadScriptUtil {
         VirtualFile selectedFolder = chooseScriptFolder(project);
         if (selectedFolder != null) {
             long testId = Long.parseLong(test.getValue("id").getValue().toString());
-            String testName;
+            String testName, scriptFileName;
 
             if(Entity.getEntityType(test) == Entity.BDD_SCENARIO) {
                 EntityModel bddScenario = entityService.findEntity(Entity.BDD_SCENARIO, testId, Collections.singleton("bdd_spec"));
                 testName = Util.getUiDataFromModel(bddScenario.getValue("bdd_spec"));
+                String bddSpecId = Util.getUiDataFromModel(bddScenario.getValue("bdd_spec"), "id");
+                scriptFileName = testName + "_" + bddSpecId + ".feature";
             } else {
                 testName = test.getValue("name").getValue().toString();
                 testName = removeHtmlTags(testName);
+                scriptFileName = testName + "_" + testId + ".feature";
             }
 
-            String scriptFileName = testName + "_" + testId + ".feature";
             boolean shouldDownloadScript = true;
             if (selectedFolder.findChild(scriptFileName) != null) {
                 String title = "Confirm file overwrite";
