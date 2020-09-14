@@ -260,7 +260,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
                 if (entityType.equals(Entity.MANUAL_TEST_RUN) || entityType.equals(Entity.TEST_SUITE_RUN)) {
                     String nativeStatus = getUiDataFromModel(entityModel.getValue(FIELD_TEST_RUN_NATIVE_STATUS));
                     rowPanel.addDetails("Status", nativeStatus, DetailsPosition.TOP);
-                } else {
+                } else if (entityType != Entity.BDD_SCENARIO) {
                     String phase = getUiDataFromModel(entityModel.getValue("phase"));
                     rowPanel.addDetails("Phase", phase, DetailsPosition.TOP);
                 }
