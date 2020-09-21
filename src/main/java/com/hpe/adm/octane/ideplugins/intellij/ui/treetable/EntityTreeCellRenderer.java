@@ -238,11 +238,6 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
                         DetailsPosition.TOP);
             }
 
-            //Check if the item is dismissible or not
-            if (MyWorkUtil.isUserItemDismissible(userItem)) {
-                rowPanel.addSimpleDetails("Dismissible", DetailsPosition.BOTTOM);
-            }
-
             //Check if the rendered item is the active item or not
             EntityTypeIdPair entityTypeIdPair =
                     EntityTypeIdPair.fromJsonObject(
