@@ -61,6 +61,7 @@ public class EntityComboBox extends JPanel {
     private List<EntityModel> selectedEntities = new ArrayList<>();
 
     private Timer delayTimer;
+    private final AWTEventListener globalScrollListener;
 
     public interface EntityLoader {
         public Collection<EntityModel> loadEntities(String searchQuery);
@@ -148,6 +149,22 @@ public class EntityComboBox extends JPanel {
             }).start();
             delayTimer.stop();
         });
+
+        globalScrollListener = new AWTEventListener()
+        {
+            public void eventDispatched(AWTEvent e)
+            {
+                if (popupFrame != null) {
+                    // Check if the hovered component is a component of the popup
+                    Component c = SwingUtilities.getDeepestComponentAt(popupFrame, ((MouseWheelEvent) e).getX(), ((MouseWheelEvent) e).getY());
+                    if (c == null) {
+                        popupFrame.dispose();
+                    }
+                }
+            }
+        };
+
+        Toolkit.getDefaultToolkit().addAWTEventListener(globalScrollListener, AWTEvent.MOUSE_WHEEL_EVENT_MASK);
     }
 
     private void createSingleSelectionUI() {
@@ -248,6 +265,15 @@ public class EntityComboBox extends JPanel {
 
     public void createPopup() {
         popupFrame = new JFrame();
+
+        // Remove the global scrolling listener when the popup is closing
+        popupFrame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                super.windowClosing(e);
+                Toolkit.getDefaultToolkit().removeAWTEventListener(globalScrollListener);
+            }
+        });
 
         popupRootPanel = new JPanel();
         popupRootPanel.setBorder(new MatteBorder(2, 2, 2, 2, JBColor.border()));
