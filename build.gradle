@@ -12,7 +12,7 @@
  */
 
 plugins {
-    id "org.jetbrains.intellij" version "0.4.9"
+    id "org.jetbrains.intellij" version "0.4.21"
 }
 
 project.group = projectGroup
@@ -23,18 +23,9 @@ apply plugin: 'groovy'
 apply plugin: "idea"
 apply plugin: "org.jetbrains.intellij"
 
-//Allows you to set the local repository path with a property
-//NOTE, the local maven repository path from the settings.xml will be ignored because of this, the default is hardcoded
-def localMavenRepo = project.hasProperty('localMavenRepo') ?
-        project.getProperty('localMavenRepo') :
-        'file://' + new File(System.getProperty('user.home'), '.m2/repository').absolutePath
-
 repositories {
     //local
-    maven {
-        name = 'localRepo'
-        url localMavenRepo
-    }
+    mavenLocal()
     mavenCentral()
     maven { url 'http://dl.bintray.com/jetbrains/intellij-plugin-service' }
 }

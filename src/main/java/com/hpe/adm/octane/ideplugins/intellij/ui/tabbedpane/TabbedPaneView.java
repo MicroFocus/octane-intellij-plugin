@@ -181,7 +181,7 @@ public class TabbedPaneView implements View {
         closeAllExcept(null);
     }
 
-    private void closeAllExcept(TabInfo exceptTabInfo){
+    public void closeAllExcept(TabInfo exceptTabInfo){
         editorTabs.getTabs().forEach(tabInfo -> {
            if(isClosable(tabInfo) && !tabInfo.equals(exceptTabInfo)){
                editorTabs.removeTab(tabInfo);

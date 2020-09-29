@@ -17,7 +17,9 @@ import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import com.hpe.adm.nga.sdk.exception.OctaneException;
 import com.hpe.adm.nga.sdk.model.EntityModel;
+import com.hpe.adm.nga.sdk.model.StringFieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.eventbus.OpenDetailTabEvent;
 import com.hpe.adm.octane.ideplugins.intellij.eventbus.RefreshMyWorkEvent;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
@@ -27,8 +29,8 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.tabbedpane.TabbedPanePresenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityCategory;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeView;
+import com.hpe.adm.octane.ideplugins.intellij.ui.util.DownloadScriptUtil;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
-import com.hpe.adm.octane.ideplugins.intellij.util.ExceptionHandler;
 import com.hpe.adm.octane.ideplugins.services.EntityLabelService;
 import com.hpe.adm.octane.ideplugins.services.EntityService;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
@@ -41,6 +43,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
 import org.jetbrains.annotations.NotNull;
 
@@ -72,6 +75,7 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
             Entity.MANUAL_TEST,
             Entity.AUTOMATED_TEST,
             Entity.GHERKIN_TEST,
+            Entity.BDD_SCENARIO,
             Entity.REQUIREMENT};
 
     protected EntityTreeView entityTreeView;
@@ -83,7 +87,13 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
     private MyWorkService myWorkService;
 
     @Inject
+    private Project project;
+
+    @Inject
     private EventBus eventBus;
+
+    @Inject
+    private DownloadScriptUtil downloadScriptUtil;
 
     private String lastSearchQuery = null;
 
@@ -113,9 +123,16 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
 
             public void onError(@NotNull Exception ex) {
                 entityTreeView.setLoading(false);
-                ExceptionHandler exceptionHandler = new ExceptionHandler(ex, myProject);
-                exceptionHandler.showErrorNotification();
-                entityTreeView.setTreeModel(createEmptyEntityTreeModel(new ArrayList<>()));
+                String message = ex.getMessage();
+                if (ex instanceof OctaneException) {
+                    entityTreeView.setTreeModel(createEmptyEntityTreeModel(new ArrayList<>()));
+                    OctaneException octaneException = (OctaneException) ex;
+                    StringFieldModel errorDescription = (StringFieldModel) octaneException.getError().getValue("description");
+                    if (errorDescription != null) {
+                        message = errorDescription.getValue();
+                    }
+                }
+                entityTreeView.setErrorMessage(message, project);
 
             }
         };
@@ -155,7 +172,7 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
         entityCategories.add(new SearchEntityCategory(entityLabelMap.get(Entity.REQUIREMENT).getValue("plural_capitalized").getValue().toString(), Entity.REQUIREMENT));
         entityCategories.add(new SearchEntityCategory(entityLabelMap.get(Entity.DEFECT).getValue("plural_capitalized").getValue().toString(), Entity.DEFECT));
         entityCategories.add(new SearchEntityCategory(entityLabelMap.get(Entity.TASK).getValue("plural_capitalized").getValue().toString(), Entity.TASK));
-        entityCategories.add(new SearchEntityCategory("Tests", Entity.TEST_SUITE, Entity.MANUAL_TEST, Entity.AUTOMATED_TEST, Entity.GHERKIN_TEST));
+        entityCategories.add(new SearchEntityCategory("Tests", Entity.TEST_SUITE, Entity.MANUAL_TEST, Entity.AUTOMATED_TEST, Entity.GHERKIN_TEST, Entity.BDD_SCENARIO));
         return new EntityTreeModel(entityCategories, entityModels);
     }
 
@@ -187,6 +204,19 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
                     }
                 });
                 popup.add(viewDetailMenuItem);
+            }
+
+            if ( entityType == Entity.GHERKIN_TEST || entityType == Entity.BDD_SCENARIO ) {
+                JMenuItem downloadScriptItem = new JMenuItem("Download script", AllIcons.Actions.Download);
+                downloadScriptItem.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mousePressed(MouseEvent e) {
+                        super.mousePressed(e);
+                        if (SwingUtilities.isLeftMouseButton(e))
+                            downloadScriptUtil.downloadScriptForTest(entityModel);
+                    }
+                });
+                popup.add(downloadScriptItem);
             }
 
             if (myWorkService.isAddingToMyWorkSupported(entityType)) {

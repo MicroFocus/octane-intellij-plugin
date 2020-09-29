@@ -134,9 +134,15 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
 
                         return entityModelWrapper;
                     } catch (Exception ex) {
-                        ExceptionHandler exceptionHandler = new ExceptionHandler(ex, project);
-                        exceptionHandler.showErrorNotification();
-                        entityDetailView.setErrorMessage(ex.getMessage());
+                        String message = ex.getMessage();
+                        if (ex instanceof OctaneException) {
+                            OctaneException octaneException = (OctaneException) ex;
+                            StringFieldModel errorDescription = (StringFieldModel) octaneException.getError().getValue("description");
+                            if (errorDescription != null) {
+                                message = errorDescription.getValue();
+                            }
+                        }
+                        entityDetailView.setErrorMessage(message);
                         return null;
                     }
                 },

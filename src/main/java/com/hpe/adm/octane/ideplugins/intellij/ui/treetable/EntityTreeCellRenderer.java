@@ -16,6 +16,7 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.treetable;
 import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.nga.sdk.model.FieldModel;
+import com.hpe.adm.nga.sdk.model.ReferenceFieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
@@ -42,6 +43,21 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
     private static final String[] commonFields = new String[]{"id", "name", "phase"};
     private static final String[] progressFields = new String[]{FIELD_INVESTED_HOURS, FIELD_REMAINING_HOURS, FIELD_ESTIMATED_HOURS};
     private static final Map<String, String> subtypeNames = new HashMap<>();
+    static {
+        subtypeNames.put(Entity.USER_STORY.getSubtypeName(), "User Story");
+        subtypeNames.put(Entity.DEFECT.getSubtypeName(), "Defect");
+        subtypeNames.put(Entity.QUALITY_STORY.getSubtypeName(), "Quality Story");
+        subtypeNames.put(Entity.EPIC.getSubtypeName(), "Epic");
+        subtypeNames.put(Entity.FEATURE.getSubtypeName(), "Feature");
+        subtypeNames.put(Entity.GHERKIN_TEST.getSubtypeName(), "Gherkin Test");
+        subtypeNames.put(Entity.MANUAL_TEST.getSubtypeName(), "Manual Test");
+        subtypeNames.put(Entity.MANUAL_TEST_RUN.getSubtypeName(), "Manual Run");
+        subtypeNames.put(Entity.AUTOMATED_TEST_RUN.getSubtypeName(), "Automated Run");
+        subtypeNames.put(Entity.TEST_SUITE.getSubtypeName(), "Test Suite");
+        subtypeNames.put(Entity.TEST_SUITE_RUN.getSubtypeName(), "Run Suite");
+        subtypeNames.put(Entity.REQUIREMENT.getSubtypeName(), "Requirement");
+        subtypeNames.put(Entity.BDD_SCENARIO.getSubtypeName(), "BDD Scenario");
+    }
 
     @Inject
     private IdePluginPersistentState idePluginPersistentState;
@@ -136,17 +152,12 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
         entityFields.get(Entity.REQUIREMENT).add(FIELD_RELEASE);
         entityFields.get(Entity.REQUIREMENT).add("subtype");
 
-        subtypeNames.put(Entity.USER_STORY.getSubtypeName(), "User Story");
-        subtypeNames.put(Entity.DEFECT.getSubtypeName(), "Defect");
-        subtypeNames.put(Entity.QUALITY_STORY.getSubtypeName(), "Quality Story");
-        subtypeNames.put(Entity.EPIC.getSubtypeName(), "Epic");
-        subtypeNames.put(Entity.FEATURE.getSubtypeName(), "Feature");
-        subtypeNames.put(Entity.GHERKIN_TEST.getSubtypeName(), "Gherkin Test");
-        subtypeNames.put(Entity.MANUAL_TEST.getSubtypeName(), "Manual Test");
-        subtypeNames.put(Entity.MANUAL_TEST_RUN.getSubtypeName(), "Manual Run");
-        subtypeNames.put(Entity.TEST_SUITE.getSubtypeName(), "Test Suite");
-        subtypeNames.put(Entity.TEST_SUITE_RUN.getSubtypeName(), "Run Suite");
-        subtypeNames.put(Entity.REQUIREMENT.getSubtypeName(), "Requirement");
+        //BDD SCENARIO
+        entityFields.put(Entity.BDD_SCENARIO, new HashSet<>());
+        entityFields.get(Entity.BDD_SCENARIO).add(FIELD_NAME);
+        entityFields.get(Entity.BDD_SCENARIO).add(FIELD_OWNER);
+        entityFields.get(Entity.BDD_SCENARIO).add(FIELD_AUTOMATION_STATUS);
+        entityFields.get(Entity.BDD_SCENARIO).add(FIELD_BDD_SPEC);
     }
 
     /**
@@ -227,11 +238,6 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
                         DetailsPosition.TOP);
             }
 
-            //Check if the item is dismissible or not
-            if (MyWorkUtil.isUserItemDismissible(userItem)) {
-                rowPanel.addSimpleDetails("Dismissible", DetailsPosition.BOTTOM);
-            }
-
             //Check if the rendered item is the active item or not
             EntityTypeIdPair entityTypeIdPair =
                     EntityTypeIdPair.fromJsonObject(
@@ -249,7 +255,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
                 if (entityType.equals(Entity.MANUAL_TEST_RUN) || entityType.equals(Entity.TEST_SUITE_RUN)) {
                     String nativeStatus = getUiDataFromModel(entityModel.getValue(FIELD_TEST_RUN_NATIVE_STATUS));
                     rowPanel.addDetails("Status", nativeStatus, DetailsPosition.TOP);
-                } else {
+                } else if (entityType != Entity.BDD_SCENARIO) {
                     String phase = getUiDataFromModel(entityModel.getValue("phase"));
                     rowPanel.addDetails("Phase", phase, DetailsPosition.TOP);
                 }
@@ -357,6 +363,21 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
                         "No environment");
                 addRelationFieldDetails(rowPanel, entityModel, FIELD_AUTHOR, FIELD_FULL_NAME, "Author", DetailsPosition.TOP);
                 rowPanel.addDetails("Started", getUiDataFromModel(entityModel.getValue(FIELD_TEST_RUN_STARTED_DATE)), DetailsPosition.BOTTOM);
+            } else if (Entity.BDD_SCENARIO.equals(entityType)) {
+
+                rowPanel.setEntitySubTitle(
+                        getUiDataFromModel(entityModel.getValue(FIELD_TEST_TYPE)),
+                        "");
+                String automationStatus = getUiDataFromModel(entityModel.getValue("automation_status"));
+                if (StringUtils.isNotEmpty(automationStatus)) {
+                    rowPanel.addDetails("Automation status", automationStatus, DetailsPosition.BOTTOM);
+                }
+                ReferenceFieldModel bddSpec = (ReferenceFieldModel) entityModel.getValue("bdd_spec");
+                if (bddSpec != null) {
+                    String bddSpecId = bddSpec.getValue().getId();
+                    String bddSpecName = bddSpec.getValue().getValue("name").getValue().toString();
+                    rowPanel.addDetails("BDD Spec", bddSpecId + " - " + bddSpecName, DetailsPosition.BOTTOM);
+                }
             }
 
             return rowPanel;

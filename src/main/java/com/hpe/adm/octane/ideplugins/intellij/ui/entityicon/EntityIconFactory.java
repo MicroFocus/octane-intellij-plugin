@@ -88,6 +88,7 @@ public class EntityIconFactory {
         entityColorMap.put(Entity.AUTOMATED_TEST, new Color(186, 71, 226));
         entityColorMap.put(Entity.COMMENT, new Color(253, 225, 89));
         entityColorMap.put(Entity.REQUIREMENT, new Color(11, 142, 172));
+        entityColorMap.put(Entity.BDD_SCENARIO, new Color(117,218, 77));
     }
 
     //cache the icons based on size, font and entity

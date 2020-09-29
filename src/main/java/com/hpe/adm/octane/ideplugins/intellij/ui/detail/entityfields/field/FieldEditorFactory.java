@@ -174,8 +174,8 @@ public class FieldEditorFactory {
                         "*" + searchQuery + "*");
             }
 
-            //Restrict sprint dropdown to current release, if there's no current release, display no
-            if (Entity.SPRINT == entity) {
+            //Restrict sprint/milestone dropdown to current release, if there's no current release, display no
+            if (Entity.SPRINT == entity || Entity.MILESTONE == entity) {
                 if (entityModelWrapper.hasValue(DetailsViewDefaultFields.FIELD_RELEASE)) {
                     ReferenceFieldModel releaseFieldModel = (ReferenceFieldModel) entityModelWrapper.getValue(DetailsViewDefaultFields.FIELD_RELEASE);
                     String releaseId = releaseFieldModel.getValue().getId();
@@ -191,7 +191,27 @@ public class FieldEditorFactory {
                 }
             }
 
-            return entityService.findEntities(entity, qb, null, null, null, COMBO_BOX_ENTITY_LIMIT);
+            //Check if the workspace user is active
+            if (Entity.WORKSPACE_USER == entity) {
+                Query.QueryBuilder activityQb =
+                        Query.statement(DetailsViewDefaultFields.FIELD_ACTIVITY_LEVEL, QueryMethod.EqualTo, 0);
+                qb = qb != null ? qb.and(activityQb) : activityQb;
+            }
+
+            //Check if the entity is milestone, so the order of the items in the combobox will be the same as in Octane
+            String sortingFields;
+            boolean sortingOrderByAsc;
+            switch (entity) {
+                case MILESTONE:
+                    sortingFields = "release,date,name";
+                    sortingOrderByAsc = false;
+                    break;
+                default:
+                    sortingFields = "id";
+                    sortingOrderByAsc = true;
+            }
+
+            return entityService.findEntities(entity, qb, null, null, null, COMBO_BOX_ENTITY_LIMIT, sortingFields, sortingOrderByAsc);
         };
     }
 

@@ -53,9 +53,13 @@ public class OpenActiveItemAction extends OctanePluginAction {
             if (jsonObject != null) {
                 PartialEntity activeItem = PartialEntity.fromJsonObject(jsonObject);
 
+                JSONObject prevJsonObject = pluginModule.getInstance(IdePluginPersistentState.class).loadState(IdePluginPersistentState.Key.PREV_ACTIVE_WORK_ITEM);
+                PartialEntity prevActiveItem = PartialEntity.fromJsonObject(prevJsonObject);
+
                 // This is necessary to avoid doing a rest call for labels on init
                 if (!Objects.equals(activeItem, prevActiveItem)) {
-                    prevActiveItem = activeItem;
+                    // Set the new state for previous active item
+                    pluginModule.getInstance(IdePluginPersistentState.class).saveState(IdePluginPersistentState.Key.PREV_ACTIVE_WORK_ITEM, jsonObject);
 
                     e.getPresentation().setDescription(activeItem.getEntityName());
                     e.getPresentation().setText("#" + activeItem.getEntityId());
@@ -78,6 +82,7 @@ public class OpenActiveItemAction extends OctanePluginAction {
                         new ImageIcon(pluginModule
                                 .getInstance(EntityIconFactory.class)
                                 .getIconAsImage(null, 20, 11)));
+                e.getPresentation().setText("No active item");
             }
         });
     }
