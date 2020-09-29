@@ -41,7 +41,7 @@
         <li>Searching for entities in plugin from a deactivated user now returns a relevant message.</li>
         <li>Milestone field is no longer read-only.</li>
         <li>Combobox dropdown no longer moves while scrolling.</li>
-        <li>User stories and defects are now dismissible.</li>
+        <li>All user stories and defects are now dismissible.</li>
       </ul>
       <hr/>
 
