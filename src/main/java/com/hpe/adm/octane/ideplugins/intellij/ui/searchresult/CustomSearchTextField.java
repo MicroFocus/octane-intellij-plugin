@@ -469,7 +469,6 @@ public class CustomSearchTextField extends JPanel {
 
     protected Consumer createItemChosenCallback(final JList list) {
         return (value) -> {
-            //final String value = (String)list.getSelectedValue();
             getTextEditor().setText(value.toString() != null ? value.toString() : "");
             //addCurrentTextToHistory();
             if(historyItemClickedHandler!=null){
