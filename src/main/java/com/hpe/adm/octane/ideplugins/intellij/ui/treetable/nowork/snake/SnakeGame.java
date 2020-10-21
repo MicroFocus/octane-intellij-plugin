@@ -14,7 +14,6 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.treetable.nowork.snake;
 
 import com.intellij.util.ImageLoader;
-import com.intellij.util.containers.HashSet;
 
 import javax.swing.Timer;
 import javax.swing.*;
@@ -50,7 +49,7 @@ public class SnakeGame extends JPanel {
 		int x; //0 <= x < verticalPosCount
 		int y; //0 <= x < horizontalPosCount
 		SpriteDirection dir = SpriteDirection.RIGHT;
-		
+
 		SpritePos(int x, int y) {
 			this.x = x;
 			this.y = y;
@@ -84,7 +83,7 @@ public class SnakeGame extends JPanel {
 			if (y != other.y)
 				return false;
 			return true;
-		}		
+		}
 	}
 
 	private enum SpriteDirection {
@@ -315,16 +314,16 @@ public class SnakeGame extends JPanel {
 		//Set the board to a while bg
 		g.setColor(Color.WHITE);
 		g.fillRect(x1, y1, horizontalPosCount*spriteSize, verticalPosCount*spriteSize);
-		
+
 		//Now draw something on the board depending on the game state
 		if(GameState.NOT_STARTED.equals(gameState)){
 			drawGameStart(g, x1, y1, horizontalPosCount*spriteSize, verticalPosCount*spriteSize);
-			
+
 		} else if(GameState.PAUSED.equals(gameState)){
 			drawGamePaused(g, x1, y1, horizontalPosCount*spriteSize, verticalPosCount*spriteSize);
-			
+
 		} else if(GameState.RUNNING.equals(gameState)){
-			
+
 			//Draw the snake according to the game state
 			//draw apple
 			if(applePos != null){
@@ -347,30 +346,30 @@ public class SnakeGame extends JPanel {
 					g.drawImage(sprite, x1 + spriteSize * pos.x, y1 + spriteSize * pos.y, spriteSize, spriteSize, this);
 				}
 			}
-			
-			
+
+
 		} else if(GameState.OVER.equals(gameState)){
 			drawGameOver(g, x1, y1, horizontalPosCount*spriteSize, verticalPosCount*spriteSize);
-			
+
 		} else if(GameState.WON.equals(gameState)){
 			drawGameWon(g, x1, y1, horizontalPosCount*spriteSize, verticalPosCount*spriteSize);
 		}
-	
+
 		Toolkit.getDefaultToolkit().sync();
 	}
-	
+
 	private void drawGameStart(Graphics g, int x, int y, int width, int height){
 		int titleFontSize = width * 5 / 100;
 		int bottomFontSize = width * 3 / 100;
-		
+
 		Font titleFont = new JLabel().getFont().deriveFont(Font.BOLD | Font.ITALIC).deriveFont((float)titleFontSize);
 		g.setColor(microfocusBlue);
 		FontMetrics fontMetrics =  getFontMetrics(titleFont);
 		g.setFont(titleFont);
 		String title = "OCTANE SNAKE";
 		g.drawString(title, x + (width- fontMetrics.stringWidth(title)) / 2, y + height / 2 - titleFontSize / 2);
-		
-		
+
+
 		Font bottomFont = new JLabel().getFont().deriveFont(Font.BOLD).deriveFont((float)bottomFontSize);
 		g.setColor(gray);
 		fontMetrics =  getFontMetrics(bottomFont);
@@ -378,7 +377,7 @@ public class SnakeGame extends JPanel {
 		String click = "Click to start, space/click to pause";
 		g.drawString(click, x + (width - fontMetrics.stringWidth(click)) / 2 , y + height / 2 + bottomFontSize);
 	}
-	
+
 	private void drawGamePaused(Graphics g, int x, int y, int width, int height){
 		int titleFontSize = width * 5 / 100;
 		int bottomFontSize = width * 3 / 100;
@@ -388,20 +387,20 @@ public class SnakeGame extends JPanel {
 		g.setFont(titleFont);
 		String title = "PAUSED";
 		g.drawString(title, x + (width- fontMetrics.stringWidth(title)) / 2, y + height / 2 - titleFontSize / 2);
-		
-		
+
+
 		Font bottomFont = new JLabel().getFont().deriveFont(Font.BOLD).deriveFont((float)bottomFontSize);
 		g.setColor(gray);
 		fontMetrics =  getFontMetrics(bottomFont);
 		g.setFont(bottomFont);
 		String score = "Score: " + (snakeBody.size() - INIT_SIZE);
 		g.drawString(score, x + (width - fontMetrics.stringWidth(score)) / 2 , y + height / 2 + bottomFontSize);
-		
+
 		String click = "Space/click to resume";
 		g.drawString(click, x + (width - fontMetrics.stringWidth(click)) / 2 , y + height / 2 + bottomFontSize * 2);
-		
+
 	}
-	
+
 	private void drawGameOver(Graphics g, int x, int y, int width, int height){
 		int titleFontSize = width * 5 / 100;
 		int bottomFontSize = width * 3 / 100;
@@ -411,19 +410,19 @@ public class SnakeGame extends JPanel {
 		g.setFont(titleFont);
 		String title = "GAME OVER";
 		g.drawString(title, x + (width- fontMetrics.stringWidth(title)) / 2, y + height / 2 - titleFontSize / 2);
-		
-		
+
+
 		Font bottomFont = new JLabel().getFont().deriveFont(Font.BOLD).deriveFont((float)bottomFontSize);
 		g.setColor(gray);
 		fontMetrics =  getFontMetrics(bottomFont);
 		g.setFont(bottomFont);
 		String score = "Score: " + (snakeBody.size() - INIT_SIZE);
 		g.drawString(score, x + (width - fontMetrics.stringWidth(score)) / 2 , y + height / 2 + bottomFontSize);
-		
+
 		String click = "Click to restart, or maybe get back to work...";
 		g.drawString(click, x + (width - fontMetrics.stringWidth(click)) / 2 , y + height / 2 + bottomFontSize * 2);
 	}
-	
+
 	private void drawGameWon(Graphics g, int x, int y, int width, int height){
         int titleFontSize = width * 5 / 100;
         int bottomFontSize = width * 3 / 100;
@@ -433,14 +432,14 @@ public class SnakeGame extends JPanel {
 		g.setFont(titleFont);
 		String title = "GAME WON";
         g.drawString(title, x + (width- fontMetrics.stringWidth(title)) / 2, y + height / 2 - titleFontSize / 2);
-		
+
 		Font bottomFont = new JLabel().getFont().deriveFont(Font.BOLD).deriveFont((float)bottomFontSize);
 		g.setColor(gray);
 		fontMetrics =  getFontMetrics(bottomFont);
 		g.setFont(bottomFont);
 		String score = "Wow, that's impressive!";
         g.drawString(score, x + (width - fontMetrics.stringWidth(score)) / 2 , y + height / 2 + bottomFontSize);
-		
+
 		String click = "You should really get back to work now...";
         g.drawString(click, x + (width - fontMetrics.stringWidth(click)) / 2 , y + height / 2 + bottomFontSize * 2);
 	}
@@ -496,7 +495,7 @@ public class SnakeGame extends JPanel {
 			spriteName+= "-empty";
 		}
 		spriteName+= ".png";
-		return ImageLoader.loadFromResource(spriteName);
+		return ImageLoader.loadFromResource(spriteName, SnakeGame.class);
 	}
 
 }

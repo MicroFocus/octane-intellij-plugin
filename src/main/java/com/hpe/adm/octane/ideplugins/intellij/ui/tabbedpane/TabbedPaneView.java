@@ -62,7 +62,6 @@ public class TabbedPaneView implements View {
                 .setUiDecorator(
                 () -> new UiDecorator.UiDecoration(null, new Insets(2, 8, 2, 8)))
                 .setTabLabelActionsMouseDeadzone(TimedDeadzone.NULL)
-                .setGhostsAlwaysVisible(true)
                 .setTabLabelActionsAutoHide(false);
 
         setTabsContextMenu(editorTabs);
@@ -234,7 +233,7 @@ public class TabbedPaneView implements View {
         public void update(final AnActionEvent e) {
             e.getPresentation().setIcon(AllIcons.Actions.Close);
             e.getPresentation().setHoveredIcon(AllIcons.Actions.CloseHovered);
-            e.getPresentation().setVisible(UISettings.getInstance().SHOW_CLOSE_BUTTON);
+            e.getPresentation().setVisible(UISettings.getInstance().getShowCloseButton());
             e.getPresentation().setText("Close. Alt-click to close others.");
         }
 

@@ -37,10 +37,6 @@ public abstract class LoginDialog extends DialogWrapper {
         super(canBeParent);
     }
 
-    protected LoginDialog(boolean canBeParent, boolean applicationModalIfPossible) {
-        super(canBeParent, applicationModalIfPossible);
-    }
-
     protected LoginDialog(Project project, boolean canBeParent, boolean applicationModalIfPossible) {
         super(project, canBeParent, applicationModalIfPossible);
     }

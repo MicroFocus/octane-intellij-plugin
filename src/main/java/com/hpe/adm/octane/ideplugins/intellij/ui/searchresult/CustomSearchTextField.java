@@ -25,9 +25,9 @@ import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.components.JBTextField;
+import com.intellij.util.Consumer;
 import com.intellij.util.ReflectionUtil;
 import com.intellij.util.ui.JBInsets;
 import com.intellij.util.ui.UIUtil;
@@ -77,10 +77,8 @@ public class CustomSearchTextField extends JPanel {
             @Override
             public void setBackground(final Color bg) {
                 super.setBackground(bg);
-                if (!hasIconsOutsideOfTextField()) {
-                    if (myClearFieldLabel != null) {
-                        myClearFieldLabel.setBackground(bg);
-                    }
+                if (myClearFieldLabel != null) {
+                    myClearFieldLabel.setBackground(bg);
                 }
                 if (myToggleHistoryLabel != null) {
                     myToggleHistoryLabel.setBackground(bg);
@@ -168,7 +166,7 @@ public class CustomSearchTextField extends JPanel {
                 add(myToggleHistoryLabel, BorderLayout.WEST);
             }
 
-            myClearFieldLabel = new JLabel(UIUtil.isUnderDarcula() ? AllIcons.Actions.Clean : AllIcons.Actions.CleanLight);
+            myClearFieldLabel = new JLabel(UIUtil.isUnderDarcula() ? AllIcons.Actions.CloseHovered : AllIcons.Actions.Close);
             myClearFieldLabel.setOpaque(true);
             add(myClearFieldLabel, BorderLayout.EAST);
             myClearFieldLabel.addMouseListener(new MouseAdapter() {
@@ -178,26 +176,22 @@ public class CustomSearchTextField extends JPanel {
                 }
             });
 
-            if (!hasIconsOutsideOfTextField()) {
-                final Border originalBorder;
-                if (SystemInfo.isMac) {
-                    originalBorder = BorderFactory.createLoweredBevelBorder();
-                }
-                else {
-                    originalBorder = myTextField.getBorder();
-                }
-
-                myToggleHistoryLabel.setBackground(myTextField.getBackground());
-                myClearFieldLabel.setBackground(myTextField.getBackground());
-
-                setBorder(new CompoundBorder(IdeBorderFactory.createEmptyBorder(2, 0, 2, 0), originalBorder));
-
-                myTextField.setOpaque(true);
-                myTextField.setBorder(IdeBorderFactory.createEmptyBorder(0, 5, 0, 5));
+            final Border originalBorder;
+            if (SystemInfo.isMac) {
+                originalBorder = BorderFactory.createLoweredBevelBorder();
             }
             else {
-                setBorder(IdeBorderFactory.createEmptyBorder(2, 0, 2, 0));
+                originalBorder = myTextField.getBorder();
             }
+
+            myToggleHistoryLabel.setBackground(myTextField.getBackground());
+            myClearFieldLabel.setBackground(myTextField.getBackground());
+
+            setBorder(new CompoundBorder(BorderFactory.createEmptyBorder(2, 0, 2, 0), originalBorder));
+
+            myTextField.setOpaque(true);
+            myTextField.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
+
         }
 
         if (ApplicationManager.getApplication() != null) { //tests
@@ -234,11 +228,11 @@ public class CustomSearchTextField extends JPanel {
     }
 
     protected boolean isSearchControlUISupported() {
-        return (SystemInfo.isMacOSLeopard && UIUtil.isUnderAquaLookAndFeel()) || UIUtil.isUnderDarcula() || UIUtil.isUnderIntelliJLaF();
+        return (SystemInfo.isMac && UIUtil.isUnderAquaBasedLookAndFeel()) || UIUtil.isUnderDarcula() || UIUtil.isUnderIntelliJLaF();
     }
 
     protected boolean hasIconsOutsideOfTextField() {
-        return UIUtil.isUnderGTKLookAndFeel() || UIUtil.isUnderNimbusLookAndFeel();
+        return false;
     }
 
     public void addDocumentListener(DocumentListener listener) {
@@ -411,7 +405,7 @@ public class CustomSearchTextField extends JPanel {
     public Dimension getPreferredSize() {
         Dimension size = super.getPreferredSize();
         Border border = super.getBorder();
-        if (border != null && UIUtil.isUnderAquaLookAndFeel()) {
+        if (border != null && UIUtil.isUnderAquaBasedLookAndFeel()) {
             JBInsets.addTo(size, border.getBorderInsets(this));
         }
         return size;
@@ -420,11 +414,12 @@ public class CustomSearchTextField extends JPanel {
     protected void showPopup() {
         if (myPopup == null || !myPopup.isVisible()) {
             final JList list = new JBList(myModel);
-            final Runnable chooseRunnable = createItemChosenCallback(list);
-            myPopup = JBPopupFactory.getInstance().createListPopupBuilder(list)
+            final List arrayList = myModel.myFullList;
+            final Consumer chooseRunnable = createItemChosenCallback(list);
+            myPopup = JBPopupFactory.getInstance().createPopupChooserBuilder(arrayList)
                     .setMovable(false)
                     .setRequestFocus(true)
-                    .setItemChoosenCallback(chooseRunnable).createPopup();
+                    .setItemChosenCallback(chooseRunnable).createPopup();
             if (isShowing()) {
                 myPopup.showUnderneathOf(getPopupLocationComponent());
             }
@@ -432,7 +427,7 @@ public class CustomSearchTextField extends JPanel {
     }
 
     protected Component getPopupLocationComponent() {
-        return hasIconsOutsideOfTextField() ? myToggleHistoryLabel : this;
+        return this;
     }
 
     private void togglePopup() {
@@ -472,10 +467,10 @@ public class CustomSearchTextField extends JPanel {
         }
     }
 
-    protected Runnable createItemChosenCallback(final JList list) {
-        return () -> {
-            final String value = (String)list.getSelectedValue();
-            getTextEditor().setText(value != null ? value : "");
+    protected Consumer createItemChosenCallback(final JList list) {
+        return (value) -> {
+            //final String value = (String)list.getSelectedValue();
+            getTextEditor().setText(value.toString() != null ? value.toString() : "");
             //addCurrentTextToHistory();
             if(historyItemClickedHandler!=null){
                 historyItemClickedHandler.run();
