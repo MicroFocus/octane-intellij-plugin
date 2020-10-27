@@ -105,7 +105,7 @@ public class EntityDetailPresenter implements Presenter<EntityDetailView> {
         @Override
         public void stateChanged(IdePluginPersistentState.Key key, JSONObject value) {
             if (key == IdePluginPersistentState.Key.SELECTED_FIELDS) {
-                entityDetailView.redrawFields();
+                entityDetailView.redrawFields(entityType);
             }
         }
     };

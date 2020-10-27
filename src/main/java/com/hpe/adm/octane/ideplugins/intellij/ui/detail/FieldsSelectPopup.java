@@ -61,6 +61,7 @@ public class FieldsSelectPopup extends JFrame {
     private JXButton selectNoneButton;
     private JXButton selectAllButton;
     private EntityModelWrapper entityModelWrapper;
+    private Entity entityType;
 
     private Set<SelectionListener> listeners = new HashSet<>();
 
@@ -168,7 +169,7 @@ public class FieldsSelectPopup extends JFrame {
     }
 
     private void setupPopupButtonState() {
-        if (fieldsUtil.isDefaultState(entityModelWrapper.getEntityType())) {
+        if (fieldsUtil.isDefaultState(entityType)) {
             selectFieldsAction.setDefaultFieldsIcon(true);
             resetButton.setEnabled(false);
             selectAllButton.setEnabled(true);
@@ -176,10 +177,10 @@ public class FieldsSelectPopup extends JFrame {
         } else {
             selectFieldsAction.setDefaultFieldsIcon(false);
             resetButton.setEnabled(true);
-            if (selectedFieldsMap.get(entityModelWrapper.getEntityType()).size() == 0) {
+            if (selectedFieldsMap.get(entityType).size() == 0) {
                 selectNoneButton.setEnabled(false);
                 selectAllButton.setEnabled(true);
-            } else if (selectedFieldsMap.get(entityModelWrapper.getEntityType()).size() == allFields.size()) {
+            } else if (selectedFieldsMap.get(entityType).size() == allFields.size()) {
                 selectAllButton.setEnabled(false);
                 selectNoneButton.setEnabled(true);
             }
@@ -187,8 +188,10 @@ public class FieldsSelectPopup extends JFrame {
     }
 
 
-    public void setEntityDetails(EntityModelWrapper entityModelWrapper, Collection<FieldMetadata> allFields, SelectFieldsAction selectFieldsAction) {
+    public void setEntityDetails(EntityModelWrapper entityModelWrapper, Entity entityType, Collection<FieldMetadata> allFields, SelectFieldsAction selectFieldsAction) {
         this.selectFieldsAction = selectFieldsAction;
+
+        this.entityType = entityType;
 
         this.allFields = allFields.stream()
                 .filter(e -> !Arrays.asList("phase", "name", "subtype", "rank", "id").contains(e.getName()))
@@ -200,7 +203,7 @@ public class FieldsSelectPopup extends JFrame {
         setupPopupButtonState();
         createCheckBoxMenuItems();
         //populate the popup with the selected fields
-        updateFieldsPanel(selectedFieldsMap.get(entityModelWrapper.getEntityType()), this.allFields);
+        updateFieldsPanel(selectedFieldsMap.get(entityType), this.allFields);
     }
 
     private void clearSearchField() {
@@ -208,11 +211,11 @@ public class FieldsSelectPopup extends JFrame {
     }
 
     private void noneButtonClicked() {
-        selectedFieldsMap.get(entityModelWrapper.getEntityType()).removeAll(selectedFieldsMap.get(entityModelWrapper.getEntityType()));
+        selectedFieldsMap.get(entityType).removeAll(selectedFieldsMap.get(entityType));
         updateFieldsPanel(getSelectedFields(), allFields);
         fieldsPanel.repaint();
         listeners.forEach(listener -> listener.valueChanged(new SelectionEvent(this)));
-        selectedFieldsMap.replace(entityModelWrapper.getEntityType(), selectedFieldsMap.get(entityModelWrapper.getEntityType()));
+        selectedFieldsMap.replace(entityType, selectedFieldsMap.get(entityType));
         fieldsUtil.saveSelectedFields(selectedFieldsMap);
         selectFieldsAction.setDefaultFieldsIcon(false);
         selectNoneButton.transferFocusUpCycle();
@@ -226,7 +229,7 @@ public class FieldsSelectPopup extends JFrame {
         updateFieldsPanel(getSelectedFields(), allFields);
         fieldsPanel.repaint();
         listeners.forEach(listener -> listener.valueChanged(new SelectionEvent(this)));
-        selectedFieldsMap.replace(entityModelWrapper.getEntityType(), selectedFieldsMap.get(entityModelWrapper.getEntityType()));
+        selectedFieldsMap.replace(entityType, selectedFieldsMap.get(entityType));
         fieldsUtil.saveSelectedFields(selectedFieldsMap);
         selectFieldsAction.setDefaultFieldsIcon(false);
         selectAllButton.transferFocusUpCycle();
@@ -240,7 +243,7 @@ public class FieldsSelectPopup extends JFrame {
         updateFieldsPanel(getSelectedFields(), allFields);
         fieldsPanel.repaint();
         listeners.forEach(listener -> listener.valueChanged(new SelectionEvent(this)));
-        selectedFieldsMap.replace(entityModelWrapper.getEntityType(), selectedFieldsMap.get(entityModelWrapper.getEntityType()));
+        selectedFieldsMap.replace(entityType, selectedFieldsMap.get(entityType));
         fieldsUtil.saveSelectedFields(selectedFieldsMap);
         selectFieldsAction.setDefaultFieldsIcon(true);
         resetButton.transferFocusUpCycle();
@@ -258,7 +261,7 @@ public class FieldsSelectPopup extends JFrame {
             searchfields = allFields;
         }
         if (searchfields.size() != 0) {
-            updateFieldsPanel(selectedFieldsMap.get(entityModelWrapper.getEntityType()), searchfields);
+            updateFieldsPanel(selectedFieldsMap.get(entityType), searchfields);
         } else {
             createNoResultsPanel();
         }
@@ -285,13 +288,13 @@ public class FieldsSelectPopup extends JFrame {
                 public void actionPerformed(ActionEvent e) {
 
                     if (menuItem.isSelected()) {
-                        selectedFieldsMap.get(entityModelWrapper.getEntityType()).add(fieldMetadata.getName());
+                        selectedFieldsMap.get(entityType).add(fieldMetadata.getName());
                     } else {
-                        selectedFieldsMap.get(entityModelWrapper.getEntityType()).remove(fieldMetadata.getName());
+                        selectedFieldsMap.get(entityType).remove(fieldMetadata.getName());
                     }
                     listeners.forEach(listener -> listener.valueChanged(new SelectionEvent(this)));
 
-                    if (defaultFieldsMap.get(entityModelWrapper.getEntityType()).containsAll(selectedFieldsMap.get(entityModelWrapper.getEntityType())) && selectedFieldsMap.get(entityModelWrapper.getEntityType()).containsAll(defaultFieldsMap.get(entityModelWrapper.getEntityType()))) {
+                    if (defaultFieldsMap.get(entityType).containsAll(selectedFieldsMap.get(entityType)) && selectedFieldsMap.get(entityType).containsAll(defaultFieldsMap.get(entityType))) {
                         selectFieldsAction.setDefaultFieldsIcon(true);
                         resetButton.setEnabled(false);
                         selectNoneButton.setEnabled(true);
@@ -300,23 +303,23 @@ public class FieldsSelectPopup extends JFrame {
                         selectFieldsAction.setDefaultFieldsIcon(false);
                         resetButton.setEnabled(true);
 
-                        if (selectedFieldsMap.get(entityModelWrapper.getEntityType()).size() == 0) {
+                        if (selectedFieldsMap.get(entityType).size() == 0) {
                             selectNoneButton.setEnabled(false);
                         } else {
                             selectNoneButton.setEnabled(true);
                         }
 
-                        if (selectedFieldsMap.get(entityModelWrapper.getEntityType()).containsAll(allFields.stream().map(FieldMetadata::getName).collect(Collectors.toSet()))) {
+                        if (selectedFieldsMap.get(entityType).containsAll(allFields.stream().map(FieldMetadata::getName).collect(Collectors.toSet()))) {
                             selectAllButton.setEnabled(false);
                         } else {
                             selectAllButton.setEnabled(true);
                         }
                     }
-                    selectedFieldsMap.replace(entityModelWrapper.getEntityType(), selectedFieldsMap.get(entityModelWrapper.getEntityType()));
+                    selectedFieldsMap.replace(entityType, selectedFieldsMap.get(entityType));
                     fieldsUtil.saveSelectedFields(selectedFieldsMap);
                 }
             });
-            if (selectedFieldsMap.get(entityModelWrapper.getEntityType()).contains(fieldMetadata)) {
+            if (selectedFieldsMap.get(entityType).contains(fieldMetadata)) {
                 menuItem.setState(true);
             }
             menuItems.add(menuItem);
@@ -361,7 +364,7 @@ public class FieldsSelectPopup extends JFrame {
      * @return the default fields of the entity opened in detailed view
      */
     public Set<String> getDefaultFields() {
-        return defaultFieldsMap.get(entityModelWrapper.getEntityType());
+        return defaultFieldsMap.get(entityType);
     }
 
     /**
@@ -370,12 +373,12 @@ public class FieldsSelectPopup extends JFrame {
      * @return the selected fields
      */
     public Set<String> getSelectedFields() {
-        return selectedFieldsMap.get(entityModelWrapper.getEntityType());
+        return selectedFieldsMap.get(entityType);
     }
 
     private void setSelectedFields(Set<String> fields) {
-        selectedFieldsMap.get(entityModelWrapper.getEntityType()).removeAll(selectedFieldsMap.get(entityModelWrapper.getEntityType()));
-        selectedFieldsMap.get(entityModelWrapper.getEntityType()).addAll(fields);
+        selectedFieldsMap.get(entityType).removeAll(selectedFieldsMap.get(entityType));
+        selectedFieldsMap.get(entityType).addAll(fields);
     }
 
 }

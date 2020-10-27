@@ -28,6 +28,7 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.util.FieldsUtil;
 import com.hpe.adm.octane.ideplugins.intellij.util.ExceptionHandler;
 import com.hpe.adm.octane.ideplugins.intellij.util.RestUtil;
 import com.hpe.adm.octane.ideplugins.services.CommentService;
+import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.model.EntityModelWrapper;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -57,6 +58,7 @@ public class EntityDetailView extends JPanel implements View {
 
     private EntityModelWrapper entityModelWrapper;
     private Collection<FieldMetadata> fields;
+    private Entity entityType;
 
     @Inject
     private FieldsUtil fieldsUtil;
@@ -125,6 +127,8 @@ public class EntityDetailView extends JPanel implements View {
 
     public void setEntityModel(EntityModelWrapper entityModelWrapper, Collection<FieldMetadata> fields) {
         this.entityModelWrapper = entityModelWrapper;
+        //set entity type
+        this.entityType = entityModelWrapper.getEntityType();
 
         this.fields = fields;
         // set header data
@@ -142,8 +146,8 @@ public class EntityDetailView extends JPanel implements View {
         showEntity();
     }
 
-    public void redrawFields() {
-        entityFieldsPanel.setEntityModel(entityModelWrapper, fieldsUtil.retrieveSelectedFieldsForEntity(entityModelWrapper.getEntityType()));
+    public void redrawFields(Entity entityType) {
+        entityFieldsPanel.setEntityModel(entityModelWrapper, fieldsUtil.retrieveSelectedFieldsForEntity(entityType));
     }
 
     private void setupComments(EntityModelWrapper entityModelWrapper) {
@@ -250,7 +254,7 @@ public class EntityDetailView extends JPanel implements View {
     public void showFieldsSettings() {
         FieldsSelectPopup fieldsPopup = PluginModule.getPluginModuleForProject(project).getInstance(FieldsSelectPopup.class);
 
-        fieldsPopup.setEntityDetails(entityModelWrapper, fields, fieldsSelectAction);
+        fieldsPopup.setEntityDetails(entityModelWrapper, entityType, fields, fieldsSelectAction);
 
         fieldsPopup.setLocation(headerPanel.getFieldsPopupLocation().x - (int) fieldsPopup.getPreferredSize().getWidth(),
                 headerPanel.getFieldsPopupLocation().y);
