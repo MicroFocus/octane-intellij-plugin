@@ -121,7 +121,7 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
                 entityTreeView.expandAllNodes();
             }
 
-            public void onError(@NotNull Exception ex) {
+            public void onThrowable(@NotNull Throwable ex) {
                 entityTreeView.setLoading(false);
                 String message = ex.getMessage();
                 if (ex instanceof OctaneException) {
@@ -133,7 +133,6 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
                     }
                 }
                 entityTreeView.setErrorMessage(message, project);
-
             }
         };
 

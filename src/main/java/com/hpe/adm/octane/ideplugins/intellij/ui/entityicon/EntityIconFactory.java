@@ -69,7 +69,7 @@ public class EntityIconFactory {
 
     private static final Color fontColor = new Color(255, 255, 255);
     private static final Color unmappedEntityIconColor = new Color(0, 0, 0);
-    private static final Image activeImg = ImageLoader.loadFromResource(Constants.IMG_ACTIVE_ITEM);
+    private static final Image activeImg = ImageLoader.loadFromResource(Constants.IMG_ACTIVE_ITEM, EntityIconFactory.class);
 
     private static final Map<Entity, Color> entityColorMap = new HashMap<>();
 

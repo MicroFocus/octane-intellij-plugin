@@ -129,7 +129,7 @@ public class IdePersistentConnectionSettingsProvider extends BasicConnectionSett
             } else {
                 PasswordSafe.getInstance().storePassword(project, IdePersistentConnectionSettingsProvider.class, OCTANE_PASSWORD_KEY, password);
             }
-        } catch (NullPointerException | PasswordSafeException e) {
+        } catch (RuntimeException e) {
             //log.info("Couldn't get password for key [" + OCTANE_PASSWORD_KEY + "]", e);
         }
     }
@@ -139,7 +139,7 @@ public class IdePersistentConnectionSettingsProvider extends BasicConnectionSett
         String password;
         try {
             password = PasswordSafe.getInstance().getPassword(project, IdePersistentConnectionSettingsProvider.class, OCTANE_PASSWORD_KEY);
-        } catch (NullPointerException | PasswordSafeException e) {
+        } catch (RuntimeException e) {
             //log.info("Couldn't get password for key [" + OCTANE_PASSWORD_KEY + "]", e);
             password = "";
         }
