@@ -60,6 +60,7 @@ public class DateTimeFieldEditor extends FieldEditor {
         setLayout(gridBagLayout);
 
         microbaDatePicker = new DatePicker();
+        microbaDatePicker.show(true);
         microbaDatePicker.addActionListener(e -> handleChange());
 
         timeLabel = new JLabel("time :");
@@ -68,16 +69,20 @@ public class DateTimeFieldEditor extends FieldEditor {
         hourSpinner = new JSpinner(hourSpinnerModel);
         JFormattedTextField hourSpinnerTextField = ((JSpinner.NumberEditor) hourSpinner.getEditor()).getTextField();
         ((NumberFormatter) hourSpinnerTextField.getFormatter()).setAllowsInvalid(false);
+        int w = hourSpinner.getWidth();   int h = hourSpinner.getHeight();
+        hourSpinner.setPreferredSize(new Dimension(55,30));
 
         SpinnerModel minuteSpinnerModel = new SpinnerNumberModel(0, 0, 59, 1);
         minuteSpinner = new JSpinner(minuteSpinnerModel);
         JFormattedTextField minuteSpinnerTextField = ((JSpinner.NumberEditor) minuteSpinner.getEditor()).getTextField();
         ((NumberFormatter) minuteSpinnerTextField.getFormatter()).setAllowsInvalid(false);
+        minuteSpinner.setPreferredSize(new Dimension(55,30));
 
         SpinnerModel secondsSpinnerModel = new SpinnerNumberModel(0, 0, 59, 1);
         secondsSpinner = new JSpinner(secondsSpinnerModel);
         JFormattedTextField secondsSpinnerTextField = ((JSpinner.NumberEditor) minuteSpinner.getEditor()).getTextField();
         ((NumberFormatter) secondsSpinnerTextField.getFormatter()).setAllowsInvalid(false);
+        secondsSpinner.setPreferredSize(new Dimension(55,30));
 
         SpinnerModel daytimeSpinnerModel = new SpinnerListModel(Arrays.asList("AM", "PM"));
         dayTimeSpinner = new JSpinner(daytimeSpinnerModel);
@@ -85,6 +90,7 @@ public class DateTimeFieldEditor extends FieldEditor {
         dayTimeSpinnerTextField.setEditable(false);
         dayTimeSpinnerTextField.setColumns(3);
         dayTimeSpinnerTextField.setHorizontalAlignment(JTextField.CENTER);
+        dayTimeSpinner.setPreferredSize(new Dimension(60,30));
 
         linkToButtons = new JLabel("set date");
         linkToButtons.setForeground(UIManager.getColor("EditorPane.selectionBackground"));
