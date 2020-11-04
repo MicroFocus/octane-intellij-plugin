@@ -60,7 +60,6 @@ public class DateTimeFieldEditor extends FieldEditor {
         setLayout(gridBagLayout);
 
         microbaDatePicker = new DatePicker();
-        microbaDatePicker.show(true);
         microbaDatePicker.addActionListener(e -> handleChange());
 
         timeLabel = new JLabel("time :");
