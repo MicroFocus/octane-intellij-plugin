@@ -68,7 +68,6 @@ public class DateTimeFieldEditor extends FieldEditor {
         hourSpinner = new JSpinner(hourSpinnerModel);
         JFormattedTextField hourSpinnerTextField = ((JSpinner.NumberEditor) hourSpinner.getEditor()).getTextField();
         ((NumberFormatter) hourSpinnerTextField.getFormatter()).setAllowsInvalid(false);
-        int w = hourSpinner.getWidth();   int h = hourSpinner.getHeight();
         hourSpinner.setPreferredSize(new Dimension(55,30));
 
         SpinnerModel minuteSpinnerModel = new SpinnerNumberModel(0, 0, 59, 1);
