@@ -41,6 +41,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 
 import javax.swing.*;
+import java.awt.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.CookieHandler;
 import java.net.CookieManager;
@@ -65,7 +66,7 @@ public class PluginModule extends AbstractModule {
 
         TokenPollingStartedHandler pollingStartedHandler = loginPageUrl -> SwingUtilities.invokeLater(() -> {
 
-            if (JavaFxUtils.isJavaFxAvailable()) {
+            if (JavaFxUtils.isJavaFxAvailable() && JavaFxUtils.isJavaFxInteropFactoryNAvailable()){
 
                 boolean cookiesCleared = CookieManagerUtil.clearCookies(connectionSettingsProvider.getConnectionSettings().getBaseUrl());
 
@@ -80,40 +81,48 @@ public class PluginModule extends AbstractModule {
                 loginDialog = new ExternalUrlLoginDialog(project, loginPageUrl);
             }
 
-            loginDialog.show();
+
+            if (EventQueue.isDispatchThread()) {
+                loginDialog.show();
+            } else {
+                SwingUtilities.invokeLater(() -> loginDialog.show());
+            }
         });
 
         TokenPollingInProgressHandler pollingInProgressHandler = pollingStatus -> {
-            try {
-                SwingUtilities.invokeAndWait(() -> {
-                    if (loginDialog != null) {
-                        long secondsUntilTimeout = (pollingStatus.timeoutTimeStamp - System.currentTimeMillis()) / 1000;
-                        loginDialog.setTitle(JavaFxLoginDialog.TITLE + " (waiting for session, timeout in: " + secondsUntilTimeout + ")");
-                        pollingStatus.shouldPoll = !loginDialog.wasClosed();
-                    }
-                });
-            } catch (InterruptedException | InvocationTargetException e) {
-                logger.error(e);
+            Runnable updateDialog = () -> {
+                if (loginDialog != null) {
+                    long secondsUntilTimeout = (pollingStatus.timeoutTimeStamp - System.currentTimeMillis()) / 1000;
+                    loginDialog.setTitle(JavaFxLoginDialog.TITLE + " (waiting for session, timeout in: " + secondsUntilTimeout + ")");
+                    pollingStatus.shouldPoll = !loginDialog.wasClosed();
+                }
+            };
+
+            if (EventQueue.isDispatchThread()) {
+                updateDialog.run();
+            } else {
+                SwingUtilities.invokeLater(updateDialog);
             }
+
             return pollingStatus;
         };
 
         TokenPollingCompleteHandler pollingCompleteHandler = tokenPollingCompletedStatus -> {
-            try {
-                SwingUtilities.invokeAndWait(() -> {
+            if (EventQueue.isDispatchThread()) {
+                if (loginDialog != null)
+                    loginDialog.close(0, true);
+            } else {
+                SwingUtilities.invokeLater(() -> {
                     if (loginDialog != null)
                         loginDialog.close(0, true);
                 });
+            }
 
-                boolean cookiesCleared = CookieManagerUtil.clearCookies(connectionSettingsProvider.getConnectionSettings().getBaseUrl());
-                if (!cookiesCleared) {
-                    logger.warn("Failed to remove http cookies for url " + connectionSettingsProvider.getConnectionSettings().getBaseUrl() + ", clearing global cookie store");
-                    // we're sorry, this might break every java.net.HttpURLConnection
-                    CookieHandler.setDefault(new CookieManager()); // clear cookies globally
-                }
-
-            } catch (InterruptedException | InvocationTargetException e) {
-                logger.error(e);
+            boolean cookiesCleared = CookieManagerUtil.clearCookies(connectionSettingsProvider.getConnectionSettings().getBaseUrl());
+            if (!cookiesCleared) {
+                logger.warn("Failed to remove http cookies for url " + connectionSettingsProvider.getConnectionSettings().getBaseUrl() + ", clearing global cookie store");
+                // we're sorry, this might break every java.net.HttpURLConnection
+                CookieHandler.setDefault(new CookieManager()); // clear cookies globally
             }
         };
 

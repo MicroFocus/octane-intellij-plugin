@@ -117,12 +117,12 @@ public class EntryPoint implements ToolWindowFactory {
                                     "Failed to connect to Octane",
                                     "Your previously saved connection settings do not seem to work <br> Error: " + ex.toString(),
                                     NotificationType.WARNING);
+
+                            log.error("Showing welcome view, cause: ", ex);
                         } else {
                             //In this case (probably), the plugin was never configured on this project before
                             welcomeViewComponent = new WelcomeViewComponent(project);
                         }
-
-                        log.error("Showing welcome view, cause: ", ex);
 
                         //Show the welcome view
                         setContent(toolWindow, welcomeViewComponent, "");

@@ -11,4 +11,16 @@ public class JavaFxUtils {
         }
     }
 
+    /**
+     * JDK bug, might be missing in some versions of jbr
+     */
+    public static boolean isJavaFxInteropFactoryNAvailable() {
+        try {
+            JavaFxUtils.class.getClassLoader().loadClass("com.sun.javafx.embed.swing.newimpl.InteropFactoryN");
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+    }
+
 }
