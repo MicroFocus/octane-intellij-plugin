@@ -13,8 +13,7 @@
 
 package com.hpe.adm.octane.ideplugins.intellij.ui.treetable.nowork.snake;
 
-import com.intellij.util.ImageLoader;
-
+import javax.imageio.ImageIO;
 import javax.swing.Timer;
 import javax.swing.*;
 import java.awt.*;
@@ -22,6 +21,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 import java.util.List;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
@@ -36,7 +36,6 @@ public class SnakeGame extends JPanel {
 	private Timer gameLoopTimer;
 	private static final Color microfocusBlue = new Color(0, 121, 239);
 	private static final Color gray = new Color(133, 142, 132);
-
 
 	private enum GameState {
 		NOT_STARTED, RUNNING, PAUSED, OVER, WON;
@@ -102,6 +101,8 @@ public class SnakeGame extends JPanel {
 
 	//changes to a random color very apple hit
 	private Color backgroundColor = microfocusBlue;
+
+	private Map<String, Image> spriteCache = new HashMap<>();
 
 	public SnakeGame() {
 		requestFocusInWindow();
@@ -255,7 +256,6 @@ public class SnakeGame extends JPanel {
 		if(gameLoopTimer==null){
 			gameLoopTimer = new Timer(speed, e -> {
 				if(GameState.RUNNING.equals(gameState)){
-					gameState = GameState.RUNNING;
 					moveSnake();
 					repaint();
 				}
@@ -296,7 +296,7 @@ public class SnakeGame extends JPanel {
 		//determine sprite size from current window size
 		int spriteSizeWidth = screenWidth / horizontalPosCount;
 		int spriteSizeHeight = screenHeight / verticalPosCount;
-		int spriteSize = spriteSizeHeight > spriteSizeWidth ? spriteSizeWidth : spriteSizeHeight;
+		int spriteSize = Math.min(spriteSizeHeight, spriteSizeWidth);
 
 		//view start
 		int x1 = (screenWidth - (spriteSize * horizontalPosCount)) / 2 + (padding/2);
@@ -346,7 +346,6 @@ public class SnakeGame extends JPanel {
 					g.drawImage(sprite, x1 + spriteSize * pos.x, y1 + spriteSize * pos.y, spriteSize, spriteSize, this);
 				}
 			}
-
 
 		} else if(GameState.OVER.equals(gameState)){
 			drawGameOver(g, x1, y1, horizontalPosCount*spriteSize, verticalPosCount*spriteSize);
@@ -495,7 +494,14 @@ public class SnakeGame extends JPanel {
 			spriteName+= "-empty";
 		}
 		spriteName+= ".png";
-		return ImageLoader.loadFromResource(spriteName, SnakeGame.class);
+
+		return spriteCache.computeIfAbsent(spriteName, key -> {
+			try {
+				return ImageIO.read(getClass().getResource(key));
+			} catch (IOException e) {
+				return null;
+			}
+		});
 	}
 
 }
