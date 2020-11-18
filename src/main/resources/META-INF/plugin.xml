@@ -30,7 +30,7 @@
 
     <change-notes><![CDATA[
 
-      <b>2016.3-15.1.40.1</b>
+      <b>2020.2-15.1.40.1</b>
       <ul>
         <li>Added support for BDD scenarios (add to MyWork, search, and download script)</li>
         <li>Added support for comments on BDD Specifications and BDD Scenarios</li>
