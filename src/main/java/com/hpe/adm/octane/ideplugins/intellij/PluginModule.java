@@ -30,7 +30,6 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.searchresult.SearchResultEntity
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeCellRenderer;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeView;
 import com.hpe.adm.octane.ideplugins.intellij.util.CookieManagerUtil;
-import com.hpe.adm.octane.ideplugins.intellij.util.JavaFxUtils;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import com.hpe.adm.octane.ideplugins.services.connection.granttoken.TokenPollingCompleteHandler;
 import com.hpe.adm.octane.ideplugins.services.connection.granttoken.TokenPollingInProgressHandler;
@@ -42,7 +41,6 @@ import com.intellij.openapi.project.Project;
 
 import javax.swing.*;
 import java.awt.*;
-import java.lang.reflect.InvocationTargetException;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.util.HashMap;
@@ -66,26 +64,16 @@ public class PluginModule extends AbstractModule {
 
         TokenPollingStartedHandler pollingStartedHandler = loginPageUrl -> SwingUtilities.invokeLater(() -> {
 
-            if (JavaFxUtils.isJavaFxAvailable() && JavaFxUtils.isJavaFxInteropFactoryNAvailable()){
-
-                boolean cookiesCleared = CookieManagerUtil.clearCookies(connectionSettingsProvider.getConnectionSettings().getBaseUrl());
-
-                if (!cookiesCleared) {
-                    logger.warn("Failed to remove http cookies for url " + connectionSettingsProvider.getConnectionSettings().getBaseUrl() + ", login page won't have javafx browser");
-                }
-
-                // do not show the embedded browser if cookie clear failed
-                loginDialog = new JavaFxLoginDialog(project, loginPageUrl, cookiesCleared);
-            } else {
-
-                loginDialog = new ExternalUrlLoginDialog(project, loginPageUrl);
-            }
-
+            loginDialog = new ExternalUrlLoginDialog(project, loginPageUrl);
 
             if (EventQueue.isDispatchThread()) {
                 loginDialog.show();
             } else {
-                SwingUtilities.invokeLater(() -> loginDialog.show());
+                try {
+                    SwingUtilities.invokeAndWait(() -> loginDialog.show());
+                } catch (Exception ex) {
+                    logger.warn(ex);
+                }
             }
         });
 
@@ -101,7 +89,11 @@ public class PluginModule extends AbstractModule {
             if (EventQueue.isDispatchThread()) {
                 updateDialog.run();
             } else {
-                SwingUtilities.invokeLater(updateDialog);
+                try {
+                    SwingUtilities.invokeAndWait(updateDialog);
+                } catch (Exception ex) {
+                    logger.warn(ex);
+                }
             }
 
             return pollingStatus;
@@ -112,10 +104,14 @@ public class PluginModule extends AbstractModule {
                 if (loginDialog != null)
                     loginDialog.close(0, true);
             } else {
-                SwingUtilities.invokeLater(() -> {
-                    if (loginDialog != null)
-                        loginDialog.close(0, true);
-                });
+                try {
+                    SwingUtilities.invokeAndWait(() -> {
+                        if (loginDialog != null)
+                            loginDialog.close(0, true);
+                    });
+                } catch (Exception ex) {
+                    logger.warn(ex);
+                }
             }
 
             boolean cookiesCleared = CookieManagerUtil.clearCookies(connectionSettingsProvider.getConnectionSettings().getBaseUrl());
