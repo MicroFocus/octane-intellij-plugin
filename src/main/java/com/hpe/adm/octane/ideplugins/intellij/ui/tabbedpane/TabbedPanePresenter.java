@@ -254,7 +254,7 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
         tabbedPaneView.setSearchRequestHandler(this::openSearchTab);
 
         //TODO atoth: should only save once at the end
-        tabbedPaneView.addTabsListener(new TabsListener.Adapter() {
+        tabbedPaneView.addTabsListener(new TabsListener() {
             @Override
             public void selectionChanged(TabInfo oldSelection, TabInfo newSelection) {
                 logger.debug("Selection changed to: " + newSelection);

@@ -76,7 +76,8 @@ public class DownloadScriptUtil {
                         (scriptFile) -> {
                             VirtualFile vFile = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(scriptFile);
                             FileEditorManager.getInstance(project).openFile(vFile, true, true);
-                            project.getBaseDir().refresh(false, true);
+                            // getProjectFile() returns .../{project_directory}/.idea/misc.xml, and we need to remove /.idea/misc.xml
+                            project.getProjectFile().getParent().getParent().refresh(false, true);
                         },
                         project,
                         "failed to download script for " + test.getType() + " test with id " + testId);
@@ -87,7 +88,8 @@ public class DownloadScriptUtil {
     private VirtualFile chooseScriptFolder(Project project) {
         FileChooserDescriptor descriptor = new OpenProjectFileChooserDescriptor(true);
         descriptor.setHideIgnored(false);
-        descriptor.setRoots(project.getBaseDir());
+        // getProjectFile() returns .../{project_directory}/.idea/misc.xml, and we need to remove /.idea/misc.xml
+        descriptor.setRoots(project.getProjectFile().getParent().getParent());
         descriptor.setTitle("Select Parent Folder");
         descriptor.withTreeRootVisible(false);
         VirtualFile[] virtualFile = FileChooser.chooseFiles(descriptor, null, null);

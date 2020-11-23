@@ -55,12 +55,12 @@ class CustomJBRunnerTabs extends JBRunnerTabs {
     private String lastSearchText = "";
 
     public CustomJBRunnerTabs(@Nullable Project project, @NotNull ActionManager actionManager, IdeFocusManager focusManager, @NotNull Disposable parent) {
-        super(project, actionManager, focusManager, parent);
+        super(project, parent);
 
         //inject is not supported here but we need SearchManagerHistory
         searchManager = PluginModule.getPluginModuleForProject(project).getInstance(SearchHistoryManager.class);
 
-        addListener(new TabsListener.Adapter() {
+        addListener(new TabsListener() {
             @Override
             public void beforeSelectionChanged(TabInfo oldSelection, TabInfo newSelection) {
                 //sync text and history

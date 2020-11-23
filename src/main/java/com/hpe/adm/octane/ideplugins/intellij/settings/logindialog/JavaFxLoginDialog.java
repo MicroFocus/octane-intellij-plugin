@@ -81,50 +81,54 @@ public class JavaFxLoginDialog extends LoginDialog {
         // We need to check if the jvm running IntelliJ has java fx installed in it, on linux, openjdk can be installed without java fx
         if (JavaFxUtils.isJavaFxAvailable() && shouldUseJavaFxBrowser) {
 
-            browserPanel = new JPanel(new BorderLayout());
-            browserPanel.setBorder(new LineBorder(UIManager.getColor("Separator.foreground")));
-            contentPane.add(browserPanel, BorderLayout.CENTER);
+            try {
+                browserPanel = new JPanel(new BorderLayout());
+                browserPanel.setBorder(new LineBorder(UIManager.getColor("Separator.foreground")));
+                contentPane.add(browserPanel, BorderLayout.CENTER);
 
-            LoadingWidget loadingWidget = new LoadingWidget("Loading login page...");
-            JFXPanel jfxPanel = new JFXPanel();
+                LoadingWidget loadingWidget = new LoadingWidget("Loading login page...");
+                JFXPanel jfxPanel = new JFXPanel();
 
-            PlatformImpl.setImplicitExit(false);
-            PlatformImpl.runAndWait(() -> {
+                PlatformImpl.setImplicitExit(false);
+                PlatformImpl.runAndWait(() -> {
 
-                Group root = new Group();
-                Stage stage = new Stage();
-                stage.setResizable(true);
+                    Group root = new Group();
+                    Stage stage = new Stage();
+                    stage.setResizable(true);
 
-                Scene scene = new Scene(root, jfxPanel.getWidth(), jfxPanel.getHeight());
-                stage.setScene(scene);
+                    Scene scene = new Scene(root, jfxPanel.getWidth(), jfxPanel.getHeight());
+                    stage.setScene(scene);
 
-                // Set up the embedded browser:
-                WebView browser = new WebView();
-                WebEngine webEngine = browser.getEngine();
+                    // Set up the embedded browser:
+                    WebView browser = new WebView();
+                    WebEngine webEngine = browser.getEngine();
 
-                // process page loading
-                webEngine.getLoadWorker().stateProperty().addListener(
-                        (ov, oldState, newState) ->
-                                SwingUtilities.invokeLater(() -> {
-                                    browserPanel.remove(jfxPanel);
-                                    browserPanel.remove(loadingWidget);
+                    // process page loading
+                    webEngine.getLoadWorker().stateProperty().addListener(
+                            (ov, oldState, newState) ->
+                                    SwingUtilities.invokeLater(() -> {
+                                        browserPanel.remove(jfxPanel);
+                                        browserPanel.remove(loadingWidget);
 
-                                    if (State.SCHEDULED == newState || State.RUNNING == newState) {
-                                        browserPanel.add(loadingWidget, BorderLayout.CENTER);
-                                    } else {
-                                        browserPanel.add(jfxPanel, BorderLayout.CENTER);
-                                    }
+                                        if (State.SCHEDULED == newState || State.RUNNING == newState) {
+                                            browserPanel.add(loadingWidget, BorderLayout.CENTER);
+                                        } else {
+                                            browserPanel.add(jfxPanel, BorderLayout.CENTER);
+                                        }
 
-                                    contentPane.repaint();
-                                    contentPane.revalidate();
-                                })
-                );
+                                        contentPane.repaint();
+                                        contentPane.revalidate();
+                                    })
+                    );
 
-                webEngine.load(loginPageUrl);
-                root.getChildren().add(browser);
+                    webEngine.load(loginPageUrl);
+                    root.getChildren().add(browser);
 
-                jfxPanel.setScene(scene);
-            });
+                    jfxPanel.setScene(scene);
+                });
+            } catch (Exception e) {
+                logger.warn("Failed to load login page: " + e.getMessage());
+            }
 
         } else {
             contentPane.setPreferredSize(new Dimension(800, -1));

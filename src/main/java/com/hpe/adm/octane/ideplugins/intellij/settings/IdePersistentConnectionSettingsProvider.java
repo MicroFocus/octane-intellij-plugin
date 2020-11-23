@@ -16,12 +16,12 @@ package com.hpe.adm.octane.ideplugins.intellij.settings;
 import com.hpe.adm.octane.ideplugins.services.connection.BasicConnectionSettingProvider;
 import com.hpe.adm.octane.ideplugins.services.connection.UserAuthentication;
 import com.hpe.adm.octane.ideplugins.services.connection.granttoken.GrantTokenAuthentication;
+import com.intellij.credentialStore.CredentialAttributes;
+import com.intellij.credentialStore.Credentials;
 import com.intellij.ide.passwordSafe.PasswordSafe;
-import com.intellij.ide.passwordSafe.PasswordSafeException;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -39,8 +39,6 @@ public class IdePersistentConnectionSettingsProvider extends BasicConnectionSett
             return "Octane IntelliJ Plugin";
         }
     }
-
-    private static final String OCTANE_PASSWORD_KEY = "OCTANE_PASSWORD_KEY";
 
     private static final String CONNECTION_SETTINGS_TAG = "ConnectionSettings";
     private static final String URL_TAG = "Url";
@@ -80,7 +78,7 @@ public class IdePersistentConnectionSettingsProvider extends BasicConnectionSett
             }
             //save the password into the password store, not related to the xml file
             if (!StringUtils.isEmpty(authentication.getPassword())) {
-                encryptPassword(authentication.getPassword());
+                encryptPassword(authentication.getPassword(), authentication.getUserName());
             }
 
         } else if (connectionSettings.getAuthentication() instanceof GrantTokenAuthentication) {
@@ -112,7 +110,7 @@ public class IdePersistentConnectionSettingsProvider extends BasicConnectionSett
         if(state.getAttributeValue(SSO_TAG) == null || state.getAttributeValue(SSO_TAG).equals(Boolean.FALSE.toString())) {
             //user pass login
             String username = state.getAttributeValue(USER_TAG) != null ? state.getAttributeValue(USER_TAG) : "";
-            String password = decryptPassword();
+            String password = decryptPassword(username);
             connectionSettings.setAuthentication(new UserAuthentication(username, password));
         } else {
             connectionSettings.setAuthentication(new GrantTokenAuthentication());
@@ -120,30 +118,28 @@ public class IdePersistentConnectionSettingsProvider extends BasicConnectionSett
 
     }
 
-    @NotNull
-    private void encryptPassword(String password) {
-        try {
-            if ((password == null || StringUtils.isBlank(password))
-                    && PasswordSafe.getInstance().getPassword(project, IdePersistentConnectionSettingsProvider.class, OCTANE_PASSWORD_KEY) != null) {
-                PasswordSafe.getInstance().removePassword(project, IdePersistentConnectionSettingsProvider.class, OCTANE_PASSWORD_KEY);
-            } else {
-                PasswordSafe.getInstance().storePassword(project, IdePersistentConnectionSettingsProvider.class, OCTANE_PASSWORD_KEY, password);
-            }
-        } catch (NullPointerException | PasswordSafeException e) {
-            //log.info("Couldn't get password for key [" + OCTANE_PASSWORD_KEY + "]", e);
-        }
+    private void encryptPassword(String password, String userName) {
+        CredentialAttributes attributes = new CredentialAttributes(
+                project.getName() + project.getLocationHash(),
+                userName,
+                this.getClass(),
+                false);
+
+        Credentials saveCredentials = new Credentials(attributes.getUserName(), password);
+        PasswordSafe.getInstance().set(attributes, saveCredentials);
     }
 
     @NotNull
-    private String decryptPassword() {
-        String password;
-        try {
-            password = PasswordSafe.getInstance().getPassword(project, IdePersistentConnectionSettingsProvider.class, OCTANE_PASSWORD_KEY);
-        } catch (NullPointerException | PasswordSafeException e) {
-            //log.info("Couldn't get password for key [" + OCTANE_PASSWORD_KEY + "]", e);
-            password = "";
-        }
-        return StringUtil.notNullize(password);
+    private String decryptPassword(String username) {
+        CredentialAttributes attributes = new CredentialAttributes(
+                project.getName() + project.getLocationHash(),
+                username,
+                this.getClass(),
+                false);
+
+        String pw = PasswordSafe.getInstance().getPassword(attributes);
+        pw = pw == null ? "" : pw;
+        return pw;
     }
 
 }
