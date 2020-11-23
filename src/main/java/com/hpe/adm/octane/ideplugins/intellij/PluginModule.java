@@ -63,26 +63,21 @@ public class PluginModule extends AbstractModule {
 
         TokenPollingStartedHandler pollingStartedHandler = loginPageUrl -> SwingUtilities.invokeLater(() -> {
             loginDialog = new ExternalUrlLoginDialog(project, loginPageUrl);
-
             try {
-                SwingUtilities.invokeAndWait(() -> loginDialog.show());
+                SwingUtilities.invokeLater(() -> loginDialog.show());
             } catch (Exception e) {
                 logger.warn(e);
             }
         });
 
         TokenPollingInProgressHandler pollingInProgressHandler = pollingStatus -> {
-            try {
-                SwingUtilities.invokeAndWait(() -> {
-                    if (loginDialog != null) {
-                        long secondsUntilTimeout = (pollingStatus.timeoutTimeStamp - System.currentTimeMillis()) / 1000;
-                        loginDialog.setTitle(JavaFxLoginDialog.TITLE + " (waiting for session, timeout in: " + secondsUntilTimeout + ")");
-                        pollingStatus.shouldPoll = !loginDialog.wasClosed();
-                    }
-                });
-            } catch (Exception e) {
-                logger.warn(e);
-            }
+            SwingUtilities.invokeLater(() -> {
+                if (loginDialog != null) {
+                    long secondsUntilTimeout = (pollingStatus.timeoutTimeStamp - System.currentTimeMillis()) / 1000;
+                    loginDialog.setTitle(JavaFxLoginDialog.TITLE + " (waiting for session, timeout in: " + secondsUntilTimeout + ")");
+                    pollingStatus.shouldPoll = !loginDialog.wasClosed();
+                }
+            });
             return pollingStatus;
         };
 
