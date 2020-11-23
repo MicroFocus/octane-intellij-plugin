@@ -40,7 +40,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 
 import javax.swing.*;
-import java.awt.*;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.util.HashMap;
@@ -63,55 +62,40 @@ public class PluginModule extends AbstractModule {
         ConnectionSettingsProvider connectionSettingsProvider = ServiceManager.getService(project, IdePersistentConnectionSettingsProvider.class);
 
         TokenPollingStartedHandler pollingStartedHandler = loginPageUrl -> SwingUtilities.invokeLater(() -> {
-
             loginDialog = new ExternalUrlLoginDialog(project, loginPageUrl);
 
-            if (EventQueue.isDispatchThread()) {
-                loginDialog.show();
-            } else {
-                try {
-                    SwingUtilities.invokeAndWait(() -> loginDialog.show());
-                } catch (Exception ex) {
-                    logger.warn(ex);
-                }
+            try {
+                SwingUtilities.invokeAndWait(() -> loginDialog.show());
+            } catch (Exception e) {
+                logger.warn(e);
             }
         });
 
         TokenPollingInProgressHandler pollingInProgressHandler = pollingStatus -> {
-            Runnable updateDialog = () -> {
-                if (loginDialog != null) {
-                    long secondsUntilTimeout = (pollingStatus.timeoutTimeStamp - System.currentTimeMillis()) / 1000;
-                    loginDialog.setTitle(JavaFxLoginDialog.TITLE + " (waiting for session, timeout in: " + secondsUntilTimeout + ")");
-                    pollingStatus.shouldPoll = !loginDialog.wasClosed();
-                }
-            };
-
-            if (EventQueue.isDispatchThread()) {
-                updateDialog.run();
-            } else {
-                try {
-                    SwingUtilities.invokeAndWait(updateDialog);
-                } catch (Exception ex) {
-                    logger.warn(ex);
-                }
+            try {
+                SwingUtilities.invokeAndWait(() -> {
+                    if (loginDialog != null) {
+                        long secondsUntilTimeout = (pollingStatus.timeoutTimeStamp - System.currentTimeMillis()) / 1000;
+                        loginDialog.setTitle(JavaFxLoginDialog.TITLE + " (waiting for session, timeout in: " + secondsUntilTimeout + ")");
+                        pollingStatus.shouldPoll = !loginDialog.wasClosed();
+                    }
+                });
+            } catch (Exception e) {
+                logger.warn(e);
             }
-
             return pollingStatus;
         };
 
         TokenPollingCompleteHandler pollingCompleteHandler = tokenPollingCompletedStatus -> {
-            if (EventQueue.isDispatchThread()) {
-                if (loginDialog != null)
-                    loginDialog.close(0, true);
-            } else {
-                try {
-                    SwingUtilities.invokeAndWait(() -> {
-                        if (loginDialog != null)
-                            loginDialog.close(0, true);
-                    });
-                } catch (Exception ex) {
-                    logger.warn(ex);
-                }
+
+            try {
+                SwingUtilities.invokeAndWait(() -> {
+                    if (loginDialog != null) {
+                        loginDialog.close(0, true);
+                    }
+                });
+            } catch (Exception e) {
+                logger.warn(e);
             }
 
             boolean cookiesCleared = CookieManagerUtil.clearCookies(connectionSettingsProvider.getConnectionSettings().getBaseUrl());
