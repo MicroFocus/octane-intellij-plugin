@@ -29,7 +29,6 @@ import com.hpe.adm.octane.ideplugins.intellij.settings.logindialog.LoginDialog;
 import com.hpe.adm.octane.ideplugins.intellij.ui.searchresult.SearchResultEntityTreeCellRenderer;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeCellRenderer;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeView;
-import com.hpe.adm.octane.ideplugins.intellij.util.CookieManagerUtil;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import com.hpe.adm.octane.ideplugins.services.connection.granttoken.TokenPollingCompleteHandler;
 import com.hpe.adm.octane.ideplugins.services.connection.granttoken.TokenPollingInProgressHandler;
@@ -40,8 +39,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 
 import javax.swing.*;
-import java.net.CookieHandler;
-import java.net.CookieManager;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -62,8 +59,8 @@ public class PluginModule extends AbstractModule {
         ConnectionSettingsProvider connectionSettingsProvider = ServiceManager.getService(project, IdePersistentConnectionSettingsProvider.class);
 
         TokenPollingStartedHandler pollingStartedHandler = loginPageUrl -> SwingUtilities.invokeLater(() -> {
-            loginDialog = new ExternalUrlLoginDialog(project, loginPageUrl);
             try {
+                loginDialog = new ExternalUrlLoginDialog(project, loginPageUrl);
                 SwingUtilities.invokeLater(() -> loginDialog.show());
             } catch (Exception e) {
                 logger.warn(e);
@@ -71,33 +68,26 @@ public class PluginModule extends AbstractModule {
         });
 
         TokenPollingInProgressHandler pollingInProgressHandler = pollingStatus -> {
-            SwingUtilities.invokeLater(() -> {
-                if (loginDialog != null) {
+            if (loginDialog != null) {
+                SwingUtilities.invokeLater(() -> {
                     long secondsUntilTimeout = (pollingStatus.timeoutTimeStamp - System.currentTimeMillis()) / 1000;
                     loginDialog.setTitle(JavaFxLoginDialog.TITLE + " (waiting for session, timeout in: " + secondsUntilTimeout + ")");
                     pollingStatus.shouldPoll = !loginDialog.wasClosed();
-                }
-            });
+                });
+            }
             return pollingStatus;
         };
 
         TokenPollingCompleteHandler pollingCompleteHandler = tokenPollingCompletedStatus -> {
 
-            try {
-                SwingUtilities.invokeAndWait(() -> {
-                    if (loginDialog != null) {
+            if (loginDialog != null && !loginDialog.wasClosed()) {
+                try {
+                    SwingUtilities.invokeAndWait(() -> {
                         loginDialog.close(0, true);
-                    }
-                });
-            } catch (Exception e) {
-                logger.warn(e);
-            }
-
-            boolean cookiesCleared = CookieManagerUtil.clearCookies(connectionSettingsProvider.getConnectionSettings().getBaseUrl());
-            if (!cookiesCleared) {
-                logger.warn("Failed to remove http cookies for url " + connectionSettingsProvider.getConnectionSettings().getBaseUrl() + ", clearing global cookie store");
-                // we're sorry, this might break every java.net.HttpURLConnection
-                CookieHandler.setDefault(new CookieManager()); // clear cookies globally
+                    });
+                } catch (Exception ex) {
+                    logger.warn(ex);
+                }
             }
         };
 
