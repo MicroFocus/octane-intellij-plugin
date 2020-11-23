@@ -20,6 +20,7 @@ import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.components.ConnectionSettingsComponent;
 import com.hpe.adm.octane.ideplugins.intellij.ui.searchresult.SearchHistoryManager;
+import com.hpe.adm.octane.ideplugins.intellij.ui.tabbedpane.TabbedPanePresenter;
 import com.hpe.adm.octane.ideplugins.intellij.util.ExceptionHandler;
 import com.hpe.adm.octane.ideplugins.services.TestService;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
@@ -56,14 +57,15 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
     private ConnectionSettingsComponent connectionSettingsView;
     private SearchHistoryManager searchManager;
     private boolean pinMessage = false;
+    private final PluginModule pluginModule;
 
     public ConnectionSettingsConfigurable(@NotNull final Project currentProject) {
-        PluginModule module = PluginModule.getPluginModuleForProject(currentProject);
+        pluginModule = PluginModule.getPluginModuleForProject(currentProject);
         connectionSettingsView = new ConnectionSettingsComponent(currentProject);
-        connectionSettingsProvider = module.getInstance(ConnectionSettingsProvider.class);
-        testService = module.getInstance(TestService.class);
-        idePluginPersistentState = module.getInstance(IdePluginPersistentState.class);
-        searchManager = module.getInstance(SearchHistoryManager.class);
+        connectionSettingsProvider = pluginModule.getInstance(ConnectionSettingsProvider.class);
+        testService = pluginModule.getInstance(TestService.class);
+        idePluginPersistentState = pluginModule.getInstance(IdePluginPersistentState.class);
+        searchManager = pluginModule.getInstance(SearchHistoryManager.class);
         this.currentProject = currentProject;
     }
 
@@ -181,7 +183,6 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
             exceptionHandler.showErrorNotification();
         }
 
-
         //apply if valid
         if (newConnectionSettings != null) {
 
@@ -191,14 +192,19 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
                 idePluginPersistentState.clearState(IdePluginPersistentState.Key.SELECTED_TAB);
                 idePluginPersistentState.clearState(IdePluginPersistentState.Key.OPEN_TABS);
             }
-
             connectionSettingsProvider.setConnectionSettings(newConnectionSettings);
             //remove the hash and remove extra stuff if successful
             connectionSettingsView.setServerUrl(UrlParser.createUrlFromConnectionSettings(newConnectionSettings));
             connectionSettingsView.setConnectionStatusSuccess();
+
+            SwingUtilities.invokeLater(() -> {
+                try {
+                    pluginModule.getInstance(TabbedPanePresenter.class).closeAllTabsExceptMyWork();
+                } catch (Exception ignored) {
+                }
+            });
         }
     }
-
 
     private void testOctaneVersion(ConnectionSettings connectionSettings) {
         OctaneVersion version;

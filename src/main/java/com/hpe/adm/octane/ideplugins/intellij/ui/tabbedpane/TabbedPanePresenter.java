@@ -61,6 +61,7 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
 
     // TODO to be kept up-to-date
     public static ImmutableSet<Entity> supportedDetailTabs;
+
     static {
         supportedDetailTabs = ImmutableSet.copyOf(new Entity[]{
                 USER_STORY,
@@ -153,10 +154,9 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
 
     public void openDetailTab(Entity entityType, Long entityId, String entityName) {
         PartialEntity partialEntity = new PartialEntity(entityId, entityName, entityType);
-        if(isDetailTabAlreadyOpen(partialEntity)) {
+        if (isDetailTabAlreadyOpen(partialEntity)) {
             selectDetailTab(partialEntity);
-        }
-        else {
+        } else {
             EntityDetailPresenter presenter = entityDetailPresenterProvider.get();
             presenter.setEntity(entityType, entityId);
 
@@ -244,10 +244,10 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
         if (selectedTabKey != null) {
             selectDetailTab(selectedTabKey);
         }
+    }
 
-        connectionSettingsProvider.addChangeHandler(() -> {
-            tabbedPaneView.closeAllExcept(myWorkTabInfo);
-        });
+    public void closeAllTabsExceptMyWork() {
+        tabbedPaneView.closeAllExcept(myWorkTabInfo);
     }
 
     private void initHandlers() {
@@ -270,7 +270,7 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
 
                 PartialEntity partialEntity = detailTabInfo.inverse().get(tabToRemove);
 
-                if(detailTabPresenterMap.containsKey(partialEntity)) {
+                if (detailTabPresenterMap.containsKey(partialEntity)) {
                     EntityDetailPresenter entityDetailPresenter = detailTabPresenterMap.get(partialEntity);
                     entityDetailPresenter.closing();
                     detailTabPresenterMap.remove(partialEntity);
@@ -350,7 +350,7 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
     }
 
     public Presenter getSelectedPresenter() {
-        if(isMyWorkSelected()) {
+        if (isMyWorkSelected()) {
             return entityTreeTablePresenterProvider.get();
         } else if (isSearchTabSelected()) {
             return entitySearchResultPresenter;
