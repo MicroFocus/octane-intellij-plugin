@@ -19,10 +19,11 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.services.EntityLabelService;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
-import com.intellij.util.ImageLoader;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -69,7 +70,14 @@ public class EntityIconFactory {
 
     private static final Color fontColor = new Color(255, 255, 255);
     private static final Color unmappedEntityIconColor = new Color(0, 0, 0);
-    private static final Image activeImg = ImageLoader.loadFromResource(Constants.IMG_ACTIVE_ITEM, EntityIconFactory.class);
+    private static Image activeImg;
+    static {
+        try {
+            activeImg = ImageIO.read(EntityIconFactory.class.getResource(Constants.IMG_ACTIVE_ITEM));
+        } catch (IOException e) {
+            activeImg = null;
+        }
+    }
 
     private static final Map<Entity, Color> entityColorMap = new HashMap<>();
 
