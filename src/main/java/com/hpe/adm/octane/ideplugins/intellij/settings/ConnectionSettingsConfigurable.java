@@ -191,6 +191,7 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
                 idePluginPersistentState.clearState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM);
                 idePluginPersistentState.clearState(IdePluginPersistentState.Key.SELECTED_TAB);
                 idePluginPersistentState.clearState(IdePluginPersistentState.Key.OPEN_TABS);
+                idePluginPersistentState.clearState(IdePluginPersistentState.Key.PREV_ACTIVE_WORK_ITEM);
             }
             connectionSettingsProvider.setConnectionSettings(newConnectionSettings);
             //remove the hash and remove extra stuff if successful

@@ -32,8 +32,6 @@ import java.util.Objects;
 
 public class OpenActiveItemAction extends OctanePluginAction {
 
-    private PartialEntity prevActiveItem;
-
     public OpenActiveItemAction() {
         super("Open active backlog item", "Open a detail tab with the active backlog item.", IconLoader.findIcon(Constants.IMG_ACTIVE_ITEM_20x20));
     }
@@ -56,13 +54,15 @@ public class OpenActiveItemAction extends OctanePluginAction {
                 JSONObject prevJsonObject = pluginModule.getInstance(IdePluginPersistentState.class).loadState(IdePluginPersistentState.Key.PREV_ACTIVE_WORK_ITEM);
                 PartialEntity prevActiveItem = PartialEntity.fromJsonObject(prevJsonObject);
 
+                String activeItemId = "#" + activeItem.getEntityId();
+
                 // This is necessary to avoid doing a rest call for labels on init
-                if (!Objects.equals(activeItem, prevActiveItem)) {
+                if (!Objects.equals(activeItem, prevActiveItem) || e.getPresentation().getText() != activeItemId) {
                     // Set the new state for previous active item
                     pluginModule.getInstance(IdePluginPersistentState.class).saveState(IdePluginPersistentState.Key.PREV_ACTIVE_WORK_ITEM, jsonObject);
 
                     e.getPresentation().setDescription(activeItem.getEntityName());
-                    e.getPresentation().setText("#" + activeItem.getEntityId());
+                    e.getPresentation().setText(activeItemId);
 
                     // Has to be in a thread other than the UI, because the EntityIconFactory will trigger sso login on startup
                     // The thread is not that expensive because of the presentation is only updated if the active item changed
