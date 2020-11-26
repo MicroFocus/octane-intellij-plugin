@@ -265,7 +265,12 @@ public class HeaderPanel extends JPanel {
     public void setEntityModel(EntityModelWrapper entityModelWrapper) {
         this.entityModelWrapper = entityModelWrapper;
         // icon
-        setEntityIcon(new ImageIcon(iconFactory.getIconAsImage(entityModelWrapper.getEntityType(), 26, 12)));
+        iconFactory.getIconAsImageAsync(
+                entityModelWrapper.getEntityType(),
+                26,
+                12,
+                img -> setEntityIcon(new ImageIcon(img))
+        );
         // id
         setId(Util.getUiDataFromModel(entityModelWrapper.getValue(DetailsViewDefaultFields.FIELD_ID)));
         // name

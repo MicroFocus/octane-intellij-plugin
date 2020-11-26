@@ -145,8 +145,7 @@ public class EntityModelRow extends JPanel {
 
     public void setIcon(Entity entityType, boolean isActive) {
         if (iconFactory != null) {
-            Image icon = iconFactory.getIconAsImage(entityType, 40, 17, isActive);
-            lblEntityIcon.setIcon(new ImageIcon(icon));
+            iconFactory.getIconAsImageAsync(entityType, 40, 17, isActive, icon -> lblEntityIcon.setIcon(new ImageIcon(icon)));
         }
     }
 

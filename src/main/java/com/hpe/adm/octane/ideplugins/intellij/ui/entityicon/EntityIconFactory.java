@@ -21,12 +21,17 @@ import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvi
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.function.Consumer;
 
 /*
 JBColor might not be backwards compatible with prev intellij versions
@@ -35,7 +40,7 @@ JBColor might not be backwards compatible with prev intellij versions
 @Singleton
 public class EntityIconFactory {
 
-    class CacheKey {
+    static class CacheKey {
         int size;
         int fontSize;
         Entity type;
@@ -71,6 +76,7 @@ public class EntityIconFactory {
     private static final Color fontColor = new Color(255, 255, 255);
     private static final Color unmappedEntityIconColor = new Color(0, 0, 0);
     private static Image activeImg;
+
     static {
         try {
             activeImg = ImageIO.read(EntityIconFactory.class.getResource(Constants.IMG_ACTIVE_ITEM));
@@ -80,6 +86,7 @@ public class EntityIconFactory {
     }
 
     private static final Map<Entity, Color> entityColorMap = new HashMap<>();
+    private static final ExecutorService executorService = Executors.newFixedThreadPool(5);
 
     static {
         entityColorMap.put(Entity.USER_STORY, new Color(255, 176, 0));
@@ -96,16 +103,24 @@ public class EntityIconFactory {
         entityColorMap.put(Entity.AUTOMATED_TEST, new Color(186, 71, 226));
         entityColorMap.put(Entity.COMMENT, new Color(253, 225, 89));
         entityColorMap.put(Entity.REQUIREMENT, new Color(11, 142, 172));
-        entityColorMap.put(Entity.BDD_SCENARIO, new Color(117,218, 77));
+        entityColorMap.put(Entity.BDD_SCENARIO, new Color(117, 218, 77));
     }
 
     //cache the icons based on size, font and entity
-    private Map<CacheKey, Image> imageCache = new HashMap<>();
+    private Map<CacheKey, Image> imageCache = new ConcurrentHashMap<>();
 
     @Inject
     public EntityIconFactory(EntityLabelService entityLabelService, ConnectionSettingsProvider connectionSettingsProvider) {
         this.entityLabelService = entityLabelService;
         connectionSettingsProvider.addChangeHandler(() -> imageCache.clear());
+    }
+
+    private Image createIconAsImage(CacheKey cacheKey) {
+        return createIconAsImage(
+                cacheKey.type,
+                cacheKey.size,
+                cacheKey.fontSize,
+                cacheKey.isActive);
     }
 
     /**
@@ -150,19 +165,41 @@ public class EntityIconFactory {
         return image;
     }
 
+    /**
+     * @deprecated use getIconAsImageAsync
+     */
+    @Deprecated
     public Image getIconAsImage(Entity entity, int iconSize, int fontSize) {
-        return createIconAsImage(entity, iconSize, fontSize, false);
+        return getIconAsImage(entity, iconSize, fontSize, false);
     }
 
+    /**
+     * @deprecated use getIconAsImageAsync
+     */
+    @Deprecated
     public Image getIconAsImage(Entity entity, int iconSize, int fontSize, boolean isActive) {
+        CacheKey key = new CacheKey(iconSize, fontSize, entity, isActive);
+        return imageCache.computeIfAbsent(key, this::createIconAsImage);
+    }
 
+    public void getIconAsImageAsync(Entity entity, int iconSize, int fontSize, Consumer<Image> imageConsumer) {
+        getIconAsImageAsync(entity, iconSize, fontSize, false, imageConsumer);
+    }
+
+    public void getIconAsImageAsync(Entity entity, int iconSize, int fontSize, boolean isActive, Consumer<Image> imageConsumer) {
         CacheKey key = new CacheKey(iconSize, fontSize, entity, isActive);
 
         if (!imageCache.containsKey(key)) {
-            imageCache.put(key, createIconAsImage(entity, iconSize, fontSize, isActive));
-        }
+            executorService.submit(() -> {
+                imageCache.put(key, createIconAsImage(key));
 
-        return imageCache.get(key);
+                SwingUtilities.invokeLater(() -> {
+                    imageConsumer.accept(imageCache.get(key));
+                });
+            });
+        } else {
+            imageConsumer.accept(imageCache.get(key));
+        }
     }
 
 }
