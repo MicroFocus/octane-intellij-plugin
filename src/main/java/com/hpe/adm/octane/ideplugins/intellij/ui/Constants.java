@@ -20,6 +20,7 @@ public class Constants {
     public static final String IMG_FOLDER_PATH = "/images/";
     public static final String IMG_VENDOR_LOGO = IMG_FOLDER_PATH + "microfocus-blue-logo.png";
     public static final String IMG_OCTANE_LOGO = IMG_FOLDER_PATH + "octane-logo.png";
+    public static final String IMG_OCTANE_LOGO_20x20 = IMG_FOLDER_PATH + "octane-logo-20x20.png";
     public static final String IMG_AJAX_SPINNER = IMG_FOLDER_PATH + "octane_preloader.gif";
     public static final String IMG_REFRESH_ICON = IMG_FOLDER_PATH + "refresh-16x16.png";
     public static final String IMG_COMMENTS_ICON = IMG_FOLDER_PATH + "comments-16x16.png";
