@@ -34,6 +34,7 @@ import com.hpe.adm.octane.ideplugins.services.connection.granttoken.TokenPolling
 import com.hpe.adm.octane.ideplugins.services.connection.granttoken.TokenPollingInProgressHandler;
 import com.hpe.adm.octane.ideplugins.services.connection.granttoken.TokenPollingStartedHandler;
 import com.hpe.adm.octane.ideplugins.services.di.ServiceModule;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
@@ -48,9 +49,11 @@ public class PluginModule extends AbstractModule {
 
     protected final Supplier<Injector> injectorSupplier;
 
-    private Project project;
     private LoginDialog loginDialog;
-    private static final Map<Project, Supplier<Injector>> injectorMap = new HashMap<>();
+    private final Project project;
+    public volatile boolean isSsoLoginInProgress = false;
+
+    private static final Map<Project, PluginModule> pluginModuleMap = new HashMap<>();
 
     private PluginModule(Project project) {
 
@@ -59,9 +62,12 @@ public class PluginModule extends AbstractModule {
         ConnectionSettingsProvider connectionSettingsProvider = ServiceManager.getService(project, IdePersistentConnectionSettingsProvider.class);
 
         TokenPollingStartedHandler pollingStartedHandler = loginPageUrl -> SwingUtilities.invokeLater(() -> {
+            isSsoLoginInProgress = true;
             try {
-                loginDialog = new ExternalUrlLoginDialog(project, loginPageUrl);
-                SwingUtilities.invokeLater(() -> loginDialog.show());
+                ApplicationManager.getApplication().invokeAndWait(() -> {
+                    loginDialog = new ExternalUrlLoginDialog(project, loginPageUrl);
+                    loginDialog.show();
+                });
             } catch (Exception e) {
                 logger.warn(e);
             }
@@ -69,18 +75,22 @@ public class PluginModule extends AbstractModule {
 
         TokenPollingInProgressHandler pollingInProgressHandler = pollingStatus -> {
             if (loginDialog != null) {
-                SwingUtilities.invokeLater(() -> {
-                    long secondsUntilTimeout = (pollingStatus.timeoutTimeStamp - System.currentTimeMillis()) / 1000;
-                    loginDialog.setTitle(JavaFxLoginDialog.TITLE + " (waiting for session, timeout in: " + secondsUntilTimeout + ")");
-                    pollingStatus.shouldPoll = !loginDialog.wasClosed();
-                });
+                try {
+                    SwingUtilities.invokeAndWait(() -> {
+                        long secondsUntilTimeout = (pollingStatus.timeoutTimeStamp - System.currentTimeMillis()) / 1000;
+                        loginDialog.setTitle(JavaFxLoginDialog.TITLE + " (waiting for session, timeout in: " + secondsUntilTimeout + ")");
+                        pollingStatus.shouldPoll = !loginDialog.wasClosed();
+                    });
+                } catch (Exception e) {
+                    logger.warn(e);
+                }
             }
             return pollingStatus;
         };
 
         TokenPollingCompleteHandler pollingCompleteHandler = tokenPollingCompletedStatus -> {
-
             if (loginDialog != null && !loginDialog.wasClosed()) {
+                isSsoLoginInProgress = false;
                 try {
                     SwingUtilities.invokeAndWait(() -> {
                         loginDialog.close(0, true);
@@ -93,29 +103,18 @@ public class PluginModule extends AbstractModule {
 
         ServiceModule serviceModule = new ServiceModule(connectionSettingsProvider, pollingStartedHandler, pollingInProgressHandler, pollingCompleteHandler);
         injectorSupplier = Suppliers.memoize(() -> Guice.createInjector(serviceModule, this));
-        injectorMap.put(project, injectorSupplier);
-    }
-
-    /**
-     * Create an instance from an already existing PluginModule
-     *
-     * @param project
-     * @param injectorSupplier
-     */
-    private PluginModule(Project project, Supplier<Injector> injectorSupplier) {
-        this.project = project;
-        this.injectorSupplier = injectorSupplier;
+        pluginModuleMap.put(project, this);
     }
 
     public static boolean hasProject(Project project) {
-        return injectorMap.containsKey(project);
+        return pluginModuleMap.containsKey(project);
     }
 
-    public static PluginModule getPluginModuleForProject(Project project) {
-        if (hasProject(project)) {
-            return new PluginModule(project, injectorMap.get(project));
+    public synchronized static PluginModule getPluginModuleForProject(Project project) {
+        if (!hasProject(project)) {
+            new PluginModule(project);
         }
-        return new PluginModule(project);
+        return pluginModuleMap.get(project);
     }
 
     public <T> T getInstance(Class<T> type) {
@@ -131,12 +130,9 @@ public class PluginModule extends AbstractModule {
      * @param <T>
      * @return
      */
-    public static <T> T getInstance(Project project, Class<T> type) {
-        if (!injectorMap.containsKey(project)) {
-            //Constructor changes static field event tho instance is not used anywhere
-            new PluginModule(project);
-        }
-        return injectorMap.get(project).get().getInstance(type);
+    public synchronized static <T> T getInstance(Project project, Class<T> type) {
+        PluginModule pluginModule = getPluginModuleForProject(project);
+        return pluginModule.getInstance(type);
     }
 
     @Override

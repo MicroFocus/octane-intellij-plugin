@@ -161,12 +161,11 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
             presenter.setEntity(entityType, entityId);
 
             PartialEntity tabKey = new PartialEntity(entityId, entityName, entityType);
-            ImageIcon tabIcon = new ImageIcon(iconFactory.getIconAsImage(entityType, 22, 11));
 
             TabInfo tabInfo = tabbedPaneView.addTab(
                     String.valueOf(entityId),
                     entityName,
-                    tabIcon,
+                    null,
                     presenter.getView().getComponent());
 
             detailTabInfo.put(tabKey, tabInfo);
@@ -174,6 +173,8 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
 
             saveDetailTabsToPersistentState();
             tabbedPaneView.selectTabWithTabInfo(tabInfo, true);
+
+            iconFactory.getIconAsImageAsync(entityType, 22, 11, (image -> tabInfo.setIcon(new ImageIcon(image))));
         }
     }
 
