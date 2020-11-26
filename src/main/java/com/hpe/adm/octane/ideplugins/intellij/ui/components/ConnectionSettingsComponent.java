@@ -34,6 +34,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -523,7 +524,12 @@ public class ConnectionSettingsComponent implements HasComponent {
             return;
         }
 
-        List<Pair<String, String>> proxySettings = HttpConfigurable.getInstance().getJvmProperties(true, uri);
+        List<Pair<String, String>> proxySettings;
+        try {
+            proxySettings = HttpConfigurable.getInstance().getJvmProperties(true, uri);
+        } catch (Exception ex) {
+            proxySettings = Collections.emptyList();
+        }
 
         String proxyValues = "<b>Detected proxy for current server url:</b><br>";
 
