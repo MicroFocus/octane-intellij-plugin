@@ -14,6 +14,7 @@
 package com.hpe.adm.octane.ideplugins.intellij.settings;
 
 import com.google.api.client.http.HttpResponseException;
+import com.hpe.adm.nga.sdk.authentication.Authentication;
 import com.hpe.adm.nga.sdk.exception.OctaneException;
 import com.hpe.adm.nga.sdk.model.StringFieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
@@ -44,6 +45,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.Objects;
 
 public class ConnectionSettingsConfigurable implements SearchableConfigurable, Configurable.NoScroll {
 
@@ -187,11 +189,16 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
         if (newConnectionSettings != null) {
 
             //If anything other than the password was changed, wipe open tabs and active tab item
-            if (!newConnectionSettings.equalsExceptAuth(connectionSettingsProvider.getConnectionSettings())) {
+            boolean isServerInfoChanged = !newConnectionSettings.equalsExceptAuth(connectionSettingsProvider.getConnectionSettings());
+            Class<? extends Authentication> authType = connectionSettingsProvider.getConnectionSettings().getAuthentication().getClass();
+            Class<? extends Authentication> newAuthType = newConnectionSettings.getAuthentication().getClass();
+            boolean isAuthTypeChanged = !Objects.equals(authType, newAuthType);
+
+            if (isServerInfoChanged || isAuthTypeChanged) {
                 idePluginPersistentState.clearState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM);
+                idePluginPersistentState.clearState(IdePluginPersistentState.Key.PREV_ACTIVE_WORK_ITEM);
                 idePluginPersistentState.clearState(IdePluginPersistentState.Key.SELECTED_TAB);
                 idePluginPersistentState.clearState(IdePluginPersistentState.Key.OPEN_TABS);
-                idePluginPersistentState.clearState(IdePluginPersistentState.Key.PREV_ACTIVE_WORK_ITEM);
             }
             connectionSettingsProvider.setConnectionSettings(newConnectionSettings);
             //remove the hash and remove extra stuff if successful
