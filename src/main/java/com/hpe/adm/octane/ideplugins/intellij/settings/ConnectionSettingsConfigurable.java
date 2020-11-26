@@ -190,7 +190,14 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
 
             //If anything other than the password was changed, wipe open tabs and active tab item
             boolean isServerInfoChanged = !newConnectionSettings.equalsExceptAuth(connectionSettingsProvider.getConnectionSettings());
-            Class<? extends Authentication> authType = connectionSettingsProvider.getConnectionSettings().getAuthentication().getClass();
+
+            Class<? extends Authentication> authType;
+            if(connectionSettingsProvider.getConnectionSettings().getAuthentication() != null) {
+                authType = connectionSettingsProvider.getConnectionSettings().getAuthentication().getClass();
+            } else {
+                authType = null;
+            }
+
             Class<? extends Authentication> newAuthType = newConnectionSettings.getAuthentication().getClass();
             boolean isAuthTypeChanged = !Objects.equals(authType, newAuthType);
 
