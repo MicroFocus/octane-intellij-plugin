@@ -24,15 +24,14 @@
     <description><![CDATA[
         Enables integration with ALM Octane.<br>
         Compatible with ALM Octane version 12.53.20 and above.<br>
-        For a better experience rendering the backlog item detail views, please install the
-        <a href="https://plugins.jetbrains.com/plugin/14250-javafx-runtime-for-plugins">JavaFX Runtime for Plugins</a> plugin.
+        For a better experience rendering the backlog item detail views, please install the <a href="https://plugins.jetbrains.com/plugin/14250-javafx-runtime-for-plugins">JavaFX Runtime for Plugins</a> plugin.
     ]]></description>
     <!--enables the plugin on other platforms-->
     <depends>com.intellij.modules.lang</depends>
 
     <change-notes><![CDATA[
 
-      <b>2020.2-15.1.40.1</b>
+      <b>2020.2-15.1.40.7</b>
       <ul>
         <li>Added support for BDD scenarios (add to MyWork, search, and download script)</li>
         <li>Added support for comments on BDD Specifications and BDD Scenarios</li>
