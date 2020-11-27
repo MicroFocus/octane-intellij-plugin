@@ -28,7 +28,6 @@
     ]]></description>
     <!--enables the plugin on other platforms-->
     <depends>com.intellij.modules.lang</depends>
-    <depends optional="true" config-file="plugin-nojavafx.xml">com.intellij.javafx</depends>
 
     <change-notes><![CDATA[
 
