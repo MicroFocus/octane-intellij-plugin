@@ -13,6 +13,7 @@
 
 package com.hpe.adm.octane.ideplugins.intellij.ui;
 
+import com.hpe.adm.nga.sdk.authentication.Authentication;
 import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.components.WelcomeViewComponent;
@@ -24,6 +25,7 @@ import com.hpe.adm.octane.ideplugins.intellij.util.JavaFxUtils;
 import com.hpe.adm.octane.ideplugins.services.TestService;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
+import com.hpe.adm.octane.ideplugins.services.connection.UserAuthentication;
 import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
 import com.hpe.adm.octane.ideplugins.services.nonentity.SharedSpaceLevelRequestService;
 import com.hpe.adm.octane.ideplugins.services.nonentity.TimelineService;
@@ -35,6 +37,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowFactory;
 import com.intellij.ui.content.ContentFactory;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -106,6 +109,18 @@ public class EntryPoint implements ToolWindowFactory {
                         // If there were previously configured connection settings
                         // show a slightly different message in the welcome view
                         if (!connectionSettingsProvider.getConnectionSettings().isEmpty()) {
+
+                            String message = ex.toString();
+                            Authentication auth = connectionSettingsProvider.getConnectionSettings().getAuthentication();
+                            if(auth instanceof UserAuthentication){
+                                UserAuthentication userAuthentication = (UserAuthentication) auth;
+                                String username = userAuthentication.getUserName();
+                                String password = userAuthentication.getPassword();
+                                if(StringUtils.isNotEmpty(username) && StringUtils.isEmpty(password)){
+                                    message = "Please re-introduce your password.";
+                                }
+                            }
+
                             welcomeViewComponent = new WelcomeViewComponent(
                                     project,
                                     "Your previously saved connection settings do not seem to work",
@@ -115,14 +130,15 @@ public class EntryPoint implements ToolWindowFactory {
                             //also show a notification with the exception
                             UiUtil.showWarningBalloon(project,
                                     "Failed to connect to Octane",
-                                    "Your previously saved connection settings do not seem to work <br> Error: " + ex.toString(),
+                                    "Your previously saved connection settings do not seem to work <br> Error: " + message,
                                     NotificationType.WARNING);
 
-                            log.error("Showing welcome view, cause: ", ex);
                         } else {
                             //In this case (probably), the plugin was never configured on this project before
                             welcomeViewComponent = new WelcomeViewComponent(project);
                         }
+
+                        log.debug("Showing welcome view, cause: ", ex);
 
                         //Show the welcome view
                         setContent(toolWindow, welcomeViewComponent, "");
