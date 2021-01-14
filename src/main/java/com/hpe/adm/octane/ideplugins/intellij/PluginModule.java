@@ -51,9 +51,13 @@ public class PluginModule extends AbstractModule {
 
     private LoginDialog loginDialog;
     private final Project project;
+
     public volatile boolean isSsoLoginInProgress = false;
 
     private static final Map<Project, PluginModule> pluginModuleMap = new HashMap<>();
+
+    private volatile boolean wasSsoLoginCancelled = false;
+
 
     private PluginModule(Project project) {
 
@@ -65,8 +69,10 @@ public class PluginModule extends AbstractModule {
             isSsoLoginInProgress = true;
             try {
                 ApplicationManager.getApplication().invokeAndWait(() -> {
-                    loginDialog = new ExternalUrlLoginDialog(project, loginPageUrl);
-                    loginDialog.show();
+                    if(!wasSsoLoginCancelled) {
+                        loginDialog = new ExternalUrlLoginDialog(project, loginPageUrl);
+                        loginDialog.show();
+                    }
                 });
             } catch (Exception e) {
                 logger.warn(e);
@@ -74,15 +80,34 @@ public class PluginModule extends AbstractModule {
         });
 
         TokenPollingInProgressHandler pollingInProgressHandler = pollingStatus -> {
-            if (loginDialog != null) {
-                try {
-                    SwingUtilities.invokeAndWait(() -> {
-                        long secondsUntilTimeout = (pollingStatus.timeoutTimeStamp - System.currentTimeMillis()) / 1000;
-                        loginDialog.setTitle(JavaFxLoginDialog.TITLE + " (waiting for session, timeout in: " + secondsUntilTimeout + ")");
-                        pollingStatus.shouldPoll = !loginDialog.wasClosed();
-                    });
-                } catch (Exception e) {
-                    logger.warn(e);
+            if(wasSsoLoginCancelled) {
+                pollingStatus.shouldPoll = false;
+            } else {
+                if (loginDialog != null) {
+                    try {
+                        SwingUtilities.invokeAndWait(() -> {
+
+                            long secondsUntilTimeout = (pollingStatus.timeoutTimeStamp - System.currentTimeMillis()) / 1000;
+                            loginDialog.setTitle(JavaFxLoginDialog.TITLE + " (waiting for session, timeout in: " + secondsUntilTimeout + ")");
+
+                            pollingStatus.shouldPoll = !loginDialog.wasClosed();
+                            if(loginDialog.wasClosed()) {
+                                wasSsoLoginCancelled = true;
+                                new java.util.Timer().schedule(
+                                        new java.util.TimerTask() {
+                                            @Override
+                                            public void run() {
+                                                wasSsoLoginCancelled = false;
+                                            }
+                                        },
+                                        10000
+                                );
+
+                            }
+                        });
+                    } catch (Exception e) {
+                        logger.warn(e);
+                    }
                 }
             }
             return pollingStatus;
