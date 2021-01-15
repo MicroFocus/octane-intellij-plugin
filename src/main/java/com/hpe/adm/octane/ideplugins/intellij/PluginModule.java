@@ -100,7 +100,7 @@ public class PluginModule extends AbstractModule {
                                                 wasSsoLoginCancelled = false;
                                             }
                                         },
-                                        10000
+                                        5000
                                 );
 
                             }
