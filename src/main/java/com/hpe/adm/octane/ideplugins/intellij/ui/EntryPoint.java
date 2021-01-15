@@ -48,7 +48,6 @@ import javax.swing.*;
 public class EntryPoint implements ToolWindowFactory {
 
     private static final Logger log = Logger.getInstance(EntryPoint.class);
-    private Runnable mainToolWindowContentControl;
 
     /**
      * This method can be called by multiple IntelliJ's running at the same time,
@@ -61,7 +60,7 @@ public class EntryPoint implements ToolWindowFactory {
     @Override
     public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
 
-        if (!JavaFxUtils.isJavaFxAvailable()) {
+        if(!JavaFxUtils.isJavaFxAvailable()){
             UiUtil.showWarningBalloon(project,
                     "JavaFx not found on current JVM",
                     "JVM running the IDEA platform does not have JavaFx installed, comments and memo fields might not be displayed properly.",
@@ -77,7 +76,7 @@ public class EntryPoint implements ToolWindowFactory {
         // all members of below classes will have support for field injection and constructor injection
         final ConnectionSettingsProvider connectionSettingsProvider = pluginModule.getInstance(ConnectionSettingsProvider.class);
 
-        mainToolWindowContentControl = () -> {
+        Runnable mainToolWindowContentControl = () -> {
 
             EntryPoint.this.setContent(toolWindow, LoadingWidget::new, "");
 
@@ -95,6 +94,7 @@ public class EntryPoint implements ToolWindowFactory {
 
                         // Make sure you only instantiate other services (including the ones in the Presenter hierarchy,
                         // after you tested the connection settings with the test service
+
                         final String toolWindowTabTitle = getToolWindowTabTitle(pluginModule);
                         SwingUtilities.invokeAndWait(() -> {
                             //Create the presenter hierarchy, DI will inject view instances
@@ -112,11 +112,11 @@ public class EntryPoint implements ToolWindowFactory {
 
                             String message = ex.toString();
                             Authentication auth = connectionSettingsProvider.getConnectionSettings().getAuthentication();
-                            if (auth instanceof UserAuthentication) {
+                            if(auth instanceof UserAuthentication){
                                 UserAuthentication userAuthentication = (UserAuthentication) auth;
                                 String username = userAuthentication.getUserName();
                                 String password = userAuthentication.getPassword();
-                                if (StringUtils.isNotEmpty(username) && StringUtils.isEmpty(password)) {
+                                if(StringUtils.isNotEmpty(username) && StringUtils.isEmpty(password)){
                                     message = "Please re-introduce your password.";
                                 }
                             }
@@ -142,14 +142,13 @@ public class EntryPoint implements ToolWindowFactory {
 
                         //Show the welcome view
                         setContent(toolWindow, welcomeViewComponent, "");
-
                     }
                 }
             };
             backgroundTask.queue();
         };
 
-
+        //Run at the start of the application
         mainToolWindowContentControl.run();
         connectionSettingsProvider.addChangeHandler(mainToolWindowContentControl);
     }
