@@ -341,7 +341,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
                     String ownerName = getUiDataFromModel(owner, "name");
                     String ownerType = getUiDataFromModel(owner, "type");
 
-                    String entityName = wrapHtml("Comment on " + getSubtypeName(ownerType).toLowerCase() + ": " + "<b>" + ownerId + "</b>" + " " + ownerName);
+                    String entityName = getSubtypeName(ownerType) + " " + ownerId + " - " + ownerName;
 
                     rowPanel.setEntityName("", entityName);
                     rowPanel.setEntitySubTitle(text, "");
