@@ -35,10 +35,13 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
 import com.hpe.adm.octane.ideplugins.services.CommentService;
 import com.hpe.adm.octane.ideplugins.services.EntityLabelService;
 import com.hpe.adm.octane.ideplugins.services.EntityService;
+import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.mywork.MyWorkService;
 import com.hpe.adm.octane.ideplugins.services.mywork.MyWorkUtil;
+import com.hpe.adm.octane.ideplugins.services.nonentity.OctaneVersionService;
 import com.hpe.adm.octane.ideplugins.services.util.EntityUtil;
+import com.hpe.adm.octane.ideplugins.services.util.OctaneVersion;
 import com.hpe.adm.octane.ideplugins.services.util.PartialEntity;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
 import com.intellij.icons.AllIcons;
@@ -94,6 +97,9 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
     @Inject
     private CommentService commentService;
 
+    @Inject
+    private ConnectionSettingsProvider connectionSettingsProvider;
+
     public EntityTreeTablePresenter() {
     }
 
@@ -102,6 +108,13 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
             public void run(@NotNull ProgressIndicator indicator) {
                 try {
                     entityTreeTableView.setLoading(true);
+
+                    // remove BDD from EntityFieldMap for Octane versions lower than Coldplay P1 ( 15.1.4 - version where BDD was implemented )
+                    OctaneVersion octaneVersion = OctaneVersionService.getOctaneVersion(connectionSettingsProvider.getConnectionSettings());
+                    if (octaneVersion.isLessOrEqThan(OctaneVersion.COLDPLAY_P1)) {
+                        EntityTreeCellRenderer.removeBddFromEntityFields();
+                    }
+
                     Collection<EntityModel> myWork = myWorkService.getMyWork(EntityTreeCellRenderer.getEntityFieldMap());
 
                     SwingUtilities.invokeLater(() -> {

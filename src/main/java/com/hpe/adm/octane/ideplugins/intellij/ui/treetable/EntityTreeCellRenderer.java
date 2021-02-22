@@ -429,4 +429,9 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
         return "<html><body>" + string + "</body></html>";
     }
 
+    public static void removeBddFromEntityFields() {
+        if (entityFields.containsKey(Entity.BDD_SCENARIO)) {
+            entityFields.remove(Entity.BDD_SCENARIO);
+        }
+    }
 }
