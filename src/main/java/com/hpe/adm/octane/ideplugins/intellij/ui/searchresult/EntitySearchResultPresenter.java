@@ -33,9 +33,12 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.util.DownloadScriptUtil;
 import com.hpe.adm.octane.ideplugins.intellij.ui.util.UiUtil;
 import com.hpe.adm.octane.ideplugins.services.EntityLabelService;
 import com.hpe.adm.octane.ideplugins.services.EntityService;
+import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.mywork.MyWorkService;
 import com.hpe.adm.octane.ideplugins.services.nonentity.EntitySearchService;
+import com.hpe.adm.octane.ideplugins.services.nonentity.OctaneVersionService;
+import com.hpe.adm.octane.ideplugins.services.util.OctaneVersion;
 import com.intellij.icons.AllIcons;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -50,10 +53,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Singleton
 public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
@@ -75,7 +75,6 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
             Entity.MANUAL_TEST,
             Entity.AUTOMATED_TEST,
             Entity.GHERKIN_TEST,
-            Entity.BDD_SCENARIO,
             Entity.REQUIREMENT};
 
     protected EntityTreeView entityTreeView;
@@ -95,6 +94,9 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
     @Inject
     private DownloadScriptUtil downloadScriptUtil;
 
+    @Inject
+    private ConnectionSettingsProvider connectionSettingsProvider;
+
     private String lastSearchQuery = null;
 
     @Override
@@ -112,7 +114,15 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
 
             public void run(@NotNull ProgressIndicator indicator) {
                 entityTreeView.setLoading(true);
-                searchResults = entitySearchService.searchGlobal(query, 20, searchEntityTypes);
+
+                // add BDD to searchEntityTypes for Octane versions higher or eq than Coldplay P1 ( 15.1.4 - version where BDD was implemented )
+                OctaneVersion octaneVersion = OctaneVersionService.getOctaneVersion(connectionSettingsProvider.getConnectionSettings());
+                Entity[] searchEntityTypesCopy = searchEntityTypes;
+                if (octaneVersion.isMoreOrEqThan(OctaneVersion.COLDPLAY_P1)) {
+                    searchEntityTypesCopy = addEntityType(searchEntityTypesCopy, Entity.BDD_SCENARIO);
+                }
+
+                searchResults = entitySearchService.searchGlobal(query, 20, searchEntityTypesCopy);
             }
 
             public void onSuccess() {
@@ -250,5 +260,17 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
 
             return popup;
         });
+    }
+
+    private static Entity[] addEntityType(Entity searchEntityTypes[], Entity newType) {
+        Entity searchEntityTypesCopy[] = new Entity[searchEntityTypes.length + 1];
+        for (int i = 0; i < searchEntityTypes.length; i++)
+            if (searchEntityTypes[i] != newType) // if the type was already added, return initial array
+                searchEntityTypesCopy[i] = searchEntityTypes[i];
+            else
+                return searchEntityTypes;
+        searchEntityTypesCopy[searchEntityTypes.length] = newType;
+
+        return searchEntityTypesCopy;
     }
 }
