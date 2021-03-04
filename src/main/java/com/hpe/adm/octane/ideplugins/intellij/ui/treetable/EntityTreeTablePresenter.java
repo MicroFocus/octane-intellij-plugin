@@ -111,7 +111,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
 
                     // remove BDD from EntityFieldMap for Octane versions lower than Coldplay P1 ( 15.1.4 - version where BDD was implemented )
                     OctaneVersion octaneVersion = OctaneVersionService.getOctaneVersion(connectionSettingsProvider.getConnectionSettings());
-                    if (octaneVersion.isLessOrEqThan(OctaneVersion.COLDPLAY_P1)) {
+                    if (octaneVersion.isLessThan(OctaneVersion.COLDPLAY_P1)) {
                         EntityTreeCellRenderer.removeBddFromEntityFields();
                     }
 
