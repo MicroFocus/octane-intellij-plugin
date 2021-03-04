@@ -264,11 +264,14 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
 
     private static Entity[] addEntityType(Entity searchEntityTypes[], Entity newType) {
         Entity searchEntityTypesCopy[] = new Entity[searchEntityTypes.length + 1];
-        for (int i = 0; i < searchEntityTypes.length; i++)
-            if (searchEntityTypes[i] != newType) // if the type was already added, return initial array
+        for (int i = 0; i < searchEntityTypes.length; i++) {
+            if (searchEntityTypes[i] != newType) { // if the type was already added, return initial array
                 searchEntityTypesCopy[i] = searchEntityTypes[i];
-            else
+            }
+            else {
                 return searchEntityTypes;
+            }
+        }
         searchEntityTypesCopy[searchEntityTypes.length] = newType;
 
         return searchEntityTypesCopy;
