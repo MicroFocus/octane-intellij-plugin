@@ -8,6 +8,7 @@ import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.nonentity.DownloadScriptService;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
 import com.intellij.ide.actions.OpenProjectFileChooserDescriptor;
+import com.intellij.notification.NotificationType;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -70,7 +71,16 @@ public class DownloadScriptUtil {
                 RestUtil.LOADING_MESSAGE = "Downloading script for " + test.getType() + " test with id " + testId;
                 RestUtil.runInBackground(
                         () -> {
-                            String scriptContent = scriptService.getTestScriptContent(testId);
+                            String scriptContent;
+                            try {
+                                scriptContent = scriptService.getTestScriptContent(testId);
+                            } catch (UnsupportedEncodingException e) {
+                                scriptContent = null;
+                                UiUtil.showWarningBalloon(project,
+                                        "Unsupported Encoding",
+                                        "The script you are trying to download contains unsupported characters.",
+                                        NotificationType.WARNING);
+                            }
                             return createTestScriptFile(selectedFolder.getPath(), scriptFileName, scriptContent);
                         },
                         (scriptFile) -> {
