@@ -147,12 +147,8 @@ public class EntityDetailView extends JPanel implements View {
     }
 
     private void setupComments(EntityModelWrapper entityModelWrapper) {
-        if (entityModelWrapper.getEntityType() != TASK) {
-            setComments(entityModelWrapper);
-            addSendNewCommentAction(entityModelWrapper);
-        } else {
-            headerPanel.removeCommentButton();
-        }
+        setComments(entityModelWrapper);
+        addSendNewCommentAction(entityModelWrapper);
     }
 
     public void setErrorMessage(String error) {
