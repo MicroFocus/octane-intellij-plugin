@@ -27,6 +27,7 @@ repositories {
     //local
     mavenLocal()
     mavenCentral()
+    maven { url 'http://nexus.almoctane.com:8081/content/repositories/mqm-snapshots' }
     maven { url 'http://dl.bintray.com/jetbrains/intellij-plugin-service' }
 }
 
