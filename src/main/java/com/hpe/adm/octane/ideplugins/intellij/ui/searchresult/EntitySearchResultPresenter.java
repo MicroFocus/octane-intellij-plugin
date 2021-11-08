@@ -105,10 +105,10 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
     }
 
     public void globalSearch(String query) {
+        String trimmedQuery = query.trim();
+        lastSearchQuery = trimmedQuery;
 
-        lastSearchQuery = query;
-
-        Task.Backgroundable backgroundTask = new Task.Backgroundable(null, "Searching Octane for \"" + query + "\"", false) {
+        Task.Backgroundable backgroundTask = new Task.Backgroundable(null, "Searching Octane for \"" + trimmedQuery + "\"", false) {
 
             private Collection<EntityModel> searchResults;
 
@@ -122,7 +122,7 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
                     searchEntityTypesCopy = addEntityType(searchEntityTypesCopy, Entity.BDD_SCENARIO);
                 }
 
-                searchResults = entitySearchService.searchGlobal(query, 20, searchEntityTypesCopy);
+                searchResults = entitySearchService.searchGlobal(trimmedQuery, 20, searchEntityTypesCopy);
             }
 
             public void onSuccess() {
