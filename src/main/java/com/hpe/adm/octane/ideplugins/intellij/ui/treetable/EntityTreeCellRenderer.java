@@ -42,25 +42,25 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
     private static final Map<Entity, HashSet<String>> entityFields = new HashMap<>();
     private static final String[] commonFields = new String[]{"id", "name", "phase"};
     private static final String[] progressFields = new String[]{FIELD_INVESTED_HOURS, FIELD_REMAINING_HOURS, FIELD_ESTIMATED_HOURS};
-    private static final Map<String, String> entityTypeDisplayName = new HashMap<>();
+    private static final Map<String, String> entityTypeDisplayNames = new HashMap<>();
     static {
-        entityTypeDisplayName.put(Entity.USER_STORY.getSubtypeName(), "User Story");
-        entityTypeDisplayName.put(Entity.DEFECT.getSubtypeName(), "Defect");
-        entityTypeDisplayName.put(Entity.QUALITY_STORY.getSubtypeName(), "Quality Story");
-        entityTypeDisplayName.put(Entity.EPIC.getSubtypeName(), "Epic");
-        entityTypeDisplayName.put(Entity.FEATURE.getSubtypeName(), "Feature");
-        entityTypeDisplayName.put(Entity.GHERKIN_TEST.getSubtypeName(), "Gherkin Test");
-        entityTypeDisplayName.put(Entity.MANUAL_TEST.getSubtypeName(), "Manual Test");
-        entityTypeDisplayName.put(Entity.MANUAL_TEST_RUN.getSubtypeName(), "Manual Run");
-        entityTypeDisplayName.put(Entity.AUTOMATED_TEST_RUN.getSubtypeName(), "Automated Run");
-        entityTypeDisplayName.put(Entity.TEST_SUITE.getSubtypeName(), "Test Suite");
-        entityTypeDisplayName.put(Entity.TEST_SUITE_RUN.getSubtypeName(), "Run Suite");
-        entityTypeDisplayName.put(Entity.REQUIREMENT.getSubtypeName(), "Requirement");
-        entityTypeDisplayName.put(Entity.BDD_SCENARIO.getSubtypeName(), "BDD Scenario");
-        entityTypeDisplayName.put(Entity.AUTOMATED_TEST.getSubtypeName(), "Automated Test");
-        entityTypeDisplayName.put(Entity.GHERKIN_AUTOMATED_RUN.getSubtypeName(), "Gherkin Auto Run");
-        entityTypeDisplayName.put(Entity.TASK.getTypeName(), "Task");
-        entityTypeDisplayName.put(Entity.BDD_SPEC.getTypeName(), "BDD Specification");
+        entityTypeDisplayNames.put(Entity.USER_STORY.getSubtypeName(), "User Story");
+        entityTypeDisplayNames.put(Entity.DEFECT.getSubtypeName(), "Defect");
+        entityTypeDisplayNames.put(Entity.QUALITY_STORY.getSubtypeName(), "Quality Story");
+        entityTypeDisplayNames.put(Entity.EPIC.getSubtypeName(), "Epic");
+        entityTypeDisplayNames.put(Entity.FEATURE.getSubtypeName(), "Feature");
+        entityTypeDisplayNames.put(Entity.GHERKIN_TEST.getSubtypeName(), "Gherkin Test");
+        entityTypeDisplayNames.put(Entity.MANUAL_TEST.getSubtypeName(), "Manual Test");
+        entityTypeDisplayNames.put(Entity.MANUAL_TEST_RUN.getSubtypeName(), "Manual Run");
+        entityTypeDisplayNames.put(Entity.AUTOMATED_TEST_RUN.getSubtypeName(), "Automated Run");
+        entityTypeDisplayNames.put(Entity.TEST_SUITE.getSubtypeName(), "Test Suite");
+        entityTypeDisplayNames.put(Entity.TEST_SUITE_RUN.getSubtypeName(), "Run Suite");
+        entityTypeDisplayNames.put(Entity.REQUIREMENT.getSubtypeName(), "Requirement");
+        entityTypeDisplayNames.put(Entity.BDD_SCENARIO.getSubtypeName(), "BDD Scenario");
+        entityTypeDisplayNames.put(Entity.AUTOMATED_TEST.getSubtypeName(), "Automated Test");
+        entityTypeDisplayNames.put(Entity.GHERKIN_AUTOMATED_RUN.getSubtypeName(), "Gherkin Auto Run");
+        entityTypeDisplayNames.put(Entity.TASK.getTypeName(), "Task");
+        entityTypeDisplayNames.put(Entity.BDD_SPEC.getTypeName(), "BDD Specification");
     }
 
     @Inject
@@ -174,7 +174,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
     }
 
     public static String getEntityDisplayName(String subtype) {
-        String displayName = entityTypeDisplayName.get(subtype);
+        String displayName = entityTypeDisplayNames.get(subtype);
         return displayName != null ? displayName : subtype;
     }
 
@@ -298,7 +298,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
                 } else {
                     type = storyEntityModel.getValue("type").getValue().toString();
                 }
-                String storyTypeName = entityTypeDisplayName.get(type);
+                String storyTypeName = entityTypeDisplayNames.get(type);
 
                 StringBuilder parentInfoSb = new StringBuilder();
                 parentInfoSb.append("<html>");
