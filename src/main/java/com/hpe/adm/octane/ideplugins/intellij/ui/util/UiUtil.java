@@ -46,7 +46,7 @@ public class UiUtil {
         StringBuilder result = new StringBuilder();
 
         if(Entity.getEntityType(entityModel) != null){
-            result.append(EntityTreeCellRenderer.getSubtypeName(Entity.getEntityType(entityModel).getEntityName()));
+            result.append(EntityTreeCellRenderer.getEntityDisplayName(Entity.getEntityType(entityModel).getEntityName()));
             result.append(" ");
         }
 
