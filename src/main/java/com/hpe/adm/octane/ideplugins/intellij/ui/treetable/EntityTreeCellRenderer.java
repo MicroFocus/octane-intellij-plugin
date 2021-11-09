@@ -42,21 +42,25 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
     private static final Map<Entity, HashSet<String>> entityFields = new HashMap<>();
     private static final String[] commonFields = new String[]{"id", "name", "phase"};
     private static final String[] progressFields = new String[]{FIELD_INVESTED_HOURS, FIELD_REMAINING_HOURS, FIELD_ESTIMATED_HOURS};
-    private static final Map<String, String> subtypeNames = new HashMap<>();
+    private static final Map<String, String> entityTypeDisplayNames = new HashMap<>();
     static {
-        subtypeNames.put(Entity.USER_STORY.getSubtypeName(), "User Story");
-        subtypeNames.put(Entity.DEFECT.getSubtypeName(), "Defect");
-        subtypeNames.put(Entity.QUALITY_STORY.getSubtypeName(), "Quality Story");
-        subtypeNames.put(Entity.EPIC.getSubtypeName(), "Epic");
-        subtypeNames.put(Entity.FEATURE.getSubtypeName(), "Feature");
-        subtypeNames.put(Entity.GHERKIN_TEST.getSubtypeName(), "Gherkin Test");
-        subtypeNames.put(Entity.MANUAL_TEST.getSubtypeName(), "Manual Test");
-        subtypeNames.put(Entity.MANUAL_TEST_RUN.getSubtypeName(), "Manual Run");
-        subtypeNames.put(Entity.AUTOMATED_TEST_RUN.getSubtypeName(), "Automated Run");
-        subtypeNames.put(Entity.TEST_SUITE.getSubtypeName(), "Test Suite");
-        subtypeNames.put(Entity.TEST_SUITE_RUN.getSubtypeName(), "Run Suite");
-        subtypeNames.put(Entity.REQUIREMENT.getSubtypeName(), "Requirement");
-        subtypeNames.put(Entity.BDD_SCENARIO.getSubtypeName(), "BDD Scenario");
+        entityTypeDisplayNames.put(Entity.USER_STORY.getSubtypeName(), "User Story");
+        entityTypeDisplayNames.put(Entity.DEFECT.getSubtypeName(), "Defect");
+        entityTypeDisplayNames.put(Entity.QUALITY_STORY.getSubtypeName(), "Quality Story");
+        entityTypeDisplayNames.put(Entity.EPIC.getSubtypeName(), "Epic");
+        entityTypeDisplayNames.put(Entity.FEATURE.getSubtypeName(), "Feature");
+        entityTypeDisplayNames.put(Entity.GHERKIN_TEST.getSubtypeName(), "Gherkin Test");
+        entityTypeDisplayNames.put(Entity.MANUAL_TEST.getSubtypeName(), "Manual Test");
+        entityTypeDisplayNames.put(Entity.MANUAL_TEST_RUN.getSubtypeName(), "Manual Run");
+        entityTypeDisplayNames.put(Entity.AUTOMATED_TEST_RUN.getSubtypeName(), "Automated Run");
+        entityTypeDisplayNames.put(Entity.TEST_SUITE.getSubtypeName(), "Test Suite");
+        entityTypeDisplayNames.put(Entity.TEST_SUITE_RUN.getSubtypeName(), "Run Suite");
+        entityTypeDisplayNames.put(Entity.REQUIREMENT.getSubtypeName(), "Requirement");
+        entityTypeDisplayNames.put(Entity.BDD_SCENARIO.getSubtypeName(), "BDD Scenario");
+        entityTypeDisplayNames.put(Entity.AUTOMATED_TEST.getSubtypeName(), "Automated Test");
+        entityTypeDisplayNames.put(Entity.GHERKIN_AUTOMATED_RUN.getSubtypeName(), "Gherkin Auto Run");
+        entityTypeDisplayNames.put(Entity.TASK.getTypeName(), "Task");
+        entityTypeDisplayNames.put(Entity.BDD_SPEC.getTypeName(), "BDD Specification");
     }
 
     @Inject
@@ -169,9 +173,9 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
         return Collections.unmodifiableMap(entityFields);
     }
 
-    public static String getSubtypeName(String subtype) {
-        String subtypeName = subtypeNames.get(subtype);
-        return subtypeName != null ? subtypeName : subtype;
+    public static String getEntityDisplayName(String subtype) {
+        String displayName = entityTypeDisplayNames.get(subtype);
+        return displayName != null ? displayName : subtype;
     }
 
     @Override
@@ -294,7 +298,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
                 } else {
                     type = storyEntityModel.getValue("type").getValue().toString();
                 }
-                String storyTypeName = subtypeNames.get(type);
+                String storyTypeName = entityTypeDisplayNames.get(type);
 
                 StringBuilder parentInfoSb = new StringBuilder();
                 parentInfoSb.append("<html>");
@@ -341,7 +345,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
                     String ownerName = getUiDataFromModel(owner, "name");
                     String ownerType = getUiDataFromModel(owner, "type");
 
-                    String entityName = getSubtypeName(ownerType) + " " + ownerId + " - " + ownerName;
+                    String entityName = getEntityDisplayName(ownerType) + " " + ownerId + " - " + ownerName;
 
                     rowPanel.setEntityName("", entityName);
                     rowPanel.setEntitySubTitle(text, "");
