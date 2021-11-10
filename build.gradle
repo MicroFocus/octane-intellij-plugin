@@ -12,7 +12,8 @@
  */
 
 plugins {
-    id "org.jetbrains.intellij" version "0.4.21"
+    id "org.jetbrains.intellij" version "0.7.3"
+    id 'org.openjfx.javafxplugin' version '0.0.10'
 }
 
 project.group = projectGroup
@@ -64,24 +65,33 @@ dependencies {
 }
 
 intellij {
-    plugins 'java'
+    plugins = ['java']
 
-    version project.hasProperty("intellijVersion") ? project.getProperty("intellijVersion") : ideaVersion
+    version = project.hasProperty("intellijVersion") ? project.getProperty("intellijVersion") : ideaVersion
     //to debug the plugin on other platforms comment out alternativeIdePath and set the path to the installation
     //folder of the IDE
     //alternativeIdePath 'C:\\DevTools\\PyCharm Community Edition 2018.2.1'
 
     plugins = ["maven", "gradle"]
     pluginName = project.hasProperty('zipname') ? project.getProperty('zipname') : "Octane IntelliJ Plugin"
-    updateSinceUntilBuild false
+    updateSinceUntilBuild = false
 
-    downloadSources true
-    sandboxDirectory project.rootDir.canonicalPath + "/.sandbox"
+    downloadSources = true
+    sandboxDirectory = project.rootDir.canonicalPath + "/.sandbox"
+}
+
+javafx {
+    modules = [ 'javafx.controls', 'javafx.graphics', 'javafx.swing', 'javafx.base', 'javafx.web' ]
 }
 
 tasks.withType(JavaExec) {
+    jvmArgs '--add-exports', 'java.base/jdk.internal.vm=ALL-UNNAMED'
     if (System.getProperty('DEBUG', 'false') == 'true') {
         jvmArgs '-Xdebug', '-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=9099'
     }
+}
+
+configurations.all {
+    exclude module: 'logback-classic-1.2.3'
 }
 
