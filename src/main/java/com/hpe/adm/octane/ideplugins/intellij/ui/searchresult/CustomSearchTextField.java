@@ -13,6 +13,7 @@
 
 package com.hpe.adm.octane.ideplugins.intellij.ui.searchresult;
 
+import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.CommonShortcuts;
@@ -20,7 +21,6 @@ import com.intellij.openapi.actionSystem.EmptyAction;
 import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.ui.JBMenuItem;
-import com.intellij.openapi.ui.JBPopupMenu;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.SystemInfo;
@@ -42,6 +42,7 @@ import java.awt.event.*;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author max
@@ -135,64 +136,46 @@ public class CustomSearchTextField extends JPanel {
             }
         });
 
-        if (isSearchControlUISupported()) {
-            myTextField.putClientProperty("JTextField.variant", "search");
-            myTextField.putClientProperty("JTextField.Search.CancelAction", new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    myTextField.setText("");
-                    onFieldCleared();
-                }
-            });
-
-            if (historyEnabled) {
-                myNativeSearchPopup = new JBPopupMenu();
-                myNoItems = new JBMenuItem("No recent searches");
-                myNoItems.setEnabled(false);
-
-                updateMenu();
-                myTextField.putClientProperty("JTextField.Search.FindPopup", myNativeSearchPopup);
+        myToggleHistoryLabel = new JLabel(new ImageIcon(Objects.requireNonNull(CustomSearchTextField.class.getResource(Constants.IMG_SEARCH_ICON))));
+        myToggleHistoryLabel.setBorder(BorderFactory.createEmptyBorder(0, 3, 0, 0));
+        myToggleHistoryLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        myToggleHistoryLabel.setOpaque(true);
+        myToggleHistoryLabel.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent e) {
+                togglePopup();
             }
+        });
+        if (historyEnabled) {
+            add(myToggleHistoryLabel, BorderLayout.WEST);
+        }
+
+        myClearFieldLabel = new JLabel(UIUtil.isUnderDarcula() ? AllIcons.Actions.CloseHovered : AllIcons.Actions.Close);
+        myClearFieldLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 3));
+        myClearFieldLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        myClearFieldLabel.setOpaque(true);
+        add(myClearFieldLabel, BorderLayout.EAST);
+        myClearFieldLabel.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent e) {
+                myTextField.setText("");
+                onFieldCleared();
+            }
+        });
+
+        final Border originalBorder;
+        if (SystemInfo.isMac) {
+            originalBorder = BorderFactory.createLoweredBevelBorder();
         }
         else {
-            myToggleHistoryLabel = new JLabel(AllIcons.Actions.Search);
-            myToggleHistoryLabel.setOpaque(true);
-            myToggleHistoryLabel.addMouseListener(new MouseAdapter() {
-                public void mousePressed(MouseEvent e) {
-                    togglePopup();
-                }
-            });
-            if (historyEnabled) {
-                add(myToggleHistoryLabel, BorderLayout.WEST);
-            }
-
-            myClearFieldLabel = new JLabel(UIUtil.isUnderDarcula() ? AllIcons.Actions.CloseHovered : AllIcons.Actions.Close);
-            myClearFieldLabel.setOpaque(true);
-            add(myClearFieldLabel, BorderLayout.EAST);
-            myClearFieldLabel.addMouseListener(new MouseAdapter() {
-                public void mousePressed(MouseEvent e) {
-                    myTextField.setText("");
-                    onFieldCleared();
-                }
-            });
-
-            final Border originalBorder;
-            if (SystemInfo.isMac) {
-                originalBorder = BorderFactory.createLoweredBevelBorder();
-            }
-            else {
-                originalBorder = myTextField.getBorder();
-            }
-
-            myToggleHistoryLabel.setBackground(myTextField.getBackground());
-            myClearFieldLabel.setBackground(myTextField.getBackground());
-
-            setBorder(new CompoundBorder(BorderFactory.createEmptyBorder(2, 0, 2, 0), originalBorder));
-
-            myTextField.setOpaque(true);
-            myTextField.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
-
+            originalBorder = myTextField.getBorder();
         }
+
+        myToggleHistoryLabel.setBackground(myTextField.getBackground());
+        myClearFieldLabel.setBackground(myTextField.getBackground());
+
+        setBorder(new CompoundBorder(BorderFactory.createEmptyBorder(2, 0, 0, 15), originalBorder));
+
+        myTextField.setOpaque(true);
+        myTextField.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
 
         if (ApplicationManager.getApplication() != null) { //tests
             final ActionManager actionManager = ActionManager.getInstance();
@@ -404,6 +387,7 @@ public class CustomSearchTextField extends JPanel {
     @Override
     public Dimension getPreferredSize() {
         Dimension size = super.getPreferredSize();
+        size.width += 50;
         Border border = super.getBorder();
         if (border != null && UIUtil.isUnderAquaBasedLookAndFeel()) {
             JBInsets.addTo(size, border.getBorderInsets(this));
