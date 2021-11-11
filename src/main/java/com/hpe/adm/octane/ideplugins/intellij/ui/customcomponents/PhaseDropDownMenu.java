@@ -123,7 +123,7 @@ public class PhaseDropDownMenu extends JPanel {
             String phase = Util.getUiDataFromModel(e.getValue("target_phase"), "name");
             // don't put the phase which is already in the target label into the
             // popup menu
-            if (!targetPhaseLabel.getText().contains(phase)) {
+            if (!targetPhaseLabel.getText().substring(MOVE_TO.length()).equals(phase)) {
                 JMenuItem menuItem = new JMenuItem(phase);
                 labelPhaseMap.put(menuItem, e.getValue("target_phase"));
             }
