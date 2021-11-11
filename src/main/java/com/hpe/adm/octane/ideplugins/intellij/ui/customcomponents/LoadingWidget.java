@@ -26,7 +26,7 @@ public class LoadingWidget extends JPanel {
 
     public LoadingWidget(String loadingMessage) {
         setLayout(new BorderLayout(0, 0));
-        ImageIcon pacmanImage = new ImageIcon(LoadingWidget.class.getClassLoader().getResource(Constants.IMG_AJAX_SPINNER));
+        ImageIcon pacmanImage = new ImageIcon(LoadingWidget.class.getResource(Constants.IMG_AJAX_SPINNER));
         JLabel loadingLabel = new JLabel(pacmanImage);
         //loadingLabel.setText(loadingMessage);
         add(loadingLabel, BorderLayout.CENTER);
