@@ -54,8 +54,8 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
         entityTypeDisplayNames.put(Entity.MANUAL_TEST_RUN.getSubtypeName(), "Manual Run");
         entityTypeDisplayNames.put(Entity.AUTOMATED_TEST_RUN.getSubtypeName(), "Automated Run");
         entityTypeDisplayNames.put(Entity.TEST_SUITE.getSubtypeName(), "Test Suite");
-        entityTypeDisplayNames.put(Entity.TEST_SUITE_RUN.getSubtypeName(), "Run Suite");
-        entityTypeDisplayNames.put(Entity.REQUIREMENT.getSubtypeName(), "Requirement");
+        entityTypeDisplayNames.put(Entity.TEST_SUITE_RUN.getSubtypeName(), "Suite Run");
+        entityTypeDisplayNames.put(Entity.REQUIREMENT.getSubtypeName(), "Requirement Document");
         entityTypeDisplayNames.put(Entity.BDD_SCENARIO.getSubtypeName(), "BDD Scenario");
         entityTypeDisplayNames.put(Entity.AUTOMATED_TEST.getSubtypeName(), "Automated Test");
         entityTypeDisplayNames.put(Entity.GHERKIN_AUTOMATED_RUN.getSubtypeName(), "Gherkin Auto Run");
