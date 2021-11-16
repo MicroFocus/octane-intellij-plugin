@@ -57,7 +57,8 @@ public final class NotificationBuilder {
     }
 
     public Notification get() {
-        Notification notification = new Notification(NOTIFICATION_GROUP, title, message, type, listener.orNull());
+        Notification notification = new Notification(NOTIFICATION_GROUP, title, message, type);
+        notification.setListener(listener.orNull());
         if (!showBalloon) {
             notification.expire();
         }

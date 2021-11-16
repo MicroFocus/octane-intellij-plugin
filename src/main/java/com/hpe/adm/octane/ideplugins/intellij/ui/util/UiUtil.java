@@ -35,8 +35,7 @@ public class UiUtil {
                         "Octane IntelliJ Plugin",
                         title,
                         htmlText,
-                        type,
-                        null);
+                        type);
 
         notification.notify(project);
     }

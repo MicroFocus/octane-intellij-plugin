@@ -73,8 +73,8 @@ public class OpenActiveItemAction extends OctanePluginAction {
                     e.getPresentation().setText(activeItemId);
 
                     ConnectionSettings connectionSettings =
-                            ServiceManager
-                                    .getService(e.getProject(), IdePersistentConnectionSettingsProvider.class)
+                            e.getProject()
+                                    .getService(IdePersistentConnectionSettingsProvider.class)
                                     .getConnectionSettings();
 
                     // SSO login does not have dynamic icon in order to not trigger grant token login

@@ -63,7 +63,7 @@ public class PluginModule extends AbstractModule {
 
         this.project = project;
 
-        ConnectionSettingsProvider connectionSettingsProvider = ServiceManager.getService(project, IdePersistentConnectionSettingsProvider.class);
+        ConnectionSettingsProvider connectionSettingsProvider = project.getService(IdePersistentConnectionSettingsProvider.class);
 
         TokenPollingStartedHandler pollingStartedHandler = loginPageUrl -> SwingUtilities.invokeLater(() -> {
             isSsoLoginInProgress = true;
@@ -163,7 +163,7 @@ public class PluginModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(IdePluginPersistentState.class)
-                .toProvider(() -> ServiceManager.getService(project, IdePluginPersistentState.class));
+                .toProvider(() -> project.getService(IdePluginPersistentState.class));
     }
 
     @Provides
