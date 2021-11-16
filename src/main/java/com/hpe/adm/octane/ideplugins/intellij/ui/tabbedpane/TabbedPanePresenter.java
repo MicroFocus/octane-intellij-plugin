@@ -326,7 +326,7 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
                             "Octane IntelliJ Plugin",
                             "Detail tab not supported",
                             "Opening " + entityType.name().toLowerCase() + " " + entityId + "  in browser...",
-                            NotificationType.WARNING, null);
+                            NotificationType.WARNING);
 
             notification.notify(project);
 
