@@ -290,7 +290,7 @@ public class HeaderPanel extends JPanel {
 
     private final class EntityOpenInBrowser extends AnAction {
         public EntityOpenInBrowser() {
-            super("Open in browser the current entity", "Open in browser", IconLoader.findIcon(Constants.IMG_BROWSER_ICON));
+            super("Open in browser", "Open in browser", IconLoader.findIcon(Constants.IMG_BROWSER_ICON));
         }
 
         @Override

@@ -227,16 +227,6 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
 
             JPopupMenu popup = new JPopupMenu();
 
-            JMenuItem viewInBrowserItem = new JMenuItem("View in browser", IconLoader.findIcon(Constants.IMG_BROWSER_ICON));
-            viewInBrowserItem.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mousePressed(MouseEvent mouseEvent) {
-                    entityService.openInBrowser(entityModel);
-                }
-            });
-            popup.add(viewInBrowserItem);
-
-
             if (TabbedPanePresenter.isDetailTabSupported(entityType)) {
                 Icon icon = new ImageIcon(iconFactory.getIconAsImage(entityType, 20, 11));
                 JMenuItem viewDetailMenuItem = new JMenuItem("View details", icon);
@@ -248,6 +238,15 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
                 });
                 popup.add(viewDetailMenuItem);
             }
+
+            JMenuItem viewInBrowserItem = new JMenuItem("View in browser", IconLoader.findIcon(Constants.IMG_BROWSER_ICON));
+            viewInBrowserItem.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent mouseEvent) {
+                    entityService.openInBrowser(entityModel);
+                }
+            });
+            popup.add(viewInBrowserItem);
 
             if (entityType == Entity.TASK || entityType == Entity.COMMENT) {
                 //Get parent info
