@@ -239,15 +239,6 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
                 popup.add(viewDetailMenuItem);
             }
 
-            JMenuItem viewInBrowserItem = new JMenuItem("View in browser", IconLoader.findIcon(Constants.IMG_BROWSER_ICON));
-            viewInBrowserItem.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mousePressed(MouseEvent mouseEvent) {
-                    entityService.openInBrowser(entityModel);
-                }
-            });
-            popup.add(viewInBrowserItem);
-
             if (entityType == Entity.TASK || entityType == Entity.COMMENT) {
                 //Get parent info
                 EntityModel parentEntityModel;
@@ -270,6 +261,15 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
                     popup.add(viewParentMenuItem);
                 }
             }
+
+            JMenuItem viewInBrowserItem = new JMenuItem("View in browser", IconLoader.findIcon(Constants.IMG_BROWSER_ICON));
+            viewInBrowserItem.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent mouseEvent) {
+                    entityService.openInBrowser(entityModel);
+                }
+            });
+            popup.add(viewInBrowserItem);
 
             if (entityType == Entity.GHERKIN_TEST || entityType == Entity.BDD_SCENARIO) {
                 JMenuItem downloadScriptItem = new JMenuItem("Download script", AllIcons.Actions.Download);
