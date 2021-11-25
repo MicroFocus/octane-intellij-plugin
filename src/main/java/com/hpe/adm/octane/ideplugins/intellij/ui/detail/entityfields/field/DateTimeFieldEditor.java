@@ -237,8 +237,7 @@ public class DateTimeFieldEditor extends FieldEditor {
         LocalDate localDate = microbaDatePicker.getDate()
                 .toInstant()
                 .atZone(ZoneId.systemDefault()).toLocalDate();
-        //Date uses 0 based numbering while ZonedDateTime uses 1 based numbering
-        localDate = localDate.plusMonths(1);
+
         // Converting to UTC is not necessary, the SDK will do it for you
         return ZonedDateTime.of(localDate,
                 LocalTime.of(
