@@ -21,6 +21,7 @@ project.group = projectGroup
 project.version = projectVersion
 
 repositories {
+    mavenLocal()
     mavenCentral()
     maven { url 'http://nexus.almoctane.com:8081/content/repositories/mqm-snapshots' }
 }
