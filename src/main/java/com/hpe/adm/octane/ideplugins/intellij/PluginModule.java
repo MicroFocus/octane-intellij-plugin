@@ -24,7 +24,6 @@ import com.google.inject.name.Named;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePersistentConnectionSettingsProvider;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.settings.logindialog.ExternalUrlLoginDialog;
-import com.hpe.adm.octane.ideplugins.intellij.settings.logindialog.JavaFxLoginDialog;
 import com.hpe.adm.octane.ideplugins.intellij.settings.logindialog.LoginDialog;
 import com.hpe.adm.octane.ideplugins.intellij.ui.searchresult.SearchResultEntityTreeCellRenderer;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeCellRenderer;
@@ -88,7 +87,7 @@ public class PluginModule extends AbstractModule {
                         SwingUtilities.invokeAndWait(() -> {
 
                             long secondsUntilTimeout = (pollingStatus.timeoutTimeStamp - System.currentTimeMillis()) / 1000;
-                            loginDialog.setTitle(JavaFxLoginDialog.TITLE + " (waiting for session, timeout in: " + secondsUntilTimeout + ")");
+                            loginDialog.setTitle(LoginDialog.TITLE + " (waiting for session, timeout in: " + secondsUntilTimeout + ")");
 
                             pollingStatus.shouldPoll = !loginDialog.wasClosed();
                             if(loginDialog.wasClosed()) {
