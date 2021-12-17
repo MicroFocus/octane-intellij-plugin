@@ -17,8 +17,10 @@ import com.google.inject.Inject;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.DetailsViewDefaultFields;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.html.HtmlPanel;
+import com.hpe.adm.octane.ideplugins.intellij.ui.detail.html.JavaFxHtmlPanel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.html.SwingHtmlPanel;
 import com.hpe.adm.octane.ideplugins.intellij.util.HtmlTextEditor;
+import com.hpe.adm.octane.ideplugins.intellij.util.JavaFxUtils;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.util.ui.JBUI;
@@ -46,7 +48,11 @@ public class CommentsPanel extends JPanel {
     @Inject
     public CommentsPanel() {
 
-       this.commentsPanel = new SwingHtmlPanel();
+        if(JavaFxUtils.isJavaFxAvailable()) {
+            this.commentsPanel = new JavaFxHtmlPanel();
+        } else {
+            this.commentsPanel = new SwingHtmlPanel();
+        }
 
         setLayout(new BorderLayout());
 

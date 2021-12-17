@@ -13,6 +13,7 @@
 
 plugins {
     id "org.jetbrains.intellij" version "0.7.3"
+    id 'org.openjfx.javafxplugin' version '0.0.10'
 }
 
 project.group = projectGroup
@@ -79,7 +80,9 @@ intellij {
     sandboxDirectory = project.rootDir.canonicalPath + "/.sandbox"
 }
 
-
+javafx {
+    modules = [ 'javafx.controls', 'javafx.graphics', 'javafx.swing', 'javafx.base', 'javafx.web' ]
+}
 
 tasks.withType(JavaExec) {
     jvmArgs '--add-exports', 'java.base/jdk.internal.vm=ALL-UNNAMED'
