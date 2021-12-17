@@ -12,24 +12,17 @@
  */
 
 plugins {
-    id "org.jetbrains.intellij" version "0.7.3"
+    id 'java'
+    id 'org.jetbrains.intellij' version '0.7.3'
     id 'org.openjfx.javafxplugin' version '0.0.10'
 }
 
 project.group = projectGroup
 project.version = projectVersion
 
-apply plugin: 'java'
-apply plugin: 'groovy'
-apply plugin: "idea"
-apply plugin: "org.jetbrains.intellij"
-
 repositories {
-    //local
-    mavenLocal()
     mavenCentral()
     maven { url 'http://nexus.almoctane.com:8081/content/repositories/mqm-snapshots' }
-    maven { url 'https://www.jetbrains.com/intellij-repository/snapshots/com/jetbrains/intellij/' }
 }
 
 clean.doLast {
@@ -45,6 +38,11 @@ sourceSets {
         java.srcDir 'src/test/java'
         resources.srcDir 'src/test/resources'
     }
+}
+
+javafx {
+    version = '11.0.2'
+    modules = ['javafx.controls', 'javafx.graphics', 'javafx.swing', 'javafx.base', 'javafx.web']
 }
 
 dependencies {
@@ -80,9 +78,6 @@ intellij {
     sandboxDirectory = project.rootDir.canonicalPath + "/.sandbox"
 }
 
-javafx {
-    modules = [ 'javafx.controls', 'javafx.graphics', 'javafx.swing', 'javafx.base', 'javafx.web' ]
-}
 
 tasks.withType(JavaExec) {
     jvmArgs '--add-exports', 'java.base/jdk.internal.vm=ALL-UNNAMED'
@@ -94,4 +89,3 @@ tasks.withType(JavaExec) {
 configurations.all {
     exclude module: 'logback-classic-1.2.3'
 }
-
