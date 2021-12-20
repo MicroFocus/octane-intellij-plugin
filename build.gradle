@@ -52,7 +52,7 @@ dependencies {
 
     operatingSystems.each { os ->
         javaFxModules.each { module ->
-            implementation "org.openjfx:javafx-${module}:${javaFxVersion}:${os}"
+            compileOnly "org.openjfx:javafx-${module}:${javaFxVersion}:${os}"
         }
     }
 
