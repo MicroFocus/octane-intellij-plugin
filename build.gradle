@@ -41,14 +41,19 @@ sourceSets {
     }
 }
 
-javafx {
-    version = '11.0.2'
-    modules = ['javafx.controls', 'javafx.graphics', 'javafx.swing', 'javafx.base', 'javafx.web']
-}
-
 dependencies {
     compile("com.hpe.adm.octane.ideplugins:octane-plugin-common:$commonVersion"){
         exclude group: 'org.slf4j', module: 'slf4j-api'
+    }
+
+    def javaFxVersion = '11.0.2'
+    def javaFxModules = ['controls', 'graphics', 'swing', 'base', 'web']
+    def operatingSystems = ['win', 'linux', 'mac']
+
+    operatingSystems.each {os ->
+        javaFxModules.each { module ->
+            implementation "org.openjfx:javafx-${module}:${javaFxVersion}:${os}"
+        }
     }
 
     compile group: 'org.jsoup', name: 'jsoup', version: '1.8.3'
