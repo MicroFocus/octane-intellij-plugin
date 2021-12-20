@@ -105,7 +105,7 @@ public class EntityTreeView implements View {
         scrollPane.setViewportView(tree);
 
         // Toolbar
-        rootPanel.add(createToolbar(), BorderLayout.EAST);
+        rootPanel.add(createToolbar(rootPanel), BorderLayout.EAST);
     }
 
     private FillingTree initTree(TreeCellRenderer entityTreeCellRenderer) {
@@ -196,8 +196,9 @@ public class EntityTreeView implements View {
         toolBarActionGroup.addSeparator();
     }
 
-    private JComponent createToolbar() {
+    private JComponent createToolbar(JComponent root) {
         ActionToolbar actionToolBar = ActionManager.getInstance().createActionToolbar("My Work actions", toolBarActionGroup, false);
+        actionToolBar.setTargetComponent(root);
         actionToolBar.getComponent().setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, JBColor.border()));
         return actionToolBar.getComponent();
     }

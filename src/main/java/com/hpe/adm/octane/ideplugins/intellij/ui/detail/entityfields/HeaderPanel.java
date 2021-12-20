@@ -161,6 +161,7 @@ public class HeaderPanel extends JPanel {
         actionToolBar = ActionManager.
                 getInstance().createActionToolbar("save | refresh | fields | open in browser | comments ", buttonActionGroup,
                 true);
+        actionToolBar.setTargetComponent(panelControls);
         actionToolBar.setLayoutPolicy(0);
         ((ActionToolbarImpl) actionToolBar).addComponentListener(new ComponentAdapter() {
             @Override
