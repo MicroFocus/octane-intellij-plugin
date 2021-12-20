@@ -47,10 +47,10 @@ dependencies {
     }
 
     def javaFxVersion = '11.0.2'
-    def javaFxModules = ['controls', 'graphics', 'swing', 'base', 'web']
+    def javaFxModules = ['graphics', 'swing', 'base', 'web']
     def operatingSystems = ['win', 'linux', 'mac']
 
-    operatingSystems.each {os ->
+    operatingSystems.each { os ->
         javaFxModules.each { module ->
             implementation "org.openjfx:javafx-${module}:${javaFxVersion}:${os}"
         }
