@@ -46,14 +46,22 @@ dependencies {
         exclude group: 'org.slf4j', module: 'slf4j-api'
     }
 
+    //use javafx modules only at compile time based on the current OS
     def javaFxVersion = '11.0.2'
     def javaFxModules = ['graphics', 'swing', 'base', 'web']
-    def operatingSystems = ['win', 'linux', 'mac']
+    def currentOS = org.gradle.internal.os.OperatingSystem.current()
+    def platform
 
-    operatingSystems.each { os ->
-        javaFxModules.each { module ->
-            compileOnly "org.openjfx:javafx-${module}:${javaFxVersion}:${os}"
-        }
+    if (currentOS.isWindows()) {
+        platform = 'win'
+    } else if (currentOS.isLinux()) {
+        platform = 'linux'
+    } else if (currentOS.isMacOsX()) {
+        platform = 'mac'
+    }
+
+    javaFxModules.each { module ->
+        compileOnly "org.openjfx:javafx-${module}:${javaFxVersion}:${platform}"
     }
 
     compile group: 'org.jsoup', name: 'jsoup', version: '1.8.3'
