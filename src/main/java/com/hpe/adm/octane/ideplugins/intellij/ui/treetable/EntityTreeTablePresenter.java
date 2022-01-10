@@ -93,12 +93,15 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
 
     @Inject
     private Project project;
-    
+
     @Inject
     private CommentService commentService;
 
     @Inject
     private ConnectionSettingsProvider connectionSettingsProvider;
+
+    @Inject
+    private OctaneVersionService versionService;
 
     public EntityTreeTablePresenter() {
     }
@@ -148,7 +151,9 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
     private void updateActiveItem(Collection<EntityModel> myWork) {
 
         //Convert to normal entities
-        myWork = MyWorkUtil.getEntityModelsFromUserItems(myWork);
+        if (!isIronMaidenP1OrHigher()) {
+            myWork = MyWorkUtil.getEntityModelsFromUserItems(myWork);
+        }
 
         PartialEntity activeItem = getActiveItemFromPersistentState();
         if (activeItem == null) return;
@@ -219,8 +224,14 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
 
     private void setContextMenuFactory(EntityTreeView entityTreeView) {
         entityTreeView.setEntityContextMenuFactory(userItem -> {
+            EntityModel entityModel;
 
-            EntityModel entityModel = MyWorkUtil.getEntityModelFromUserItem(userItem);
+            if (!isIronMaidenP1OrHigher()) {
+                entityModel = MyWorkUtil.getEntityModelFromUserItem(userItem);
+            } else {
+                entityModel = userItem;
+            }
+
             Entity entityType = Entity.getEntityType(entityModel);
             String entityName = Util.getUiDataFromModel(entityModel.getValue("name"));
             Integer entityId = Integer.valueOf(getUiDataFromModel(entityModel.getValue("id")));
@@ -347,22 +358,31 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
                                         public void run(@NotNull ProgressIndicator indicator) {
                                             if (commentService.dismissComment(entityModel)) {
 
-                                                String userItemId = (String)((ReferenceFieldModel)userItem.getValue("my_follow_items_comment")).getValue().getValue("id").getValue();
+                                                String userItemId;
+
+                                                if (isIronMaidenP1OrHigher()) {
+                                                    userItemId = userItem.getId();
+                                                } else {
+                                                    userItemId = (String) ((ReferenceFieldModel) userItem.getValue("my_follow_items_comment")).getValue().getValue("id").getValue();
+                                                }
+
                                                 //Remove dismissed item if successful
                                                 List list = entityTreeView.getTreeModel().getGroupedEntities()
                                                         .values()
                                                         .stream()
                                                         .flatMap(Collection::stream)
-                                                        .filter( currentEntityModel -> {
-                                                                    boolean isComment = currentEntityModel.getValue("entity_type").getValue() == "comment";
-                                                                    String myFollowEntityModelId = (MyWorkUtil.getEntityModelFromUserItem(currentEntityModel)).getId();
-                                                                    //check if it's comment
-                                                                    if (isComment) {
-                                                                        //check if it's the selected item
-                                                                        return !userItemId.equals(myFollowEntityModelId);
-                                                                    }
-                                                                    return true;
-                                                                })
+                                                        .filter(currentEntityModel -> {
+                                                            if (isIronMaidenP1OrHigher()) {
+                                                                boolean isComment = currentEntityModel.getType().equals("comment");
+
+                                                                return !isComment || !userItemId.equals(currentEntityModel.getId());
+                                                            } else {
+                                                                boolean isComment = (MyWorkUtil.getEntityModelFromUserItem(currentEntityModel)).getType().equals("comment");
+                                                                String myFollowEntityModelId = (MyWorkUtil.getEntityModelFromUserItem(currentEntityModel)).getId();
+
+                                                                return !isComment || !userItemId.equals(myFollowEntityModelId);
+                                                            }
+                                                        })
                                                         .collect(Collectors.toList());
 
                                                 SwingUtilities.invokeLater(() -> {
@@ -478,10 +498,14 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
 
         entityCategories.add(new UserItemEntityCategory(entityLabelMap.get(Entity.REQUIREMENT).getValue("plural_capitalized").getValue().toString(), Entity.REQUIREMENT));
         entityCategories.add(new UserItemEntityCategory(entityLabelMap.get(Entity.TASK).getValue("plural_capitalized").getValue().toString(), Entity.TASK));
+        entityCategories.add(new UserItemEntityCategory("Test runs", Entity.MANUAL_TEST_RUN, Entity.TEST_SUITE_RUN));
         entityCategories.add(new UserItemEntityCategory("Tests", Entity.GHERKIN_TEST, Entity.MANUAL_TEST, Entity.BDD_SCENARIO));
         entityCategories.add(new UserItemEntityCategory("Mention in comments", Entity.COMMENT));
-        entityCategories.add(new UserItemEntityCategory("Runs", Entity.MANUAL_TEST_RUN, Entity.TEST_SUITE_RUN));
 
         return new EntityTreeModel(entityCategories, entityModels);
+    }
+
+    private boolean isIronMaidenP1OrHigher() {
+        return OctaneVersion.compare(versionService.getOctaneVersion(), OctaneVersion.Operation.HIGHER_EQ, OctaneVersion.IRONMAIDEN_P1);
     }
 }

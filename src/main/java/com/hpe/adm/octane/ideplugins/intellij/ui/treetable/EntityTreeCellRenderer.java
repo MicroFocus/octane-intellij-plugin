@@ -21,7 +21,9 @@ import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.entityicon.EntityIconFactory;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
 import com.hpe.adm.octane.ideplugins.services.mywork.MyWorkUtil;
+import com.hpe.adm.octane.ideplugins.services.nonentity.OctaneVersionService;
 import com.hpe.adm.octane.ideplugins.services.util.EntityTypeIdPair;
+import com.hpe.adm.octane.ideplugins.services.util.OctaneVersion;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ui.UIUtil;
@@ -69,6 +71,9 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
 
     @Inject
     private EntityIconFactory entityIconFactory;
+
+    @Inject
+    private OctaneVersionService versionService;
 
     static {
         //US
@@ -210,7 +215,14 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
 
             //Base data
             EntityModel userItem = (EntityModel) value;
-            EntityModel entityModel = MyWorkUtil.getEntityModelFromUserItem(userItem);
+            EntityModel entityModel;
+
+            if (!isIronMaidenP1OrHigher()) {
+                entityModel = MyWorkUtil.getEntityModelFromUserItem(userItem);
+            } else {
+                entityModel = userItem;
+            }
+
             Entity entityType = Entity.getEntityType(entityModel);
             Long entityId = Long.valueOf(getUiDataFromModel(entityModel.getValue("id")));
 
@@ -438,5 +450,9 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
         if (entityFields.containsKey(Entity.BDD_SCENARIO)) {
             entityFields.remove(Entity.BDD_SCENARIO);
         }
+    }
+
+    private boolean isIronMaidenP1OrHigher() {
+        return OctaneVersion.compare(versionService.getOctaneVersion(), OctaneVersion.Operation.HIGHER_EQ, OctaneVersion.IRONMAIDEN_P1);
     }
 }

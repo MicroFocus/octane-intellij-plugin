@@ -32,8 +32,11 @@ public class UserItemEntityCategory implements EntityCategory {
     }
 
     @Override
-    public boolean isInCategory(EntityModel userItem) {
-        EntityModel entityModel = MyWorkUtil.getEntityModelFromUserItem(userItem);
+    public boolean isInCategory(EntityModel entityModel) {
+        if(Entity.USER_ITEM == Entity.getEntityType(entityModel)) {
+            entityModel = MyWorkUtil.getEntityModelFromUserItem(entityModel);
+        }
+
         return entityTypes.contains(Entity.getEntityType(entityModel));
     }
 
