@@ -217,7 +217,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
             EntityModel userItem = (EntityModel) value;
             EntityModel entityModel;
 
-            if (!isIronMaidenP1OrHigher()) {
+            if (!isIronMaidenP1OrHigher() && Entity.USER_ITEM == Entity.getEntityType(userItem)) {
                 entityModel = MyWorkUtil.getEntityModelFromUserItem(userItem);
             } else {
                 entityModel = userItem;
