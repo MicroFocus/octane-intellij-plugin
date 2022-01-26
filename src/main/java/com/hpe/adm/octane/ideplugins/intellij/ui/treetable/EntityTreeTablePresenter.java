@@ -226,7 +226,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
         entityTreeView.setEntityContextMenuFactory(userItem -> {
             EntityModel entityModel;
 
-            if (!isIronMaidenP1OrHigher() && Entity.USER_ITEM != Entity.getEntityType(userItem)) {
+            if (!isIronMaidenP1OrHigher() && Entity.USER_ITEM == Entity.getEntityType(userItem)) {
                 entityModel = MyWorkUtil.getEntityModelFromUserItem(userItem);
             } else {
                 entityModel = userItem;
