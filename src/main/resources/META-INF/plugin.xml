@@ -31,6 +31,15 @@
     <depends optional="true" config-file="plugin-withJavaFX.xml">com.intellij.javafx</depends>
 
     <change-notes><![CDATA[
+      <b>2020.2-16.0.300.1</b>
+      <ul>
+        <li>Implemented compatibility with ALM Octane 16.0.300.</li>
+        <li>Change plugin build to use JDK11.</li>
+        <li>Align My Work with the new My Work from Octane.</li>
+        <li>Other bug fixes.</li>
+      </ul>
+      <hr/>
+
       <b>2020.2-15.1.90.1</b>
       <ul>
         <li>Implemented compatibility with ALM Octane 15.1.90.</li>
