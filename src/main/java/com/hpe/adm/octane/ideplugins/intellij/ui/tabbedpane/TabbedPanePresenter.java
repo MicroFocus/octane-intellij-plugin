@@ -115,11 +115,11 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
     private TabInfo selectedTabInfo;
     private TabInfo searchTabInfo;
     private TabInfo myWorkTabInfo;
-    private Icon searchIcon = IconLoader.findIcon(Constants.IMG_SEARCH_ICON);
+    private Icon searchIcon = IconLoader.findIcon(Constants.IMG_SEARCH_ICON, TabbedPanePresenter.class.getClassLoader());
 
     public EntityTreeTablePresenter openMyWorkTab() {
         EntityTreeTablePresenter presenter = entityTreeTablePresenterProvider.get();
-        Icon myWorkIcon = IconLoader.findIcon(Constants.IMG_MYWORK);
+        Icon myWorkIcon = IconLoader.findIcon(Constants.IMG_MYWORK, TabbedPanePresenter.class.getClassLoader());
         myWorkTabInfo = tabbedPaneView.addTab(Constants.TAB_MY_WORK_TITLE, null, myWorkIcon, presenter.getView().getComponent(), false);
         return presenter;
     }

@@ -113,7 +113,7 @@ public class DateTimeFieldEditor extends FieldEditor {
 
         clearSelection = new JLabel();
         clearSelection.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        clearSelection.setIcon(IconLoader.findIcon(Constants.getOctaneRemoveIcon()));
+        clearSelection.setIcon(IconLoader.findIcon(Constants.getOctaneRemoveIcon(), DateTimeFieldEditor.class.getClassLoader()));
         clearSelection.setEnabled(false);
 
         // Nullify
