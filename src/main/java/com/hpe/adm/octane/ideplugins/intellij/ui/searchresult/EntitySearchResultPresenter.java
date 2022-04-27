@@ -155,7 +155,7 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
         this.entityTreeView = entityTreeView;
 
         //start presenting
-        this.entityTreeView.addActionToToolbar(new AnAction("Refresh", "Refresh view", IconLoader.findIcon(Constants.IMG_REFRESH_ICON)) {
+        this.entityTreeView.addActionToToolbar(new AnAction("Refresh", "Refresh view", IconLoader.findIcon(Constants.IMG_REFRESH_ICON, EntitySearchResultPresenter.class.getClassLoader())) {
             @Override
             public void actionPerformed(AnActionEvent e) {
                 globalSearch(lastSearchQuery);
@@ -206,7 +206,7 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
                 popup.add(viewDetailMenuItem);
             }
 
-            JMenuItem viewInBrowserItem = new JMenuItem("View in browser", IconLoader.findIcon(Constants.IMG_BROWSER_ICON));
+            JMenuItem viewInBrowserItem = new JMenuItem("View in browser", IconLoader.findIcon(Constants.IMG_BROWSER_ICON, EntitySearchResultPresenter.class.getClassLoader()));
             viewInBrowserItem.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent mouseEvent) {

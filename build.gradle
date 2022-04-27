@@ -13,7 +13,7 @@
 
 plugins {
     id 'java'
-    id 'org.jetbrains.intellij' version '0.7.3'
+    id 'org.jetbrains.intellij' version '1.5.3'
     id 'org.openjfx.javafxplugin' version '0.0.10'
 }
 
@@ -23,7 +23,10 @@ project.version = projectVersion
 repositories {
     mavenLocal()
     mavenCentral()
-    maven { url 'http://nexus.almoctane.com:8081/content/repositories/mqm-snapshots' }
+    maven {
+        url 'http://nexus.almoctane.com:8081/content/repositories/mqm-snapshots'
+        allowInsecureProtocol = true
+    }
 }
 
 clean.doLast {
@@ -42,7 +45,7 @@ sourceSets {
 }
 
 dependencies {
-    compile("com.hpe.adm.octane.ideplugins:octane-plugin-common:$commonVersion"){
+    implementation("com.hpe.adm.octane.ideplugins:octane-plugin-common:$commonVersion") {
         exclude group: 'org.slf4j', module: 'slf4j-api'
     }
 
@@ -64,20 +67,20 @@ dependencies {
         compileOnly "org.openjfx:javafx-${module}:${javaFxVersion}:${platform}"
     }
 
-    compile group: 'org.jsoup', name: 'jsoup', version: '1.8.3'
+    implementation group: 'org.jsoup', name: 'jsoup', version: '1.8.3'
 
-    compile('com.google.inject:guice:4.0') {
+    implementation('com.google.inject:guice:4.0') {
         exclude group: 'com.google.guava', module: 'guava'
     }
-    compile('com.google.inject.extensions:guice-multibindings:4.0') {
+    implementation('com.google.inject.extensions:guice-multibindings:4.0') {
         exclude group: 'com.google.guava', module: 'guava'
     }
 
-    testCompile group: 'junit', name: 'junit', version: '4.11'
+    testImplementation group: 'junit', name: 'junit', version: '4.11'
 }
 
 intellij {
-    plugins = ['java']
+    plugins = ['com.intellij.java']
 
     version = project.hasProperty("intellijVersion") ? project.getProperty("intellijVersion") : ideaVersion
     //to debug the plugin on other platforms comment out alternativeIdePath and set the path to the installation
@@ -89,15 +92,18 @@ intellij {
     updateSinceUntilBuild = false
 
     downloadSources = true
-    sandboxDirectory = project.rootDir.canonicalPath + "/.sandbox"
+    sandboxDir = project.rootDir.canonicalPath + "/.sandbox"
 }
-
 
 tasks.withType(JavaExec) {
     jvmArgs '--add-exports', 'java.base/jdk.internal.vm=ALL-UNNAMED'
     if (System.getProperty('DEBUG', 'false') == 'true') {
         jvmArgs '-Xdebug', '-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=9099'
     }
+}
+
+tasks.processResources {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 configurations.all {

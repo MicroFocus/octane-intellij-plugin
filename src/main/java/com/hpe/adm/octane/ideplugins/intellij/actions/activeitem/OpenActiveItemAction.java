@@ -35,7 +35,7 @@ import java.util.Objects;
 
 public class OpenActiveItemAction extends OctanePluginAction {
 
-    private static final Icon defaultActiveIcon = IconLoader.findIcon(Constants.IMG_OCTANE_LOGO_20x20);
+    private static final Icon defaultActiveIcon = IconLoader.findIcon(Constants.IMG_OCTANE_LOGO_20x20, OpenActiveItemAction.class.getClassLoader());
 
     public OpenActiveItemAction() {
         super("Open active backlog item", "Open a detail tab with the active backlog item.", defaultActiveIcon);

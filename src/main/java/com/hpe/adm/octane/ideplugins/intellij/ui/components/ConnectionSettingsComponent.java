@@ -143,7 +143,7 @@ public class ConnectionSettingsComponent implements HasComponent {
 
         userPassButton = new JRadioButton("Login with username and password");
 
-        JLabel lblUserPassAuthInfo = new JLabel(IconLoader.findIcon(Constants.IMG_HELP_ICON));
+        JLabel lblUserPassAuthInfo = new JLabel(IconLoader.findIcon(Constants.IMG_HELP_ICON, ConnectionSettingsComponent.class.getClassLoader()));
         lblUserPassAuthInfo.setToolTipText(userPassAuthInfoText);
         lblUserPassAuthInfo.addMouseListener(new MouseAdapter() {
             @Override
@@ -198,7 +198,7 @@ public class ConnectionSettingsComponent implements HasComponent {
 
         ssoRadioButton = new JRadioButton("Login using a browser");
 
-        JLabel lblBrowserAuthInfo = new JLabel(IconLoader.findIcon(Constants.IMG_HELP_ICON));
+        JLabel lblBrowserAuthInfo = new JLabel(IconLoader.findIcon(Constants.IMG_HELP_ICON, ConnectionSettingsComponent.class.getClassLoader()));
         lblBrowserAuthInfo.setToolTipText(browserAuthInfoText);
         lblBrowserAuthInfo.addMouseListener(new MouseAdapter() {
             @Override

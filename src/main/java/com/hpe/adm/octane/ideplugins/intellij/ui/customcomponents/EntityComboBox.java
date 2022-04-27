@@ -108,7 +108,7 @@ public class EntityComboBox extends JPanel {
         gbc_separator.fill = GridBagConstraints.VERTICAL;
         add(separator, gbc_separator);
 
-        arrowButton = new JLabel(IconLoader.findIcon(Constants.IMG_ENTITY_COMBOBOX_ARROW));
+        arrowButton = new JLabel(IconLoader.findIcon(Constants.IMG_ENTITY_COMBOBOX_ARROW, EntityComboBox.class.getClassLoader()));
         GridBagConstraints gbc_arrowButton = new GridBagConstraints();
         gbc_arrowButton.anchor = GridBagConstraints.WEST;
         gbc_arrowButton.gridx = 2;

@@ -23,7 +23,7 @@ import com.intellij.openapi.util.IconLoader;
 public class RefreshCurrentEntityAction extends OctanePluginAction {
 
     public RefreshCurrentEntityAction() {
-        super("Refresh backlog item", "Refresh backlog item details.", IconLoader.findIcon(Constants.IMG_REFRESH_ICON));
+        super("Refresh backlog item", "Refresh backlog item details.", IconLoader.findIcon(Constants.IMG_REFRESH_ICON, RefreshCurrentEntityAction.class.getClassLoader()));
     }
 
     public void actionPerformed(AnActionEvent e) {

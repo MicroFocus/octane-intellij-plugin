@@ -256,7 +256,7 @@ public class EntityDetailView extends JPanel implements View {
 
     private final class EntityCommentsAction extends AnAction {
         public EntityCommentsAction() {
-            super("Show comments for current entity", "Show comments for current entity", IconLoader.findIcon(Constants.IMG_COMMENTS_ICON));
+            super("Show comments for current entity", "Show comments for current entity", IconLoader.findIcon(Constants.IMG_COMMENTS_ICON, EntityDetailView.class.getClassLoader()));
         }
 
         public void actionPerformed(AnActionEvent e) {

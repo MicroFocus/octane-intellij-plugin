@@ -25,7 +25,7 @@ import com.intellij.openapi.wm.ToolWindowManager;
 public class OpenMyWorkAction extends AnAction {
 
     public OpenMyWorkAction() {
-        super("Open \"My Work\"", "Open \"My Work\"", IconLoader.findIcon(Constants.IMG_MYWORK));
+        super("Open \"My Work\"", "Open \"My Work\"", IconLoader.findIcon(Constants.IMG_MYWORK, OpenMyWorkAction.class.getClassLoader()));
     }
 
     @Override

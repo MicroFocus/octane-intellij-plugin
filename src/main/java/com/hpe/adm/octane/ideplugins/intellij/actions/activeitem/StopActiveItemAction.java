@@ -23,7 +23,7 @@ import org.json.JSONObject;
 public class StopActiveItemAction extends OctanePluginAction {
 
     public StopActiveItemAction() {
-        super("Stop work on the active item", "Stops work on active item", IconLoader.findIcon(Constants.IMG_STOP_TIMER));
+        super("Stop work on the active item", "Stops work on active item", IconLoader.findIcon(Constants.IMG_STOP_TIMER, StopActiveItemAction.class.getClassLoader()));
     }
 
     @Override
