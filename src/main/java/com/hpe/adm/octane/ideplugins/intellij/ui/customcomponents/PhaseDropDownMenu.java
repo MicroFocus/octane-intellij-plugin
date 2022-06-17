@@ -182,11 +182,11 @@ public class PhaseDropDownMenu extends JPanel {
 
     private Icon getDropdownIcon() {
         Icon dropdown;
-        IconLoader.findIcon(Constants.IMG_PHASE_DROPDOWN);
+        IconLoader.findIcon(Constants.IMG_PHASE_DROPDOWN, PhaseDropDownMenu.class.getClassLoader());
         if(UIUtil.isUnderDarcula()) {
-            dropdown = IconLoader.findIcon(Constants.IMG_PHASE_DROPDOWN_DARKULA);
+            dropdown = IconLoader.findIcon(Constants.IMG_PHASE_DROPDOWN_DARKULA, PhaseDropDownMenu.class.getClassLoader());
         } else {
-            dropdown = IconLoader.findIcon(Constants.IMG_PHASE_DROPDOWN);
+            dropdown = IconLoader.findIcon(Constants.IMG_PHASE_DROPDOWN, PhaseDropDownMenu.class.getClassLoader());
         }
         return dropdown;
     }

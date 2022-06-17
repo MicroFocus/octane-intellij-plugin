@@ -291,12 +291,12 @@ public class HeaderPanel extends JPanel {
 
     private final class EntityOpenInBrowser extends AnAction {
         public EntityOpenInBrowser() {
-            super("Open in browser", "Open in browser", IconLoader.findIcon(Constants.IMG_BROWSER_ICON));
+            super("Open in browser", "Open in browser", IconLoader.findIcon(Constants.IMG_BROWSER_ICON, HeaderPanel.class.getClassLoader()));
         }
 
         @Override
         public void update(AnActionEvent e) {
-            getTemplatePresentation().setEnabled(false);
+
         }
 
         public void actionPerformed(AnActionEvent e) {

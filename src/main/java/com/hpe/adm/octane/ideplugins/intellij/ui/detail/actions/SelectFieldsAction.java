@@ -29,7 +29,7 @@ public final class SelectFieldsAction extends AnAction {
     }
 
     public SelectFieldsAction(EntityDetailView entityDetailView) {
-        super("Select fields for this entity type", "Select fields popup", IconLoader.findIcon(Constants.IMG_FIELD_SELECTION_DEFAULT));
+        super("Select fields for this entity type", "Select fields popup", IconLoader.findIcon(Constants.IMG_FIELD_SELECTION_DEFAULT, SelectFieldsAction.class.getClassLoader()));
         this.entityDetailView = entityDetailView;
     }
 
@@ -39,9 +39,9 @@ public final class SelectFieldsAction extends AnAction {
 
     public void update(AnActionEvent e) {
         if (defaultfields) {
-            e.getPresentation().setIcon(IconLoader.findIcon(Constants.IMG_FIELD_SELECTION_DEFAULT));
+            e.getPresentation().setIcon(IconLoader.findIcon(Constants.IMG_FIELD_SELECTION_DEFAULT, SelectFieldsAction.class.getClassLoader()));
         } else {
-            e.getPresentation().setIcon(IconLoader.findIcon(Constants.IMG_FIELD_SELECTION_NON_DEFAULT));
+            e.getPresentation().setIcon(IconLoader.findIcon(Constants.IMG_FIELD_SELECTION_NON_DEFAULT, SelectFieldsAction.class.getClassLoader()));
         }
     }
 }

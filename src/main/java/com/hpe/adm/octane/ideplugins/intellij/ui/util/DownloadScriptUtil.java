@@ -60,8 +60,8 @@ public class DownloadScriptUtil {
                 ConfirmationDialog dialog = new ConfirmationDialog(project, message, title,
                         null, VcsShowConfirmationOption.STATIC_SHOW_CONFIRMATION) {
                     @Override
-                    public void setDoNotAskOption(@Nullable DoNotAskOption doNotAsk) {
-                        super.setDoNotAskOption(null);
+                    public void setDoNotAskOption(@Nullable com.intellij.openapi.ui.DoNotAskOption doNotAsk) {
+                        super.setDoNotAskOption((com.intellij.openapi.ui.DoNotAskOption) null);
                     }
                 };
                 shouldDownloadScript = dialog.showAndGet();

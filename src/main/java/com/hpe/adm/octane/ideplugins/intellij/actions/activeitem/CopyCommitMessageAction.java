@@ -25,7 +25,7 @@ import org.json.JSONObject;
 public class CopyCommitMessageAction extends OctanePluginAction {
 
     public CopyCommitMessageAction() {
-        super("Copy commit message", "Copies commit message for the current active item", IconLoader.findIcon(Constants.IMG_COPY_ICON));
+        super("Copy commit message", "Copies commit message for the current active item", IconLoader.findIcon(Constants.IMG_COPY_ICON, CopyCommitMessageAction.class.getClassLoader()));
     }
 
     @Override

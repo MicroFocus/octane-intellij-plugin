@@ -9,20 +9,19 @@ import com.intellij.openapi.util.IconLoader;
 public final class SaveCurrentEntityAction extends OctanePluginAction {
 
     public SaveCurrentEntityAction() {
-        super("Save backlog item", "Save changes to backlog item.", IconLoader.findIcon("/actions/menu-saveall.png"));
-        getTemplatePresentation().setEnabled(false);
+        super("Save backlog item", "Save changes to backlog item.", IconLoader.findIcon("/actions/menu-saveall.png", SaveCurrentEntityAction.class.getClassLoader()));
     }
 
     public void update(AnActionEvent e) {
         Presenter presenter = getSelectedPresenter(e);
-        if(presenter instanceof EntityDetailPresenter) {
+        if (presenter instanceof EntityDetailPresenter) {
             e.getPresentation().setEnabled(((EntityDetailPresenter) presenter).wasEntityChanged());
         }
     }
 
     public void actionPerformed(AnActionEvent e) {
         Presenter presenter = getSelectedPresenter(e);
-        if(presenter instanceof EntityDetailPresenter) {
+        if (presenter instanceof EntityDetailPresenter) {
             ((EntityDetailPresenter) presenter).saveEntity();
         }
     }

@@ -13,9 +13,7 @@
 
 package com.hpe.adm.octane.ideplugins.intellij.util;
 
-import com.google.common.base.Optional;
 import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.project.Project;
 
@@ -26,19 +24,12 @@ public final class NotificationBuilder {
     private final String title;
     private final String message;
     private NotificationType type = NotificationType.INFORMATION;
-
-    private Optional<NotificationListener> listener = Optional.absent();
     private boolean showBalloon = true;
 
     public NotificationBuilder(Project project, String title, String message) {
         this.project = project;
         this.title = title;
         this.message = message;
-    }
-
-    public NotificationBuilder listener(NotificationListener listener) {
-        this.listener = Optional.of(listener);
-        return this;
     }
 
     public NotificationBuilder type(NotificationType type) {
@@ -58,7 +49,6 @@ public final class NotificationBuilder {
 
     public Notification get() {
         Notification notification = new Notification(NOTIFICATION_GROUP, title, message, type);
-        notification.setListener(listener.orNull());
         if (!showBalloon) {
             notification.expire();
         }

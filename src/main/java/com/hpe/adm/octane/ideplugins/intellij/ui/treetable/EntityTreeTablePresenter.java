@@ -204,7 +204,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
         setContextMenuFactory(entityTreeView);
 
         //start presenting
-        entityTreeTableView.addActionToToolbar(new AnAction("Refresh", "Refresh view", IconLoader.findIcon(Constants.IMG_REFRESH_ICON)) {
+        entityTreeTableView.addActionToToolbar(new AnAction("Refresh", "Refresh view", IconLoader.findIcon(Constants.IMG_REFRESH_ICON, EntityTreeTablePresenter.class.getClassLoader())) {
             @Override
             public void actionPerformed(AnActionEvent e) {
                 refresh();
@@ -273,7 +273,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
                 }
             }
 
-            JMenuItem viewInBrowserItem = new JMenuItem("View in browser", IconLoader.findIcon(Constants.IMG_BROWSER_ICON));
+            JMenuItem viewInBrowserItem = new JMenuItem("View in browser", IconLoader.findIcon(Constants.IMG_BROWSER_ICON, EntityTreeTablePresenter.class.getClassLoader()));
             viewInBrowserItem.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent mouseEvent) {
@@ -309,10 +309,10 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
 
                 JMenuItem activateItem;
                 if (isActivated) {
-                    activateItem = new JMenuItem("Stop work", IconLoader.findIcon(Constants.IMG_STOP_TIMER));
+                    activateItem = new JMenuItem("Stop work", IconLoader.findIcon(Constants.IMG_STOP_TIMER, EntityTreeTablePresenter.class.getClassLoader()));
 
                 } else {
-                    activateItem = new JMenuItem("Start work", IconLoader.findIcon(Constants.IMG_START_TIMER));
+                    activateItem = new JMenuItem("Start work", IconLoader.findIcon(Constants.IMG_START_TIMER, EntityTreeTablePresenter.class.getClassLoader()));
                 }
 
                 activateItem.addMouseListener(new MouseAdapter() {
@@ -330,7 +330,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
                 popup.add(activateItem);
 
 
-                JMenuItem copyCommitMessage = new JBMenuItem("Copy Commit Message", IconLoader.findIcon(Constants.IMG_COPY_ICON));
+                JMenuItem copyCommitMessage = new JBMenuItem("Copy Commit Message", IconLoader.findIcon(Constants.IMG_COPY_ICON, EntityTreeTablePresenter.class.getClassLoader()));
                 copyCommitMessage.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mousePressed(MouseEvent e) {
