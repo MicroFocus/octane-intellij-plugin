@@ -57,13 +57,7 @@ public class DownloadScriptUtil {
                 String message = "Selected destination folder already contains a file named \"" +
                         scriptFileName + "\". Do you want to overwrite this file?";
 
-                ConfirmationDialog dialog = new ConfirmationDialog(project, message, title,
-                        null, VcsShowConfirmationOption.STATIC_SHOW_CONFIRMATION) {
-                    @Override
-                    public void setDoNotAskOption(@Nullable com.intellij.openapi.ui.DoNotAskOption doNotAsk) {
-                        super.setDoNotAskOption((com.intellij.openapi.ui.DoNotAskOption) null);
-                    }
-                };
+                ConfirmationDialog dialog = new ConfirmationDialog(project, message, title, null, VcsShowConfirmationOption.STATIC_SHOW_CONFIRMATION);
                 shouldDownloadScript = dialog.showAndGet();
             }
 
