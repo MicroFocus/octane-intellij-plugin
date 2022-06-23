@@ -33,7 +33,7 @@
     <change-notes><![CDATA[
       <b>2022.0.0</b>
       <ul>
-        <li>Implemented compatibility with ALM Octane 16.1.08.</li>
+        <li>Implemented compatibility with ALM Octane 16.1.8.</li>
         <li>Changed the versioning style to CalVer versioning.</li>
         <li>Other bug fixes.</li>
       </ul>
