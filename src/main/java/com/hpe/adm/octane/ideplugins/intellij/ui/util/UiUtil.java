@@ -16,10 +16,17 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.util;
 import com.hpe.adm.nga.sdk.model.EntityModel;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeCellRenderer;
 import com.hpe.adm.octane.ideplugins.services.filtering.Entity;
+import com.intellij.ide.BrowserUtil;
 import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationAction;
 import com.intellij.notification.NotificationType;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.actionSystem.PlatformDataKeys;
+import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -29,7 +36,11 @@ import java.util.stream.Collectors;
  */
 public class UiUtil {
 
-    public static void showWarningBalloon(Project project, String title, String htmlText, NotificationType type){
+    public static void showWarningBalloon(Project project, String title, String htmlText, NotificationType type) {
+        showWarningBalloon(project, title, htmlText, type, null);
+    }
+
+    public static void showWarningBalloon(Project project, String title, String htmlText, NotificationType type, NotificationAction notificationAction) {
         Notification notification =
                 new Notification(
                         "Octane IntelliJ Plugin",
@@ -37,24 +48,28 @@ public class UiUtil {
                         htmlText,
                         type);
 
+        if (notificationAction != null) {
+            notification.addAction(notificationAction);
+        }
+
         notification.notify(project);
     }
 
 
-    public static String entityToString(EntityModel entityModel){
+    public static String entityToString(EntityModel entityModel) {
         StringBuilder result = new StringBuilder();
 
-        if(Entity.getEntityType(entityModel) != null){
+        if (Entity.getEntityType(entityModel) != null) {
             result.append(EntityTreeCellRenderer.getEntityDisplayName(Entity.getEntityType(entityModel).getEntityName()));
             result.append(" ");
         }
 
-        if(entityModel.getValue("id") != null){
+        if (entityModel.getValue("id") != null) {
             result.append(entityModel.getValue("id").getValue().toString());
             result.append(": ");
         }
 
-        if(entityModel.getValue("name") != null){
+        if (entityModel.getValue("name") != null) {
             result.append(entityModel.getValue("name").getValue().toString());
         }
 
