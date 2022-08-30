@@ -194,7 +194,7 @@ public class EntryPoint implements ToolWindowFactory {
 
     private void setContent(ToolWindow toolWindow, HasComponent hasComponent, String workspaceName) {
         SwingUtilities.invokeLater(() -> {
-            ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
+            ContentFactory contentFactory = ContentFactory.getInstance();
             toolWindow.getContentManager().removeAllContents(true);
             toolWindow.getContentManager().addContent(contentFactory.createContent(hasComponent.getComponent(), workspaceName, false));
         });
