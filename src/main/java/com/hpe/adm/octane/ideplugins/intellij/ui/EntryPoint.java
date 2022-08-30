@@ -29,6 +29,8 @@ import com.hpe.adm.octane.ideplugins.services.connection.UserAuthentication;
 import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
 import com.hpe.adm.octane.ideplugins.services.nonentity.SharedSpaceLevelRequestService;
 import com.hpe.adm.octane.ideplugins.services.nonentity.TimelineService;
+import com.intellij.ide.BrowserUtil;
+import com.intellij.notification.NotificationAction;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -60,11 +62,15 @@ public class EntryPoint implements ToolWindowFactory {
     @Override
     public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
 
+        NotificationAction openInBrowserAction = NotificationAction.createSimple("Install 'JavaFX Runtime for Plugins'",
+                () -> BrowserUtil.browse("https://plugins.jetbrains.com/plugin/14250-javafx-runtime-for-plugins"));
+
         if(!JavaFxUtils.isJavaFxAvailable()){
             UiUtil.showWarningBalloon(project,
-                    "JavaFx not found on current JVM",
-                    "JVM running the IDEA platform does not have JavaFx installed, comments and memo fields might not be displayed properly.",
-                    NotificationType.WARNING);
+                    "JavaFX not found!",
+                    "The current IntelliJ IDEA platform does not have JavaFX Runtime for Plugins installed, comments and memo fields might not be displayed properly.",
+                    NotificationType.WARNING,
+                    openInBrowserAction);
         }
 
         // The DI module returns instances based on your current project
@@ -188,7 +194,7 @@ public class EntryPoint implements ToolWindowFactory {
 
     private void setContent(ToolWindow toolWindow, HasComponent hasComponent, String workspaceName) {
         SwingUtilities.invokeLater(() -> {
-            ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
+            ContentFactory contentFactory = ContentFactory.getInstance();
             toolWindow.getContentManager().removeAllContents(true);
             toolWindow.getContentManager().addContent(contentFactory.createContent(hasComponent.getComponent(), workspaceName, false));
         });
