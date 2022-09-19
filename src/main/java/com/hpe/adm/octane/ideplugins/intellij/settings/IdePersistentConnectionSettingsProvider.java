@@ -72,13 +72,13 @@ public class IdePersistentConnectionSettingsProvider extends BasicConnectionSett
 
             UserAuthentication authentication = (UserAuthentication) connectionSettings.getAuthentication();
 
-            if (!StringUtils.isEmpty(authentication.getUserName())) {
-                element.setAttribute(USER_TAG, authentication.getUserName());
+            if (!StringUtils.isEmpty(authentication.getAuthenticationId())) {
+                element.setAttribute(USER_TAG, authentication.getAuthenticationId());
                 element.setAttribute(SSO_TAG, Boolean.FALSE.toString());
             }
             //save the password into the password store, not related to the xml file
-            if (!StringUtils.isEmpty(authentication.getPassword())) {
-                encryptPassword(authentication.getPassword(), authentication.getUserName());
+            if (!StringUtils.isEmpty(authentication.getAuthenticationSecret())) {
+                encryptPassword(authentication.getAuthenticationSecret(), authentication.getAuthenticationId());
             }
 
         } else if (connectionSettings.getAuthentication() instanceof GrantTokenAuthentication) {

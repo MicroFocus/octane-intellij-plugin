@@ -120,8 +120,8 @@ public class EntryPoint implements ToolWindowFactory {
                             Authentication auth = connectionSettingsProvider.getConnectionSettings().getAuthentication();
                             if(auth instanceof UserAuthentication){
                                 UserAuthentication userAuthentication = (UserAuthentication) auth;
-                                String username = userAuthentication.getUserName();
-                                String password = userAuthentication.getPassword();
+                                String username = userAuthentication.getAuthenticationId();
+                                String password = userAuthentication.getAuthenticationSecret();
                                 if(StringUtils.isNotEmpty(username) && StringUtils.isEmpty(password)){
                                     message = "Please re-introduce your password.";
                                 }
