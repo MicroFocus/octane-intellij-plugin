@@ -106,8 +106,8 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
         if (connectionSettings.getAuthentication() instanceof UserAuthentication) {
             connectionSettingsView.setSsoAuth(false);
             UserAuthentication authentication = (UserAuthentication) connectionSettings.getAuthentication();
-            connectionSettingsView.setUserName(authentication.getUserName());
-            connectionSettingsView.setPassword(authentication.getPassword());
+            connectionSettingsView.setUserName(authentication.getAuthenticationId());
+            connectionSettingsView.setPassword(authentication.getAuthenticationSecret());
         } else if (connectionSettings.getAuthentication() instanceof GrantTokenAuthentication) {
             connectionSettingsView.setSsoAuth(true);
         }
@@ -398,8 +398,8 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
 
         if (connectionSettings.getAuthentication() instanceof UserAuthentication) {
             UserAuthentication authentication = (UserAuthentication) connectionSettings.getAuthentication();
-            connectionSettingsView.setUserName(authentication.getUserName());
-            connectionSettingsView.setPassword(authentication.getPassword());
+            connectionSettingsView.setUserName(authentication.getAuthenticationId());
+            connectionSettingsView.setPassword(authentication.getAuthenticationSecret());
         }
     }
 
