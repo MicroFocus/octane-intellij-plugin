@@ -19,11 +19,11 @@
     <!--This is set by gradle build plugin-->
     <version>0.0</version>
 
-    <vendor email="agm.cluj.dev@microfocus.com" url="https://www.microfocus.com">Micro Focus</vendor>
+    <vendor email="alm_octane_ide_plugins_cluj@microfocus.com" url="https://www.microfocus.com">Micro Focus</vendor>
     <!--enables the plugin on other platforms-->
     <depends>com.intellij.modules.lang</depends>
 
-    <idea-version since-build="202"/>
+    <idea-version since-build="222"/>
 
     <extensions defaultExtensionNs="com.intellij">
 
