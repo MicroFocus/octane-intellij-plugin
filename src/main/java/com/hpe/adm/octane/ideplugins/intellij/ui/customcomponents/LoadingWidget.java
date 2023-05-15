@@ -14,6 +14,7 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents;
 
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
+import com.intellij.util.ui.UIUtil;
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,8 +27,13 @@ public class LoadingWidget extends JPanel {
 
     public LoadingWidget(String loadingMessage) {
         setLayout(new BorderLayout(0, 0));
-        ImageIcon pacmanImage = new ImageIcon(LoadingWidget.class.getResource(Constants.IMG_AJAX_SPINNER));
-        JLabel loadingLabel = new JLabel(pacmanImage);
+        ImageIcon preloaderIcon;
+        if (UIUtil.isUnderDarcula()) {
+            preloaderIcon = new ImageIcon(LoadingWidget.class.getResource(Constants.IMG_SPINNER_DARK));
+        } else {
+            preloaderIcon = new ImageIcon(LoadingWidget.class.getResource(Constants.IMG_SPINNER_LIGHT));
+        }
+        JLabel loadingLabel = new JLabel(preloaderIcon);
         //loadingLabel.setText(loadingMessage);
         add(loadingLabel, BorderLayout.CENTER);
     }

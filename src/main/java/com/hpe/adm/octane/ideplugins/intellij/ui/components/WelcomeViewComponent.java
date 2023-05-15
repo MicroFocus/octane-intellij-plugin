@@ -21,6 +21,7 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.nowork.NoWorkPanel;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
+import com.intellij.util.ui.UIUtil;
 import org.jdesktop.swingx.JXHyperlink;
 
 import javax.swing.*;
@@ -75,7 +76,7 @@ public class WelcomeViewComponent extends JPanel implements HasComponent {
         setLayout(gridBagLayout);
 
         JLabel lblCompany = new JLabel("");
-        lblCompany.setIcon(new ImageIcon(NoWorkPanel.class.getResource(Constants.IMG_VENDOR_LOGO)));
+        lblCompany.setIcon(new ImageIcon(NoWorkPanel.class.getResource(Constants.IMG_VENDOR_LOGO_LIGHT)));
         GridBagConstraints gbc_lblCompany = new GridBagConstraints();
         gbc_lblCompany.anchor = GridBagConstraints.SOUTHEAST;
         gbc_lblCompany.fill = GridBagConstraints.VERTICAL;

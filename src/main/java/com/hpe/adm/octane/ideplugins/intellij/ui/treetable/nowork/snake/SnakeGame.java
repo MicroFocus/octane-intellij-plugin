@@ -34,7 +34,7 @@ public class SnakeGame extends JPanel {
 	private static int verticalPosCount = 10;
 	private static int horizontalPosCount = 20;
 	private Timer gameLoopTimer;
-	private static final Color microfocusBlue = new Color(0, 121, 239);
+	private static final Color lightBlue = new Color(0, 121, 239);
 	private static final Color gray = new Color(133, 142, 132);
 
 	private enum GameState {
@@ -100,7 +100,7 @@ public class SnakeGame extends JPanel {
 	private int speed = INIT_SPEED;
 
 	//changes to a random color very apple hit
-	private Color backgroundColor = microfocusBlue;
+	private Color backgroundColor = lightBlue;
 
 	private Map<String, Image> spriteCache = new HashMap<>();
 
@@ -224,7 +224,7 @@ public class SnakeGame extends JPanel {
 		if(possiblePositions.size() <= 1){
             applePos = null;
             gameState = GameState.WON; //nice
-            backgroundColor = microfocusBlue;
+            backgroundColor = lightBlue;
             return;
         }
 
@@ -362,7 +362,7 @@ public class SnakeGame extends JPanel {
 		int bottomFontSize = width * 3 / 100;
 
 		Font titleFont = new JLabel().getFont().deriveFont(Font.BOLD | Font.ITALIC).deriveFont((float)titleFontSize);
-		g.setColor(microfocusBlue);
+		g.setColor(lightBlue);
 		FontMetrics fontMetrics =  getFontMetrics(titleFont);
 		g.setFont(titleFont);
 		String title = "OCTANE SNAKE";
@@ -426,7 +426,7 @@ public class SnakeGame extends JPanel {
         int titleFontSize = width * 5 / 100;
         int bottomFontSize = width * 3 / 100;
 		Font titleFont = new JLabel().getFont().deriveFont(Font.BOLD | Font.ITALIC).deriveFont((float)titleFontSize);
-		g.setColor(microfocusBlue);
+		g.setColor(lightBlue);
 		FontMetrics fontMetrics =  getFontMetrics(titleFont);
 		g.setFont(titleFont);
 		String title = "GAME WON";
