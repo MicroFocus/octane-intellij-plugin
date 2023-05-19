@@ -1,5 +1,21 @@
-/*
- * © Copyright 2017-2022 Micro Focus or one of its affiliates.
+/*******************************************************************************
+ * Copyright 2017-2023 Open Text.
+ *
+ * The only warranties for products and services of Open Text and
+ * its affiliates and licensors (“Open Text”) are as may be set forth
+ * in the express warranty statements accompanying such products and services.
+ * Nothing herein should be construed as constituting an additional warranty.
+ * Open Text shall not be liable for technical or editorial errors or
+ * omissions contained herein. The information contained herein is subject
+ * to change without notice.
+ *
+ * Except as specifically indicated otherwise, this document contains
+ * confidential information and a valid license is required for possession,
+ * use or copying. If this work is provided to the U.S. Government,
+ * consistent with FAR 12.211 and 12.212, Commercial Computer Software,
+ * Computer Software Documentation, and Technical Data for Commercial Items are
+ * licensed to the U.S. Government under vendor's standard commercial license.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -9,7 +25,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ ******************************************************************************/
 
 package com.hpe.adm.octane.ideplugins.intellij.ui.treetable.nowork.snake;
 
@@ -34,7 +50,7 @@ public class SnakeGame extends JPanel {
 	private static int verticalPosCount = 10;
 	private static int horizontalPosCount = 20;
 	private Timer gameLoopTimer;
-	private static final Color microfocusBlue = new Color(0, 121, 239);
+	private static final Color lightBlue = new Color(0, 121, 239);
 	private static final Color gray = new Color(133, 142, 132);
 
 	private enum GameState {
@@ -100,7 +116,7 @@ public class SnakeGame extends JPanel {
 	private int speed = INIT_SPEED;
 
 	//changes to a random color very apple hit
-	private Color backgroundColor = microfocusBlue;
+	private Color backgroundColor = lightBlue;
 
 	private Map<String, Image> spriteCache = new HashMap<>();
 
@@ -224,7 +240,7 @@ public class SnakeGame extends JPanel {
 		if(possiblePositions.size() <= 1){
             applePos = null;
             gameState = GameState.WON; //nice
-            backgroundColor = microfocusBlue;
+            backgroundColor = lightBlue;
             return;
         }
 
@@ -362,7 +378,7 @@ public class SnakeGame extends JPanel {
 		int bottomFontSize = width * 3 / 100;
 
 		Font titleFont = new JLabel().getFont().deriveFont(Font.BOLD | Font.ITALIC).deriveFont((float)titleFontSize);
-		g.setColor(microfocusBlue);
+		g.setColor(lightBlue);
 		FontMetrics fontMetrics =  getFontMetrics(titleFont);
 		g.setFont(titleFont);
 		String title = "OCTANE SNAKE";
@@ -426,7 +442,7 @@ public class SnakeGame extends JPanel {
         int titleFontSize = width * 5 / 100;
         int bottomFontSize = width * 3 / 100;
 		Font titleFont = new JLabel().getFont().deriveFont(Font.BOLD | Font.ITALIC).deriveFont((float)titleFontSize);
-		g.setColor(microfocusBlue);
+		g.setColor(lightBlue);
 		FontMetrics fontMetrics =  getFontMetrics(titleFont);
 		g.setFont(titleFont);
 		String title = "GAME WON";
