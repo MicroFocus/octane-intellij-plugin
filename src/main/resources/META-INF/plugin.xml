@@ -35,7 +35,7 @@
     <!--This is set by gradle build plugin-->
     <version>0.0</version>
 
-    <vendor email="alm_octane_ide_plugins_cluj@microfocus.com" url="https://www.opentext.com/">OpenText</vendor>
+    <vendor email="alm_octane_ide_plugins_cluj@microfocus.com" url="https://www.microfocus.com/opentext">OpenText</vendor>
 
     <description><![CDATA[
         Enables integration with ALM Octane.<br>
