@@ -47,6 +47,12 @@
     <depends optional="true" config-file="plugin-withJavaFX.xml">com.intellij.javafx</depends>
 
     <change-notes><![CDATA[
+      <b>2023.1.1</b>
+      <ul>
+        <li>Rebranding to Open Text.</li>
+      </ul>
+      <hr/>
+
       <b>2023.1.0</b>
       <ul>
         <li>Rebranding to Open Text.</li>
