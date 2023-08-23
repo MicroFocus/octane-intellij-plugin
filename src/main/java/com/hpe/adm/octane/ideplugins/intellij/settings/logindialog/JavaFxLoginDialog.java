@@ -44,6 +44,7 @@ import javafx.stage.Stage;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -84,6 +85,7 @@ public class JavaFxLoginDialog extends LoginDialog {
         contentPane.setPreferredSize(new Dimension(800, 600));
 
         JLabel lblOpenSystemBrowser = new JLabel("<html>If the page below does not display correctly, <a href=\\\"\\\">click here to use your system default browser.</a></html>");
+        lblOpenSystemBrowser.setBorder(new EmptyBorder(10, 0, 10, 0));
         lblOpenSystemBrowser.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         contentPane.add(lblOpenSystemBrowser, BorderLayout.NORTH);
 

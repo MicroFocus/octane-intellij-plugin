@@ -34,6 +34,7 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -63,6 +64,7 @@ public class ExternalUrlLoginDialog extends LoginDialog {
         contentPane.setLayout(new BorderLayout(0, 10));
 
         JLabel lblOpenSystemBrowser = new JLabel("<html><a href=\\\"\\\">Please click here to use your system default browser to login to ALM Octane...</a></html>");
+        lblOpenSystemBrowser.setBorder(new EmptyBorder(10, 0, 10, 0));
         lblOpenSystemBrowser.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         contentPane.add(lblOpenSystemBrowser, BorderLayout.CENTER);
 
