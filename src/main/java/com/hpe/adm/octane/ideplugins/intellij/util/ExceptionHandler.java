@@ -47,13 +47,13 @@ public class ExceptionHandler {
             String fieldName = UiUtil.convertFieldNameToLabel(f.getName());
             exceptionMessage.append(fieldName + ": " + f.getValue() + "<br/>");
         });
-        notificationBuilder = new NotificationBuilder(project, "ALM Octane plugin error", exceptionMessage.toString());
+        notificationBuilder = new NotificationBuilder(project, "ValueEdge plugin error", exceptionMessage.toString());
     }
 
     public ExceptionHandler(Exception ex, Project project){
         exceptionMessage = new StringBuilder();
         exceptionMessage.append(ex.getMessage());
-        notificationBuilder = new NotificationBuilder(project, "ALM Octane plugin error", exceptionMessage.toString());
+        notificationBuilder = new NotificationBuilder(project, "ValueEdge plugin error", exceptionMessage.toString());
     }
 
     public void addAction(AnAction action){

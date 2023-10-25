@@ -37,7 +37,6 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.nowork.NoWorkPanel;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
-import com.intellij.util.ui.UIUtil;
 import org.jdesktop.swingx.JXHyperlink;
 
 import javax.swing.*;
@@ -46,7 +45,7 @@ import java.awt.*;
 public class WelcomeViewComponent extends JPanel implements HasComponent {
 
     private static final long serialVersionUID = 1L;
-    private static final String WELCOME_TEXT = "Welcome to ALM Octane plugin";
+    private static final String WELCOME_TEXT = "Welcome to ValueEdge plugin";
     private static final String OCTANE_SETTINGS_TEXT = "To start, go to Settings and connect.";
     private static final String OCTANE_SETTINGS_RETRY = "Retry";
     private JXHyperlink hyperlinkSettings;

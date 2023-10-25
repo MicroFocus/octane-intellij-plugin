@@ -39,7 +39,7 @@ import java.awt.*;
 
 public abstract class LoginDialog extends DialogWrapper {
 
-    public static final String TITLE = "Login to ALM Octane";
+    public static final String TITLE = "Login to ValueEdge";
     protected boolean wasClosed = false;
 
     protected LoginDialog(@Nullable Project project, boolean canBeParent) {

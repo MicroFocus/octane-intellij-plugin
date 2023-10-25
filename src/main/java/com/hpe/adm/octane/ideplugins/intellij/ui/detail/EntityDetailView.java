@@ -57,8 +57,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Collection;
 
-import static com.hpe.adm.octane.ideplugins.services.filtering.Entity.TASK;
-
 public class EntityDetailView extends JPanel implements View {
 
     private static final Logger logger = Logger.getInstance(EntityDetailView.class.getName());

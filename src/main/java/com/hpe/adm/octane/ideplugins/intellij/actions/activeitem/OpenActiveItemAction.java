@@ -39,7 +39,6 @@ import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
 import com.hpe.adm.octane.ideplugins.services.connection.granttoken.GrantTokenAuthentication;
 import com.hpe.adm.octane.ideplugins.services.util.PartialEntity;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
@@ -132,9 +131,9 @@ public class OpenActiveItemAction extends OctanePluginAction {
         getPluginModule(e).ifPresent(pluginModule -> {
             JSONObject jsonObject = pluginModule.getInstance(IdePluginPersistentState.class).loadState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM);
             if (jsonObject != null) {
-                ToolWindow octaneToolWindow = ToolWindowManager.getInstance(Objects.requireNonNull(e.getProject())).getToolWindow("ALM Octane");
+                ToolWindow octaneToolWindow = ToolWindowManager.getInstance(Objects.requireNonNull(e.getProject())).getToolWindow("ValueEdge");
                 if (!octaneToolWindow.isActive()) {
-                    ToolWindowManager.getInstance(e.getProject()).getToolWindow("ALM Octane").show(null);
+                    ToolWindowManager.getInstance(e.getProject()).getToolWindow("ValueEdge").show(null);
                 }
                 TabbedPanePresenter tabbedPanePresenter = pluginModule.getInstance(TabbedPanePresenter.class);
                 tabbedPanePresenter.openDetailTab(PartialEntity.fromJsonObject(jsonObject));

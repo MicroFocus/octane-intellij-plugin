@@ -146,12 +146,12 @@ public class EntryPoint implements ToolWindowFactory {
                             welcomeViewComponent = new WelcomeViewComponent(
                                     project,
                                     "Your previously saved connection settings do not seem to work",
-                                    "Please go to settings and test your connection to Octane",
-                                    "Retry to connect Octane");
+                                    "Please go to settings and test your connection to ValueEdge",
+                                    "Retry to connect ValueEdge");
 
                             //also show a notification with the exception
                             UiUtil.showWarningBalloon(project,
-                                    "Failed to connect to Octane",
+                                    "Failed to connect to ValueEdge",
                                     "Your previously saved connection settings do not seem to work <br> Error: " + message,
                                     NotificationType.WARNING);
 
