@@ -1,4 +1,4 @@
-# valueedge-intellij-plugin
+# octane-intellij-plugin
 ## IntelliJ IDEA IDE Integration for ValueEdge
 
 The plugin shares a common service layer with: https://github.com/MicroFocus/octane-eclipse-plugin <br>

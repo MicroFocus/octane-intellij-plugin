@@ -147,7 +147,7 @@ public class EntryPoint implements ToolWindowFactory {
                                     project,
                                     "Your previously saved connection settings do not seem to work",
                                     "Please go to settings and test your connection to ValueEdge",
-                                    "Retry to connect ValueEdge");
+                                    "Retry to connect to ValueEdge");
 
                             //also show a notification with the exception
                             UiUtil.showWarningBalloon(project,
