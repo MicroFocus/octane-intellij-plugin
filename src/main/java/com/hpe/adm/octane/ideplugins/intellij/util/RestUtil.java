@@ -40,7 +40,7 @@ import java.util.function.Supplier;
 
 public class RestUtil {
 
-    public static String LOADING_MESSAGE = "Fetching data from Octane...";
+    public static String LOADING_MESSAGE = "Fetching data from ValueEdge...";
 
     private static NotificationUtil notificationService = new NotificationUtil();
 

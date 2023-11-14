@@ -53,7 +53,7 @@ public class UiUtil {
     public static void showWarningBalloon(Project project, String title, String htmlText, NotificationType type, NotificationAction notificationAction) {
         Notification notification =
                 new Notification(
-                        "Octane IntelliJ Plugin",
+                        "ValueEdge IntelliJ Plugin",
                         title,
                         htmlText,
                         type);

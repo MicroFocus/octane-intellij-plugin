@@ -35,7 +35,7 @@
     <!--This is set by gradle build plugin-->
     <version>0.0</version>
 
-    <vendor email="alm_octane_ide_plugins_cluj@microfocus.com" url="https://www.microfocus.com/opentext">OpenText</vendor>
+    <vendor email="MFI-alm_octane_ide_plugins_cluj@opentext.com" url="https://www.microfocus.com/opentext">OpenText</vendor>
     <!--enables the plugin on other platforms-->
     <depends>com.intellij.modules.lang</depends>
 
