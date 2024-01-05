@@ -48,7 +48,7 @@
     <depends optional="true" config-file="plugin-withJavaFX.xml">com.intellij.javafx</depends>
 
     <change-notes><![CDATA[
-      <b>CE 23.4</b>
+      <b>CE 24.1</b>
       <ul>
         <li>Rebranding plugin references from ALM Octane to ValueEdge</li>
         <li>Changed all marketplaces listings to fit the new ValueEdge name</li>
