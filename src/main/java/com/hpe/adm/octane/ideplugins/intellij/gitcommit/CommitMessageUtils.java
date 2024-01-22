@@ -119,6 +119,7 @@ public class CommitMessageUtils {
 
         String id = entityModel.getId();
         Entity type = Entity.getEntityType(entityModel);
+        type = Entity.getEntityType(entityModel);
 
         switch (type) {
             case USER_STORY:
