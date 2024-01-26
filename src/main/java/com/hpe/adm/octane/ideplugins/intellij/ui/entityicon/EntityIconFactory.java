@@ -115,7 +115,7 @@ public class EntityIconFactory {
         entityColorMap.put(Entity.GHERKIN_TEST, new Color(0, 169, 137));
         entityColorMap.put(Entity.TEST_SUITE, new Color(39, 23, 130));
         entityColorMap.put(Entity.MANUAL_TEST_RUN, new Color(0, 171, 243));
-        entityColorMap.put(Entity.TEST_SUITE_RUN, new Color(0, 171, 243));
+        entityColorMap.put(Entity.TEST_SUITE_RUN, new Color(82, 22, 172));
         entityColorMap.put(Entity.AUTOMATED_TEST, new Color(186, 71, 226));
         entityColorMap.put(Entity.COMMENT, new Color(253, 225, 89));
         entityColorMap.put(Entity.REQUIREMENT, new Color(11, 142, 172));
