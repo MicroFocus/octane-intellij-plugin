@@ -119,6 +119,7 @@ public class CommitMessageUtils {
 
         String id = entityModel.getId();
         Entity type = Entity.getEntityType(entityModel);
+        String commitMessage = ": my commit message";
 
         switch (type) {
             case USER_STORY:
@@ -134,6 +135,7 @@ public class CommitMessageUtils {
 
         messageBuilder.append(id);
         messageBuilder.append(taskString);
+        messageBuilder.append(commitMessage);
         return messageBuilder.toString();
     }
 
