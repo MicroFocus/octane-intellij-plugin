@@ -35,12 +35,14 @@ import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.CommonShortcuts;
 import com.intellij.openapi.actionSystem.EmptyAction;
 import com.intellij.openapi.actionSystem.IdeActions;
+import com.intellij.openapi.actionSystem.ex.ActionUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.ui.JBMenuItem;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.components.JBTextField;
 import com.intellij.util.Consumer;
@@ -165,7 +167,7 @@ public class CustomSearchTextField extends JPanel {
             add(myToggleHistoryLabel, BorderLayout.WEST);
         }
 
-        myClearFieldLabel = new JLabel(UIUtil.isUnderDarcula() ? AllIcons.Actions.CloseHovered : AllIcons.Actions.Close);
+        myClearFieldLabel = new JLabel(!JBColor.isBright() ? AllIcons.Actions.CloseHovered : AllIcons.Actions.Close);
         myClearFieldLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 3));
         myClearFieldLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         myClearFieldLabel.setOpaque(true);
@@ -196,7 +198,7 @@ public class CustomSearchTextField extends JPanel {
         if (ApplicationManager.getApplication() != null) { //tests
             final ActionManager actionManager = ActionManager.getInstance();
             if (actionManager != null) {
-                EmptyAction.registerWithShortcutSet(IdeActions.ACTION_CLEAR_TEXT, CommonShortcuts.ESCAPE, this);
+                ActionUtil.wrap(IdeActions.ACTION_CLEAR_TEXT).registerCustomShortcutSet(CommonShortcuts.ESCAPE, this);
             }
         }
     }
@@ -227,7 +229,7 @@ public class CustomSearchTextField extends JPanel {
     }
 
     protected boolean isSearchControlUISupported() {
-        return (SystemInfo.isMac && UIUtil.isUnderAquaBasedLookAndFeel()) || UIUtil.isUnderDarcula() || UIUtil.isUnderIntelliJLaF();
+        return (SystemInfo.isMac && UIUtil.isUnderAquaBasedLookAndFeel()) || !JBColor.isBright() || UIUtil.isUnderIntelliJLaF();
     }
 
     protected boolean hasIconsOutsideOfTextField() {

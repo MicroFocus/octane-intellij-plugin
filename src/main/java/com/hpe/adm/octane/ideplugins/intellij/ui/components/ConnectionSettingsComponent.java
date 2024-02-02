@@ -40,7 +40,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.util.net.HttpConfigurable;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.swingx.JXHyperlink;
 
 import javax.swing.*;
