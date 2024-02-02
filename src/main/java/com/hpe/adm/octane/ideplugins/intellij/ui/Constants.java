@@ -29,7 +29,7 @@
 
 package com.hpe.adm.octane.ideplugins.intellij.ui;
 
-import com.intellij.util.ui.UIUtil;
+import com.intellij.ui.JBColor;
 
 public class Constants {
 
@@ -68,7 +68,7 @@ public class Constants {
     public static final String TAB_MY_WORK_TITLE = "My work";
 
     public static String getOctaneRemoveIcon() {
-        if (UIUtil.isUnderDarcula()) {
+        if (!JBColor.isBright()) {
             return IMG_FOLDER_PATH + "octane_remove_light.png";
         } else {
             return IMG_FOLDER_PATH + "octane_remove_dark.png";
@@ -76,7 +76,7 @@ public class Constants {
     }
 
     public static String getOctaneRemoveDisabledIcon() {
-        if (UIUtil.isUnderDarcula()) {
+        if (!JBColor.isBright()) {
             return IMG_TRANSPARENT;
         } else {
             return IMG_FOLDER_PATH + "octane_remove_light.png";

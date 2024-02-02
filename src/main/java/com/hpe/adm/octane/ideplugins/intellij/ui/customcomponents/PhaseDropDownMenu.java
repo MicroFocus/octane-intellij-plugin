@@ -39,7 +39,7 @@ import com.hpe.adm.octane.ideplugins.services.model.EntityModelWrapper;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
 import com.intellij.openapi.ui.JBPopupMenu;
 import com.intellij.openapi.util.IconLoader;
-import com.intellij.util.ui.UIUtil;
+import com.intellij.ui.JBColor;
 
 import javax.swing.*;
 import java.awt.*;
@@ -199,7 +199,7 @@ public class PhaseDropDownMenu extends JPanel {
     private Icon getDropdownIcon() {
         Icon dropdown;
         IconLoader.findIcon(Constants.IMG_PHASE_DROPDOWN, PhaseDropDownMenu.class.getClassLoader());
-        if(UIUtil.isUnderDarcula()) {
+        if(!JBColor.isBright()) {
             dropdown = IconLoader.findIcon(Constants.IMG_PHASE_DROPDOWN_DARKULA, PhaseDropDownMenu.class.getClassLoader());
         } else {
             dropdown = IconLoader.findIcon(Constants.IMG_PHASE_DROPDOWN, PhaseDropDownMenu.class.getClassLoader());

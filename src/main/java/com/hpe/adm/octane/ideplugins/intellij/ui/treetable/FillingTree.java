@@ -32,6 +32,7 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.treetable;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Conditions;
 import com.intellij.openapi.util.SystemInfo;
+import com.intellij.ui.JBColor;
 import com.intellij.util.ui.MouseEventAdapter;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NonNls;
@@ -382,7 +383,7 @@ class FillingTree extends JTree {
                     }
                 }
                 else {
-                    if (selected && (UIUtil.isUnderAquaBasedLookAndFeel() || UIUtil.isUnderDarcula() || UIUtil.isUnderIntelliJLaF())) {
+                    if (selected && (UIUtil.isUnderAquaBasedLookAndFeel() || !JBColor.isBright() || UIUtil.isUnderIntelliJLaF())) {
                         Color bg = getSelectionBackground(tree, true);
 
                         if (myWideSelectionCondition.value(row)) {
@@ -443,7 +444,7 @@ class FillingTree extends JTree {
 
         @Override
         public void paint(Graphics g, JComponent c) {
-            if (myWideSelection && !UIUtil.isUnderAquaBasedLookAndFeel() && !UIUtil.isUnderDarcula() && !UIUtil.isUnderIntelliJLaF()) {
+            if (myWideSelection && !UIUtil.isUnderAquaBasedLookAndFeel() && JBColor.isBright() && !UIUtil.isUnderIntelliJLaF()) {
                 paintSelectedRows(g, ((JTree)c));
             }
             if (myWideSelection) {

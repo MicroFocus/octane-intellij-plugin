@@ -29,8 +29,8 @@
 
 plugins {
     id 'java'
-    id 'org.jetbrains.intellij' version '1.13.2'
-    id 'org.openjfx.javafxplugin' version '0.0.13'
+    id 'org.jetbrains.intellij' version '1.17.0'
+    id 'org.openjfx.javafxplugin' version '0.1.0'
 }
 
 project.group = projectGroup

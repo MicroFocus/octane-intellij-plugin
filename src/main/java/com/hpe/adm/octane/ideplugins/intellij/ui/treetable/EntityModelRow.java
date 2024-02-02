@@ -76,7 +76,7 @@ public class EntityModelRow extends JPanel {
 
         setLayout(new EntityModelRowLayoutManager(mainPanel, detailsPanel));
 
-        if (!UIUtil.isUnderDarcula()) {
+        if (JBColor.isBright()) {
             fontColor = isSelected ? JBColor.background() : JBColor.foreground();
         }
 

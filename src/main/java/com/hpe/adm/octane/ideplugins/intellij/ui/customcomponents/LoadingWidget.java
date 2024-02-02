@@ -30,7 +30,7 @@
 package com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents;
 
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
-import com.intellij.util.ui.UIUtil;
+import com.intellij.ui.JBColor;
 
 import javax.swing.*;
 import java.awt.*;
@@ -44,7 +44,7 @@ public class LoadingWidget extends JPanel {
     public LoadingWidget(String loadingMessage) {
         setLayout(new BorderLayout(0, 0));
         ImageIcon preloaderIcon;
-        if (UIUtil.isUnderDarcula()) {
+        if (!JBColor.isBright()) {
             preloaderIcon = new ImageIcon(LoadingWidget.class.getResource(Constants.IMG_SPINNER_DARK));
         } else {
             preloaderIcon = new ImageIcon(LoadingWidget.class.getResource(Constants.IMG_SPINNER_LIGHT));
