@@ -38,7 +38,7 @@ import com.intellij.openapi.util.IconLoader;
 public final class SaveCurrentEntityAction extends OctanePluginAction {
 
     public SaveCurrentEntityAction() {
-        super("Save backlog item", "Save changes to backlog item.", IconLoader.findIcon("/actions/menu-saveall.png", SaveCurrentEntityAction.class.getClassLoader()));
+        super("Save backlog item", "Save changes to backlog item.", IconLoader.findIcon("/actions/menu-saveall.svg", SaveCurrentEntityAction.class.getClassLoader()));
     }
 
     public void update(AnActionEvent e) {
