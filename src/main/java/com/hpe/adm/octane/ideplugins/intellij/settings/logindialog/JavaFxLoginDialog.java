@@ -67,7 +67,7 @@ public class JavaFxLoginDialog extends LoginDialog {
     }
 
     public JavaFxLoginDialog(Project project, String loginPageUrl, boolean shouldUseJavaFxBrowser) {
-        super(project, false, IdeModalityType.PROJECT);
+        super(project, false, IdeModalityType.IDE);
         this.loginPageUrl = loginPageUrl;
         this.shouldUseJavaFxBrowser = shouldUseJavaFxBrowser;
         setTitle(TITLE);

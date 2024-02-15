@@ -48,7 +48,7 @@ public class ExternalUrlLoginDialog extends LoginDialog {
     private String loginPageUrl;
 
     public ExternalUrlLoginDialog(Project project, String loginPageUrl) {
-        super(project, false, IdeModalityType.PROJECT);
+        super(project, false, IdeModalityType.IDE);
         this.loginPageUrl = loginPageUrl;
         setTitle(TITLE);
         init();

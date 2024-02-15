@@ -60,7 +60,7 @@ public final class PhaseComboBoxAction extends ComboBoxAction {
 
     @NotNull
     @Override
-    protected DefaultActionGroup createPopupActionGroup(JComponent button) {
+    protected DefaultActionGroup createPopupActionGroup(JComponent button, DataContext dataContext) {
         DefaultActionGroup phaseGroup = new DefaultActionGroup();
         final Project project = CommonDataKeys.PROJECT.getData(DataManager.getInstance().getDataContext(button));
 
