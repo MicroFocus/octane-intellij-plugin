@@ -44,10 +44,10 @@ import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBScrollPane;
+import jakarta.inject.Provider;
 import org.jdesktop.swingx.JXHyperlink;
 import org.jdesktop.swingx.JXLabel;
 
-import javax.inject.Provider;
 import javax.swing.*;
 import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreePath;
