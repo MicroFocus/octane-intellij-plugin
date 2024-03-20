@@ -38,9 +38,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.security.SecureRandom;
 import java.util.List;
 import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class SnakeGame extends JPanel {
 
@@ -120,6 +120,8 @@ public class SnakeGame extends JPanel {
 
 	private Map<String, Image> spriteCache = new HashMap<>();
 
+	SecureRandom secureRandom = new SecureRandom();
+
 	public SnakeGame() {
 		requestFocusInWindow();
 		setKeyBindings();
@@ -192,7 +194,7 @@ public class SnakeGame extends JPanel {
 			snakeBody.add(0, new SpritePos(newX, newY, snakeDirection));
 			placeRandomApple();
 			//get new random background color
-			backgroundColor = new Color((int)(Math.random() * 0x1000000));
+			backgroundColor = new Color(secureRandom.nextInt(0x1000000));
 			speed = (speed > 100) ? (speed - 5) : 100;
 			gameLoopTimer.setDelay(speed);
 		} else {
@@ -245,7 +247,7 @@ public class SnakeGame extends JPanel {
         }
 
 		//Pick a random element of the set
-        int index = ThreadLocalRandom.current().nextInt(0, possiblePositions.size());
+		int index = secureRandom.nextInt(possiblePositions.size());
         Iterator<SpritePos> iter = possiblePositions.iterator();
         for (int i = 0; i < index; i++) {
             iter.next();

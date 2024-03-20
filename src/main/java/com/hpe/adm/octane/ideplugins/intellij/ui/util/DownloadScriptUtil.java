@@ -46,7 +46,6 @@ import com.intellij.openapi.vcs.VcsShowConfirmationOption;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ui.ConfirmationDialog;
-import org.jetbrains.annotations.Nullable;
 import org.jsoup.Jsoup;
 
 import java.io.*;
@@ -141,10 +140,9 @@ public class DownloadScriptUtil {
         try {
             f.createNewFile();
             if (script != null) {
-                Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(f), StandardCharsets.UTF_8));
-                out.append(script);
-                out.flush();
-                out.close();
+                try (Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(f), StandardCharsets.UTF_8))) {
+                    out.append(script);
+                }
             }
         } catch (IOException e) {
             return null;
