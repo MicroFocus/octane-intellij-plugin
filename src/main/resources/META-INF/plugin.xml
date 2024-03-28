@@ -327,7 +327,10 @@
         </action>
 
         <group id="com.hpe.adm.octane.ideplugins.intellij.ActiveItemActions" text="ValueEdge Active Item">
-            <add-to-group group-id="MainToolBar" anchor="last"/>
+            <!--new UI -->
+            <add-to-group group-id="MainToolbarRight" anchor="first"/>
+
+            <!--old UI -->
             <add-to-group group-id="NavBarToolBar" anchor="first"/>
 
             <separator/>
