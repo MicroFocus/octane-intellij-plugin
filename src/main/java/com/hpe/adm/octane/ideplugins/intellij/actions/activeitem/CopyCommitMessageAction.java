@@ -34,8 +34,10 @@ import com.hpe.adm.octane.ideplugins.intellij.gitcommit.CommitMessageUtils;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.services.util.PartialEntity;
+import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.util.IconLoader;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 public class CopyCommitMessageAction extends OctanePluginAction {
@@ -61,5 +63,10 @@ public class CopyCommitMessageAction extends OctanePluginAction {
                 pluginModule.getInstance(CommitMessageUtils.class).asyncCopyCommitMessageToClipboard(PartialEntity.fromJsonObject(jsonObject));
             }
         });
+    }
+
+    @Override
+    public @NotNull ActionUpdateThread getActionUpdateThread() {
+        return ActionUpdateThread.BGT;
     }
 }
