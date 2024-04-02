@@ -32,8 +32,10 @@ package com.hpe.adm.octane.ideplugins.intellij.actions.activeitem;
 import com.hpe.adm.octane.ideplugins.intellij.actions.OctanePluginAction;
 import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
+import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.util.IconLoader;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 public class StopActiveItemAction extends OctanePluginAction {
@@ -59,4 +61,8 @@ public class StopActiveItemAction extends OctanePluginAction {
         });
     }
 
+    @Override
+    public @NotNull ActionUpdateThread getActionUpdateThread() {
+        return ActionUpdateThread.BGT;
+    }
 }
