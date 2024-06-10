@@ -155,7 +155,7 @@ public class CustomSearchTextField extends JPanel {
         });
 
         myToggleHistoryLabel = new JLabel(new ImageIcon(Objects.requireNonNull(CustomSearchTextField.class.getResource(Constants.IMG_SEARCH_ICON))));
-        myToggleHistoryLabel.setBorder(BorderFactory.createEmptyBorder(0, 3, 0, 0));
+        myToggleHistoryLabel.setBorder(BorderFactory.createEmptyBorder(2, 3, 0, 0));
         myToggleHistoryLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         myToggleHistoryLabel.setOpaque(true);
         myToggleHistoryLabel.addMouseListener(new MouseAdapter() {
@@ -190,7 +190,7 @@ public class CustomSearchTextField extends JPanel {
         myToggleHistoryLabel.setBackground(myTextField.getBackground());
         myClearFieldLabel.setBackground(myTextField.getBackground());
 
-        setBorder(new CompoundBorder(BorderFactory.createEmptyBorder(2, 0, 0, 15), originalBorder));
+        setBorder(new CompoundBorder(BorderFactory.createEmptyBorder(-4, 0, 0, 15), originalBorder));
 
         myTextField.setOpaque(true);
         myTextField.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
