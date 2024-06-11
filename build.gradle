@@ -66,7 +66,7 @@ dependencies {
     }
 
     //use javafx modules only at compile time based on the current OS
-    def javaFxVersion = '11.0.2'
+    def javaFxVersion = '17.0.11'
     def javaFxModules = ['graphics', 'swing', 'base', 'web']
     def currentOS = org.gradle.internal.os.OperatingSystem.current()
     def platform
