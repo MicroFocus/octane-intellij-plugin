@@ -37,10 +37,13 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.nowork.NoWorkPanel;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
-import org.jdesktop.swingx.JXHyperlink;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.font.TextAttribute;
+import java.util.Map;
 
 public class WelcomeViewComponent extends JPanel implements HasComponent {
 
@@ -48,41 +51,34 @@ public class WelcomeViewComponent extends JPanel implements HasComponent {
     private static final String WELCOME_TEXT = "Welcome to ValueEdge plugin";
     private static final String OCTANE_SETTINGS_TEXT = "To start, go to Settings and connect.";
     private static final String OCTANE_SETTINGS_RETRY = "Retry";
-    private JXHyperlink hyperlinkSettings;
-    private JXHyperlink hyperlinkRetry;
+
+    private static final Color HYPERLINK_COLOR = new Color(3, 93, 185);
+    private static final Cursor CURSOR = new Cursor(Cursor.HAND_CURSOR);
+
+    private JLabel hyperlinkSettings;
+    private JLabel hyperlinkRetry;
     private JLabel lblMessage;
     private boolean connectionFailed;
 
-    public WelcomeViewComponent() {
-        init();
-    }
-
     public WelcomeViewComponent(Project project) {
-        init();
-        hyperlinkSettings.addActionListener(event -> ShowSettingsUtil.getInstance().showSettingsDialog(project, ConnectionSettingsConfigurable.class));
+        init(project);
     }
 
     public WelcomeViewComponent(Project project, String welcomeMessage, String settingsLinkMessage, String retryMessage) {
         final ConnectionSettingsProvider connectionSettingsProvider = PluginModule.getPluginModuleForProject(project).getInstance(ConnectionSettingsProvider.class);
         connectionFailed = retryMessage != null;
-        init();
+        init(project);
         lblMessage.setText(welcomeMessage);
         hyperlinkSettings.setText(settingsLinkMessage);
-        hyperlinkSettings.addActionListener(event -> ShowSettingsUtil.getInstance().showSettingsDialog(project, ConnectionSettingsConfigurable.class));
         if (connectionFailed) {
             hyperlinkRetry.setText(retryMessage);
-            hyperlinkRetry.addActionListener(event -> {
-                        connectionSettingsProvider.setConnectionSettings(connectionSettingsProvider.getConnectionSettings());
-                    }
-            );
         }
     }
-
 
     /**
      * Create the panel.
      */
-    private void init() {
+    private void init(Project project) {
         GridBagLayout gridBagLayout = new GridBagLayout();
         gridBagLayout.columnWidths = new int[]{0, 0, 0};
         gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0};
@@ -90,60 +86,124 @@ public class WelcomeViewComponent extends JPanel implements HasComponent {
         gridBagLayout.rowWeights = new double[]{0.0, 1.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
         setLayout(gridBagLayout);
 
+        addCompanyLabel();
+        addOctaneLogoLabel();
+        addWelcomeTextLabel();
+        addSettingsHyperlinkLabel(project);
+
+        if (connectionFailed) {
+            addRetryHyperlinkLabel(project);
+        }
+    }
+
+    private void addCompanyLabel() {
         JLabel lblCompany = new JLabel("");
         lblCompany.setIcon(new ImageIcon(NoWorkPanel.class.getResource(Constants.IMG_VENDOR_LOGO_LIGHT)));
+
         GridBagConstraints gbc_lblCompany = new GridBagConstraints();
         gbc_lblCompany.anchor = GridBagConstraints.SOUTHEAST;
         gbc_lblCompany.fill = GridBagConstraints.VERTICAL;
         gbc_lblCompany.insets = new Insets(0, 0, 10, 10);
         gbc_lblCompany.gridx = 1;
         gbc_lblCompany.gridy = 5;
+
         add(lblCompany, gbc_lblCompany);
+    }
 
-
+    private void addOctaneLogoLabel() {
         JLabel lblOctane = new JLabel("");
         lblOctane.setIcon(new ImageIcon(NoWorkPanel.class.getResource(Constants.IMG_OCTANE_LOGO)));
+
         GridBagConstraints gbc_lblOctane = new GridBagConstraints();
         gbc_lblOctane.anchor = GridBagConstraints.CENTER;
         gbc_lblOctane.fill = GridBagConstraints.VERTICAL;
         gbc_lblOctane.insets = new Insets(10, 0, 0, 0);
         gbc_lblOctane.gridx = 1;
         gbc_lblOctane.gridy = 1;
-        add(lblOctane, gbc_lblOctane);
 
+        add(lblOctane, gbc_lblOctane);
+    }
+
+    private void addWelcomeTextLabel() {
         lblMessage = new JLabel(WELCOME_TEXT);
-        Font lblMessageFont = new Font(lblMessage.getFont().getFontName(),Font.PLAIN,18);
+
+        Font lblMessageFont = new Font(lblMessage.getFont().getFontName(), Font.PLAIN, 18);
         lblMessage.setFont(lblMessageFont);
+
         GridBagConstraints gbc_lblMessage = new GridBagConstraints();
         gbc_lblMessage.anchor = GridBagConstraints.CENTER;
         gbc_lblMessage.insets = new Insets(0, 0, 5, 0);
-        gbc_lblMessage.gridx =1;
+        gbc_lblMessage.gridx = 1;
         gbc_lblMessage.gridy = 2;
         add(lblMessage, gbc_lblMessage);
+    }
 
-        hyperlinkSettings = new JXHyperlink();
+    private void addSettingsHyperlinkLabel(Project project) {
+        hyperlinkSettings = new JLabel();
         hyperlinkSettings.setText(OCTANE_SETTINGS_TEXT);
-        Font  hyperlinkSettingsFont = new Font(hyperlinkSettings.getFont().getFontName(),Font.PLAIN,18);
+        hyperlinkSettings.setForeground(HYPERLINK_COLOR);
+        hyperlinkSettings.setCursor(CURSOR);
+
+        Font hyperlinkSettingsFont = new Font(hyperlinkSettings.getFont().getFontName(), Font.PLAIN, 18);
         hyperlinkSettings.setFont(hyperlinkSettingsFont);
+
+        hyperlinkSettings.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                ShowSettingsUtil.getInstance().showSettingsDialog(project, ConnectionSettingsConfigurable.class);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                setUnderlineText(hyperlinkSettings, TextAttribute.SUPERSCRIPT_SUB);
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                setUnderlineText(hyperlinkSettings, TextAttribute.UNDERLINE_ON);
+            }
+        });
         GridBagConstraints gbc_hyperlinkSettings = new GridBagConstraints();
         gbc_hyperlinkSettings.anchor = GridBagConstraints.CENTER;
         gbc_hyperlinkSettings.insets = new Insets(0, 0, 5, 0);
         gbc_hyperlinkSettings.gridx = 1;
         gbc_hyperlinkSettings.gridy = 3;
+
         add(hyperlinkSettings, gbc_hyperlinkSettings);
+    }
 
-        if (connectionFailed) {
-            hyperlinkRetry = new JXHyperlink();
-            hyperlinkRetry.setText(OCTANE_SETTINGS_RETRY);
-            Font  hyperlinkRetryFont = new Font(hyperlinkRetry.getFont().getFontName(),Font.PLAIN,18);
-            hyperlinkRetry.setFont(hyperlinkRetryFont);
-            GridBagConstraints gbc_hyperlinkRetry = new GridBagConstraints();
-            gbc_hyperlinkRetry.anchor = GridBagConstraints.CENTER;
-            gbc_hyperlinkRetry.gridx = 1;
-            gbc_hyperlinkRetry.gridy = 4;
-            add(hyperlinkRetry, gbc_hyperlinkRetry);
-        }
+    private void addRetryHyperlinkLabel(Project project) {
+        hyperlinkRetry = new JLabel();
+        hyperlinkRetry.setText(OCTANE_SETTINGS_RETRY);
+        hyperlinkRetry.setForeground(HYPERLINK_COLOR);
+        hyperlinkRetry.setCursor(CURSOR);
 
+        Font hyperlinkRetryFont = new Font(hyperlinkRetry.getFont().getFontName(), Font.PLAIN, 18);
+        hyperlinkRetry.setFont(hyperlinkRetryFont);
+
+        hyperlinkRetry.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                ShowSettingsUtil.getInstance().showSettingsDialog(project, ConnectionSettingsConfigurable.class);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                setUnderlineText(hyperlinkRetry, TextAttribute.SUPERSCRIPT_SUB);
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                setUnderlineText(hyperlinkRetry, TextAttribute.UNDERLINE_ON);
+            }
+        });
+
+        GridBagConstraints gbc_hyperlinkRetry = new GridBagConstraints();
+        gbc_hyperlinkRetry.anchor = GridBagConstraints.CENTER;
+        gbc_hyperlinkRetry.gridx = 1;
+        gbc_hyperlinkRetry.gridy = 4;
+
+        add(hyperlinkRetry, gbc_hyperlinkRetry);
     }
 
     @Override
@@ -151,4 +211,10 @@ public class WelcomeViewComponent extends JPanel implements HasComponent {
         return this;
     }
 
+    private void setUnderlineText(JLabel label, Integer underline) {
+        Font font = label.getFont();
+        Map<TextAttribute, Object> attributes = (Map<TextAttribute, Object>) font.getAttributes();
+        attributes.put(TextAttribute.UNDERLINE, underline);
+        label.setFont(font.deriveFont(attributes));
+    }
 }
