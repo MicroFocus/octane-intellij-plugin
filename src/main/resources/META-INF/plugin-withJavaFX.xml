@@ -39,7 +39,7 @@
     <!--enables the plugin on other platforms-->
     <depends>com.intellij.modules.lang</depends>
 
-    <idea-version since-build="222"/>
+    <idea-version since-build="233"/>
 
     <extensions defaultExtensionNs="com.intellij">
 
