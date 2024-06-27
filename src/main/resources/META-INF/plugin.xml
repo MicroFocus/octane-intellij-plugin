@@ -48,7 +48,7 @@
     <depends optional="true" config-file="plugin-withJavaFX.xml">com.intellij.javafx</depends>
 
     <change-notes><![CDATA[
-      <b>CE 24.2</b>
+      <b>CE-24.2</b>
       <ul>
         <li>Updated plugin build to use JDK17</li>
         <li>Rebranding plugin references from ALM Octane to ValueEdge</li>
