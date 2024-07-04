@@ -30,7 +30,7 @@
 <idea-plugin>
     <id>com.hpe.adm.octane.ideplugins.intellij</id>
 
-    <name>ValueEdge</name>
+    <name>OpenText™ Core Software Delivery Platform</name>
 
     <!--This is set by gradle build plugin-->
     <version>0.0</version>
@@ -38,8 +38,8 @@
     <vendor email="MFI-alm_octane_ide_plugins_cluj@opentext.com" url="https://www.microfocus.com/opentext">OpenText</vendor>
 
     <description><![CDATA[
-        Enables integration with ValueEdge.<br>
-        Compatible with ValueEdge version 12.53.20 and above.<br>
+        Enables integration with OpenText™ Core Software Delivery Platform.<br>
+        Compatible with OpenText™ Core Software Delivery Platform version 12.53.20 and above.<br>
         For a better experience rendering the backlog item detail views, please install the
         <a href="https://plugins.jetbrains.com/plugin/14250-javafx-runtime-for-plugins">JavaFX Runtime for Plugins</a> plugin.
     ]]></description>
@@ -288,7 +288,7 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <toolWindow factoryClass="com.hpe.adm.octane.ideplugins.intellij.ui.EntryPoint" anchor="bottom"
-                    icon="/images/favicon.png" secondary="true" id="ValueEdge"/>
+                    icon="/images/favicon.png" secondary="true" id="OpenText™ Core Software Delivery Platform"/>
 
         <projectService
                 serviceInterface="com.hpe.adm.octane.ideplugins.intellij.settings.IdePersistentConnectionSettingsProvider"
@@ -298,7 +298,7 @@
                         serviceImplementation="com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState"/>
 
         <projectConfigurable id="com.hpe.adm.octane.ideplugins.intellij.settings.ConnectionSettingsConfigurable"
-                             displayName="ValueEdge Settings"
+                             displayName="OpenText™ Core Software Delivery Platform Settings"
                              instance="com.hpe.adm.octane.ideplugins.intellij.settings.ConnectionSettingsConfigurable"/>
     </extensions>
 
@@ -327,7 +327,7 @@
             <keyboard-shortcut first-keystroke="control shift O" keymap="$default"/>
         </action>
 
-        <group id="com.hpe.adm.octane.ideplugins.intellij.ActiveItemActions" text="ValueEdge Active Item">
+        <group id="com.hpe.adm.octane.ideplugins.intellij.ActiveItemActions" text="OpenText™ Core Software Delivery Platform Active Item">
             <!--new UI -->
             <add-to-group group-id="MainToolbarRight" anchor="first"/>
 
