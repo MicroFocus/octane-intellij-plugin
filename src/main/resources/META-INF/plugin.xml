@@ -48,6 +48,12 @@
     <depends optional="true" config-file="plugin-withJavaFX.xml">com.intellij.javafx</depends>
 
     <change-notes><![CDATA[
+      <b>CE-24.3</b>
+      <ul>
+        <li>Rebranding plugin from ValueEdge to OpenText™️ Core Software Delivery Platform</li>
+      </ul>
+      <hr/>
+
       <b>CE-24.2</b>
       <ul>
         <li>Updated plugin build to use JDK17</li>
