@@ -104,7 +104,7 @@ intellij {
     //alternativeIdePath 'C:\\DevTools\\PyCharm Community Edition 2018.2.1'
 
     plugins = ["maven", "gradle"]
-    pluginName = project.hasProperty('zipname') ? project.getProperty('zipname') : "ValueEdge IntelliJ Plugin"
+    pluginName = project.hasProperty('zipname') ? project.getProperty('zipname') : "OpenText Core Software Delivery Platform IntelliJ Plugin"
     updateSinceUntilBuild = false
 
     downloadSources = true

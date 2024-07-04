@@ -43,6 +43,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
+import com.intellij.ui.JBColor;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
@@ -51,7 +52,7 @@ import java.util.Objects;
 
 public class OpenActiveItemAction extends OctanePluginAction {
 
-    private static final Icon defaultActiveIcon = IconLoader.findIcon(Constants.IMG_OCTANE_LOGO_20x20, OpenActiveItemAction.class.getClassLoader());
+    private static final Icon defaultActiveIcon = IconLoader.findIcon(!JBColor.isBright() ? Constants.IMG_OCTANE_LOGO_20x20_DARK : Constants.IMG_OCTANE_LOGO_20x20_LIGHT, OpenActiveItemAction.class.getClassLoader());
 
     public OpenActiveItemAction() {
         super("Open active backlog item", "Open a detail tab with the active backlog item.", defaultActiveIcon);
@@ -132,9 +133,9 @@ public class OpenActiveItemAction extends OctanePluginAction {
         getPluginModule(e).ifPresent(pluginModule -> {
             JSONObject jsonObject = pluginModule.getInstance(IdePluginPersistentState.class).loadState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM);
             if (jsonObject != null) {
-                ToolWindow octaneToolWindow = ToolWindowManager.getInstance(Objects.requireNonNull(e.getProject())).getToolWindow("ValueEdge");
+                ToolWindow octaneToolWindow = ToolWindowManager.getInstance(Objects.requireNonNull(e.getProject())).getToolWindow("OpenText™ Core Software Delivery Platform");
                 if (!octaneToolWindow.isActive()) {
-                    ToolWindowManager.getInstance(e.getProject()).getToolWindow("ValueEdge").show(null);
+                    ToolWindowManager.getInstance(e.getProject()).getToolWindow("OpenText™ Core Software Delivery Platform").show(null);
                 }
                 TabbedPanePresenter tabbedPanePresenter = pluginModule.getInstance(TabbedPanePresenter.class);
                 tabbedPanePresenter.openDetailTab(PartialEntity.fromJsonObject(jsonObject));

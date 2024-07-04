@@ -50,9 +50,9 @@ public class OpenMyWorkAction extends AnAction {
             return;
         }
 
-        ToolWindow octaneToolWindow = ToolWindowManager.getInstance(e.getProject()).getToolWindow("ValueEdge");
+        ToolWindow octaneToolWindow = ToolWindowManager.getInstance(e.getProject()).getToolWindow("OpenText™ Core Software Delivery Platform");
         if (!octaneToolWindow.isActive()) {
-            ToolWindowManager.getInstance(e.getProject()).getToolWindow("ValueEdge").show(null);
+            ToolWindowManager.getInstance(e.getProject()).getToolWindow("OpenText™ Core Software Delivery Platform").show(null);
         }
 
         PluginModule pluginModule = PluginModule.getPluginModuleForProject(e.getProject());

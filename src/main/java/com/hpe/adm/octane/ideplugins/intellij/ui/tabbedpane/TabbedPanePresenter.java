@@ -339,7 +339,7 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
             //Show warning message
             Notification notification =
                     new Notification(
-                            "ValueEdge IntelliJ Plugin",
+                            "OpenText™ Core Software Delivery Platform IntelliJ Plugin",
                             "Detail tab not supported",
                             "Opening " + entityType.name().toLowerCase() + " " + entityId + "  in browser...",
                             NotificationType.WARNING);
