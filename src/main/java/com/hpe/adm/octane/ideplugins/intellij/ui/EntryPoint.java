@@ -146,12 +146,12 @@ public class EntryPoint implements ToolWindowFactory {
                             welcomeViewComponent = new WelcomeViewComponent(
                                     project,
                                     "Your previously saved connection settings do not seem to work",
-                                    "Please go to settings and test your connection to OpenText™ Core Software Delivery Platform",
-                                    "Retry to connect to OpenText™ Core Software Delivery Platform");
+                                    "Please go to settings and test your connection to ValueEdge",
+                                    "Retry to connect to ValueEdge");
 
                             //also show a notification with the exception
                             UiUtil.showWarningBalloon(project,
-                                    "Failed to connect to OpenText™ Core Software Delivery Platform",
+                                    "Failed to connect to ValueEdge",
                                     "Your previously saved connection settings do not seem to work <br> Error: " + message,
                                     NotificationType.WARNING);
 

@@ -383,7 +383,7 @@ public class SnakeGame extends JPanel {
 		g.setColor(lightBlue);
 		FontMetrics fontMetrics =  getFontMetrics(titleFont);
 		g.setFont(titleFont);
-		String title = "OpenText™ Core Software Delivery Platform SNAKE";
+		String title = "VALUEEDGE SNAKE";
 		g.drawString(title, x + (width- fontMetrics.stringWidth(title)) / 2, y + height / 2 - titleFontSize / 2);
 
 

@@ -1,10 +1,10 @@
 # octane-intellij-plugin
-## IntelliJ IDEA IDE Integration for OpenText™ Core Software Delivery Platform
+## IntelliJ IDEA IDE Integration for ValueEdge
 
 The plugin shares a common service layer with: https://github.com/MicroFocus/octane-eclipse-plugin <br>
 Common: https://github.com/MicroFocus/octane-plugin-common <br>
 
-Connection to the server is done using the REST SDK for OpenText™ Core Software Delivery Platform, see: <br>
+Connection to the server is done using the REST SDK for ValueEdge, see: <br>
 * https://github.com/MicroFocus/ALMOctaneJavaRESTSDK
 
 ### How to build:

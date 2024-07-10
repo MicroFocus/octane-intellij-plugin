@@ -63,7 +63,7 @@ public class ExternalUrlLoginDialog extends LoginDialog {
         JPanel contentPane = new JPanel();
         contentPane.setLayout(new BorderLayout(0, 10));
 
-        JLabel lblOpenSystemBrowser = new JLabel("<html><a href=\\\"\\\">Please click here to use your system default browser to login to OpenText™ Core Software Delivery Platform...</a></html>");
+        JLabel lblOpenSystemBrowser = new JLabel("<html><a href=\\\"\\\">Please click here to use your system default browser to login to ValueEdge...</a></html>");
         lblOpenSystemBrowser.setBorder(new EmptyBorder(10, 0, 10, 0));
         lblOpenSystemBrowser.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         contentPane.add(lblOpenSystemBrowser, BorderLayout.CENTER);

@@ -65,7 +65,7 @@ import java.util.Objects;
 
 public class ConnectionSettingsConfigurable implements SearchableConfigurable, Configurable.NoScroll {
 
-    private static final String NAME = "OpenText™ Core Software Delivery Platform";
+    private static final String NAME = "ValueEdge";
     private Project currentProject;
 
     //@Inject is not supported here, this class is instantiated by intellij
@@ -243,12 +243,12 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
             version = OctaneVersionService.getOctaneVersion(connectionSettings);
             version.discardBuildNumber();
             if (version.compareTo(OctaneVersion.DYNAMO) < 0) {
-                showWarningBalloon("OpenText™ Core Software Delivery Platform version not supported. This plugin works with OpenText™ Core Software Delivery Platform versions starting " + OctaneVersion.DYNAMO.getVersionString());
+                showWarningBalloon("ValueEdge version not supported. This plugin works with ValueEdge versions starting " + OctaneVersion.DYNAMO.getVersionString());
             }
 
             if (connectionSettingsView.isSsoAuth()) {
                 if (version.compareTo(new OctaneVersion("12.60.14")) < 0) {
-                    showWarningBalloon("Login with browser is only supported starting from OpenText™ Core Software Delivery Platform server version: " + OctaneVersion.INTER_P2.getVersionString());
+                    showWarningBalloon("Login with browser is only supported starting from ValueEdge server version: " + OctaneVersion.INTER_P2.getVersionString());
                     connectionSettingsView.setSsoAuth(false);
                 }
             }
@@ -256,7 +256,7 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
         } catch (Exception ex) {
             version = OctaneVersionService.fallbackVersion;
 
-            String message = "Failed to determine OpenText™ Core Software Delivery Platform server version, http call to " +
+            String message = "Failed to determine ValueEdge server version, http call to " +
                     OctaneVersionService.getServerVersionUrl(connectionSettings) +
                     " failed. Assuming server version is higher or equal to: " +
                     version.getVersionString();
@@ -318,7 +318,7 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
                             connectionSettingsView.setConnectionStatusError("Invalid username or password.");
                         }
                     } else {
-                        connectionSettingsView.setConnectionStatusError("Failed to connect to OpenText™ Core Software Delivery Platform: " + ex.getMessage());
+                        connectionSettingsView.setConnectionStatusError("Failed to connect to ValueEdge: " + ex.getMessage());
                     }
                 }
             });
