@@ -36,10 +36,8 @@ public class Constants {
     public static final String IMG_FOLDER_PATH = "/images/";
     public static final String IMG_VENDOR_LOGO_LIGHT = IMG_FOLDER_PATH + "opentext-logo_light-theme-128.png";
     public static final String IMG_VENDOR_LOGO_DARK = IMG_FOLDER_PATH + "opentext-logo_dark-theme-128.png";
-    public static final String IMG_OCTANE_LOGO_LIGHT = IMG_FOLDER_PATH + "octane-logo-light.png";
-    public static final String IMG_OCTANE_LOGO_DARK = IMG_FOLDER_PATH + "octane-logo-dark.png";
-    public static final String IMG_OCTANE_LOGO_20x20_LIGHT = IMG_FOLDER_PATH + "octane-logo-light-20x20.png";
-    public static final String IMG_OCTANE_LOGO_20x20_DARK = IMG_FOLDER_PATH + "octane-logo-dark-20x20.png";
+    public static final String IMG_OCTANE_LOGO = IMG_FOLDER_PATH + "octane-logo.png";
+    public static final String IMG_OCTANE_LOGO_20x20 = IMG_FOLDER_PATH + "octane-logo-20x20.png";
     public static final String IMG_SPINNER_LIGHT = IMG_FOLDER_PATH + "octane_preloader_light-128.gif";
     public static final String IMG_SPINNER_DARK = IMG_FOLDER_PATH + "octane_preloader_dark-128.gif";
     public static final String IMG_REFRESH_ICON = IMG_FOLDER_PATH + "refresh-16x16.png";

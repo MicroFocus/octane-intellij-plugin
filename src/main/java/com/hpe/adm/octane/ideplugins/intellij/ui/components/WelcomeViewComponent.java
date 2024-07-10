@@ -37,7 +37,6 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.nowork.NoWorkPanel;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettingsProvider;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
-import com.intellij.ui.JBColor;
 
 import javax.swing.*;
 import java.awt.*;
@@ -49,7 +48,7 @@ import java.util.Map;
 public class WelcomeViewComponent extends JPanel implements HasComponent {
 
     private static final long serialVersionUID = 1L;
-    private static final String WELCOME_TEXT = "<html>OpenText&trade; Core Software Delivery Platform</html>";
+    private static final String WELCOME_TEXT = "Welcome to ValueEdge plugin";
     private static final String OCTANE_SETTINGS_TEXT = "To start, go to Settings and connect.";
     private static final String OCTANE_SETTINGS_RETRY = "Retry";
 
@@ -113,11 +112,7 @@ public class WelcomeViewComponent extends JPanel implements HasComponent {
 
     private void addOctaneLogoLabel() {
         JLabel lblOctane = new JLabel("");
-        if (!JBColor.isBright()) {
-            lblOctane.setIcon(new ImageIcon(NoWorkPanel.class.getResource(Constants.IMG_OCTANE_LOGO_DARK)));
-        } else {
-            lblOctane.setIcon(new ImageIcon(NoWorkPanel.class.getResource(Constants.IMG_OCTANE_LOGO_LIGHT)));
-        }
+        lblOctane.setIcon(new ImageIcon(NoWorkPanel.class.getResource(Constants.IMG_OCTANE_LOGO)));
 
         GridBagConstraints gbc_lblOctane = new GridBagConstraints();
         gbc_lblOctane.anchor = GridBagConstraints.CENTER;
@@ -130,8 +125,7 @@ public class WelcomeViewComponent extends JPanel implements HasComponent {
     }
 
     private void addWelcomeTextLabel() {
-        lblMessage = new JLabel();
-        lblMessage.setText(WELCOME_TEXT);
+        lblMessage = new JLabel(WELCOME_TEXT);
 
         Font lblMessageFont = new Font(lblMessage.getFont().getFontName(), Font.PLAIN, 18);
         lblMessage.setFont(lblMessageFont);
