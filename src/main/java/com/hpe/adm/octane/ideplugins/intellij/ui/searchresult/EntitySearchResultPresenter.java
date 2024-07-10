@@ -124,7 +124,7 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
         String trimmedQuery = query.trim();
         lastSearchQuery = trimmedQuery;
 
-        Task.Backgroundable backgroundTask = new Task.Backgroundable(null, "Searching ValueEdge for \"" + trimmedQuery + "\"", false) {
+        Task.Backgroundable backgroundTask = new Task.Backgroundable(null, "Searching Core Software Delivery Platform for \"" + trimmedQuery + "\"", false) {
 
             private Collection<EntityModel> searchResults;
 

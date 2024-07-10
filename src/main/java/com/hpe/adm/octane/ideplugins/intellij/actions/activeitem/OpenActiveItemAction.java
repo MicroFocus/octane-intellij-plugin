@@ -132,9 +132,9 @@ public class OpenActiveItemAction extends OctanePluginAction {
         getPluginModule(e).ifPresent(pluginModule -> {
             JSONObject jsonObject = pluginModule.getInstance(IdePluginPersistentState.class).loadState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM);
             if (jsonObject != null) {
-                ToolWindow octaneToolWindow = ToolWindowManager.getInstance(Objects.requireNonNull(e.getProject())).getToolWindow("ValueEdge");
+                ToolWindow octaneToolWindow = ToolWindowManager.getInstance(Objects.requireNonNull(e.getProject())).getToolWindow("Core Software Delivery Platform");
                 if (!octaneToolWindow.isActive()) {
-                    ToolWindowManager.getInstance(e.getProject()).getToolWindow("ValueEdge").show(null);
+                    ToolWindowManager.getInstance(e.getProject()).getToolWindow("Core Software Delivery Platform").show(null);
                 }
                 TabbedPanePresenter tabbedPanePresenter = pluginModule.getInstance(TabbedPanePresenter.class);
                 tabbedPanePresenter.openDetailTab(PartialEntity.fromJsonObject(jsonObject));

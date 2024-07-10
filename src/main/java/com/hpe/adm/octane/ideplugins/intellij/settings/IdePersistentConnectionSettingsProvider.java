@@ -52,7 +52,7 @@ public class IdePersistentConnectionSettingsProvider extends BasicConnectionSett
     public static class OctanePluginNameGetter extends State.NameGetter {
         @Override
         public String get() {
-            return "ValueEdge IntelliJ Plugin";
+            return "Core Software Delivery Platform IntelliJ Plugin";
         }
     }
 

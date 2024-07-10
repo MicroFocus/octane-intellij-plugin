@@ -40,7 +40,7 @@ import java.util.function.Supplier;
 
 public class RestUtil {
 
-    public static String LOADING_MESSAGE = "Fetching data from ValueEdge...";
+    public static String LOADING_MESSAGE = "Fetching data from Core Software Delivery Platform...";
 
     private static NotificationUtil notificationService = new NotificationUtil();
 
