@@ -30,7 +30,7 @@
 <idea-plugin>
     <id>com.hpe.adm.octane.ideplugins.intellij</id>
 
-    <name>ValueEdge</name>
+    <name>Core Software Delivery Platform</name>
 
     <!--This is set by gradle build plugin-->
     <version>0.0</version>

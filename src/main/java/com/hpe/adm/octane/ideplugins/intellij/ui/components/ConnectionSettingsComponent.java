@@ -56,13 +56,13 @@ import java.util.stream.Collectors;
 
 public class ConnectionSettingsComponent implements HasComponent {
 
-    private static final String EMPTY_SERVER_URL_TEXT = "Copy paste your ValueEdge URL from the browser here...";
+    private static final String EMPTY_SERVER_URL_TEXT = "Copy paste your Core Software Delivery Platform URL from the browser here...";
     private static final String EMPTY_SHAREDSPACE_WORKSPACE_URL_TEXT = "Retrieved from server URL";
 
-    private static final String userPassAuthInfoText = "Log into ValueEdge directly with your user name and password, in non-SSO environments. " + System.lineSeparator() +
+    private static final String userPassAuthInfoText = "Log into Core Software Delivery Platform directly with your user name and password, in non-SSO environments. " + System.lineSeparator() +
             "This method saves your login credentials between sessions, so you do not have to re-enter them.";
 
-    private static final String browserAuthInfoText = "Log into ValueEdge using a browser. " + System.lineSeparator() +
+    private static final String browserAuthInfoText = "Log into Core Software Delivery Platform using a browser. " + System.lineSeparator() +
             "You can use this method for non-SSO, SSO, and federated environments. " + System.lineSeparator() +
             "Your login credentials are not saved between sessions, so you will have to re-enter them each time.";
 

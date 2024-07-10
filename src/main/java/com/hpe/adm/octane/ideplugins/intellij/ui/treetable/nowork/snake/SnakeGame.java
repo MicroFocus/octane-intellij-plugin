@@ -376,14 +376,14 @@ public class SnakeGame extends JPanel {
 	}
 
 	private void drawGameStart(Graphics g, int x, int y, int width, int height){
-		int titleFontSize = width * 5 / 100;
+		int titleFontSize = width * 4 / 100;
 		int bottomFontSize = width * 3 / 100;
 
 		Font titleFont = new JLabel().getFont().deriveFont(Font.BOLD | Font.ITALIC).deriveFont((float)titleFontSize);
 		g.setColor(lightBlue);
 		FontMetrics fontMetrics =  getFontMetrics(titleFont);
 		g.setFont(titleFont);
-		String title = "VALUEEDGE SNAKE";
+		String title = "CORE SOFTWARE DELIVERY PLATFORM SNAKE";
 		g.drawString(title, x + (width- fontMetrics.stringWidth(title)) / 2, y + height / 2 - titleFontSize / 2);
 
 

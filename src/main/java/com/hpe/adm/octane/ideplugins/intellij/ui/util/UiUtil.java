@@ -53,7 +53,7 @@ public class UiUtil {
     public static void showWarningBalloon(Project project, String title, String htmlText, NotificationType type, NotificationAction notificationAction) {
         Notification notification =
                 new Notification(
-                        "ValueEdge IntelliJ Plugin",
+                        "Core Software Delivery Platform IntelliJ Plugin",
                         title,
                         htmlText,
                         type);

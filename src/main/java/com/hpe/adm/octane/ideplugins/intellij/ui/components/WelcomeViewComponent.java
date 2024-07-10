@@ -48,7 +48,7 @@ import java.util.Map;
 public class WelcomeViewComponent extends JPanel implements HasComponent {
 
     private static final long serialVersionUID = 1L;
-    private static final String WELCOME_TEXT = "Welcome to ValueEdge plugin";
+    private static final String WELCOME_TEXT = "Welcome to Core Software Delivery Platform plugin";
     private static final String OCTANE_SETTINGS_TEXT = "To start, go to Settings and connect.";
     private static final String OCTANE_SETTINGS_RETRY = "Retry";
 
