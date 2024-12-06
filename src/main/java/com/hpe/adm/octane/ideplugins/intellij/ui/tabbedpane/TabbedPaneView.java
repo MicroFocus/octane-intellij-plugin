@@ -263,6 +263,11 @@ public class TabbedPaneView implements View {
                 }
             }
         }
+
+        @Override
+        public @NotNull ActionUpdateThread getActionUpdateThread() {
+            return ActionUpdateThread.EDT;
+        }
     }
 
 }

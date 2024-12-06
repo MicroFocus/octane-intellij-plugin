@@ -44,6 +44,7 @@ import com.intellij.openapi.actionSystem.impl.ActionToolbarImpl;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ui.JBUI;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.border.MatteBorder;
@@ -314,8 +315,14 @@ public class HeaderPanel extends JPanel {
 
         }
 
+        @Override
         public void actionPerformed(AnActionEvent e) {
             entityService.openInBrowser(entityModelWrapper.getEntityModel());
+        }
+
+        @Override
+        public @NotNull ActionUpdateThread getActionUpdateThread() {
+            return ActionUpdateThread.EDT;
         }
     }
 }

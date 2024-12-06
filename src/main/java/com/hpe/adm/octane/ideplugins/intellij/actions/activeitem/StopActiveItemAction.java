@@ -34,6 +34,7 @@ import com.hpe.adm.octane.ideplugins.intellij.settings.IdePluginPersistentState;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.IconLoader;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
@@ -46,9 +47,14 @@ public class StopActiveItemAction extends OctanePluginAction {
 
     @Override
     public void update(AnActionEvent e) {
-        getPluginModule(e).ifPresent(pluginModule -> {
-            JSONObject jsonObject = pluginModule.getInstance(IdePluginPersistentState.class).loadState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM);
-            e.getPresentation().setEnabled(jsonObject != null);
+        ApplicationManager.getApplication().executeOnPooledThread(() -> {
+            getPluginModule(e).ifPresent(pluginModule -> {
+                JSONObject jsonObject = pluginModule.getInstance(IdePluginPersistentState.class).loadState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM);
+
+                ApplicationManager.getApplication().invokeLater(() -> {
+                    e.getPresentation().setEnabled(jsonObject != null);
+                });
+            });
         });
     }
 
@@ -63,6 +69,6 @@ public class StopActiveItemAction extends OctanePluginAction {
 
     @Override
     public @NotNull ActionUpdateThread getActionUpdateThread() {
-        return ActionUpdateThread.BGT;
+        return ActionUpdateThread.EDT;
     }
 }

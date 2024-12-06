@@ -31,9 +31,11 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.detail.actions;
 
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.EntityDetailView;
+import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.util.IconLoader;
+import org.jetbrains.annotations.NotNull;
 
 public final class SelectFieldsAction extends AnAction {
 
@@ -49,15 +51,22 @@ public final class SelectFieldsAction extends AnAction {
         this.entityDetailView = entityDetailView;
     }
 
+    @Override
     public void actionPerformed(AnActionEvent e) {
         entityDetailView.showFieldsSettings();
     }
 
+    @Override
     public void update(AnActionEvent e) {
         if (defaultfields) {
             e.getPresentation().setIcon(IconLoader.findIcon(Constants.IMG_FIELD_SELECTION_DEFAULT, SelectFieldsAction.class.getClassLoader()));
         } else {
             e.getPresentation().setIcon(IconLoader.findIcon(Constants.IMG_FIELD_SELECTION_NON_DEFAULT, SelectFieldsAction.class.getClassLoader()));
         }
+    }
+
+    @Override
+    public @NotNull ActionUpdateThread getActionUpdateThread() {
+        return ActionUpdateThread.EDT;
     }
 }

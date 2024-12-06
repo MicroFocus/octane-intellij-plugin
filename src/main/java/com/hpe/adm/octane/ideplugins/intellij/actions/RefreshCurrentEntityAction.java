@@ -33,8 +33,10 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Presenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.detail.EntityDetailPresenter;
 import com.hpe.adm.octane.ideplugins.intellij.ui.treetable.EntityTreeTablePresenter;
+import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.util.IconLoader;
+import org.jetbrains.annotations.NotNull;
 
 public class RefreshCurrentEntityAction extends OctanePluginAction {
 
@@ -42,6 +44,7 @@ public class RefreshCurrentEntityAction extends OctanePluginAction {
         super("Refresh backlog item", "Refresh backlog item details.", IconLoader.findIcon(Constants.IMG_REFRESH_ICON, RefreshCurrentEntityAction.class.getClassLoader()));
     }
 
+    @Override
     public void actionPerformed(AnActionEvent e) {
         Presenter presenter = getSelectedPresenter(e);
 
@@ -56,5 +59,10 @@ public class RefreshCurrentEntityAction extends OctanePluginAction {
             ((EntityDetailPresenter) presenter).refresh();
         }
 
+    }
+
+    @Override
+    public @NotNull ActionUpdateThread getActionUpdateThread() {
+        return ActionUpdateThread.EDT;
     }
 }
