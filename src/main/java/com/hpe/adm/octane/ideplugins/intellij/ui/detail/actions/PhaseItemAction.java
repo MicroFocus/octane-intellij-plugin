@@ -31,10 +31,12 @@ package com.hpe.adm.octane.ideplugins.intellij.ui.detail.actions;
 
 import com.intellij.execution.RunManager;
 import com.intellij.execution.RunnerAndConfigurationSettings;
+import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 
 public class PhaseItemAction extends AnAction {
@@ -75,4 +77,8 @@ public class PhaseItemAction extends AnAction {
         updateIcon(e.getPresentation());
     }
 
+    @Override
+    public @NotNull ActionUpdateThread getActionUpdateThread() {
+        return ActionUpdateThread.EDT;
+    }
 }

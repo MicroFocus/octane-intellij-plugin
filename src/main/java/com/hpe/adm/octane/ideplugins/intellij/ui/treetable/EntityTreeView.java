@@ -47,6 +47,7 @@ import com.intellij.ui.components.JBScrollPane;
 import jakarta.inject.Provider;
 import org.jdesktop.swingx.JXHyperlink;
 import org.jdesktop.swingx.JXLabel;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.tree.TreeCellRenderer;
@@ -70,10 +71,15 @@ public class EntityTreeView implements View {
             this.treeView = treeView;
         }
 
+        @Override
         public void actionPerformed(AnActionEvent e) {
             treeView.expandAllNodes();
         }
 
+        @Override
+        public @NotNull ActionUpdateThread getActionUpdateThread() {
+            return ActionUpdateThread.EDT;
+        }
     }
 
     public static class CollapseNodesAction extends AnAction {
@@ -84,8 +90,14 @@ public class EntityTreeView implements View {
             this.treeView = treeView;
         }
 
+        @Override
         public void actionPerformed(AnActionEvent e) {
             treeView.collapseAllNodes();
+        }
+
+        @Override
+        public @NotNull ActionUpdateThread getActionUpdateThread() {
+            return ActionUpdateThread.EDT;
         }
     }
 

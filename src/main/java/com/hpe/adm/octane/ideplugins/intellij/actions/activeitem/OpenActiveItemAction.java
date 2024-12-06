@@ -40,6 +40,7 @@ import com.hpe.adm.octane.ideplugins.services.connection.granttoken.GrantTokenAu
 import com.hpe.adm.octane.ideplugins.services.util.PartialEntity;
 import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
@@ -63,63 +64,73 @@ public class OpenActiveItemAction extends OctanePluginAction {
             return;
         }
 
-        getPluginModule(e).ifPresent(pluginModule -> {
+        ApplicationManager.getApplication().executeOnPooledThread(() -> {
+            getPluginModule(e).ifPresent(pluginModule -> {
 
-            JSONObject jsonObject = pluginModule
-                    .getInstance(IdePluginPersistentState.class)
-                    .loadState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM);
+                JSONObject jsonObject = pluginModule
+                        .getInstance(IdePluginPersistentState.class)
+                        .loadState(IdePluginPersistentState.Key.ACTIVE_WORK_ITEM);
 
-            boolean isEnabled = jsonObject != null && !pluginModule.isSsoLoginInProgress;
-            e.getPresentation().setEnabled(isEnabled);
 
-            if (jsonObject != null) {
-                PartialEntity activeItem = PartialEntity.fromJsonObject(jsonObject);
+                ApplicationManager.getApplication().invokeLater(() -> {
+                    boolean isEnabled = jsonObject != null && !pluginModule.isSsoLoginInProgress;
+                    e.getPresentation().setEnabled(isEnabled);
+                });
 
-                JSONObject prevJsonObject = pluginModule.getInstance(IdePluginPersistentState.class).loadState(IdePluginPersistentState.Key.PREV_ACTIVE_WORK_ITEM);
-                PartialEntity prevActiveItem = PartialEntity.fromJsonObject(prevJsonObject);
+                if (jsonObject != null) {
+                    PartialEntity activeItem = PartialEntity.fromJsonObject(jsonObject);
 
-                String activeItemId = "#" + activeItem.getEntityId();
+                    JSONObject prevJsonObject = pluginModule.getInstance(IdePluginPersistentState.class).loadState(IdePluginPersistentState.Key.PREV_ACTIVE_WORK_ITEM);
+                    PartialEntity prevActiveItem = PartialEntity.fromJsonObject(prevJsonObject);
 
-                // This is necessary to avoid doing a rest call for labels on init
-                if (!Objects.equals(activeItem, prevActiveItem) || !Objects.equals(e.getPresentation().getText(), activeItemId)) {
-                    // Set the new state for previous active item
-                    pluginModule.getInstance(IdePluginPersistentState.class).saveState(IdePluginPersistentState.Key.PREV_ACTIVE_WORK_ITEM, jsonObject);
+                    String activeItemId = "#" + activeItem.getEntityId();
 
-                    e.getPresentation().setDescription(activeItem.getEntityName());
-                    e.getPresentation().setText(activeItemId);
 
-                    ConnectionSettings connectionSettings =
-                            e.getProject()
-                                    .getService(IdePersistentConnectionSettingsProvider.class)
-                                    .getConnectionSettings();
+                    ApplicationManager.getApplication().invokeLater(() -> {
+                        // This is necessary to avoid doing a rest call for labels on init
+                        if (!Objects.equals(activeItem, prevActiveItem) || !Objects.equals(e.getPresentation().getText(), activeItemId)) {
+                            // Set the new state for previous active item
+                            pluginModule.getInstance(IdePluginPersistentState.class).saveState(IdePluginPersistentState.Key.PREV_ACTIVE_WORK_ITEM, jsonObject);
 
-                    // SSO login does not have dynamic icon in order to not trigger grant token login
-                    if (connectionSettings.getAuthentication() instanceof GrantTokenAuthentication) {
-                        e.getPresentation().setIcon(defaultActiveIcon);
-                    } else {
+                            e.getPresentation().setDescription(activeItem.getEntityName());
+                            e.getPresentation().setText(activeItemId);
+
+                            ConnectionSettings connectionSettings =
+                                    e.getProject()
+                                            .getService(IdePersistentConnectionSettingsProvider.class)
+                                            .getConnectionSettings();
+
+                            // SSO login does not have dynamic icon in order to not trigger grant token login
+                            if (connectionSettings.getAuthentication() instanceof GrantTokenAuthentication) {
+                                e.getPresentation().setIcon(defaultActiveIcon);
+                            } else {
+                                pluginModule.getInstance(EntityIconFactory.class).getIconAsImageAsync(
+                                        activeItem.getEntityType(),
+                                        20,
+                                        11,
+                                        image -> {
+                                            ImageIcon imageIcon = new ImageIcon(image);
+                                            e.getPresentation().setIcon(imageIcon);
+                                        }
+                                );
+                            }
+                        }
+                    });
+                } else {
+                    ApplicationManager.getApplication().invokeLater(() -> {
                         pluginModule.getInstance(EntityIconFactory.class).getIconAsImageAsync(
-                                activeItem.getEntityType(),
+                                null,
                                 20,
                                 11,
                                 image -> {
                                     ImageIcon imageIcon = new ImageIcon(image);
                                     e.getPresentation().setIcon(imageIcon);
+                                    e.getPresentation().setText("No Active Item");
                                 }
                         );
-                    }
+                    });
                 }
-            } else {
-                pluginModule.getInstance(EntityIconFactory.class).getIconAsImageAsync(
-                        null,
-                        20,
-                        11,
-                        image -> {
-                            ImageIcon imageIcon = new ImageIcon(image);
-                            e.getPresentation().setIcon(imageIcon);
-                            e.getPresentation().setText("No Active Item");
-                        }
-                );
-            }
+            });
         });
     }
 
@@ -144,6 +155,6 @@ public class OpenActiveItemAction extends OctanePluginAction {
 
     @Override
     public @NotNull ActionUpdateThread getActionUpdateThread() {
-        return ActionUpdateThread.BGT;
+        return ActionUpdateThread.EDT;
     }
 }

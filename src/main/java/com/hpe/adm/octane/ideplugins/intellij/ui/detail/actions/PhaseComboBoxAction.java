@@ -40,6 +40,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 
 public final class PhaseComboBoxAction extends ComboBoxAction {
+    @Override
     public void update(final AnActionEvent event) {
         Presentation presentation = event.getPresentation();
         Project project = event.getData(CommonDataKeys.PROJECT);
