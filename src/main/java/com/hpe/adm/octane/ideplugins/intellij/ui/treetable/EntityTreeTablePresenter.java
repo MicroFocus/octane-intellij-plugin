@@ -510,7 +510,12 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
         entityCategories.add(new UserItemEntityCategory("Backlog",
                 Entity.USER_STORY,
                 Entity.DEFECT,
-                Entity.QUALITY_STORY));
+                Entity.QUALITY_STORY,
+                // TEST ADDED BY MAXXWEL
+                Entity.FEATURE,
+                // TEST ADDED BY MAXXWEL
+                // THE FOLLOWING DOES NOT WORK - EPICS ARE NOT IN MY WORK
+                Entity.EPIC));
 
         entityCategories.add(new UserItemEntityCategory(entityLabelMap.get(Entity.REQUIREMENT).getValue("plural_capitalized").getValue().toString(), Entity.REQUIREMENT));
         entityCategories.add(new UserItemEntityCategory(entityLabelMap.get(Entity.TASK).getValue("plural_capitalized").getValue().toString(), Entity.TASK));
