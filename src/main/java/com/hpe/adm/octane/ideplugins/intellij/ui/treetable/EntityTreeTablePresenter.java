@@ -315,7 +315,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
                     entityType == Entity.USER_STORY ||
                     entityType == Entity.QUALITY_STORY ||
                     entityType == Entity.TASK ||
-                    // TEST ADDED BY MAXXWEL
+                    // MAXXWEL: ADDED IN CASE NEEDED FOR FEATURES.
                     entityType == Entity.FEATURE) {
 
                 popup.addSeparator();
@@ -513,7 +513,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
                 Entity.USER_STORY,
                 Entity.DEFECT,
                 Entity.QUALITY_STORY,
-                // ADDED BY MAXXWEL
+                // MAXXWEL: ENABLES VIEWING OF FEATURES IN MY WORK.
                 Entity.FEATURE));
 
         entityCategories.add(new UserItemEntityCategory(entityLabelMap.get(Entity.REQUIREMENT).getValue("plural_capitalized").getValue().toString(), Entity.REQUIREMENT));

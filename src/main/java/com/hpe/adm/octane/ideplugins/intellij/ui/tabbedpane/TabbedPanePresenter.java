@@ -89,7 +89,7 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
                 MANUAL_TEST_RUN,
                 TEST_SUITE_RUN,
                 REQUIREMENT,
-                // ADDED BY MAXXWEL
+                // MAXXWEL: ENABLES VIEWING OF FEATURE DETAIL TAB.
                 FEATURE,
         });
     }
