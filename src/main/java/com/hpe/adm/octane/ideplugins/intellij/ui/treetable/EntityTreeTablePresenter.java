@@ -314,7 +314,8 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
             if (entityType == Entity.DEFECT ||
                     entityType == Entity.USER_STORY ||
                     entityType == Entity.QUALITY_STORY ||
-                    entityType == Entity.TASK) {
+                    entityType == Entity.TASK ||
+                    entityType == Entity.FEATURE) {
 
                 popup.addSeparator();
 
@@ -510,7 +511,8 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
         entityCategories.add(new UserItemEntityCategory("Backlog",
                 Entity.USER_STORY,
                 Entity.DEFECT,
-                Entity.QUALITY_STORY));
+                Entity.QUALITY_STORY,
+                Entity.FEATURE));
 
         entityCategories.add(new UserItemEntityCategory(entityLabelMap.get(Entity.REQUIREMENT).getValue("plural_capitalized").getValue().toString(), Entity.REQUIREMENT));
         entityCategories.add(new UserItemEntityCategory(entityLabelMap.get(Entity.TASK).getValue("plural_capitalized").getValue().toString(), Entity.TASK));
