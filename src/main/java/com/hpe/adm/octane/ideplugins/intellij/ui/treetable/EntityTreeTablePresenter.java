@@ -314,7 +314,8 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
             if (entityType == Entity.DEFECT ||
                     entityType == Entity.USER_STORY ||
                     entityType == Entity.QUALITY_STORY ||
-                    entityType == Entity.TASK) {
+                    entityType == Entity.TASK ||
+                    entityType == Entity.FEATURE) {
 
                 popup.addSeparator();
 
@@ -517,6 +518,8 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
         entityCategories.add(new UserItemEntityCategory("Test runs", Entity.MANUAL_TEST_RUN, Entity.TEST_SUITE_RUN));
         entityCategories.add(new UserItemEntityCategory("Tests", Entity.GHERKIN_TEST, Entity.MANUAL_TEST, Entity.BDD_SCENARIO));
         entityCategories.add(new UserItemEntityCategory("Mention in comments", Entity.COMMENT));
+
+        entityCategories.add(new UserItemEntityCategory("Features", Entity.FEATURE));
 
         return new EntityTreeModel(entityCategories, entityModels);
     }
