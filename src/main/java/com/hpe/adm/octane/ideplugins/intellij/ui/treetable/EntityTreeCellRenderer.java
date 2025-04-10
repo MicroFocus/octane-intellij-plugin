@@ -363,6 +363,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
                 if (StringUtils.isNotEmpty(automationStatus)) {
                     rowPanel.addDetails("Automation status", automationStatus, DetailsPosition.BOTTOM);
                 }
+
             } else if (Entity.COMMENT.equals(entityType)) {
 
                 String text = getUiDataFromModel(entityModel.getValue("text"));
@@ -395,6 +396,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
                         "No environment");
                 addRelationFieldDetails(rowPanel, entityModel, FIELD_AUTHOR, FIELD_FULL_NAME, "Author", DetailsPosition.TOP);
                 rowPanel.addDetails("Started", getUiDataFromModel(entityModel.getValue(FIELD_TEST_RUN_STARTED_DATE)), DetailsPosition.BOTTOM);
+
             } else if (Entity.BDD_SCENARIO.equals(entityType)) {
 
                 rowPanel.setEntitySubTitle(
@@ -410,6 +412,16 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
                     String bddSpecName = bddSpec.getValue().getValue("name").getValue().toString();
                     rowPanel.addDetails("BDD Spec", bddSpecId + " - " + bddSpecName, DetailsPosition.BOTTOM);
                 }
+
+            } else if (Entity.FEATURE.equals(entityType)) {
+                rowPanel.setEntitySubTitle(
+                        getUiDataFromModel(entityModel.getValue(FIELD_RELEASE)),
+                        "No release");
+
+                addStoryPoints(rowPanel, entityModel);
+                addRelationFieldDetails(rowPanel, entityModel, FIELD_AUTHOR, FIELD_FULL_NAME, "Author", DetailsPosition.TOP);
+                addProgress(rowPanel, entityModel);
+
             }
 
             return rowPanel;
