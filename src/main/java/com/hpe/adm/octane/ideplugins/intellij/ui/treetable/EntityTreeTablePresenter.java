@@ -315,7 +315,6 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
                     entityType == Entity.USER_STORY ||
                     entityType == Entity.QUALITY_STORY ||
                     entityType == Entity.TASK ||
-                    // MAXXWEL: ADDED IN CASE NEEDED FOR FEATURES.
                     entityType == Entity.FEATURE) {
 
                 popup.addSeparator();
@@ -512,15 +511,15 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
         entityCategories.add(new UserItemEntityCategory("Backlog",
                 Entity.USER_STORY,
                 Entity.DEFECT,
-                Entity.QUALITY_STORY,
-                // MAXXWEL: ENABLES VIEWING OF FEATURES IN MY WORK.
-                Entity.FEATURE));
+                Entity.QUALITY_STORY));
 
         entityCategories.add(new UserItemEntityCategory(entityLabelMap.get(Entity.REQUIREMENT).getValue("plural_capitalized").getValue().toString(), Entity.REQUIREMENT));
         entityCategories.add(new UserItemEntityCategory(entityLabelMap.get(Entity.TASK).getValue("plural_capitalized").getValue().toString(), Entity.TASK));
         entityCategories.add(new UserItemEntityCategory("Test runs", Entity.MANUAL_TEST_RUN, Entity.TEST_SUITE_RUN));
         entityCategories.add(new UserItemEntityCategory("Tests", Entity.GHERKIN_TEST, Entity.MANUAL_TEST, Entity.BDD_SCENARIO));
         entityCategories.add(new UserItemEntityCategory("Mention in comments", Entity.COMMENT));
+
+        entityCategories.add(new UserItemEntityCategory("Features", Entity.FEATURE));
 
         return new EntityTreeModel(entityCategories, entityModels);
     }
