@@ -420,7 +420,6 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
 
                 addStoryPoints(rowPanel, entityModel);
                 addRelationFieldDetails(rowPanel, entityModel, FIELD_AUTHOR, FIELD_FULL_NAME, "Author", DetailsPosition.TOP);
-                addProgress(rowPanel, entityModel);
 
             }
 
