@@ -31,6 +31,7 @@ package com.hpe.adm.octane.ideplugins.intellij.settings;
 
 import com.google.api.client.http.HttpResponseException;
 import com.hpe.adm.nga.sdk.authentication.Authentication;
+import com.hpe.adm.nga.sdk.authentication.JSONAuthentication;
 import com.hpe.adm.nga.sdk.exception.OctaneException;
 import com.hpe.adm.nga.sdk.model.StringFieldModel;
 import com.hpe.adm.octane.ideplugins.intellij.PluginModule;
@@ -331,12 +332,13 @@ public class ConnectionSettingsConfigurable implements SearchableConfigurable, C
 
     private ConnectionSettings getConnectionSettingsFromView() throws ServiceException {
 
+        JSONAuthentication jsonAuthentication = new UserAuthentication(connectionSettingsView.getUserName(), connectionSettingsView.getPassword());
+
         //Parse server url
-        ConnectionSettings connectionSettings =
-                UrlParser.resolveConnectionSettings(
-                        connectionSettingsView.getServerUrl(),
-                        connectionSettingsView.getUserName(),
-                        connectionSettingsView.getPassword());
+        ConnectionSettings connectionSettings = UrlParser.resolveConnectionSettings(
+                connectionSettingsView.getServerUrl(),
+                jsonAuthentication
+        );
 
         if (connectionSettingsView.isSsoAuth()) {
             connectionSettings.setAuthentication(new GrantTokenAuthentication());

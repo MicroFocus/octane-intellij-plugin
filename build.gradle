@@ -29,8 +29,7 @@
 
 plugins {
     id 'java'
-    id 'org.jetbrains.intellij' version '1.17.0'
-    id 'org.openjfx.javafxplugin' version '0.1.0'
+    id 'org.jetbrains.intellij.platform' version '2.6.0'
 }
 
 project.group = projectGroup
@@ -40,13 +39,17 @@ repositories {
     mavenLocal()
     mavenCentral()
     maven {
-        url 'https://nexus.octane.admlabs.aws.swinfra.net/nexus/content/repositories/mqm-all'
+        url = 'https://nexus.octane.admlabs.aws.swinfra.net/nexus/content/repositories/mqm-all'
         allowInsecureProtocol = true
+    }
+    intellijPlatform {
+        defaultRepositories()
     }
 }
 
 clean.doLast {
     file('.sandbox').deleteDir()
+    file('.intellijPlatform').deleteDir()
 }
 
 sourceSets {
@@ -61,13 +64,21 @@ sourceSets {
 }
 
 dependencies {
+    intellijPlatform {
+        def type = providers.gradleProperty('ideaType')
+        def version = providers.gradleProperty('ideaVersion')
+
+        create(type, version)
+
+        bundledPlugin 'com.intellij.java'
+    }
+
     implementation("com.hpe.adm.octane.ideplugins:octane-plugin-common:$commonVersion") {
         exclude group: 'org.slf4j', module: 'slf4j-api'
     }
 
-    //use javafx modules only at compile time based on the current OS
     def javaFxVersion = '17.0.11'
-    def javaFxModules = ['graphics', 'swing', 'base', 'web']
+    def javaFxModules = ['graphics', 'swing', 'base', 'web', 'controls', 'media']
     def currentOS = org.gradle.internal.os.OperatingSystem.current()
     def platform
 
@@ -80,7 +91,7 @@ dependencies {
     }
 
     javaFxModules.each { module ->
-        compileOnly "org.openjfx:javafx-${module}:${javaFxVersion}:${platform}"
+        implementation "org.openjfx:javafx-${module}:${javaFxVersion}:${platform}"
     }
 
     implementation group: 'org.jsoup', name: 'jsoup', version: '1.8.3'
@@ -88,6 +99,7 @@ dependencies {
     implementation('com.google.inject:guice:4.0') {
         exclude group: 'com.google.guava', module: 'guava'
     }
+
     implementation('com.google.inject.extensions:guice-multibindings:4.0') {
         exclude group: 'com.google.guava', module: 'guava'
     }
@@ -95,20 +107,8 @@ dependencies {
     testImplementation group: 'junit', name: 'junit', version: '4.11'
 }
 
-intellij {
-    plugins = ['com.intellij.java']
-
-    version = project.hasProperty("intellijVersion") ? project.getProperty("intellijVersion") : ideaVersion
-    //to debug the plugin on other platforms comment out alternativeIdePath and set the path to the installation
-    //folder of the IDE
-    //alternativeIdePath 'C:\\DevTools\\PyCharm Community Edition 2018.2.1'
-
-    plugins = ["maven", "gradle"]
-    pluginName = project.hasProperty('zipname') ? project.getProperty('zipname') : "Core Software Delivery Platform IntelliJ Plugin"
-    updateSinceUntilBuild = false
-
-    downloadSources = true
-    sandboxDir = project.rootDir.canonicalPath + "/.sandbox"
+intellijPlatform {
+    projectName = projectPluginName
 }
 
 tasks.withType(JavaExec) {

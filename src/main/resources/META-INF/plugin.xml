@@ -45,7 +45,6 @@
     ]]></description>
     <!--enables the plugin on other platforms-->
     <depends>com.intellij.modules.lang</depends>
-    <depends optional="true" config-file="plugin-withJavaFX.xml">com.intellij.javafx</depends>
 
     <change-notes><![CDATA[
       <b>CE-24.4</b>

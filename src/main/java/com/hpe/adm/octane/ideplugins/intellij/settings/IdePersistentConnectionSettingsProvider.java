@@ -138,7 +138,6 @@ public class IdePersistentConnectionSettingsProvider extends BasicConnectionSett
         CredentialAttributes attributes = new CredentialAttributes(
                 project.getName() + project.getLocationHash(),
                 userName,
-                this.getClass(),
                 false);
 
         Credentials saveCredentials = new Credentials(attributes.getUserName(), password);
@@ -150,7 +149,6 @@ public class IdePersistentConnectionSettingsProvider extends BasicConnectionSett
         CredentialAttributes attributes = new CredentialAttributes(
                 project.getName() + project.getLocationHash(),
                 username,
-                this.getClass(),
                 false);
 
         String pw = PasswordSafe.getInstance().getPassword(attributes);

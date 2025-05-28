@@ -168,7 +168,10 @@ public class TabbedPaneView implements View {
             addCloseActionToTab(tabInfo);
         }
 
+        editorTabs.addSearchBar(tabInfo);
+
         editorTabs.addTab(tabInfo);
+
         return tabInfo;
     }
 
@@ -205,12 +208,12 @@ public class TabbedPaneView implements View {
     }
 
     private boolean isClosable(TabInfo tabInfo){
-        return (tabInfo.getTabLabelActions()!=null && hasActionType(tabInfo.getTabLabelActions(), CloseTab.class));
+        return (tabInfo.getTabLabelActions()!=null && hasActionType(tabInfo.getTabLabelActions()));
     }
 
-    private boolean hasActionType(ActionGroup actionGroup, Class<? extends AnAction> actionType){
-        for(AnAction anAction : actionGroup.getChildren(null)){
-            if(anAction.getClass().equals(actionType)){
+    private boolean hasActionType(ActionGroup actionGroup){
+        for(AnAction anAction : ((DefaultActionGroup) actionGroup).getChildren(ActionManager.getInstance())){
+            if(anAction.getClass().equals(CloseTab.class)){
                 return true;
             }
         }
@@ -255,7 +258,7 @@ public class TabbedPaneView implements View {
 
         @Override
         public void actionPerformed(final AnActionEvent e) {
-            if (BitUtil.isSet(e.getModifiers(), InputEvent.ALT_MASK)) {
+            if (BitUtil.isSet(e.getModifiers(), InputEvent.ALT_DOWN_MASK)) {
                 closeAllExcept(myTabInfo);
             } else {
                 if (isClosable(myTabInfo)) {

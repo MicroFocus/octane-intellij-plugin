@@ -218,9 +218,9 @@ public class JavaFxHtmlPanel extends HtmlPanel {
             try {
                 //useful for checking whether relative or absolute url been given
                 try {
-                    targetUrl = new URL(href);
+                    targetUrl = URI.create(href).toURL();
                 } catch (MalformedURLException ex) {
-                    targetUrl = new URL(connectionSettingsProvider.getConnectionSettings().getBaseUrl() + href);
+                    targetUrl = URI.create(connectionSettingsProvider.getConnectionSettings().getBaseUrl() + href).toURL();;
                 }
                 targetUri = targetUrl.toURI();
                 if (HyperlinkEvent.EventType.ACTIVATED.equals(eventType)) {
