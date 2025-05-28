@@ -33,7 +33,7 @@ import com.hpe.adm.octane.ideplugins.intellij.ui.customcomponents.LoadingWidget;
 import com.hpe.adm.octane.ideplugins.intellij.util.JavaFxUtils;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-import com.sun.javafx.application.PlatformImpl;
+import javafx.application.Platform;
 import javafx.concurrent.Worker.State;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Group;
@@ -120,8 +120,8 @@ public class JavaFxLoginDialog extends LoginDialog {
                 LoadingWidget loadingWidget = new LoadingWidget("Loading login page...");
                 JFXPanel jfxPanel = new JFXPanel();
 
-                PlatformImpl.setImplicitExit(false);
-                PlatformImpl.runAndWait(() -> {
+                Platform.setImplicitExit(false);
+                Platform.runLater(() -> {
 
                     Group root = new Group();
                     Stage stage = new Stage();

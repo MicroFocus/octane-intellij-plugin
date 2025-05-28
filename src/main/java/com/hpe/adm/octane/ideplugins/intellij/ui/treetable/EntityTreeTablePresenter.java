@@ -383,7 +383,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
                                                 }
 
                                                 //Remove dismissed item if successful
-                                                List list = entityTreeView.getTreeModel().getGroupedEntities()
+                                                List<EntityModel> list = entityTreeView.getTreeModel().getGroupedEntities()
                                                         .values()
                                                         .stream()
                                                         .flatMap(Collection::stream)
@@ -442,7 +442,7 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
                                             if (myWorkService.removeFromMyWork(entityModel)) {
 
                                                 //Remove dismissed item if successful
-                                                List list = entityTreeView.getTreeModel().getGroupedEntities()
+                                                List<EntityModel> list = entityTreeView.getTreeModel().getGroupedEntities()
                                                         .values()
                                                         .stream()
                                                         .flatMap(Collection::stream)

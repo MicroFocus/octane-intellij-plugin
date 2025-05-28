@@ -130,16 +130,13 @@ class CustomJBRunnerTabs extends JBRunnerTabs {
         searchRequestHandler.searchedQuery(searchTextField.getText());
     }
 
-    @NotNull
-    @Override
-    public TabInfo addTab(TabInfo info) {
+    public void addSearchBar(TabInfo info) {
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         CustomSearchTextField searchTextField = createTextField();
         searchPanel.add(searchTextField);
         searchFields.put(info, searchTextField);
 
         info.setSideComponent(searchPanel);
-        return super.addTab(info);
     }
 
     public void setSearchRequestHandler(SearchRequestHandler searchRequestHandler){

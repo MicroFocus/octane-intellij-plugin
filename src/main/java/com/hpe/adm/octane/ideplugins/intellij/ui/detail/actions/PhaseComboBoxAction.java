@@ -72,15 +72,4 @@ public final class PhaseComboBoxAction extends ComboBoxAction {
 
         return phaseGroup;
     }
-
-    private void createEmptyList(DefaultActionGroup group) {
-        AnAction action = new AnAction("No  recently viewed issues found") {
-
-            public void actionPerformed(AnActionEvent anActionEvent) {
-
-            }
-        };
-        action.setDefaultIcon(true);
-        group.add(action);
-    }
 }

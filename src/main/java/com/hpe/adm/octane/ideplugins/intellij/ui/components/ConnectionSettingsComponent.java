@@ -29,15 +29,17 @@
 
 package com.hpe.adm.octane.ideplugins.intellij.ui.components;
 
+import com.hpe.adm.nga.sdk.authentication.JSONAuthentication;
 import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.hpe.adm.octane.ideplugins.intellij.ui.HasComponent;
 import com.hpe.adm.octane.ideplugins.services.connection.ConnectionSettings;
+import com.hpe.adm.octane.ideplugins.services.connection.UserAuthentication;
 import com.hpe.adm.octane.ideplugins.services.exception.ServiceException;
 import com.hpe.adm.octane.ideplugins.services.util.UrlParser;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
-import com.intellij.openapi.util.Pair;
-import com.intellij.util.net.HttpConfigurable;
+import com.intellij.util.net.ProxySettings;
+import com.intellij.util.net.ProxyUtils;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -48,10 +50,12 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.*;
+import java.net.ProxySelector;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ConnectionSettingsComponent implements HasComponent {
@@ -249,7 +253,7 @@ public class ConnectionSettingsComponent implements HasComponent {
 
         JXHyperlink hyperlinkSettings = new JXHyperlink();
         hyperlinkSettings.setText("Global IDE proxy settings");
-        hyperlinkSettings.addActionListener(event -> HttpConfigurable.editConfigurable(null));
+        hyperlinkSettings.addActionListener(event -> ProxyUtils.editConfigurable(ProxySettings.getInstance(), null));
         GridBagConstraints gbc_hyperlinkSettings = new GridBagConstraints();
         gbc_hyperlinkSettings.insets = JBUI.insets(0, 5, 5, 5);
         gbc_hyperlinkSettings.fill = GridBagConstraints.HORIZONTAL;
@@ -415,7 +419,8 @@ public class ConnectionSettingsComponent implements HasComponent {
         if (!StringUtils.isEmpty(serverUrl) && !EMPTY_SERVER_URL_TEXT.equals(serverUrl)) {
             ConnectionSettings connectionSettings;
             try {
-                connectionSettings = UrlParser.resolveConnectionSettings(serverUrl, getUserName(), getPassword());
+                JSONAuthentication jsonAuthentication = new UserAuthentication(getUserName(), getPassword());
+                connectionSettings = UrlParser.resolveConnectionSettings(serverUrl, jsonAuthentication);
                 setConnectionStatusLabelVisible(false);
             } catch (ServiceException ex) {
                 connectionSettings = new ConnectionSettings();
@@ -540,23 +545,22 @@ public class ConnectionSettingsComponent implements HasComponent {
             return;
         }
 
-        List<Pair<String, String>> proxySettings;
+        List<Map<String, String>> proxySettings;
         try {
-            proxySettings = HttpConfigurable.getInstance().getJvmProperties(true, uri);
+            proxySettings = ProxyUtils.getApplicableProxiesAsJvmProperties(uri, null, ProxySelector.getDefault());
         } catch (Exception ex) {
             proxySettings = Collections.emptyList();
         }
 
         String proxyValues = "<b>Detected proxy for current server url:</b><br>";
 
-        if (proxySettings.size() == 0) {
+        if (proxySettings.isEmpty()) {
             proxyValues += "No proxy detected.";
-
         } else {
-            proxyValues +=
-                    proxySettings.stream()
-                            .map(pair -> pair.getFirst() + ": " + pair.getSecond())
-                            .collect(Collectors.joining("<br>"));
+            proxyValues += proxySettings.stream()
+                    .flatMap(map -> map.entrySet().stream())
+                    .map(entry -> entry.getKey() + ": " + entry.getValue())
+                    .collect(Collectors.joining("<br>"));
         }
 
         this.lblProxySettings.setText("<html>" + proxyValues + "</html>");

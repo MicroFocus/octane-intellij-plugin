@@ -1,4 +1,5 @@
 .sandbox
+.intellijPlatform
 out
 .idea
 *.iml

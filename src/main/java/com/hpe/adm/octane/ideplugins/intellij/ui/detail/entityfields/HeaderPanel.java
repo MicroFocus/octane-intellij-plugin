@@ -40,7 +40,7 @@ import com.hpe.adm.octane.ideplugins.services.EntityService;
 import com.hpe.adm.octane.ideplugins.services.model.EntityModelWrapper;
 import com.hpe.adm.octane.ideplugins.services.util.Util;
 import com.intellij.openapi.actionSystem.*;
-import com.intellij.openapi.actionSystem.impl.ActionToolbarImpl;
+import com.intellij.openapi.actionSystem.toolbarLayout.ToolbarLayoutStrategy;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ui.JBUI;
@@ -178,11 +178,11 @@ public class HeaderPanel extends JPanel {
                 getInstance().createActionToolbar("save | refresh | fields | open in browser | comments ", buttonActionGroup,
                 true);
         actionToolBar.setTargetComponent(panelControls);
-        actionToolBar.setLayoutPolicy(0);
-        ((ActionToolbarImpl) actionToolBar).addComponentListener(new ComponentAdapter() {
+        actionToolBar.setLayoutStrategy(ToolbarLayoutStrategy.NOWRAP_STRATEGY);
+        actionToolBar.getComponent().addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
-                panelControls.setMinimumSize(((ActionToolbarImpl) actionToolBar).getPreferredSize());
+                panelControls.setMinimumSize(actionToolBar.getComponent().getPreferredSize());
             }
         });
         GridBagConstraints gbc_actionButtons = new GridBagConstraints();
