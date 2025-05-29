@@ -51,7 +51,6 @@ import java.awt.font.TextAttribute;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
@@ -67,7 +66,6 @@ public class DateTimeFieldEditor extends FieldEditor {
     private JSpinner hourSpinner;
     private JSpinner minuteSpinner;
     private JSpinner secondsSpinner;
-    private JSpinner dayTimeSpinner;
 
     private JBTextField dateTextField;
     private JXDatePicker datePickerComponent;
@@ -97,7 +95,7 @@ public class DateTimeFieldEditor extends FieldEditor {
 
         timeLabel = new JLabel("time :");
 
-        SpinnerModel hourSpinnerModel = new SpinnerNumberModel(0, 0, 11, 1);
+        SpinnerModel hourSpinnerModel = new SpinnerNumberModel(0, 0, 23, 1);
         hourSpinner = new JSpinner(hourSpinnerModel);
         JFormattedTextField hourSpinnerTextField = ((JSpinner.NumberEditor) hourSpinner.getEditor()).getTextField();
         ((NumberFormatter) hourSpinnerTextField.getFormatter()).setAllowsInvalid(false);
@@ -111,21 +109,13 @@ public class DateTimeFieldEditor extends FieldEditor {
 
         SpinnerModel secondsSpinnerModel = new SpinnerNumberModel(0, 0, 59, 1);
         secondsSpinner = new JSpinner(secondsSpinnerModel);
-        JFormattedTextField secondsSpinnerTextField = ((JSpinner.NumberEditor) minuteSpinner.getEditor()).getTextField();
+        JFormattedTextField secondsSpinnerTextField = ((JSpinner.NumberEditor) secondsSpinner.getEditor()).getTextField();
         ((NumberFormatter) secondsSpinnerTextField.getFormatter()).setAllowsInvalid(false);
         secondsSpinner.setPreferredSize(new Dimension(60, 30));
 
-        SpinnerModel daytimeSpinnerModel = new SpinnerListModel(Arrays.asList("AM", "PM"));
-        dayTimeSpinner = new JSpinner(daytimeSpinnerModel);
-        JTextField dayTimeSpinnerTextField = ((JSpinner.DefaultEditor) dayTimeSpinner.getEditor()).getTextField();
-        dayTimeSpinnerTextField.setEditable(false);
-        dayTimeSpinnerTextField.setColumns(3);
-        dayTimeSpinnerTextField.setHorizontalAlignment(JTextField.CENTER);
-        dayTimeSpinner.setPreferredSize(new Dimension(65, 30));
-
         linkToButtons = new JLabel("set date");
         linkToButtons.setForeground(UIManager.getColor("EditorPane.selectionBackground"));
-        linkToButtons.setPreferredSize(new Dimension((int) linkToButtons.getPreferredSize().getWidth(), (int) dayTimeSpinner.getPreferredSize().getHeight()));
+        linkToButtons.setPreferredSize(new Dimension((int) linkToButtons.getPreferredSize().getWidth(), (int) hourSpinner.getPreferredSize().getHeight()));
         Font font = linkToButtons.getFont();
         Map attributes = font.getAttributes();
         attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
@@ -172,11 +162,11 @@ public class DateTimeFieldEditor extends FieldEditor {
         hourSpinner.addChangeListener(e -> handleChange());
         minuteSpinner.addChangeListener(e -> handleChange());
         secondsSpinner.addChangeListener(e -> handleChange());
-        dayTimeSpinner.addChangeListener(e -> handleChange());
     }
 
     private void showDatePickerPopup() {
         datePickerComponent = new JXDatePicker();
+
         if (dateTextField.getText() != null && !dateTextField.getText().isEmpty()) {
             try {
                 LocalDate parsedDate = LocalDate.parse(dateTextField.getText(), dateFormatter);
@@ -237,13 +227,12 @@ public class DateTimeFieldEditor extends FieldEditor {
         addElementToPosition(minuteSpinner, 4);
         addElementToPosition(new JLabel(":"), 5);
         addElementToPosition(secondsSpinner, 6);
-        addElementToPosition(dayTimeSpinner, 7);
 
         GridBagConstraints gbc_emptyPlaceHolder = new GridBagConstraints();
         gbc_emptyPlaceHolder.anchor = GridBagConstraints.CENTER;
         gbc_emptyPlaceHolder.fill = GridBagConstraints.HORIZONTAL;
         gbc_emptyPlaceHolder.insets = JBUI.insetsRight(5);
-        gbc_emptyPlaceHolder.gridx = 8;
+        gbc_emptyPlaceHolder.gridx = 7;
         gbc_emptyPlaceHolder.weightx = 1.0;
         add(new JLabel(), gbc_emptyPlaceHolder);
 
@@ -274,21 +263,7 @@ public class DateTimeFieldEditor extends FieldEditor {
 
             dateTextField.setText(dateFormatter.format(localZonedDateTime.toLocalDate()));
 
-            int hour = localZonedDateTime.getHour();
-            if (hour == 0) {
-                hourSpinner.setValue(12);
-                dayTimeSpinner.setValue("AM");
-            } else if (hour == 12) {
-                hourSpinner.setValue(12);
-                dayTimeSpinner.setValue("PM");
-            } else if (hour > 12) {
-                hourSpinner.setValue(hour - 12);
-                dayTimeSpinner.setValue("PM");
-            } else {
-                hourSpinner.setValue(hour);
-                dayTimeSpinner.setValue("AM");
-            }
-
+            hourSpinner.setValue(localZonedDateTime.getHour());
             minuteSpinner.setValue(localZonedDateTime.getMinute());
             secondsSpinner.setValue(localZonedDateTime.getSecond());
             setDateTimeVisible();
@@ -298,7 +273,6 @@ public class DateTimeFieldEditor extends FieldEditor {
             hourSpinner.setValue(0);
             minuteSpinner.setValue(0);
             secondsSpinner.setValue(0);
-            dayTimeSpinner.setValue("AM");
         }
     }
 
@@ -308,23 +282,15 @@ public class DateTimeFieldEditor extends FieldEditor {
         }
         try {
             LocalDate localDate = LocalDate.parse(dateTextField.getText(), dateFormatter);
-            int hour = (int) hourSpinner.getValue();
-            String ampm = (String) dayTimeSpinner.getValue();
-
-            if (ampm.equals("PM") && hour != 12) {
-                hour += 12;
-            } else if (ampm.equals("AM") && hour == 12) {
-                hour = 0;
-            }
+            int hour = Integer.parseInt(hourSpinner.getValue().toString());
 
             return ZonedDateTime.of(localDate,
                     LocalTime.of(hour,
-                            (int) minuteSpinner.getValue(),
-                            (int) secondsSpinner.getValue()),
+                            Integer.parseInt(minuteSpinner.getValue().toString()),
+                            Integer.parseInt(secondsSpinner.getValue().toString())),
                     ZoneId.systemDefault());
         } catch (DateTimeParseException e) {
             logger.error("Error parsing date/time: {}", e.getMessage());
-
             return null;
         }
     }
