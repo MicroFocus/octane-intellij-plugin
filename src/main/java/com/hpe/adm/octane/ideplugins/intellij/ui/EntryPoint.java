@@ -77,18 +77,6 @@ public class EntryPoint implements ToolWindowFactory {
      */
     @Override
     public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
-
-        NotificationAction openInBrowserAction = NotificationAction.createSimple("Install 'JavaFX Runtime for Plugins'",
-                () -> BrowserUtil.browse("https://plugins.jetbrains.com/plugin/14250-javafx-runtime-for-plugins"));
-
-        if(!JavaFxUtils.isJavaFxAvailable()){
-            UiUtil.showWarningBalloon(project,
-                    "JavaFX not found!",
-                    "The current IntelliJ IDEA platform does not have JavaFX Runtime for Plugins installed, comments and memo fields might not be displayed properly.",
-                    NotificationType.WARNING,
-                    openInBrowserAction);
-        }
-
         // The DI module returns instances based on your current project
         // Be careful with all static members of beans, you might end up affecting the plugin open for another project
         // when dealing with 2 IntelliJ windows with two different projects running at the same time
