@@ -79,19 +79,12 @@ dependencies {
 
     def javaFxVersion = '17.0.11'
     def javaFxModules = ['graphics', 'swing', 'base', 'web', 'controls', 'media']
-    def currentOS = org.gradle.internal.os.OperatingSystem.current()
-    def platform
+    def platforms = ['linux', 'win', 'mac']
 
-    if (currentOS.isWindows()) {
-        platform = 'win'
-    } else if (currentOS.isLinux()) {
-        platform = 'linux'
-    } else if (currentOS.isMacOsX()) {
-        platform = 'mac'
-    }
-
-    javaFxModules.each { module ->
-        implementation "org.openjfx:javafx-${module}:${javaFxVersion}:${platform}"
+    platforms.each { platform ->
+        javaFxModules.each { module ->
+            implementation "org.openjfx:javafx-${module}:${javaFxVersion}:${platform}"
+        }
     }
 
     implementation group: 'org.jsoup', name: 'jsoup', version: '1.8.3'
