@@ -56,8 +56,8 @@
       <b>CE-24.2</b>
       <ul>
         <li>Updated plugin build to use JDK17</li>
-        <li>Rebranding plugin references from ALM Octane to Core Software Delivery Platform</li>
-        <li>Changed all marketplaces listings to fit the new Core Software Delivery Platform name</li>
+        <li>Rebranding plugin references from ALM Octane to ValueEdge</li>
+        <li>Changed all marketplaces listings to fit the new ValueEdge</li>
         <li>Changed versioning style to &lt;YY&gt;.&lt;Q&gt;.&lt;P&gt;</li>
         <li>Minor bug fixes</li>
       </ul>
