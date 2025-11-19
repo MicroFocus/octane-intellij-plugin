@@ -79,6 +79,11 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
         entityTypeDisplayNames.put(Entity.GHERKIN_AUTOMATED_RUN.getSubtypeName(), "Gherkin Auto Run");
         entityTypeDisplayNames.put(Entity.TASK.getTypeName(), "Task");
         entityTypeDisplayNames.put(Entity.BDD_SPEC.getTypeName(), "BDD Specification");
+        entityTypeDisplayNames.put(Entity.UNIT.getSubtypeName(), "Unit");
+        entityTypeDisplayNames.put(Entity.MODEL.getSubtypeName(), "Model");
+        entityTypeDisplayNames.put(Entity.MANUAL_ACTION.getSubtypeName(), "Manual Action");
+        entityTypeDisplayNames.put(Entity.AUTO_ACTION.getSubtypeName(), "Auto action");
+        entityTypeDisplayNames.put(Entity.QUALITY_GATE.getSubtypeName(), "Quality Gate");
     }
 
     @Inject
@@ -100,6 +105,16 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
         entityFields.get(Entity.USER_STORY).add(FIELD_STORYPOINTS);
         entityFields.get(Entity.USER_STORY).add(FIELD_OWNER);
         Collections.addAll(entityFields.get(Entity.USER_STORY), progressFields);
+
+
+        entityFields.put(Entity.FEATURE, new HashSet<>());
+        Collections.addAll(entityFields.get(Entity.FEATURE), commonFields);
+        entityFields.get(Entity.FEATURE).add("subtype");
+        entityFields.get(Entity.FEATURE).add(FIELD_RELEASE);
+        entityFields.get(Entity.FEATURE).add(FIELD_AUTHOR);
+        entityFields.get(Entity.FEATURE).add(FIELD_STORYPOINTS);
+        entityFields.get(Entity.FEATURE).add(FIELD_OWNER);
+        Collections.addAll(entityFields.get(Entity.FEATURE), progressFields);
 
         entityFields.put(Entity.QUALITY_STORY, new HashSet<>());
         Collections.addAll(entityFields.get(Entity.QUALITY_STORY), commonFields);

@@ -91,7 +91,12 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
             Entity.MANUAL_TEST,
             Entity.AUTOMATED_TEST,
             Entity.GHERKIN_TEST,
-            Entity.REQUIREMENT};
+            Entity.REQUIREMENT,
+            Entity.UNIT,
+            Entity.MODEL,
+            Entity.MANUAL_ACTION,
+            Entity.AUTO_ACTION,
+            Entity.QUALITY_GATE};
 
     protected EntityTreeView entityTreeView;
 
@@ -197,7 +202,11 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
         entityCategories.add(new SearchEntityCategory(entityLabelMap.get(Entity.REQUIREMENT).getValue("plural_capitalized").getValue().toString(), Entity.REQUIREMENT));
         entityCategories.add(new SearchEntityCategory(entityLabelMap.get(Entity.DEFECT).getValue("plural_capitalized").getValue().toString(), Entity.DEFECT));
         entityCategories.add(new SearchEntityCategory(entityLabelMap.get(Entity.TASK).getValue("plural_capitalized").getValue().toString(), Entity.TASK));
+        entityCategories.add(new SearchEntityCategory(entityLabelMap.get(Entity.FEATURE).getValue("plural_capitalized").getValue().toString(), Entity.FEATURE));
+        entityCategories.add(new SearchEntityCategory(entityLabelMap.get(Entity.UNIT).getValue("plural_capitalized").getValue().toString(), Entity.UNIT));
+        entityCategories.add(new SearchEntityCategory(entityLabelMap.get(Entity.MODEL).getValue("plural_capitalized").getValue().toString(), Entity.MODEL));
         entityCategories.add(new SearchEntityCategory("Tests", Entity.TEST_SUITE, Entity.MANUAL_TEST, Entity.AUTOMATED_TEST, Entity.GHERKIN_TEST, Entity.BDD_SCENARIO));
+        entityCategories.add(new SearchEntityCategory("Process Flow", Entity.MANUAL_ACTION, Entity.AUTO_ACTION,Entity.QUALITY_GATE));
         return new EntityTreeModel(entityCategories, entityModels);
     }
 
