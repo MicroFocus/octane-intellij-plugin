@@ -88,7 +88,13 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
                 MANUAL_TEST,
                 MANUAL_TEST_RUN,
                 TEST_SUITE_RUN,
-                REQUIREMENT
+                REQUIREMENT,
+                FEATURE,
+                MANUAL_ACTION,
+                AUTO_ACTION,
+                QUALITY_GATE,
+                UNIT,
+                MODEL
         });
     }
 
