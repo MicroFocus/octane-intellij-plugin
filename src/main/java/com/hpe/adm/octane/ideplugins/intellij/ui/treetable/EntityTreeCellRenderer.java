@@ -78,12 +78,15 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
         entityTypeDisplayNames.put(Entity.AUTOMATED_TEST.getSubtypeName(), "Automated Test");
         entityTypeDisplayNames.put(Entity.GHERKIN_AUTOMATED_RUN.getSubtypeName(), "Gherkin Auto Run");
         entityTypeDisplayNames.put(Entity.TASK.getTypeName(), "Task");
+        entityTypeDisplayNames.put(Entity.SUITE_RUN_SCHEDULER.getTypeName(), "Suite Run Scheduler");
+        entityTypeDisplayNames.put(Entity.SUITE_RUN_SCHEDULER_RUN.getTypeName(), "Suite Run Scheduler Run");
         entityTypeDisplayNames.put(Entity.BDD_SPEC.getTypeName(), "BDD Specification");
         entityTypeDisplayNames.put(Entity.UNIT.getSubtypeName(), "Unit");
         entityTypeDisplayNames.put(Entity.MODEL.getSubtypeName(), "Model");
         entityTypeDisplayNames.put(Entity.MANUAL_ACTION.getSubtypeName(), "Manual Action");
         entityTypeDisplayNames.put(Entity.AUTO_ACTION.getSubtypeName(), "Auto action");
         entityTypeDisplayNames.put(Entity.QUALITY_GATE.getSubtypeName(), "Quality Gate");
+        entityTypeDisplayNames.put(Entity.MODEL_BASED_TEST.getSubtypeName(), "Model Based Test");
     }
 
     @Inject

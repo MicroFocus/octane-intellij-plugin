@@ -514,9 +514,11 @@ public class EntityTreeTablePresenter implements Presenter<EntityTreeView> {
 
         entityCategories.add(new UserItemEntityCategory(entityLabelMap.get(Entity.REQUIREMENT).getValue("plural_capitalized").getValue().toString(), Entity.REQUIREMENT));
         entityCategories.add(new UserItemEntityCategory(entityLabelMap.get(Entity.TASK).getValue("plural_capitalized").getValue().toString(), Entity.TASK));
+        entityCategories.add(new UserItemEntityCategory(entityLabelMap.get(Entity.SUITE_RUN_SCHEDULER).getValue("plural_capitalized").getValue().toString(), Entity.SUITE_RUN_SCHEDULER));
+        entityCategories.add(new UserItemEntityCategory(entityLabelMap.get(Entity.SUITE_RUN_SCHEDULER_RUN).getValue("plural_capitalized").getValue().toString(), Entity.SUITE_RUN_SCHEDULER_RUN));
         entityCategories.add(new UserItemEntityCategory(entityLabelMap.get(Entity.FEATURE).getValue("plural_capitalized").getValue().toString(), Entity.FEATURE));
         entityCategories.add(new UserItemEntityCategory("Test runs", Entity.MANUAL_TEST_RUN, Entity.TEST_SUITE_RUN));
-        entityCategories.add(new UserItemEntityCategory("Tests", Entity.GHERKIN_TEST, Entity.MANUAL_TEST, Entity.BDD_SCENARIO, Entity.TEST_SUITE));
+        entityCategories.add(new UserItemEntityCategory("Tests", Entity.GHERKIN_TEST, Entity.MANUAL_TEST, Entity.BDD_SCENARIO, Entity.TEST_SUITE, Entity.MODEL_BASED_TEST));
         entityCategories.add(new UserItemEntityCategory("Model Items", Entity.MODEL, Entity.UNIT));
         entityCategories.add(new UserItemEntityCategory("Process Items", Entity.MANUAL_ACTION, Entity.AUTO_ACTION, Entity.QUALITY_GATE));
         entityCategories.add(new UserItemEntityCategory("Mention in comments", Entity.COMMENT));

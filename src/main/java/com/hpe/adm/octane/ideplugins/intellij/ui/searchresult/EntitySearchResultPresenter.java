@@ -205,7 +205,9 @@ public class EntitySearchResultPresenter implements Presenter<EntityTreeView> {
         entityCategories.add(new SearchEntityCategory(entityLabelMap.get(Entity.FEATURE).getValue("plural_capitalized").getValue().toString(), Entity.FEATURE));
         entityCategories.add(new SearchEntityCategory(entityLabelMap.get(Entity.UNIT).getValue("plural_capitalized").getValue().toString(), Entity.UNIT));
         entityCategories.add(new SearchEntityCategory(entityLabelMap.get(Entity.MODEL).getValue("plural_capitalized").getValue().toString(), Entity.MODEL));
-        entityCategories.add(new SearchEntityCategory("Tests", Entity.TEST_SUITE, Entity.MANUAL_TEST, Entity.AUTOMATED_TEST, Entity.GHERKIN_TEST, Entity.BDD_SCENARIO));
+        entityCategories.add(new SearchEntityCategory(entityLabelMap.get(Entity.SUITE_RUN_SCHEDULER).getValue("plural_capitalized").getValue().toString(), Entity.SUITE_RUN_SCHEDULER));
+        entityCategories.add(new SearchEntityCategory(entityLabelMap.get(Entity.SUITE_RUN_SCHEDULER_RUN).getValue("plural_capitalized").getValue().toString(), Entity.SUITE_RUN_SCHEDULER_RUN));
+        entityCategories.add(new SearchEntityCategory("Tests", Entity.TEST_SUITE, Entity.MANUAL_TEST, Entity.AUTOMATED_TEST, Entity.GHERKIN_TEST, Entity.BDD_SCENARIO, Entity.MODEL_BASED_TEST));
         entityCategories.add(new SearchEntityCategory("Process Flow", Entity.MANUAL_ACTION, Entity.AUTO_ACTION,Entity.QUALITY_GATE));
         return new EntityTreeModel(entityCategories, entityModels);
     }
