@@ -125,6 +125,9 @@ public class EntityIconFactory {
         entityColorMap.put(Entity.MANUAL_ACTION, new Color(189, 79, 216));
         entityColorMap.put(Entity.AUTO_ACTION, new Color(85, 195, 186));
         entityColorMap.put(Entity.QUALITY_GATE, new Color(68, 52, 193));
+        entityColorMap.put(Entity.MODEL_BASED_TEST, new Color(168, 230, 240));
+        entityColorMap.put(Entity.SUITE_RUN_SCHEDULER, new Color(255, 45, 191));
+        entityColorMap.put(Entity.SUITE_RUN_SCHEDULER_RUN, new Color(22, 150, 181));
 
     }
 

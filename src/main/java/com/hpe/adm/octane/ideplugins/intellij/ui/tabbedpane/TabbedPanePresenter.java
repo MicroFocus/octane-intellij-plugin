@@ -94,7 +94,10 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
                 AUTO_ACTION,
                 QUALITY_GATE,
                 UNIT,
-                MODEL
+                MODEL,
+                MODEL_BASED_TEST,
+                SUITE_RUN_SCHEDULER,
+                SUITE_RUN_SCHEDULER_RUN
         });
     }
 
