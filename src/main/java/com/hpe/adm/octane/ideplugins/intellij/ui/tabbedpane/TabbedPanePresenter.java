@@ -97,7 +97,9 @@ public class TabbedPanePresenter implements Presenter<TabbedPaneView> {
                 MODEL,
                 MODEL_BASED_TEST,
                 SUITE_RUN_SCHEDULER,
-                SUITE_RUN_SCHEDULER_RUN
+                SUITE_RUN_SCHEDULER_RUN,
+                BDD_SCENARIO,
+                TEST_SUITE
         });
     }
 

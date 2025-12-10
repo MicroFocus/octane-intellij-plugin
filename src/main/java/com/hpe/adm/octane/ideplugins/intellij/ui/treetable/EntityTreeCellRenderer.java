@@ -112,7 +112,6 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
 
         entityFields.put(Entity.FEATURE, new HashSet<>());
         Collections.addAll(entityFields.get(Entity.FEATURE), commonFields);
-        entityFields.get(Entity.FEATURE).add("subtype");
         entityFields.get(Entity.FEATURE).add(FIELD_RELEASE);
         entityFields.get(Entity.FEATURE).add(FIELD_AUTHOR);
         entityFields.get(Entity.FEATURE).add(FIELD_STORYPOINTS);
