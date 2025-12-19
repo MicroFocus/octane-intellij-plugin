@@ -275,8 +275,6 @@ public class CustomSearchTextField extends JPanel {
         }
     }
 
-
-
     protected void onFieldCleared() {
     }
 
