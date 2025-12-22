@@ -68,13 +68,16 @@ import java.util.Objects;
  */
 public class CustomSearchTextField extends JPanel {
 
+    private static final Icon CLEAR_ICON = AllIcons.Actions.Close;
+    private static final Icon CLEAR_ICON_HOVER = AllIcons.Actions.CloseHovered;
+
     private int myHistorySize = 5;
     private final MyModel myModel;
     private final TextFieldWithProcessing myTextField;
 
     private JBPopup myPopup;
     private JLabel myClearFieldLabel;
-    private JLabel myToggleHistoryLabel;
+    private JLabel toggleHistoryLabel;
     private JPopupMenu myNativeSearchPopup;
     private JMenuItem myNoItems;
 
@@ -100,8 +103,8 @@ public class CustomSearchTextField extends JPanel {
                 if (myClearFieldLabel != null) {
                     myClearFieldLabel.setBackground(bg);
                 }
-                if (myToggleHistoryLabel != null) {
-                    myToggleHistoryLabel.setBackground(bg);
+                if (toggleHistoryLabel != null) {
+                    toggleHistoryLabel.setBackground(bg);
                 }
             }
 
@@ -155,26 +158,23 @@ public class CustomSearchTextField extends JPanel {
             }
         });
 
-        myToggleHistoryLabel = new JLabel(AllIcons.Actions.Search);
-        myToggleHistoryLabel.setBorder(JBUI.Borders.empty(0, 6, 0, 4));
-        myToggleHistoryLabel.setOpaque(false);
+        toggleHistoryLabel = new JLabel(AllIcons.Actions.Search);
+        toggleHistoryLabel.setBorder(JBUI.Borders.empty(0, 6, 0, 4));
+        toggleHistoryLabel.setOpaque(false);
 
         if (historyEnabled) {
-            myToggleHistoryLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-            myToggleHistoryLabel.addMouseListener(new MouseAdapter() {
+            toggleHistoryLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            toggleHistoryLabel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
                     togglePopup();
                 }
             });
         } else {
-            myToggleHistoryLabel.setCursor(Cursor.getDefaultCursor());
+            toggleHistoryLabel.setCursor(Cursor.getDefaultCursor());
         }
 
-        final Icon clearBaseIcon = AllIcons.Actions.Close;
-        final Icon clearHoverIcon = AllIcons.Actions.CloseHovered;
-
-        myClearFieldLabel = new JLabel(clearBaseIcon);
+        myClearFieldLabel = new JLabel(CLEAR_ICON);
         myClearFieldLabel.setBorder(JBUI.Borders.empty(0, 4, 0, 6));
         myClearFieldLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         myClearFieldLabel.setOpaque(false);
@@ -183,12 +183,12 @@ public class CustomSearchTextField extends JPanel {
         myClearFieldLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                myClearFieldLabel.setIcon(clearHoverIcon);
+                myClearFieldLabel.setIcon(CLEAR_ICON_HOVER);
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                myClearFieldLabel.setIcon(clearBaseIcon);
+                myClearFieldLabel.setIcon(CLEAR_ICON);
             }
 
             @Override
@@ -200,27 +200,27 @@ public class CustomSearchTextField extends JPanel {
 
         JPanel iconsOverlay = new JPanel(new BorderLayout());
         iconsOverlay.setOpaque(false);
-        iconsOverlay.add(myToggleHistoryLabel, BorderLayout.WEST);
+        iconsOverlay.add(toggleHistoryLabel, BorderLayout.WEST);
         iconsOverlay.add(myClearFieldLabel, BorderLayout.EAST);
 
-        final int EXTRA_BOTTOM = JBUI.scale(2);
+        final int EXTRA_BOTTOM_SPACING = JBUI.scale(2);
 
         JLayeredPane layeredPane = new JLayeredPane() {
             @Override
             public Dimension getPreferredSize() {
-                Dimension d = myTextField.getPreferredSize();
-                return new Dimension(d.width, d.height-1);
+                Dimension textFieldPreferredSize = myTextField.getPreferredSize();
+                return new Dimension(textFieldPreferredSize.width, textFieldPreferredSize.height-1);
             }
 
             @Override
             public void doLayout() {
-                int w = getWidth();
-                int h = getHeight();
-                int innerH = Math.max(0, h - EXTRA_BOTTOM);
+                int containerWidth = getWidth();
+                int containerHeight = getHeight();
+                int availableHeight = Math.max(0, containerHeight - EXTRA_BOTTOM_SPACING);
 
                 // both children occupy same area, but with reserved space at the bottom
                 for (Component c : getComponents()) {
-                    c.setBounds(0, 0, w, innerH);
+                    c.setBounds(0, 0, containerWidth, availableHeight);
                 }
             }
         };
@@ -241,7 +241,7 @@ public class CustomSearchTextField extends JPanel {
             originalBorder = myTextField.getBorder();
         }
 
-        int leftInset = myToggleHistoryLabel.getPreferredSize().width + JBUI.scale(6);
+        int leftInset = toggleHistoryLabel.getPreferredSize().width + JBUI.scale(6);
         int rightInset = myClearFieldLabel.getPreferredSize().width + JBUI.scale(6);
         Border innerPadding = JBUI.Borders.empty(0, leftInset, 0, rightInset);
 
@@ -251,8 +251,9 @@ public class CustomSearchTextField extends JPanel {
         Runnable updateClearVisibility = () -> {
             boolean hasText = myTextField.getText() != null && !myTextField.getText().isEmpty();
             myClearFieldLabel.setVisible(hasText);
+
             if (!hasText) {
-                myClearFieldLabel.setIcon(clearBaseIcon);
+                myClearFieldLabel.setIcon(CLEAR_ICON);
             }
             myClearFieldLabel.revalidate();
             myClearFieldLabel.repaint();
@@ -322,9 +323,9 @@ public class CustomSearchTextField extends JPanel {
 
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
-        if (myToggleHistoryLabel != null) {
+        if (toggleHistoryLabel != null) {
             final Color bg = enabled ? UIUtil.getTextFieldBackground() : UIUtil.getPanelBackground();
-            myToggleHistoryLabel.setBackground(bg);
+            toggleHistoryLabel.setBackground(bg);
             myClearFieldLabel.setBackground(bg);
         }
     }
@@ -537,7 +538,7 @@ public class CustomSearchTextField extends JPanel {
 
     public void setSearchIcon(final Icon icon) {
         if (! isSearchControlUISupported()) {
-            myToggleHistoryLabel.setIcon(icon);
+            toggleHistoryLabel.setIcon(icon);
         }
     }
 
