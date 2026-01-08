@@ -518,7 +518,6 @@ public class CustomSearchTextField extends JPanel {
         getTextEditor().setText(s);
     }
 
-
     public int getSelectedIndex() {
         return myModel.myFullList.indexOf(getText());
     }
