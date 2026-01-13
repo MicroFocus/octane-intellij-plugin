@@ -29,11 +29,9 @@
 
 package com.hpe.adm.octane.ideplugins.intellij.ui.searchresult;
 
-import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.CommonShortcuts;
-import com.intellij.openapi.actionSystem.EmptyAction;
 import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.actionSystem.ex.ActionUtil;
 import com.intellij.openapi.application.ApplicationManager;
@@ -61,7 +59,6 @@ import java.awt.event.*;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * @author max
@@ -70,13 +67,14 @@ public class CustomSearchTextField extends JPanel {
 
     private static final Icon CLEAR_ICON = AllIcons.Actions.Close;
     private static final Icon CLEAR_ICON_HOVER = AllIcons.Actions.CloseHovered;
+    private static final int EXTRA_BOTTOM_SPACING = JBUI.scale(2);
 
     private int myHistorySize = 5;
     private final MyModel myModel;
     private final TextFieldWithProcessing myTextField;
 
     private JBPopup myPopup;
-    private JLabel myClearFieldLabel;
+    private JLabel clearFieldLabel;
     private JLabel toggleHistoryLabel;
     private JPopupMenu myNativeSearchPopup;
     private JMenuItem myNoItems;
@@ -100,8 +98,8 @@ public class CustomSearchTextField extends JPanel {
             @Override
             public void setBackground(final Color bg) {
                 super.setBackground(bg);
-                if (myClearFieldLabel != null) {
-                    myClearFieldLabel.setBackground(bg);
+                if (clearFieldLabel != null) {
+                    clearFieldLabel.setBackground(bg);
                 }
                 if (toggleHistoryLabel != null) {
                     toggleHistoryLabel.setBackground(bg);
@@ -174,21 +172,21 @@ public class CustomSearchTextField extends JPanel {
             toggleHistoryLabel.setCursor(Cursor.getDefaultCursor());
         }
 
-        myClearFieldLabel = new JLabel(CLEAR_ICON);
-        myClearFieldLabel.setBorder(JBUI.Borders.empty(0, 4, 0, 6));
-        myClearFieldLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        myClearFieldLabel.setOpaque(false);
-        myClearFieldLabel.setVisible(false);
+        clearFieldLabel = new JLabel(CLEAR_ICON);
+        clearFieldLabel.setBorder(JBUI.Borders.empty(0, 4, 0, 6));
+        clearFieldLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        clearFieldLabel.setOpaque(false);
+        clearFieldLabel.setVisible(false);
 
-        myClearFieldLabel.addMouseListener(new MouseAdapter() {
+        clearFieldLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                myClearFieldLabel.setIcon(CLEAR_ICON_HOVER);
+                clearFieldLabel.setIcon(CLEAR_ICON_HOVER);
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                myClearFieldLabel.setIcon(CLEAR_ICON);
+                clearFieldLabel.setIcon(CLEAR_ICON);
             }
 
             @Override
@@ -201,9 +199,7 @@ public class CustomSearchTextField extends JPanel {
         JPanel iconsOverlay = new JPanel(new BorderLayout());
         iconsOverlay.setOpaque(false);
         iconsOverlay.add(toggleHistoryLabel, BorderLayout.WEST);
-        iconsOverlay.add(myClearFieldLabel, BorderLayout.EAST);
-
-        final int EXTRA_BOTTOM_SPACING = JBUI.scale(2);
+        iconsOverlay.add(clearFieldLabel, BorderLayout.EAST);
 
         JLayeredPane layeredPane = new JLayeredPane() {
             @Override
@@ -242,7 +238,7 @@ public class CustomSearchTextField extends JPanel {
         }
 
         int leftInset = toggleHistoryLabel.getPreferredSize().width + JBUI.scale(6);
-        int rightInset = myClearFieldLabel.getPreferredSize().width + JBUI.scale(6);
+        int rightInset = clearFieldLabel.getPreferredSize().width + JBUI.scale(6);
         Border innerPadding = JBUI.Borders.empty(0, leftInset, 0, rightInset);
 
         myTextField.setOpaque(true);
@@ -250,13 +246,13 @@ public class CustomSearchTextField extends JPanel {
 
         Runnable updateClearVisibility = () -> {
             boolean hasText = myTextField.getText() != null && !myTextField.getText().isEmpty();
-            myClearFieldLabel.setVisible(hasText);
+            clearFieldLabel.setVisible(hasText);
 
             if (!hasText) {
-                myClearFieldLabel.setIcon(CLEAR_ICON);
+                clearFieldLabel.setIcon(CLEAR_ICON);
             }
-            myClearFieldLabel.revalidate();
-            myClearFieldLabel.repaint();
+            clearFieldLabel.revalidate();
+            clearFieldLabel.repaint();
         };
 
         myTextField.getDocument().addDocumentListener(new com.intellij.ui.DocumentAdapter() {
@@ -326,7 +322,7 @@ public class CustomSearchTextField extends JPanel {
         if (toggleHistoryLabel != null) {
             final Color bg = enabled ? UIUtil.getTextFieldBackground() : UIUtil.getPanelBackground();
             toggleHistoryLabel.setBackground(bg);
-            myClearFieldLabel.setBackground(bg);
+            clearFieldLabel.setBackground(bg);
         }
     }
 
