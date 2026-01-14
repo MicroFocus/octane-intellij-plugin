@@ -29,11 +29,9 @@
 
 package com.hpe.adm.octane.ideplugins.intellij.ui.searchresult;
 
-import com.hpe.adm.octane.ideplugins.intellij.ui.Constants;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.CommonShortcuts;
-import com.intellij.openapi.actionSystem.EmptyAction;
 import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.actionSystem.ex.ActionUtil;
 import com.intellij.openapi.application.ApplicationManager;
@@ -42,17 +40,21 @@ import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.util.text.Strings;
+import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.components.JBTextField;
 import com.intellij.util.Consumer;
 import com.intellij.util.ReflectionUtil;
 import com.intellij.util.ui.JBInsets;
+import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
+import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.plaf.TextUI;
 import java.awt.*;
@@ -60,20 +62,23 @@ import java.awt.event.*;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * @author max
  */
 public class CustomSearchTextField extends JPanel {
 
+    private static final Icon CLEAR_ICON = AllIcons.Actions.Close;
+    private static final Icon CLEAR_ICON_HOVER = AllIcons.Actions.CloseHovered;
+    private static final int EXTRA_BOTTOM_SPACING = JBUI.scale(2);
+
     private int myHistorySize = 5;
     private final MyModel myModel;
     private final TextFieldWithProcessing myTextField;
 
     private JBPopup myPopup;
-    private JLabel myClearFieldLabel;
-    private JLabel myToggleHistoryLabel;
+    private JLabel clearFieldLabel;
+    private JLabel toggleHistoryLabel;
     private JPopupMenu myNativeSearchPopup;
     private JMenuItem myNoItems;
 
@@ -96,11 +101,11 @@ public class CustomSearchTextField extends JPanel {
             @Override
             public void setBackground(final Color bg) {
                 super.setBackground(bg);
-                if (myClearFieldLabel != null) {
-                    myClearFieldLabel.setBackground(bg);
+                if (clearFieldLabel != null) {
+                    clearFieldLabel.setBackground(bg);
                 }
-                if (myToggleHistoryLabel != null) {
-                    myToggleHistoryLabel.setBackground(bg);
+                if (toggleHistoryLabel != null) {
+                    toggleHistoryLabel.setBackground(bg);
                 }
             }
 
@@ -140,7 +145,7 @@ public class CustomSearchTextField extends JPanel {
                 super.focusGained(e);
             }
         });
-        add(myTextField, BorderLayout.CENTER);
+
         myTextField.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
@@ -154,31 +159,80 @@ public class CustomSearchTextField extends JPanel {
             }
         });
 
-        myToggleHistoryLabel = new JLabel(new ImageIcon(Objects.requireNonNull(CustomSearchTextField.class.getResource(Constants.IMG_SEARCH_ICON))));
-        myToggleHistoryLabel.setBorder(BorderFactory.createEmptyBorder(2, 3, 0, 0));
-        myToggleHistoryLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        myToggleHistoryLabel.setOpaque(true);
-        myToggleHistoryLabel.addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent e) {
-                togglePopup();
-            }
-        });
+        toggleHistoryLabel = new JLabel(AllIcons.Actions.Search);
+        toggleHistoryLabel.setBorder(JBUI.Borders.empty(0, 6, 0, 4));
+        toggleHistoryLabel.setOpaque(false);
+
         if (historyEnabled) {
-            add(myToggleHistoryLabel, BorderLayout.WEST);
+            toggleHistoryLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            toggleHistoryLabel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    togglePopup();
+                }
+            });
+        } else {
+            toggleHistoryLabel.setCursor(Cursor.getDefaultCursor());
         }
 
-        myClearFieldLabel = new JLabel(!JBColor.isBright() ? AllIcons.Actions.CloseHovered : AllIcons.Actions.Close);
-        myClearFieldLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 3));
-        myClearFieldLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        myClearFieldLabel.setOpaque(true);
-        add(myClearFieldLabel, BorderLayout.EAST);
-        myClearFieldLabel.addMouseListener(new MouseAdapter() {
+        clearFieldLabel = new JLabel(CLEAR_ICON);
+        clearFieldLabel.setBorder(JBUI.Borders.empty(0, 4, 0, 6));
+        clearFieldLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        clearFieldLabel.setOpaque(false);
+        clearFieldLabel.setVisible(false);
+
+        clearFieldLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                clearFieldLabel.setIcon(CLEAR_ICON_HOVER);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                clearFieldLabel.setIcon(CLEAR_ICON);
+            }
+
+            @Override
             public void mousePressed(MouseEvent e) {
                 myTextField.setText("");
                 onFieldCleared();
             }
         });
 
+        JPanel iconsOverlay = new JPanel(new BorderLayout());
+        iconsOverlay.setOpaque(false);
+        iconsOverlay.add(toggleHistoryLabel, BorderLayout.WEST);
+        iconsOverlay.add(clearFieldLabel, BorderLayout.EAST);
+
+        JLayeredPane layeredPane = new JLayeredPane() {
+            @Override
+            public Dimension getPreferredSize() {
+                Dimension textFieldPreferredSize = myTextField.getPreferredSize();
+
+                return new Dimension(textFieldPreferredSize.width, textFieldPreferredSize.height-1);
+            }
+
+            @Override
+            public void doLayout() {
+                int containerWidth = getWidth();
+                int containerHeight = getHeight();
+                int availableHeight = Math.max(0, containerHeight - EXTRA_BOTTOM_SPACING);
+
+                // both children occupy same area, but with reserved space at the bottom
+                for (Component c : getComponents()) {
+                    c.setBounds(0, 0, containerWidth, availableHeight);
+                }
+            }
+        };
+        layeredPane.setLayout(null);
+        layeredPane.setOpaque(false);
+
+        layeredPane.add(myTextField, Integer.valueOf(0));
+        layeredPane.add(iconsOverlay, Integer.valueOf(1));
+
+        add(layeredPane, BorderLayout.CENTER);
+
+        // Keep the original border (platform/LAF specific)
         final Border originalBorder;
         if (SystemInfo.isMac) {
             originalBorder = BorderFactory.createLoweredBevelBorder();
@@ -187,13 +241,32 @@ public class CustomSearchTextField extends JPanel {
             originalBorder = myTextField.getBorder();
         }
 
-        myToggleHistoryLabel.setBackground(myTextField.getBackground());
-        myClearFieldLabel.setBackground(myTextField.getBackground());
-
-        setBorder(new CompoundBorder(BorderFactory.createEmptyBorder(-4, 0, 0, 15), originalBorder));
+        int leftInset = toggleHistoryLabel.getPreferredSize().width + JBUI.scale(6);
+        int rightInset = clearFieldLabel.getPreferredSize().width + JBUI.scale(6);
+        Border innerPadding = JBUI.Borders.empty(0, leftInset, 0, rightInset);
 
         myTextField.setOpaque(true);
-        myTextField.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
+        myTextField.setBorder(new CompoundBorder(originalBorder, innerPadding));
+
+        Runnable updateClearVisibility = () -> {
+            boolean hasText = !Strings.isEmpty(myTextField.getText());
+            clearFieldLabel.setVisible(hasText);
+
+            if (!hasText) {
+                clearFieldLabel.setIcon(CLEAR_ICON);
+            }
+            clearFieldLabel.revalidate();
+            clearFieldLabel.repaint();
+        };
+
+        myTextField.getDocument().addDocumentListener(new DocumentAdapter() {
+            @Override
+            protected void textChanged(DocumentEvent e) {
+                updateClearVisibility.run();
+            }
+        });
+
+        updateClearVisibility.run();
 
         if (ApplicationManager.getApplication() != null) { //tests
             final ActionManager actionManager = ActionManager.getInstance();
@@ -250,10 +323,10 @@ public class CustomSearchTextField extends JPanel {
 
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
-        if (myToggleHistoryLabel != null) {
+        if (toggleHistoryLabel != null) {
             final Color bg = enabled ? UIUtil.getTextFieldBackground() : UIUtil.getPanelBackground();
-            myToggleHistoryLabel.setBackground(bg);
-            myClearFieldLabel.setBackground(bg);
+            toggleHistoryLabel.setBackground(bg);
+            clearFieldLabel.setBackground(bg);
         }
     }
 
@@ -465,7 +538,7 @@ public class CustomSearchTextField extends JPanel {
 
     public void setSearchIcon(final Icon icon) {
         if (! isSearchControlUISupported()) {
-            myToggleHistoryLabel.setIcon(icon);
+            toggleHistoryLabel.setIcon(icon);
         }
     }
 
