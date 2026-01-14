@@ -40,6 +40,7 @@ import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.util.text.Strings;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBList;
@@ -248,7 +249,7 @@ public class CustomSearchTextField extends JPanel {
         myTextField.setBorder(new CompoundBorder(originalBorder, innerPadding));
 
         Runnable updateClearVisibility = () -> {
-            boolean hasText = !myTextField.getText().isEmpty();
+            boolean hasText = !Strings.isEmpty(myTextField.getText());
             clearFieldLabel.setVisible(hasText);
 
             if (!hasText) {
