@@ -40,6 +40,7 @@ import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.components.JBTextField;
@@ -52,6 +53,7 @@ import com.intellij.util.ui.UIUtil;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
+import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.plaf.TextUI;
 import java.awt.*;
@@ -205,6 +207,7 @@ public class CustomSearchTextField extends JPanel {
             @Override
             public Dimension getPreferredSize() {
                 Dimension textFieldPreferredSize = myTextField.getPreferredSize();
+
                 return new Dimension(textFieldPreferredSize.width, textFieldPreferredSize.height-1);
             }
 
@@ -245,7 +248,7 @@ public class CustomSearchTextField extends JPanel {
         myTextField.setBorder(new CompoundBorder(originalBorder, innerPadding));
 
         Runnable updateClearVisibility = () -> {
-            boolean hasText = myTextField.getText() != null && !myTextField.getText().isEmpty();
+            boolean hasText = !myTextField.getText().isEmpty();
             clearFieldLabel.setVisible(hasText);
 
             if (!hasText) {
@@ -255,9 +258,9 @@ public class CustomSearchTextField extends JPanel {
             clearFieldLabel.repaint();
         };
 
-        myTextField.getDocument().addDocumentListener(new com.intellij.ui.DocumentAdapter() {
+        myTextField.getDocument().addDocumentListener(new DocumentAdapter() {
             @Override
-            protected void textChanged(javax.swing.event.DocumentEvent e) {
+            protected void textChanged(DocumentEvent e) {
                 updateClearVisibility.run();
             }
         });
