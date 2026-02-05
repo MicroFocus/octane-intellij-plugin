@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright 2017-2023 Open Text.
+  ~ Copyright 2017-2026 Open Text.
   ~
   ~ The only warranties for products and services of Open Text and
   ~ its affiliates and licensors ("Open Text") are as may be set forth
@@ -47,6 +47,12 @@
     <depends>com.intellij.modules.lang</depends>
 
     <change-notes><![CDATA[
+      <b>26.1</b>
+      <ul>
+        <li>Removing cloud edition</li>
+      </ul>
+      <hr/>
+
       <b>CE-24.4</b>
       <ul>
         <li>Rebranding plugin from ValueEdge to Core Software Delivery Platform</li>
