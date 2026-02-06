@@ -49,7 +49,8 @@
     <change-notes><![CDATA[
       <b>26.1</b>
       <ul>
-        <li>Removing cloud edition</li>
+        <li>Removed the “Cloud Edition” from the version label to simplify the versioning style and keep it consistent across the platform.</li>
+        <li>Extended My Work entity view to include additional Octane entity types: Model Items, Process Items, Suite Run Scheduler Runs and Suite Run Schedulers. The My Work view now mirrors the Octane My Work feature.</li>
       </ul>
       <hr/>
 
