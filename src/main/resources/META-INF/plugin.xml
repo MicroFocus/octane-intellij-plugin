@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright 2017-2023 Open Text.
+  ~ Copyright 2017-2026 Open Text.
   ~
   ~ The only warranties for products and services of Open Text and
   ~ its affiliates and licensors ("Open Text") are as may be set forth
@@ -47,6 +47,13 @@
     <depends>com.intellij.modules.lang</depends>
 
     <change-notes><![CDATA[
+      <b>26.1</b>
+      <ul>
+        <li>Removed the “Cloud Edition” from the version label to simplify the versioning style and keep it consistent across the platform.</li>
+        <li>Extended My Work entity view to include additional Octane entity types: Model Items, Process Items, Suite Run Scheduler Runs and Suite Run Schedulers. The My Work view now mirrors the Octane My Work feature.</li>
+      </ul>
+      <hr/>
+
       <b>CE-24.4</b>
       <ul>
         <li>Rebranding plugin from ValueEdge to Core Software Delivery Platform</li>
