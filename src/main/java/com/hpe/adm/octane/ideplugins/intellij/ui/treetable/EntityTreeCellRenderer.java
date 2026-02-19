@@ -102,7 +102,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
         //US
         entityFields.put(Entity.USER_STORY, new HashSet<>());
         Collections.addAll(entityFields.get(Entity.USER_STORY), commonFields);
-        entityFields.get(Entity.USER_STORY).add("subtype");
+        entityFields.get(Entity.USER_STORY).add(FIELD_SUBTYPE);
         entityFields.get(Entity.USER_STORY).add(FIELD_RELEASE);
         entityFields.get(Entity.USER_STORY).add(FIELD_AUTHOR);
         entityFields.get(Entity.USER_STORY).add(FIELD_STORYPOINTS);
@@ -113,7 +113,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
         entityFields.put(Entity.FEATURE, new HashSet<>());
         Collections.addAll(entityFields.get(Entity.FEATURE), commonFields);
         entityFields.get(Entity.FEATURE).add(FIELD_RELEASE);
-        entityFields.get(Entity.FEATURE).add("subtype");
+        entityFields.get(Entity.FEATURE).add(FIELD_SUBTYPE);
         entityFields.get(Entity.FEATURE).add(FIELD_AUTHOR);
         entityFields.get(Entity.FEATURE).add(FIELD_STORYPOINTS);
         entityFields.get(Entity.FEATURE).add(FIELD_TEAM);
@@ -122,7 +122,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
 
         entityFields.put(Entity.QUALITY_STORY, new HashSet<>());
         Collections.addAll(entityFields.get(Entity.QUALITY_STORY), commonFields);
-        entityFields.get(Entity.QUALITY_STORY).add("subtype");
+        entityFields.get(Entity.QUALITY_STORY).add(FIELD_SUBTYPE);
         entityFields.get(Entity.QUALITY_STORY).add(FIELD_RELEASE);
         entityFields.get(Entity.QUALITY_STORY).add(FIELD_AUTHOR);
         entityFields.get(Entity.QUALITY_STORY).add(FIELD_STORYPOINTS);
@@ -142,7 +142,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
         //DEFECT
         entityFields.put(Entity.DEFECT, new HashSet<>());
         Collections.addAll(entityFields.get(Entity.DEFECT), commonFields);
-        entityFields.get(Entity.DEFECT).add("subtype");
+        entityFields.get(Entity.DEFECT).add(FIELD_SUBTYPE);
         entityFields.get(Entity.DEFECT).add(FIELD_ENVIROMENT);
         entityFields.get(Entity.DEFECT).add(FIELD_DETECTEDBY);
         entityFields.get(Entity.DEFECT).add(FIELD_STORYPOINTS);
@@ -153,7 +153,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
         //GHERKIN_TEST
         entityFields.put(Entity.GHERKIN_TEST, new HashSet<>());
         Collections.addAll(entityFields.get(Entity.GHERKIN_TEST), commonFields);
-        entityFields.get(Entity.GHERKIN_TEST).add("subtype");
+        entityFields.get(Entity.GHERKIN_TEST).add(FIELD_SUBTYPE);
         entityFields.get(Entity.GHERKIN_TEST).add(FIELD_TEST_TYPE);
         entityFields.get(Entity.GHERKIN_TEST).add(FIELD_AUTHOR);
         entityFields.get(Entity.GHERKIN_TEST).add(FIELD_OWNER);
@@ -162,7 +162,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
         //MANUAL_TEST
         entityFields.put(Entity.MANUAL_TEST, new HashSet<>());
         Collections.addAll(entityFields.get(Entity.MANUAL_TEST), commonFields);
-        entityFields.get(Entity.MANUAL_TEST).add("subtype");
+        entityFields.get(Entity.MANUAL_TEST).add(FIELD_SUBTYPE);
         entityFields.get(Entity.MANUAL_TEST).add(FIELD_TEST_TYPE);
         entityFields.get(Entity.MANUAL_TEST).add(FIELD_AUTHOR);
         entityFields.get(Entity.MANUAL_TEST).add(FIELD_OWNER);
@@ -172,7 +172,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
         // TEST SUITE
         entityFields.put(Entity.TEST_SUITE, new HashSet<>());
         Collections.addAll(entityFields.get(Entity.TEST_SUITE), commonFields);
-        entityFields.get(Entity.TEST_SUITE).add("subtype");
+        entityFields.get(Entity.TEST_SUITE).add(FIELD_SUBTYPE);
         entityFields.get(Entity.TEST_SUITE).add(FIELD_AUTHOR);
         entityFields.get(Entity.TEST_SUITE).add(FIELD_OWNER);
         entityFields.get(Entity.TEST_SUITE).add(FIELD_PHASE);
@@ -180,14 +180,14 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
         // MODEL BASED TEST
         entityFields.put(Entity.MODEL_BASED_TEST, new HashSet<>());
         Collections.addAll(entityFields.get(Entity.MODEL_BASED_TEST), commonFields);
-        entityFields.get(Entity.MODEL_BASED_TEST).add("subtype");
+        entityFields.get(Entity.MODEL_BASED_TEST).add(FIELD_SUBTYPE);
         entityFields.get(Entity.MODEL_BASED_TEST).add(FIELD_AUTHOR);
         entityFields.get(Entity.MODEL_BASED_TEST).add(FIELD_OWNER);
         entityFields.get(Entity.MODEL_BASED_TEST).add(FIELD_PHASE);
 
         //MANUAL TEST RUNS
         entityFields.put(Entity.MANUAL_TEST_RUN, new HashSet<>());
-        entityFields.get(Entity.MANUAL_TEST_RUN).add("subtype");
+        entityFields.get(Entity.MANUAL_TEST_RUN).add(FIELD_SUBTYPE);
         entityFields.get(Entity.MANUAL_TEST_RUN).add("name");
         entityFields.get(Entity.MANUAL_TEST_RUN).add("native_status");
         entityFields.get(Entity.MANUAL_TEST_RUN).add(FIELD_AUTHOR);
@@ -210,7 +210,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
         entityFields.get(Entity.REQUIREMENT).add(FIELD_AUTHOR);
         entityFields.get(Entity.REQUIREMENT).add(FIELD_OWNER);
         entityFields.get(Entity.REQUIREMENT).add(FIELD_RELEASE);
-        entityFields.get(Entity.REQUIREMENT).add("subtype");
+        entityFields.get(Entity.REQUIREMENT).add(FIELD_SUBTYPE);
 
         //BDD SCENARIO
         entityFields.put(Entity.BDD_SCENARIO, new HashSet<>());
@@ -220,6 +220,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
         entityFields.get(Entity.BDD_SCENARIO).add(FIELD_BDD_SPEC);
         entityFields.get(Entity.BDD_SCENARIO).add(FIELD_PHASE);
 
+        //UNIT
         entityFields.put(Entity.UNIT, new HashSet<>());
         Collections.addAll(entityFields.get(Entity.UNIT), commonFields);
         entityFields.get(Entity.UNIT).add(FIELD_AUTHOR);
@@ -227,11 +228,13 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
         entityFields.get(Entity.UNIT).add(FIELD_PRIORITY);
         entityFields.get(Entity.UNIT).add(FIELD_PHASE);
 
+        //MODEL
         entityFields.put(Entity.MODEL, new HashSet<>());
         Collections.addAll(entityFields.get(Entity.MODEL), commonFields);
         entityFields.get(Entity.MODEL).add(FIELD_AUTHOR);
         entityFields.get(Entity.MODEL).add(FIELD_OWNER);
 
+        //QUALITY_GATE
         entityFields.put(Entity.QUALITY_GATE, new HashSet<>());
         Collections.addAll(entityFields.get(Entity.QUALITY_GATE), commonFields);
         entityFields.get(Entity.QUALITY_GATE).add(FIELD_PHASE);
@@ -239,6 +242,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
         entityFields.get(Entity.QUALITY_GATE).add(FIELD_RELEASE_PROCESS);
         entityFields.get(Entity.QUALITY_GATE).add(FIELD_PARENT);
 
+        //AUTO_ACTION
         entityFields.put(Entity.AUTO_ACTION, new HashSet<>());
         Collections.addAll(entityFields.get(Entity.AUTO_ACTION), commonFields);
         entityFields.get(Entity.AUTO_ACTION).add(FIELD_PHASE);
@@ -246,6 +250,7 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
         entityFields.get(Entity.AUTO_ACTION).add(FIELD_RELEASE_PROCESS);
         entityFields.get(Entity.AUTO_ACTION).add(FIELD_PARENT);
 
+        //MANUAL_ACTION
         entityFields.put(Entity.MANUAL_ACTION, new HashSet<>());
         Collections.addAll(entityFields.get(Entity.MANUAL_ACTION), commonFields);
         entityFields.get(Entity.MANUAL_ACTION).add(FIELD_PHASE);
@@ -253,12 +258,14 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
         entityFields.get(Entity.MANUAL_ACTION).add(FIELD_RELEASE_PROCESS);
         entityFields.get(Entity.MANUAL_ACTION).add(FIELD_PARENT);
 
+        //SUITE RUN SCHEDULER
         entityFields.put(Entity.SUITE_RUN_SCHEDULER, new HashSet<>());
         entityFields.get(Entity.SUITE_RUN_SCHEDULER).add(FIELD_AUTHOR);
-        entityFields.get(Entity.SUITE_RUN_SCHEDULER).add("status");
+        entityFields.get(Entity.SUITE_RUN_SCHEDULER).add(FIELD_STATUS);
 
+        //SUITE RUN SCHEDULER RUN
         entityFields.put(Entity.SUITE_RUN_SCHEDULER_RUN, new HashSet<>());
-        entityFields.get(Entity.SUITE_RUN_SCHEDULER_RUN).add("status");
+        entityFields.get(Entity.SUITE_RUN_SCHEDULER_RUN).add(FIELD_STATUS);
     }
 
     /**
@@ -363,11 +370,9 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
                 if (entityType.equals(Entity.MANUAL_TEST_RUN) || entityType.equals(Entity.TEST_SUITE_RUN)) {
                     String nativeStatus = getUiDataFromModel(entityModel.getValue(FIELD_TEST_RUN_NATIVE_STATUS));
                     rowPanel.addDetails("Status", nativeStatus, DetailsPosition.TOP);
-                } else if (entityType != Entity.BDD_SCENARIO) {
+                } else if (!entityType.equals(Entity.BDD_SCENARIO) && !entityType.equals(Entity.SUITE_RUN_SCHEDULER) && !entityType.equals(Entity.SUITE_RUN_SCHEDULER_RUN)) {
                     String phase = getUiDataFromModel(entityModel.getValue(FIELD_PHASE));
-                    if (StringUtils.isNotEmpty(phase)) {
-                        rowPanel.addDetails("Phase", phase, DetailsPosition.TOP);
-                    }
+                    rowPanel.addDetails("Phase", phase, DetailsPosition.TOP);
                 }
 
                 String id = wrapHtml("<b>" + entityId + "</b>");
@@ -399,8 +404,8 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
                 EntityModel storyEntityModel = (EntityModel) entityModel.getValue("story").getValue();
 
                 String type;
-                if (storyEntityModel.getValue("subtype") != null) {
-                    type = storyEntityModel.getValue("subtype").getValue().toString();
+                if (storyEntityModel.getValue(FIELD_SUBTYPE) != null) {
+                    type = storyEntityModel.getValue(FIELD_SUBTYPE).getValue().toString();
                 } else {
                     type = storyEntityModel.getValue("type").getValue().toString();
                 }
@@ -521,11 +526,6 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
                 String automationStatus = getUiDataFromModel(entityModel.getValue("automation_status"));
                 if (StringUtils.isNotEmpty(automationStatus)) {
                     rowPanel.addDetails("Automation status", automationStatus, DetailsPosition.BOTTOM);
-                }
-                // Show phase for BDD scenarios only when present
-                String bddPhase = getUiDataFromModel(entityModel.getValue(FIELD_PHASE));
-                if (StringUtils.isNotEmpty(bddPhase)) {
-                    rowPanel.addDetails("Phase", bddPhase, DetailsPosition.TOP);
                 }
                 ReferenceFieldModel bddSpec = (ReferenceFieldModel) entityModel.getValue("bdd_spec");
                 if (bddSpec != null) {
