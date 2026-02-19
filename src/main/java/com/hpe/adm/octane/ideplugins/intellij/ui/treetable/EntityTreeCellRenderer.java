@@ -113,8 +113,10 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
         entityFields.put(Entity.FEATURE, new HashSet<>());
         Collections.addAll(entityFields.get(Entity.FEATURE), commonFields);
         entityFields.get(Entity.FEATURE).add(FIELD_RELEASE);
+        entityFields.get(Entity.FEATURE).add("subtype");
         entityFields.get(Entity.FEATURE).add(FIELD_AUTHOR);
         entityFields.get(Entity.FEATURE).add(FIELD_STORYPOINTS);
+        entityFields.get(Entity.FEATURE).add(FIELD_TEAM);
         entityFields.get(Entity.FEATURE).add(FIELD_OWNER);
         Collections.addAll(entityFields.get(Entity.FEATURE), progressFields);
 
@@ -167,6 +169,22 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
         entityFields.get(Entity.MANUAL_TEST).add("steps_num");
         entityFields.get(Entity.MANUAL_TEST).add("automation_status");
 
+        // TEST SUITE
+        entityFields.put(Entity.TEST_SUITE, new HashSet<>());
+        Collections.addAll(entityFields.get(Entity.TEST_SUITE), commonFields);
+        entityFields.get(Entity.TEST_SUITE).add("subtype");
+        entityFields.get(Entity.TEST_SUITE).add(FIELD_AUTHOR);
+        entityFields.get(Entity.TEST_SUITE).add(FIELD_OWNER);
+        entityFields.get(Entity.TEST_SUITE).add(FIELD_PHASE);
+
+        // MODEL BASED TEST
+        entityFields.put(Entity.MODEL_BASED_TEST, new HashSet<>());
+        Collections.addAll(entityFields.get(Entity.MODEL_BASED_TEST), commonFields);
+        entityFields.get(Entity.MODEL_BASED_TEST).add("subtype");
+        entityFields.get(Entity.MODEL_BASED_TEST).add(FIELD_AUTHOR);
+        entityFields.get(Entity.MODEL_BASED_TEST).add(FIELD_OWNER);
+        entityFields.get(Entity.MODEL_BASED_TEST).add(FIELD_PHASE);
+
         //MANUAL TEST RUNS
         entityFields.put(Entity.MANUAL_TEST_RUN, new HashSet<>());
         entityFields.get(Entity.MANUAL_TEST_RUN).add("subtype");
@@ -200,6 +218,47 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
         entityFields.get(Entity.BDD_SCENARIO).add(FIELD_OWNER);
         entityFields.get(Entity.BDD_SCENARIO).add(FIELD_AUTOMATION_STATUS);
         entityFields.get(Entity.BDD_SCENARIO).add(FIELD_BDD_SPEC);
+        entityFields.get(Entity.BDD_SCENARIO).add(FIELD_PHASE);
+
+        entityFields.put(Entity.UNIT, new HashSet<>());
+        Collections.addAll(entityFields.get(Entity.UNIT), commonFields);
+        entityFields.get(Entity.UNIT).add(FIELD_AUTHOR);
+        entityFields.get(Entity.UNIT).add(FIELD_OWNER);
+        entityFields.get(Entity.UNIT).add(FIELD_PRIORITY);
+        entityFields.get(Entity.UNIT).add(FIELD_PHASE);
+
+        entityFields.put(Entity.MODEL, new HashSet<>());
+        Collections.addAll(entityFields.get(Entity.MODEL), commonFields);
+        entityFields.get(Entity.MODEL).add(FIELD_AUTHOR);
+        entityFields.get(Entity.MODEL).add(FIELD_OWNER);
+
+        entityFields.put(Entity.QUALITY_GATE, new HashSet<>());
+        Collections.addAll(entityFields.get(Entity.QUALITY_GATE), commonFields);
+        entityFields.get(Entity.QUALITY_GATE).add(FIELD_PHASE);
+        entityFields.get(Entity.QUALITY_GATE).add(FIELD_OWNER);
+        entityFields.get(Entity.QUALITY_GATE).add(FIELD_RELEASE_PROCESS);
+        entityFields.get(Entity.QUALITY_GATE).add(FIELD_PARENT);
+
+        entityFields.put(Entity.AUTO_ACTION, new HashSet<>());
+        Collections.addAll(entityFields.get(Entity.AUTO_ACTION), commonFields);
+        entityFields.get(Entity.AUTO_ACTION).add(FIELD_PHASE);
+        entityFields.get(Entity.AUTO_ACTION).add(FIELD_OWNER);
+        entityFields.get(Entity.AUTO_ACTION).add(FIELD_RELEASE_PROCESS);
+        entityFields.get(Entity.AUTO_ACTION).add(FIELD_PARENT);
+
+        entityFields.put(Entity.MANUAL_ACTION, new HashSet<>());
+        Collections.addAll(entityFields.get(Entity.MANUAL_ACTION), commonFields);
+        entityFields.get(Entity.MANUAL_ACTION).add(FIELD_PHASE);
+        entityFields.get(Entity.MANUAL_ACTION).add(FIELD_OWNER);
+        entityFields.get(Entity.MANUAL_ACTION).add(FIELD_RELEASE_PROCESS);
+        entityFields.get(Entity.MANUAL_ACTION).add(FIELD_PARENT);
+
+        entityFields.put(Entity.SUITE_RUN_SCHEDULER, new HashSet<>());
+        entityFields.get(Entity.SUITE_RUN_SCHEDULER).add(FIELD_AUTHOR);
+        entityFields.get(Entity.SUITE_RUN_SCHEDULER).add("status");
+
+        entityFields.put(Entity.SUITE_RUN_SCHEDULER_RUN, new HashSet<>());
+        entityFields.get(Entity.SUITE_RUN_SCHEDULER_RUN).add("status");
     }
 
     /**
@@ -305,8 +364,10 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
                     String nativeStatus = getUiDataFromModel(entityModel.getValue(FIELD_TEST_RUN_NATIVE_STATUS));
                     rowPanel.addDetails("Status", nativeStatus, DetailsPosition.TOP);
                 } else if (entityType != Entity.BDD_SCENARIO) {
-                    String phase = getUiDataFromModel(entityModel.getValue("phase"));
-                    rowPanel.addDetails("Phase", phase, DetailsPosition.TOP);
+                    String phase = getUiDataFromModel(entityModel.getValue(FIELD_PHASE));
+                    if (StringUtils.isNotEmpty(phase)) {
+                        rowPanel.addDetails("Phase", phase, DetailsPosition.TOP);
+                    }
                 }
 
                 String id = wrapHtml("<b>" + entityId + "</b>");
@@ -356,6 +417,20 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
                 addRelationFieldDetails(rowPanel, entityModel, FIELD_AUTHOR, FIELD_FULL_NAME, "Author", DetailsPosition.TOP);
                 addProgress(rowPanel, entityModel);
 
+            } else if (Entity.FEATURE.equals(entityType)) {
+                addStoryPoints(rowPanel, entityModel);
+                addRelationFieldDetails(rowPanel, entityModel, FIELD_AUTHOR, FIELD_FULL_NAME, "Author", DetailsPosition.TOP);
+                addRelease(rowPanel, entityModel);
+                addTeam(rowPanel, entityModel);
+            } else if (Entity.MODEL.equals(entityType)) {
+                addRelationFieldDetails(rowPanel, entityModel, FIELD_AUTHOR, FIELD_FULL_NAME, "Author", DetailsPosition.TOP);
+            } else if (Entity.UNIT.equals(entityType)) {
+                addRelationFieldDetails(rowPanel, entityModel, FIELD_AUTHOR, FIELD_FULL_NAME, "Author", DetailsPosition.TOP);
+                rowPanel.addDetails("Risk", getUiDataFromModel(entityModel.getValue(FIELD_PRIORITY)), DetailsPosition.TOP);
+            } else if (Entity.QUALITY_GATE.equals(entityType) || Entity.AUTO_ACTION.equals(entityType) || Entity.MANUAL_ACTION.equals(entityType)) {
+                addReleaseProcess(rowPanel, entityModel);
+                rowPanel.addDetails("Quality Gate", getUiDataFromModel(entityModel.getValue(FIELD_PARENT)), DetailsPosition.TOP);
+                addRelationFieldDetails(rowPanel, entityModel, FIELD_AUTHOR, FIELD_FULL_NAME, "Author", DetailsPosition.TOP);
             } else if (Entity.GHERKIN_TEST.equals(entityType)) {
 
                 rowPanel.setEntitySubTitle(
@@ -380,6 +455,21 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
                 if (StringUtils.isNotEmpty(automationStatus)) {
                     rowPanel.addDetails("Automation status", automationStatus, DetailsPosition.BOTTOM);
                 }
+
+            } else if (Entity.TEST_SUITE.equals(entityType)) {
+
+                rowPanel.setEntitySubTitle(
+                        getUiDataFromModel(entityModel.getValue(FIELD_TEST_TYPE)),
+                        "");
+
+                addRelationFieldDetails(rowPanel, entityModel, FIELD_AUTHOR, FIELD_FULL_NAME, "Author", DetailsPosition.TOP);
+            } else if (Entity.MODEL_BASED_TEST.equals(entityType)) {
+
+                rowPanel.setEntitySubTitle(
+                        getUiDataFromModel(entityModel.getValue(FIELD_TEST_TYPE)),
+                        "");
+
+                addRelationFieldDetails(rowPanel, entityModel, FIELD_AUTHOR, FIELD_FULL_NAME, "Author", DetailsPosition.TOP);
             } else if (Entity.COMMENT.equals(entityType)) {
 
                 String text = getUiDataFromModel(entityModel.getValue("text"));
@@ -412,6 +502,17 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
                         "No environment");
                 addRelationFieldDetails(rowPanel, entityModel, FIELD_AUTHOR, FIELD_FULL_NAME, "Author", DetailsPosition.TOP);
                 rowPanel.addDetails("Started", getUiDataFromModel(entityModel.getValue(FIELD_TEST_RUN_STARTED_DATE)), DetailsPosition.BOTTOM);
+            } else if (Entity.SUITE_RUN_SCHEDULER.equals(entityType)) {
+                rowPanel.setEntitySubTitle(
+                        getUiDataFromModel(entityModel.getValue(FIELD_NAME)), "");
+                addRelationFieldDetails(rowPanel, entityModel, FIELD_AUTHOR, FIELD_FULL_NAME, "Author", DetailsPosition.TOP);
+                rowPanel.addDetails("Status", getUiDataFromModel(entityModel.getValue("status")), DetailsPosition.TOP);
+
+            } else if (Entity.SUITE_RUN_SCHEDULER_RUN.equals(entityType)) {
+                rowPanel.setEntitySubTitle(
+                        getUiDataFromModel(entityModel.getValue(FIELD_NAME)), "");
+                rowPanel.addDetails("Status", getUiDataFromModel(entityModel.getValue("status")), DetailsPosition.TOP);
+
             } else if (Entity.BDD_SCENARIO.equals(entityType)) {
 
                 rowPanel.setEntitySubTitle(
@@ -420,6 +521,11 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
                 String automationStatus = getUiDataFromModel(entityModel.getValue("automation_status"));
                 if (StringUtils.isNotEmpty(automationStatus)) {
                     rowPanel.addDetails("Automation status", automationStatus, DetailsPosition.BOTTOM);
+                }
+                // Show phase for BDD scenarios only when present
+                String bddPhase = getUiDataFromModel(entityModel.getValue(FIELD_PHASE));
+                if (StringUtils.isNotEmpty(bddPhase)) {
+                    rowPanel.addDetails("Phase", bddPhase, DetailsPosition.TOP);
                 }
                 ReferenceFieldModel bddSpec = (ReferenceFieldModel) entityModel.getValue("bdd_spec");
                 if (bddSpec != null) {
@@ -444,6 +550,21 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
     private void addStoryPoints(EntityModelRow entityModelRow, EntityModel entityModel) {
         String storyPoints = getUiDataFromModel(entityModel.getValue(FIELD_STORYPOINTS));
         entityModelRow.addDetails("SP", storyPoints, DetailsPosition.TOP);
+    }
+
+    private void addRelease(EntityModelRow rowPanel, EntityModel entityModel) {
+        String release = getUiDataFromModel(entityModel.getValue(FIELD_RELEASE));
+        rowPanel.addDetails("Release", release, DetailsPosition.BOTTOM);
+    }
+
+    private void addTeam(EntityModelRow rowPanel, EntityModel entityModel) {
+        String team = getUiDataFromModel(entityModel.getValue(FIELD_TEAM));
+        rowPanel.addDetails("Team", team, DetailsPosition.BOTTOM);
+    }
+
+    private void addReleaseProcess(EntityModelRow rowPanel, EntityModel entityModel) {
+        String releaseProcess = getUiDataFromModel(entityModel.getValue(FIELD_RELEASE_PROCESS));
+        rowPanel.addDetails("Parent Process", releaseProcess, DetailsPosition.BOTTOM);
     }
 
     /**
