@@ -511,12 +511,12 @@ public class EntityTreeCellRenderer implements TreeCellRenderer {
                 rowPanel.setEntitySubTitle(
                         getUiDataFromModel(entityModel.getValue(FIELD_NAME)), "");
                 addRelationFieldDetails(rowPanel, entityModel, FIELD_AUTHOR, FIELD_FULL_NAME, "Author", DetailsPosition.TOP);
-                rowPanel.addDetails("Status", getUiDataFromModel(entityModel.getValue("status")), DetailsPosition.TOP);
+                rowPanel.addDetails("Status", getUiDataFromModel(entityModel.getValue(FIELD_STATUS)), DetailsPosition.TOP);
 
             } else if (Entity.SUITE_RUN_SCHEDULER_RUN.equals(entityType)) {
                 rowPanel.setEntitySubTitle(
                         getUiDataFromModel(entityModel.getValue(FIELD_NAME)), "");
-                rowPanel.addDetails("Status", getUiDataFromModel(entityModel.getValue("status")), DetailsPosition.TOP);
+                rowPanel.addDetails("Status", getUiDataFromModel(entityModel.getValue(FIELD_STATUS)), DetailsPosition.TOP);
 
             } else if (Entity.BDD_SCENARIO.equals(entityType)) {
 
